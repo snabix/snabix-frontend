@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f6fb;
+  --foreground: #102443;
+  --surface: #ffffff;
+  --surface-muted: #edf2fb;
+  --brand: #021c4f;
+  --brand-deep: #021638;
+  --accent: #c50337;
+  --accent-strong: #e11d48;
+  --accent-soft: rgba(197, 3, 55, 0.1);
+  --danger: #c50337;
+  --metal: #8ea2ca;
+  --blush: #7f98c8;
+  --sand: #d9e2f2;
+  --text-muted: #60708f;
+  --border-soft: rgba(2, 28, 79, 0.1);
+  --border-strong: rgba(2, 28, 79, 0.18);
+  --shadow-soft: 0 24px 60px rgba(2, 28, 79, 0.1);
+  --shadow-card: 0 18px 38px rgba(2, 28, 79, 0.1);
+}
+
+.dark {
+  --background: #040b19;
+  --foreground: #edf2f7;
+  --surface: rgba(8, 17, 37, 0.94);
+  --surface-muted: rgba(9, 20, 46, 0.92);
+  --brand: #c50337;
+  --brand-deep: #f4f7ff;
+  --accent: #ff3d6d;
+  --accent-strong: #ff648c;
+  --accent-soft: rgba(197, 3, 55, 0.22);
+  --danger: #ff5d7d;
+  --metal: #a4b5d4;
+  --blush: #738cc5;
+  --sand: rgba(10, 18, 35, 0.94);
+  --text-muted: #a4b1ca;
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 18px 38px rgba(0, 0, 0, 0.28);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-text-muted: var(--text-muted);
+  --font-sans: "Inter", "Segoe UI", sans-serif;
+  --font-heading: "Manrope", "Inter", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background-image:
+    radial-gradient(circle at top left, rgba(2, 28, 79, 0.16), transparent 24rem),
+    radial-gradient(circle at top right, rgba(197, 3, 55, 0.14), transparent 22rem),
+    radial-gradient(circle at bottom right, rgba(2, 28, 79, 0.08), transparent 20rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 244, 251, 0.96));
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at top left, rgba(197, 3, 55, 0.18), transparent 22rem),
+    radial-gradient(circle at top right, rgba(2, 28, 79, 0.28), transparent 24rem),
+    linear-gradient(180deg, rgba(4, 11, 25, 0.98), rgba(6, 13, 29, 0.98));
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+::selection {
+  background: rgba(197, 3, 55, 0.22);
+  color: var(--brand-deep);
+}
+
+.font-heading {
+  font-family: "Manrope", "Inter", "Segoe UI", sans-serif;
+}
+
+.surface-card {
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+
+.hero-shell {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--surface) 82%, transparent)),
+    linear-gradient(135deg, rgba(2, 28, 79, 0.08), rgba(197, 3, 55, 0.08));
+  box-shadow: var(--shadow-soft);
+}
+
+.interactive-lift {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.interactive-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 40px rgba(2, 28, 79, 0.14);
+}
+
+.interactive-lift:active {
+  transform: translateY(0);
+}
+
+.glass-outline {
+  border: 1px solid color-mix(in srgb, var(--border-strong) 72%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    0 18px 38px rgba(2, 28, 79, 0.08);
+}
+
+.auth-card {
+  width: 100%;
+  border: 1px solid var(--border-soft);
+  border-top: 4px solid var(--accent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 18px 42px rgba(2, 28, 79, 0.1);
+  padding: 28px;
+}
+
+.auth-input.ant-input,
+.auth-input.ant-input-affix-wrapper {
+  min-height: 46px;
+  border-radius: 12px;
+  border-color: var(--border-soft);
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.auth-input.ant-input-affix-wrapper .ant-input {
+  background: transparent;
+}
+
+.auth-input.ant-input:hover,
+.auth-input.ant-input:focus,
+.auth-input.ant-input-affix-wrapper:hover,
+.auth-input.ant-input-affix-wrapper-focused {
+  border-color: color-mix(in srgb, var(--accent) 72%, white);
+  box-shadow: 0 0 0 4px rgba(197, 3, 55, 0.08);
+}
+
+.auth-primary-button {
+  height: 48px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, var(--brand), var(--accent)) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 14px 28px rgba(2, 28, 79, 0.16);
+}
+
+.auth-primary-button:hover,
+.auth-primary-button:focus {
+  background: linear-gradient(135deg, #0a2b73, #db0e46) !important;
+}
+
+.animate-fade-up {
+  animation: fade-up 420ms ease both;
+}
+
+.animate-orb {
+  animation: orb-float 8s ease-in-out infinite;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+body,
+.surface-card,
+.hero-shell {
+  transition:
+    background-color 240ms ease,
+    color 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0) scale(1.03);
+  }
+}

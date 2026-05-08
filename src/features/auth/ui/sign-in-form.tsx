@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button, Form, Input, message } from "antd";
+import { App, Button, Form, Input } from "antd";
 import { getMe, useUserStore } from "@/src/entities/user";
 import { signIn } from "@/src/features/auth/api";
 import { SignInFormValues } from "@/src/features/auth/lib/auth-form-values";
-import { extractAccessToken, saveAccessToken } from "@/src/shared/lib/access-token";
+import {
+  extractAccessToken,
+  saveAccessToken,
+} from "@/src/shared/lib/access-token";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 export function SignInForm() {
   const router = useRouter();
+  const { message } = App.useApp();
   const setUser = useUserStore((state) => state.setUser);
   const [isPending, startTransition] = useTransition();
 
@@ -63,8 +67,18 @@ export function SignInForm() {
           <Input className="auth-input" placeholder="you@example.com" />
         </Form.Item>
 
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <span className="text-sm text-[var(--brand-deep)]">Пароль</span>
+          <Link
+            className="text-sm font-semibold text-[var(--accent)]"
+            href="/forgot-password"
+          >
+            Забыли пароль?
+          </Link>
+        </div>
+
         <Form.Item
-          label="Пароль"
+          className="auth-form-item-without-label"
           name="password"
           rules={[{ required: true, message: "Введите пароль." }]}
         >
@@ -83,9 +97,9 @@ export function SignInForm() {
       </Form>
 
       <p className="mt-6 text-center text-sm text-[var(--text-muted)]">
-        Нет аккаунта?{" "}
+        Нет аккаунта на платформе?{" "}
         <Link className="font-semibold text-[var(--accent)]" href="/sign-up">
-          Зарегистрироваться
+          Создай его сейчас!
         </Link>
       </p>
     </div>

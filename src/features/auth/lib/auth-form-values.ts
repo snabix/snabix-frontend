@@ -4,9 +4,21 @@ export type SignInFormValues = {
 };
 
 export type SignUpFormValues = {
-  name: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
   email: string;
   password: string;
   passwordConfirmation: string;
   acceptedTerms: boolean;
+};
+
+export type ForgotPasswordFormValues = {
+  email: string;
+};
+
+export type ResetPasswordFormValues = {
+  email: string;
+  password: string;
+  passwordConfirmation: string;
 };

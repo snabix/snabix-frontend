@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { App, ConfigProvider } from "antd";
+import { App, ConfigProvider, theme } from "antd";
+import { ThemeProvider, useTheme } from "next-themes";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 
 type ProvidersProps = {
@@ -10,8 +11,25 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      enableSystem
+    >
+      <AntdThemeProvider>{children}</AntdThemeProvider>
+    </ThemeProvider>
+  );
+}
+
+function AntdThemeProvider({ children }: ProvidersProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  return (
     <ConfigProvider
       theme={{
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
           colorPrimary: "#c50337",
           colorInfo: "#021c4f",
@@ -19,10 +37,12 @@ export function Providers({ children }: ProvidersProps) {
           colorWarning: "#b45309",
           colorError: "#c50337",
           borderRadius: 18,
-          colorText: "#102443",
-          colorTextSecondary: "#5e6f8f",
-          colorBorder: "rgba(2, 28, 79, 0.12)",
-          colorBgContainer: "#ffffff",
+          colorText: isDark ? "#edf2f7" : "#102443",
+          colorTextSecondary: isDark ? "#a4b1ca" : "#5e6f8f",
+          colorBorder: isDark
+            ? "rgba(255, 255, 255, 0.12)"
+            : "rgba(2, 28, 79, 0.12)",
+          colorBgContainer: isDark ? "#081125" : "#ffffff",
           fontFamily: "Inter, Segoe UI, sans-serif",
         },
         components: {
@@ -39,7 +59,7 @@ export function Providers({ children }: ProvidersProps) {
             colorPrimary: "#c50337",
           },
           Form: {
-            labelColor: "#021c4f",
+            labelColor: isDark ? "#edf2f7" : "#021c4f",
           },
         },
       }}

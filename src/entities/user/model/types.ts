@@ -10,7 +10,7 @@ export interface User {
 
 export function getUserFullName(user: User | null) {
   if (!user) {
-    return "Пользователь";
+    return "";
   }
 
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");

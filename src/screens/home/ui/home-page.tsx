@@ -1,10 +1,10 @@
 import { Container } from "@/src/shared/ui/container";
 import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
-import { AboutSection } from "@/src/views/home/ui/about-section";
-import { BannerCarouselSection } from "@/src/views/home/ui/banner-carousel-section";
-import { BenefitsSection } from "@/src/views/home/ui/benefits-section";
-import { FeaturesSection } from "@/src/views/home/ui/features-section";
-import { HeroSection } from "@/src/views/home/ui/hero-section";
+import { AboutSection } from "@/src/screens/home/ui/about-section";
+import { BannerCarouselSection } from "@/src/screens/home/ui/banner-carousel-section";
+import { BenefitsSection } from "@/src/screens/home/ui/benefits-section";
+import { FeaturesSection } from "@/src/screens/home/ui/features-section";
+import { HeroSection } from "@/src/screens/home/ui/hero-section";
 
 export function HomePage() {
   return (

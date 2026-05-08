@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button, message } from "antd";
-import { useUserStore } from "@/src/entities/user";
+import { App, Avatar, Button, Dropdown, type MenuProps } from "antd";
+import { LogOut, Moon, Sun, UserRound } from "lucide-react";
+import { useTheme } from "next-themes";
+import { getUserFullName, useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
 import { publicNavigation } from "@/src/shared/config/navigation";
 import { removeAccessToken } from "@/src/shared/lib/access-token";
@@ -14,9 +16,12 @@ import { Logo } from "@/src/shared/ui/logo";
 
 export function Header() {
   const router = useRouter();
+  const { message } = App.useApp();
+  const { resolvedTheme, setTheme } = useTheme();
   const user = useUserStore((state) => state.user);
   const clearUser = useUserStore((state) => state.clearUser);
   const [isPending, startTransition] = useTransition();
+  const userName = getUserFullName(user);
 
   const handleLogout = async () => {
     try {
@@ -32,6 +37,31 @@ export function Header() {
       message.error(extractApiError(error, "Не удалось выйти из аккаунта."));
     }
   };
+
+  const userMenuItems: MenuProps["items"] = [
+    {
+      key: "profile",
+      label: <Link href="/account/profile">Профиль</Link>,
+      icon: <UserRound size={16} />,
+    },
+    {
+      key: "theme",
+      label: resolvedTheme === "dark" ? "Светлая тема" : "Темная тема",
+      icon: resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />,
+      onClick: () => setTheme(resolvedTheme === "dark" ? "light" : "dark"),
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
+      danger: true,
+      disabled: isPending,
+      label: "Выход",
+      icon: <LogOut size={16} />,
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4">
@@ -53,23 +83,26 @@ export function Header() {
 
           <div className="flex items-center gap-3">
             {user ? (
-              <>
-                <div className="hidden rounded-[18px] border border-[var(--border-soft)] bg-white/70 px-4 py-2 text-right sm:block">
-                  <div className="text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                    Пользователь
-                  </div>
-                  <div className="font-semibold text-[var(--brand-deep)]">
-                    {user.name}
-                  </div>
-                </div>
-                <Button
-                  className="!h-11 !rounded-[18px] !border-[var(--border-soft)] !px-5 !font-semibold"
-                  loading={isPending}
-                  onClick={handleLogout}
+              <div className="flex items-center gap-3">
+                <Dropdown
+                  menu={{ items: userMenuItems }}
+                  placement="bottomRight"
+                  trigger={["click"]}
                 >
-                  Выйти
-                </Button>
-              </>
+                  <button
+                    aria-label="Открыть меню пользователя"
+                    className="interactive-lift grid size-12 place-items-center rounded-full border border-[var(--border-soft)] bg-white/80 shadow-[0_14px_28px_rgba(2,28,79,0.12)] outline-none hover:border-[var(--accent)] focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] dark:bg-white/10"
+                    type="button"
+                  >
+                    <Avatar
+                      className="!bg-[linear-gradient(135deg,var(--brand),var(--accent))] !font-bold"
+                      size={42}
+                    >
+                      {userName.slice(0, 1).toUpperCase()}
+                    </Avatar>
+                  </button>
+                </Dropdown>
+              </div>
             ) : (
               <>
                 <Link href="/sign-in">

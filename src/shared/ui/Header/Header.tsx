@@ -17,7 +17,7 @@ import { Logo } from "@/src/shared/ui/logo";
 export function Header() {
   const router = useRouter();
   const { message } = App.useApp();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const user = useUserStore((state) => state.user);
   const clearUser = useUserStore((state) => state.clearUser);
   const [isPending, startTransition] = useTransition();
@@ -45,10 +45,37 @@ export function Header() {
       icon: <UserRound size={16} />,
     },
     {
-      key: "theme",
-      label: resolvedTheme === "dark" ? "Светлая тема" : "Темная тема",
-      icon: resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />,
-      onClick: () => setTheme(resolvedTheme === "dark" ? "light" : "dark"),
+      type: "divider",
+    },
+    {
+      key: "theme-light",
+      label: (
+        <div className="flex items-center gap-2">
+          <Sun size={16} className="text-[var(--foreground)]" />
+          <span>Светлая тема</span>
+        </div>
+      ),
+      onClick: () => setTheme("light"),
+    },
+    {
+      key: "theme-dark",
+      label: (
+        <div className="flex items-center gap-2">
+          <Moon size={16} className="text-[var(--foreground)]" />
+          <span>Темная тема</span>
+        </div>
+      ),
+      onClick: () => setTheme("dark"),
+    },
+    {
+      key: "theme-system",
+      label: (
+        <div className="flex items-center gap-2">
+          <div className="size-4 rounded-full border border-current" />
+          <span>Система</span>
+        </div>
+      ),
+      onClick: () => setTheme("system"),
     },
     {
       type: "divider",
@@ -73,7 +100,7 @@ export function Header() {
             {publicNavigation.map((item) => (
               <Link
                 key={item.href}
-                className="interactive-lift rounded-full px-4 py-3 text-sm font-semibold text-[#5f6b7a] hover:bg-white/70 hover:text-[var(--brand-deep)]"
+                className="nav-link interactive-lift rounded-full px-4 py-3 text-sm font-semibold hover:bg-[var(--accent-soft)]"
                 href={item.href}
               >
                 {item.label}
@@ -91,7 +118,7 @@ export function Header() {
                 >
                   <button
                     aria-label="Открыть меню пользователя"
-                    className="interactive-lift grid size-12 place-items-center rounded-full border border-[var(--border-soft)] bg-white/80 shadow-[0_14px_28px_rgba(2,28,79,0.12)] outline-none hover:border-[var(--accent)] focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] dark:bg-white/10"
+                    className="interactive-lift grid size-12 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] shadow-[0_14px_28px_rgba(0,70,67,0.12)] outline-none hover:border-[var(--accent)] focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
                     type="button"
                   >
                     <Avatar
@@ -107,14 +134,14 @@ export function Header() {
               <>
                 <Link href="/sign-in">
                   <Button
-                    className="!h-11 !rounded-[18px] !border-[var(--border-soft)] !px-5 !font-semibold"
+                    className="header-button-secondary !h-11 !rounded-[18px] !px-5 !font-semibold"
                   >
                     Войти
                   </Button>
                 </Link>
                 <Link href="/sign-up">
                   <Button
-                    className="!h-11 !rounded-[18px] !border-none !bg-[linear-gradient(135deg,var(--brand),var(--accent))] !px-5 !font-semibold !text-white"
+                    className="active-button !h-11 !rounded-[18px] !border-none !px-5 !font-semibold"
                     type="primary"
                   >
                     Регистрация

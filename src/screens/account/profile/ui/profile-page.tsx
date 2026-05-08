@@ -56,7 +56,7 @@ export function ProfilePage() {
         <section className="surface-card overflow-hidden rounded-[32px] p-6 sm:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
-              <div className="grid size-20 place-items-center rounded-[28px] bg-[linear-gradient(135deg,var(--brand),var(--accent))] text-white shadow-[0_18px_38px_rgba(2,28,79,0.18)]">
+              <div className="grid size-20 place-items-center rounded-[28px] bg-[linear-gradient(135deg,var(--brand),var(--accent))] text-[var(--background)] shadow-[0_18px_38px_rgba(0,70,67,0.18)]">
                 <UserRound size={34} />
               </div>
               <div>
@@ -73,19 +73,19 @@ export function ProfilePage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-3xl border border-[var(--border-soft)] bg-white/70 p-4 dark:bg-white/5">
+              <div className="rounded-3xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)] p-4">
                 <div className="flex items-center gap-2 text-sm font-bold text-[var(--brand-deep)]">
                   <Star size={17} className="text-[var(--accent)]" />
                   Рейтинг
                 </div>
                 <div className="mt-2 text-2xl font-black">5.0</div>
               </div>
-              <div className="rounded-3xl border border-[var(--border-soft)] bg-white/70 p-4 dark:bg-white/5">
+              <div className="rounded-3xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)] p-4">
                 <div className="flex items-center gap-2 text-sm font-bold text-[var(--brand-deep)]">
-                  <ShieldCheck size={17} className="text-emerald-600" />
+                  <ShieldCheck size={17} className="text-[var(--accent)]" />
                   Статус
                 </div>
-                <div className="mt-2 text-sm font-bold text-emerald-700">
+                <div className="mt-2 text-sm font-bold text-[var(--foreground)]">
                   {user?.emailVerifiedAt ? "Email подтвержден" : "Ожидает проверки"}
                 </div>
               </div>

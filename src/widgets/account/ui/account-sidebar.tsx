@@ -74,7 +74,7 @@ export function AccountSidebar() {
 
         <button
           aria-label={isCollapsed ? "Открыть боковое меню" : "Закрыть боковое меню"}
-          className="grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-white/70 text-[var(--brand-deep)] hover:border-[var(--accent)] hover:text-[var(--accent)] dark:bg-white/5"
+          className="grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)] text-[var(--brand-deep)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
           onClick={() => setIsCollapsed((value) => !value)}
           type="button"
         >
@@ -92,9 +92,9 @@ export function AccountSidebar() {
               aria-label={isCollapsed ? item.label : undefined}
               className={[
                 "group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold",
-                "text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)]",
+                "nav-link hover:bg-[var(--accent-soft)]",
                 isActive
-                  ? "bg-[linear-gradient(135deg,var(--brand),var(--accent))] text-white shadow-[0_16px_28px_rgba(2,28,79,0.16)] hover:text-white"
+                  ? "active-button shadow-[0_16px_28px_rgba(0,70,67,0.16)]"
                   : "",
                 isCollapsed ? "justify-center" : "",
               ].join(" ")}

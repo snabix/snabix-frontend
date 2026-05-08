@@ -47,7 +47,7 @@ export function ResetPasswordForm({
       </p>
 
       {!hasResetToken ? (
-        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
+        <div className="mt-5 rounded-2xl border border-[var(--border-strong)] bg-[var(--accent-soft)] px-4 py-3 text-sm leading-6 text-[var(--foreground)]">
           Ссылка восстановления некорректна или устарела. Запросите новое
           письмо для сброса пароля.
         </div>

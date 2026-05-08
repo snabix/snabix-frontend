@@ -2,9 +2,9 @@ import { featureCards } from "@/src/shared/lib/mock-data";
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="mt-16">
+    <section id="features" className="section-divider mt-16">
       <div className="mb-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#7d8597]">
+        <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
           Возможности
         </p>
         <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
@@ -21,7 +21,7 @@ export function FeaturesSection() {
             <h3 className="font-heading text-2xl font-extrabold text-[var(--brand-deep)]">
               {card.title}
             </h3>
-            <p className="mt-3 text-sm leading-7 text-[#667085]">
+            <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
               {card.description}
             </p>
           </article>

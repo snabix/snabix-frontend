@@ -5,9 +5,9 @@ import { bannerSlides } from "@/src/shared/lib/mock-data";
 
 export function BannerCarouselSection() {
   return (
-    <section className="mt-16">
+    <section className="section-divider mt-16">
       <div className="mb-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#7d8597]">
+        <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
           Баннеры платформы
         </p>
         <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
@@ -26,7 +26,7 @@ export function BannerCarouselSection() {
                 <h3 className="font-heading mt-4 text-3xl font-extrabold text-[var(--brand-deep)] sm:text-4xl">
                   {slide.title}
                 </h3>
-                <p className="mt-4 text-base leading-8 text-[#52606D]">
+                <p className="section-copy mt-4 text-base leading-8">
                   {slide.description}
                 </p>
               </div>

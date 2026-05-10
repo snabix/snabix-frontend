@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { App, Avatar, Button, Dropdown, type MenuProps } from "antd";
 import { LogOut, Moon, Sun, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -21,7 +21,24 @@ export function Header() {
   const user = useUserStore((state) => state.user);
   const clearUser = useUserStore((state) => state.clearUser);
   const [isPending, startTransition] = useTransition();
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const lastScrollYRef = useRef(0);
   const userName = getUserFullName(user);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > lastScrollYRef.current;
+
+      setIsHeaderHidden(isScrollingDown && currentScrollY > 96);
+      lastScrollYRef.current = currentScrollY;
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -91,7 +108,14 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4">
+    <header
+      className={[
+        "sticky top-0 z-40 px-3 pt-3 sm:px-4",
+        "bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_92%,var(--brand)_8%),color-mix(in_srgb,var(--background)_76%,transparent))]",
+        "transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]",
+        isHeaderHidden ? "-translate-y-[120%]" : "translate-y-0",
+      ].join(" ")}
+    >
       <Container>
         <div className="surface-card flex items-center justify-between gap-4 rounded-[30px] px-4 py-4 sm:px-6">
           <Logo />
@@ -123,6 +147,7 @@ export function Header() {
                   >
                     <Avatar
                       className="!bg-[linear-gradient(135deg,var(--brand),var(--accent))] !font-bold"
+                      src={user.avatar?.url ?? undefined}
                       size={42}
                     >
                       {userName.slice(0, 1).toUpperCase()}

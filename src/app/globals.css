@@ -227,6 +227,33 @@ textarea {
     color: var(--active-button-text) !important;
 }
 
+.profile-data-field {
+    transition:
+            transform 220ms ease,
+            border-color 220ms ease,
+            background-color 220ms ease,
+            box-shadow 220ms ease;
+}
+
+.profile-data-field:focus-within {
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--border-soft));
+    box-shadow: 0 18px 38px rgba(0, 70, 67, 0.1);
+}
+
+.profile-form-item {
+    margin-bottom: 0 !important;
+}
+
+.profile-form-item .ant-form-item-label {
+    display: none;
+}
+
+.profile-form-item .ant-form-item-explain {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 .active-button {
     position: relative;
     isolation: isolate;

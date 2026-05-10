@@ -6,6 +6,16 @@ export interface User {
   phoneNumber: string | null;
   isActive: boolean;
   emailVerifiedAt: string | null;
+  avatar: UserAvatar | null;
+}
+
+export interface UserAvatar {
+  id: number;
+  url: string | null;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  humanReadableSize: string;
 }
 
 export function getUserFullName(user: User | null) {

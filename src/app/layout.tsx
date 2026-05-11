@@ -5,8 +5,8 @@ import { Providers } from "@/src/app/providers";
 
 export const metadata: Metadata = {
   title: {
-    default: "Snabix",
-    template: "%s | Snabix",
+    default: "SNABIX",
+    template: "%s | SNABIX",
   },
   description: "Современный marketplace для объявлений, услуг и безопасных локальных сделок.",
 };

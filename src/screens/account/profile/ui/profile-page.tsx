@@ -167,6 +167,24 @@ function ProfileDataField({
     );
 }
 
+function ProfileEditField({
+    children,
+    label,
+}: {
+    children: ReactNode;
+    label: string;
+}) {
+    return (
+        <div className="grid gap-2">
+            <p className="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                {label}
+            </p>
+
+            {children}
+        </div>
+    );
+}
+
 function ProfileSectionHeader() {
     return (
         <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -654,9 +672,9 @@ export function ProfilePage() {
                         requiredMark={false}
                     >
                         <div className="grid gap-4 md:grid-cols-2">
-                            <ProfileDataField label="Имя">
+                            <ProfileEditField label="Имя">
                                 <Form.Item
-                                    className="profile-form-item"
+                                    className="profile-edit-form-item"
                                     name="firstName"
                                     rules={[
                                         { required: true, message: "Укажите имя." },
@@ -664,13 +682,13 @@ export function ProfilePage() {
                                         { max: 100, message: "Максимум 100 символов." },
                                     ]}
                                 >
-                                    <Input className="auth-input" placeholder="Ваше имя" />
+                                    <Input className="profile-edit-input" placeholder="Ваше имя" />
                                 </Form.Item>
-                            </ProfileDataField>
+                            </ProfileEditField>
 
-                            <ProfileDataField label="Фамилия">
+                            <ProfileEditField label="Фамилия">
                                 <Form.Item
-                                    className="profile-form-item"
+                                    className="profile-edit-form-item"
                                     name="lastName"
                                     rules={[
                                         { required: true, message: "Укажите фамилию." },
@@ -678,13 +696,13 @@ export function ProfilePage() {
                                         { max: 100, message: "Максимум 100 символов." },
                                     ]}
                                 >
-                                    <Input className="auth-input" placeholder="Ваша фамилия" />
+                                    <Input className="profile-edit-input" placeholder="Ваша фамилия" />
                                 </Form.Item>
-                            </ProfileDataField>
+                            </ProfileEditField>
 
-                            <ProfileDataField label="Email">
+                            <ProfileEditField label="Email">
                                 <Form.Item
-                                    className="profile-form-item"
+                                    className="profile-edit-form-item"
                                     name="email"
                                     normalize={(value: string) => value?.trim()}
                                     rules={[
@@ -693,24 +711,24 @@ export function ProfilePage() {
                                     ]}
                                 >
                                     <Input
-                                        className="auth-input"
+                                        className="profile-edit-input"
                                         placeholder="email@example.com"
                                     />
                                 </Form.Item>
-                            </ProfileDataField>
+                            </ProfileEditField>
 
-                            <ProfileDataField label="Телефон">
+                            <ProfileEditField label="Телефон">
                                 <Form.Item
-                                    className="profile-form-item"
+                                    className="profile-edit-form-item"
                                     name="phoneNumber"
                                     rules={[{ max: 20, message: "Максимум 20 символов." }]}
                                 >
                                     <Input
-                                        className="auth-input"
+                                        className="profile-edit-input"
                                         placeholder="+7 900 000-00-00"
                                     />
                                 </Form.Item>
-                            </ProfileDataField>
+                            </ProfileEditField>
                         </div>
 
                         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

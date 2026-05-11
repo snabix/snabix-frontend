@@ -5,28 +5,19 @@ type LogoProps = {
     href?: string;
 };
 
-export function Logo({ href = "/" }: LogoProps) {
+export function Logo({href = "/"}: LogoProps) {
     return (
         <Link className="flex items-center gap-3" href={href}>
-      <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,var(--brand),var(--accent))] shadow-[0_16px_34px_rgba(0,70,67,0.22)]">
+      <span
+          className="relative flex h-[50px] w-[50px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,var(--brand),var(--accent))] shadow-[0_12px_24px_rgba(0,70,67,0.14)]">
         <Image
             alt="SNABIX"
             className="h-full w-full object-cover"
-            height={44}
+            height={50}
             priority
             src="/logo.png"
-            width={44}
+            width={50}
         />
-      </span>
-
-            <span>
-        <span className="font-heading block text-lg font-extrabold text-[var(--brand-deep)]">
-          SNABIX
-        </span>
-
-        <span className="block text-xs text-[var(--text-muted)]">
-          marketplace platform
-        </span>
       </span>
         </Link>
     );

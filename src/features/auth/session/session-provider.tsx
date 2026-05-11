@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent } from "react";
 import { getMe, useUserStore } from "@/src/entities/user";
-import { removeAccessToken } from "@/src/shared/lib/access-token";
+import { getAccessToken, removeAccessToken } from "@/src/shared/lib/access-token";
 
 export function SessionProvider() {
   const setUser = useUserStore((state) => state.setUser);
@@ -13,6 +13,15 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
+    const accessToken = getAccessToken();
+
+    if (!accessToken) {
+      clearUser();
+      setLoading(false);
+      setHasCheckedSession(true);
+      return;
+    }
+
     setLoading(true);
 
     try {

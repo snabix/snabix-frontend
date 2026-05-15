@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
 import { Providers } from "@/src/app/providers";
 
@@ -19,9 +18,7 @@ export default function RootLayout({
   return (
     <html lang="ru" suppressHydrationWarning className="h-full antialiased">
       <body className="min-h-full">
-        <AntdRegistry>
-          <Providers>{children}</Providers>
-        </AntdRegistry>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

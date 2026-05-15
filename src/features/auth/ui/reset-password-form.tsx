@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { App, Button, Form, Input } from "antd";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { resetPassword } from "@/src/features/auth/api";
+import { resetPasswordSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { ResetPasswordFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { Button } from "@/src/shared/ui/shadcn/button";
+import { Input } from "@/src/shared/ui/shadcn/input";
+import { Label } from "@/src/shared/ui/shadcn/label";
+import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
 
 type ResetPasswordFormProps = {
   initialEmail?: string;
@@ -18,23 +25,36 @@ export function ResetPasswordForm({
   initialToken,
 }: ResetPasswordFormProps) {
   const router = useRouter();
-  const { message } = App.useApp();
-  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const hasResetToken = Boolean(initialToken);
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<ResetPasswordFormValues>({
+    defaultValues: {
+      email: initialEmail ?? "",
+      password: "",
+      passwordConfirmation: "",
+    },
+    resolver: zodResolver(resetPasswordSchema),
+  });
 
-  const handleSubmit = (values: ResetPasswordFormValues) => {
-    startTransition(async () => {
-      try {
-        await resetPassword({
-          ...values,
-          token: initialToken ?? "",
-        });
-        message.success("Пароль обновлен. Теперь можно войти.");
-        router.push("/sign-in");
-      } catch (error) {
-        message.error(extractApiError(error, "Не удалось обновить пароль."));
-      }
-    });
+  const onSubmit = async (values: ResetPasswordFormValues) => {
+    setIsSubmitting(true);
+
+    try {
+      await resetPassword({
+        ...values,
+        token: initialToken ?? "",
+      });
+      toast.success("Пароль обновлен. Теперь можно войти.");
+      router.push("/sign-in");
+    } catch (error) {
+      toast.error(extractApiError(error, "Не удалось обновить пароль."));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,75 +73,61 @@ export function ResetPasswordForm({
         </div>
       ) : null}
 
-      <Form<ResetPasswordFormValues>
+      <form
         autoComplete="off"
-        className="mt-7"
-        initialValues={{
-          email: initialEmail,
-        }}
-        layout="vertical"
-        onFinish={handleSubmit}
-        requiredMark={false}
+        className="mt-7 space-y-5"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Укажите email." },
-            { type: "email", message: "Введите корректный email." },
-          ]}
-        >
-          <Input className="auth-input" placeholder="you@example.com" />
-        </Form.Item>
+        <div className="space-y-2">
+          <Label htmlFor="reset-password-email">Email</Label>
+          <Input
+            id="reset-password-email"
+            placeholder="you@example.com"
+            {...register("email")}
+          />
+          {errors.email ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.email.message}
+            </p>
+          ) : null}
+        </div>
 
-        <Form.Item
-          label="Новый пароль"
-          name="password"
-          rules={[
-            { required: true, message: "Введите новый пароль." },
-            { min: 8, message: "Минимум 8 символов." },
-          ]}
-        >
-          <Input.Password
-            className="auth-input"
+        <div className="space-y-2">
+          <Label htmlFor="reset-password-value">Новый пароль</Label>
+          <PasswordInput
+            id="reset-password-value"
             placeholder="Не менее 8 символов"
+            {...register("password")}
           />
-        </Form.Item>
+          {errors.password ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.password.message}
+            </p>
+          ) : null}
+        </div>
 
-        <Form.Item
-          dependencies={["password"]}
-          label="Повторите пароль"
-          name="passwordConfirmation"
-          rules={[
-            { required: true, message: "Повторите пароль." },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(new Error("Пароли не совпадают."));
-              },
-            }),
-          ]}
-        >
-          <Input.Password
-            className="auth-input"
+        <div className="space-y-2">
+          <Label htmlFor="reset-password-confirmation">Повторите пароль</Label>
+          <PasswordInput
+            id="reset-password-confirmation"
             placeholder="Повторите пароль"
+            {...register("passwordConfirmation")}
           />
-        </Form.Item>
+          {errors.passwordConfirmation ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.passwordConfirmation.message}
+            </p>
+          ) : null}
+        </div>
 
         <Button
-          block
-          className="auth-primary-button"
+          className="auth-primary-button w-full"
           disabled={!hasResetToken}
-          htmlType="submit"
-          loading={isPending}
-          type="primary"
+          type="submit"
         >
-          Обновить пароль
+          {isSubmitting ? "Обновляем..." : "Обновить пароль"}
         </Button>
-      </Form>
+      </form>
 
       <p className="mt-6 text-center text-sm text-[var(--text-muted)]">
         Вернуться к{" "}

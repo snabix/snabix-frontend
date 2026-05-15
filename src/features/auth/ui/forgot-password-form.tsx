@@ -1,27 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { useTransition } from "react";
-import { App, Button, Form, Input } from "antd";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { forgotPassword } from "@/src/features/auth/api";
+import { forgotPasswordSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { ForgotPasswordFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { Button } from "@/src/shared/ui/shadcn/button";
+import { Input } from "@/src/shared/ui/shadcn/input";
+import { Label } from "@/src/shared/ui/shadcn/label";
 
 export function ForgotPasswordForm() {
-  const { message } = App.useApp();
-  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
-  const handleSubmit = (values: ForgotPasswordFormValues) => {
-    startTransition(async () => {
-      try {
-        await forgotPassword(values);
-        message.success("Если аккаунт найден, мы отправим письмо для сброса.");
-      } catch (error) {
-        message.error(
-          extractApiError(error, "Не удалось отправить письмо для сброса."),
-        );
-      }
-    });
+  const onSubmit = async (values: ForgotPasswordFormValues) => {
+    setIsSubmitting(true);
+
+    try {
+      await forgotPassword(values);
+      toast.success("Если аккаунт найден, мы отправим письмо для сброса.");
+    } catch (error) {
+      toast.error(
+        extractApiError(error, "Не удалось отправить письмо для сброса."),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,34 +47,33 @@ export function ForgotPasswordForm() {
         Укажите email, и мы отправим ссылку для восстановления доступа.
       </p>
 
-      <Form<ForgotPasswordFormValues>
+      <form
         autoComplete="off"
-        className="mt-7"
-        layout="vertical"
-        onFinish={handleSubmit}
-        requiredMark={false}
+        className="mt-7 space-y-5"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Укажите email." },
-            { type: "email", message: "Введите корректный email." },
-          ]}
-        >
-          <Input className="auth-input" placeholder="you@example.com" />
-        </Form.Item>
+        <div className="space-y-2">
+          <Label htmlFor="forgot-password-email">Email</Label>
+          <Input
+            id="forgot-password-email"
+            placeholder="you@example.com"
+            {...register("email")}
+          />
+          {errors.email ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.email.message}
+            </p>
+          ) : null}
+        </div>
 
         <Button
-          block
-          className="auth-primary-button"
-          htmlType="submit"
-          loading={isPending}
-          type="primary"
+          className="auth-primary-button w-full"
+          disabled={isSubmitting}
+          type="submit"
         >
           Отправить письмо
         </Button>
-      </Form>
+      </form>
 
       <p className="mt-6 text-center text-sm text-[var(--text-muted)]">
         Вспомнили пароль?{" "}

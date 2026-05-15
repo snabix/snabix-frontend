@@ -13,13 +13,9 @@ export type SignUpPayload = {
 };
 
 export type AuthResponse = {
-  accessToken?: string;
-  access_token?: string;
-  token?: string;
+  userId?: string;
   data?: {
-    accessToken?: string;
-    access_token?: string;
-    token?: string;
+    userId?: string;
   };
 };
 

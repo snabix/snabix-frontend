@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { getMe, useUserStore } from "@/src/entities/user";
-import { getAccessToken, removeAccessToken } from "@/src/shared/lib/access-token";
+import {
+  clearAuthSession,
+  shouldHydrateSession,
+} from "@/src/shared/lib/auth-session";
 
 export function SessionProvider() {
+  const hasHydratedSessionRef = useRef(false);
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
   const setLoading = useUserStore((state) => state.setLoading);
@@ -13,9 +17,7 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
-    const accessToken = getAccessToken();
-
-    if (!accessToken) {
+    if (!shouldHydrateSession()) {
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
@@ -29,7 +31,7 @@ export function SessionProvider() {
       setUser(user);
     } catch {
       clearUser();
-      removeAccessToken();
+      clearAuthSession();
     } finally {
       setLoading(false);
       setHasCheckedSession(true);
@@ -37,6 +39,12 @@ export function SessionProvider() {
   });
 
   useEffect(() => {
+    if (hasHydratedSessionRef.current) {
+      return;
+    }
+
+    hasHydratedSessionRef.current = true;
+
     hydrateSession();
   }, []);
 

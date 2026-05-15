@@ -6,7 +6,7 @@ export async function uploadProfileAvatar(file: File): Promise<User> {
 
   payload.append("avatar", file);
 
-  const { data } = await api.post<{ data: User }>("auth/me/avatar", payload, {
+  const { data } = await api.post<{ data: User }>("/auth/me/avatar", payload, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -16,7 +16,7 @@ export async function uploadProfileAvatar(file: File): Promise<User> {
 }
 
 export async function deleteProfileAvatar(): Promise<User> {
-  const { data } = await api.delete<{ data: User }>("auth/me/avatar");
+  const { data } = await api.delete<{ data: User }>("/auth/me/avatar");
 
   return data.data;
 }

@@ -2,7 +2,7 @@ import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthGuard } from "@/src/features/auth/session/auth-guard";
 import { useUserStore } from "@/src/entities/user";
-import type { User } from "@/src/entities/user/model/types";
+import type { User } from "@/src/entities/user";
 
 const { replaceMock } = vi.hoisted(() => ({
   replaceMock: vi.fn(),

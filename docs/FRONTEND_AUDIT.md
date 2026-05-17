@@ -54,10 +54,10 @@
 - [x] В форме объявлений добавлена schema-валидация через `zod/react-hook-form`.
 - [x] `attributeValues` нормализованы под `Record<string, value>` во frontend-state и payload mapper.
 - [x] Денежные значения валидируются и парсятся как целые числа без копеек.
-- [ ] Нет единого слоя API DTO mapping: frontend напрямую верит backend response shape.
-- [ ] `shouldHydrateSession()` всегда возвращает `true`, а `clearAuthSession()` пустой. Это нормально для cookie-only MVP, но название функций вводит в заблуждение.
+- [x] Добавлен единый слой unwrap для API-ответов через `shared/api/response`; полноценные runtime DTO validators можно добавить позже при необходимости.
+- [x] Cookie-only session helpers переименованы так, чтобы не вводить в заблуждение по поводу hydration/token-cleanup поведения.
 - [x] В публичной главной странице добавлен graceful fallback, если API объявлений недоступен.
-- [ ] Используются barrel imports местами из feature API, местами из entity. Нужно унифицировать.
+- [x] Импорты для entity/feature API унифицированы через публичные index/barrel там, где код находится за пределами собственного slice.
 - [x] `antd` и `@ant-design/nextjs-registry` удалены из зависимостей и импортов.
 - [x] Миграция оставшихся `antd`-компонентов на `shadcn/ui` завершена.
 

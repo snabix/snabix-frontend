@@ -1,4 +1,4 @@
-import type { CategoryNode } from "@/src/entities/category/model/types";
+import type { CategoryNode } from "@/src/entities/category";
 import type { BranchOption } from "@/src/features/listing/model/category-options";
 import { listingTypeCards } from "@/src/features/listing/model/listing-form-options";
 import { ListingFormField, ListingFormSelect } from "@/src/features/listing/ui/listing-form-field";

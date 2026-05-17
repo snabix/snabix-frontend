@@ -1,5 +1,5 @@
-import { api } from "@/src/shared/api";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 
 export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
 
@@ -19,12 +19,8 @@ export type CreateListingPayload = {
   attributeValues: Record<string, ListingAttributeValue>;
 };
 
-type ListingResponse = {
-  data: ListingItem;
-};
-
 export async function createListing(payload: CreateListingPayload): Promise<ListingItem> {
-  const response = await api.post<ListingResponse>("/listings", payload);
+  const response = await api.post<ApiDataResponse<ListingItem>>("/listings", payload);
 
-  return response.data.data;
+  return unwrapApiData(response.data);
 }

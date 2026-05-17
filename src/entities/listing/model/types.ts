@@ -1,4 +1,4 @@
-import type { CategoryAttributeDefinition } from "@/src/entities/category/model/types";
+import type { CategoryAttributeDefinition } from "@/src/entities/category";
 
 export type ListingAttributeValue = string | number | boolean | string[] | null;
 

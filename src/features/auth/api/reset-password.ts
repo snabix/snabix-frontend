@@ -1,5 +1,5 @@
 import { api } from "@/src/shared/api";
-import type { ResetPasswordPayload } from "../model/types";
+import type { ResetPasswordPayload } from "@/src/features/auth/model/types";
 
 export async function resetPassword(
   payload: ResetPasswordPayload,

@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useCategoryStore } from "@/src/entities/category/model/store";
+import { useCategoryStore } from "@/src/entities/category";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
-import type { CreateListingPayload } from "@/src/features/listing/api/create-listing";
+import type { CreateListingPayload } from "@/src/features/listing/api";
 import {
   buildAttributePayload,
   groupAttributesByName,

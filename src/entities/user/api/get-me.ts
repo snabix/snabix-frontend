@@ -1,7 +1,8 @@
-import { api } from "@/src/shared/api";
-import { User } from "@/src/entities/user/model/types";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
+import type { User } from "@/src/entities/user";
 
 export const getMe = async (): Promise<User> => {
-  const { data } = await api.get<{ data: User }>("/auth/me");
-  return data.data;
+  const response = await api.get<ApiDataResponse<User>>("/auth/me");
+
+  return unwrapApiData(response.data);
 };

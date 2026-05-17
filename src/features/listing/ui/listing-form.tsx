@@ -1,6 +1,6 @@
 import { Settings2 } from "lucide-react";
 import type { ListingItem } from "@/src/entities/listing";
-import type { CreateListingPayload } from "@/src/features/listing/api/create-listing";
+import type { CreateListingPayload } from "@/src/features/listing/api";
 import { LISTING_TYPE_PRODUCT } from "@/src/features/listing/model/listing-form-constants";
 import { conditionOptions } from "@/src/features/listing/model/listing-form-options";
 import { useListingFormState } from "@/src/features/listing/model/use-listing-form-state";
@@ -166,4 +166,3 @@ export function ListingForm({
     </div>
   );
 }
-

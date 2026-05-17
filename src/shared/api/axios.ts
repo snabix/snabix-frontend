@@ -1,7 +1,7 @@
 import axios from "axios";
 import { notifyUnauthorized } from "@/src/features/auth/session/auth-events";
 import { publicEnv } from "@/src/shared/config/env";
-import { clearAuthSession } from "@/src/shared/lib/auth-session";
+import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 
 const csrfApi = axios.create({
   baseURL: publicEnv.apiOrigin,
@@ -50,7 +50,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      clearAuthSession();
+      clearCookieSessionState();
       notifyUnauthorized();
     }
 

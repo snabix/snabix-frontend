@@ -1,4 +1,4 @@
-import type { CategoryNode } from "@/src/entities/category/model/types";
+import type { CategoryNode } from "@/src/entities/category";
 
 export type BranchOption = {
   id: number;
@@ -21,4 +21,3 @@ export function flattenBranchOptions(root: CategoryNode): BranchOption[] {
 
   return options;
 }
-

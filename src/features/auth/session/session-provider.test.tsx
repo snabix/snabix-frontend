@@ -3,16 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
-import type { User } from "@/src/entities/user/model/types";
+import type { User } from "@/src/entities/user";
 
 const {
   getMeMock,
-  clearAuthSessionMock,
-  shouldHydrateSessionMock,
+  clearCookieSessionStateMock,
+  shouldCheckCookieSessionMock,
 } = vi.hoisted(() => ({
   getMeMock: vi.fn<() => Promise<User>>(),
-  clearAuthSessionMock: vi.fn<() => void>(),
-  shouldHydrateSessionMock: vi.fn<() => boolean>(),
+  clearCookieSessionStateMock: vi.fn<() => void>(),
+  shouldCheckCookieSessionMock: vi.fn<() => boolean>(),
 }));
 
 vi.mock("@/src/entities/user", async () => {
@@ -33,8 +33,8 @@ vi.mock("@/src/shared/lib/auth-session", async () => {
 
   return {
     ...actual,
-    clearAuthSession: clearAuthSessionMock,
-    shouldHydrateSession: shouldHydrateSessionMock,
+    clearCookieSessionState: clearCookieSessionStateMock,
+    shouldCheckCookieSession: shouldCheckCookieSessionMock,
   };
 });
 
@@ -52,13 +52,13 @@ const mockUser: User = {
 describe("SessionProvider", () => {
   beforeEach(() => {
     getMeMock.mockReset();
-    clearAuthSessionMock.mockReset();
-    shouldHydrateSessionMock.mockReset();
+    clearCookieSessionStateMock.mockReset();
+    shouldCheckCookieSessionMock.mockReset();
     useUserStore.setState(useUserStore.getInitialState(), true);
   });
 
   it("marks session as checked immediately when hydration is not needed", async () => {
-    shouldHydrateSessionMock.mockReturnValue(false);
+    shouldCheckCookieSessionMock.mockReturnValue(false);
 
     render(<SessionProvider />);
 
@@ -74,7 +74,7 @@ describe("SessionProvider", () => {
   });
 
   it("hydrates user when session should be restored", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);
@@ -87,11 +87,11 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearAuthSessionMock).not.toHaveBeenCalled();
+    expect(clearCookieSessionStateMock).not.toHaveBeenCalled();
   });
 
   it("clears session and removes token when getMe fails", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockRejectedValue(new Error("Unauthorized"));
 
     render(<SessionProvider />);
@@ -104,11 +104,11 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearAuthSessionMock).toHaveBeenCalledTimes(1);
+    expect(clearCookieSessionStateMock).toHaveBeenCalledTimes(1);
   });
 
   it("clears local user state when unauthorized event is received", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);

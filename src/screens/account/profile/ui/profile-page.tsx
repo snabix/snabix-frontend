@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { resendEmailVerification, verifyEmailCode } from "@/src/features/auth/api";
-import { uploadProfileAvatar } from "@/src/features/profile/avatar/api/profile-avatar";
+import { uploadProfileAvatar } from "@/src/features/profile/avatar/api";
 import {
     AVATAR_MAX_OFFSET,
     type AvatarDraft,
@@ -32,7 +32,7 @@ import {
     createEditedAvatarFile,
 } from "@/src/features/profile/avatar/lib/avatar-editor";
 import { profileFormSchema } from "@/src/features/profile/update-profile/model/profile-form-schema";
-import { updateProfile } from "@/src/features/profile/update-profile/api/update-profile";
+import { updateProfile } from "@/src/features/profile/update-profile/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Button } from "@/src/shared/ui/shadcn/button";

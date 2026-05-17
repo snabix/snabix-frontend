@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
-import { clearAuthSession } from "@/src/shared/lib/auth-session";
+import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { CategoryCatalog } from "@/src/shared/ui/Header/CategoryCatalog";
 import { CatalogToggleButton } from "@/src/shared/ui/Header/CatalogToggleButton";
@@ -33,7 +33,7 @@ export function Header() {
   const handleLogout = async () => {
     try {
       await logout();
-      clearAuthSession();
+      clearCookieSessionState();
       clearUser();
       toast.success("Вы вышли из аккаунта.");
       startTransition(() => {

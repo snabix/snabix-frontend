@@ -1,5 +1,5 @@
 import { LoaderCircle } from "lucide-react";
-import type { CategoryAttributeDefinition } from "@/src/entities/category/model/types";
+import type { CategoryAttributeDefinition } from "@/src/entities/category";
 import type { ListingAttributeValue } from "@/src/entities/listing";
 import {
   ATTRIBUTE_TYPE_BOOLEAN,

@@ -4,8 +4,8 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import { getMe, useUserStore } from "@/src/entities/user";
 import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
 import {
-  clearAuthSession,
-  shouldHydrateSession,
+  clearCookieSessionState,
+  shouldCheckCookieSession,
 } from "@/src/shared/lib/auth-session";
 
 export function SessionProvider() {
@@ -18,7 +18,7 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
-    if (!shouldHydrateSession()) {
+    if (!shouldCheckCookieSession()) {
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
@@ -32,7 +32,7 @@ export function SessionProvider() {
       setUser(user);
     } catch {
       clearUser();
-      clearAuthSession();
+      clearCookieSessionState();
     } finally {
       setLoading(false);
       setHasCheckedSession(true);

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AuthGuard } from "@/src/features/auth/session/auth-guard";
 import { Header } from "@/src/shared/ui/Header/Header";
 import { Container } from "@/src/shared/ui/container";
 import { AccountSidebar } from "@/src/widgets/account/ui/account-sidebar";
@@ -16,7 +17,9 @@ export function AccountLayout({ children }: AccountLayoutProps) {
           <div className="hidden lg:block">
             <AccountSidebar />
           </div>
-          <section className="min-w-0 flex-1">{children}</section>
+          <section className="min-w-0 flex-1">
+            <AuthGuard>{children}</AuthGuard>
+          </section>
         </Container>
       </main>
     </>

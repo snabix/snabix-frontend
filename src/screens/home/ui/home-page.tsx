@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { BadgeCheck, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { listPublicListings } from "@/src/features/listing/api/list-public-listings";
-import type { ListingItem } from "@/src/features/listing/api/create-listing";
+import type { PublicListingItem } from "@/src/entities/listing";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Container } from "@/src/shared/ui/container";
 import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
 
 export function HomePage() {
-  const [items, setItems] = useState<ListingItem[]>([]);
+  const [items, setItems] = useState<PublicListingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

@@ -15,7 +15,6 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 
 const LISTING_TYPE_PRODUCT = 1;
 const LISTING_TYPE_SERVICE = 2;
-const LISTING_STATUS_DRAFT = 1;
 const LISTING_CONDITION_NEW = 1;
 const LISTING_CONDITION_USED = 2;
 const LISTING_CONDITION_NOT_APPLICABLE = 3;
@@ -253,7 +252,7 @@ export function ListingForm({
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (saveAsDraft = false) => {
     if (effectiveSelectedCategoryId === null) {
       toast.error("Сначала выберите категорию объявления.");
       return;
@@ -267,13 +266,13 @@ export function ListingForm({
     const payload: CreateListingPayload = {
       categoryId: effectiveSelectedCategoryId,
       type: activeType,
-      status: initialListing?.status ?? LISTING_STATUS_DRAFT,
       condition: effectiveCondition,
       title: title.trim(),
       description: description.trim(),
       price: price.trim() === "" ? null : Number(price),
       currency: currency.trim() === "" ? null : currency.trim().toUpperCase(),
       isNegotiable,
+      ...(mode === "create" ? { saveAsDraft } : {}),
       attributeValues,
     };
 
@@ -281,7 +280,9 @@ export function ListingForm({
       setIsSubmitting(true);
       const savedListing = await onSubmit(payload);
 
-      toast.success(mode === "create" ? "Черновик объявления создан." : "Объявление обновлено.");
+      toast.success(mode === "create"
+        ? (saveAsDraft ? "Черновик объявления сохранён." : "Объявление отправлено на проверку.")
+        : "Объявление обновлено.");
       router.push(`/account/listings/${savedListing.id}`);
       router.refresh();
     } catch (error) {
@@ -492,24 +493,39 @@ export function ListingForm({
           )}
         </div>
 
-        <Button
-          className="mt-6 w-full"
-          disabled={isSubmitting || isLoadingRoots || isLoadingBranch || isLoadingAttributes}
-          onClick={handleSubmit}
-          size="lg"
-          type="button"
-        >
-          {isSubmitting ? (
-            <>
-              <LoaderCircle className="animate-spin" size={18} />
-              Сохраняем
-            </>
-          ) : mode === "create" ? (
-            "Создать черновик"
-          ) : (
-            "Сохранить изменения"
-          )}
-        </Button>
+        <div className="mt-6 grid gap-3">
+          <Button
+            className="w-full"
+            disabled={isSubmitting || isLoadingRoots || isLoadingBranch || isLoadingAttributes}
+            onClick={() => handleSubmit(false)}
+            size="lg"
+            type="button"
+          >
+            {isSubmitting ? (
+              <>
+                <LoaderCircle className="animate-spin" size={18} />
+                Сохраняем
+              </>
+            ) : mode === "create" ? (
+              "Отправить на проверку"
+            ) : (
+              "Сохранить изменения"
+            )}
+          </Button>
+
+          {mode === "create" ? (
+            <Button
+              className="w-full"
+              disabled={isSubmitting || isLoadingRoots || isLoadingBranch || isLoadingAttributes}
+              onClick={() => handleSubmit(true)}
+              size="lg"
+              type="button"
+              variant="outline"
+            >
+              Сохранить как черновик
+            </Button>
+          ) : null}
+        </div>
       </aside>
     </div>
   );

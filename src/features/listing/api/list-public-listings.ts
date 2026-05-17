@@ -1,11 +1,11 @@
 import { api } from "@/src/shared/api";
-import type { ListingItem } from "@/src/features/listing/api/create-listing";
+import type { PublicListingItem } from "@/src/entities/listing";
 
 type ListPublicListingsResponse = {
-  data: ListingItem[];
+  data: PublicListingItem[];
 };
 
-export async function listPublicListings(limit = 24): Promise<ListingItem[]> {
+export async function listPublicListings(limit = 24): Promise<PublicListingItem[]> {
   const response = await api.get<ListPublicListingsResponse>("/public/listings", {
     params: { limit },
   });

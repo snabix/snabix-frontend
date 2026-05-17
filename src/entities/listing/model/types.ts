@@ -43,3 +43,8 @@ export type ListingItem = {
     displayValue: string | null;
   }>;
 };
+
+export type PublicListingItem = Omit<
+  ListingItem,
+  "userId" | "contactName" | "contactPhone" | "contactEmail" | "rejectionReason"
+>;

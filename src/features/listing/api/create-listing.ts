@@ -6,7 +6,6 @@ export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing"
 export type CreateListingPayload = {
   categoryId: number;
   type: number;
-  status: number;
   condition: number | null;
   title: string;
   description: string;
@@ -16,8 +15,7 @@ export type CreateListingPayload = {
   contactName?: string | null;
   contactPhone?: string | null;
   contactEmail?: string | null;
-  isFeatured?: boolean;
-  rejectionReason?: string | null;
+  saveAsDraft?: boolean;
   attributeValues: Record<number, ListingAttributeValue>;
 };
 

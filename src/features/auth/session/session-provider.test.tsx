@@ -1,5 +1,6 @@
 import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
 import type { User } from "@/src/entities/user/model/types";
@@ -104,5 +105,26 @@ describe("SessionProvider", () => {
     });
 
     expect(clearAuthSessionMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears local user state when unauthorized event is received", async () => {
+    shouldHydrateSessionMock.mockReturnValue(true);
+    getMeMock.mockResolvedValue(mockUser);
+
+    render(<SessionProvider />);
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toEqual(mockUser);
+    });
+
+    window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
+
+    await waitFor(() => {
+      const state = useUserStore.getState();
+
+      expect(state.user).toBeNull();
+      expect(state.isLoading).toBe(false);
+      expect(state.hasCheckedSession).toBe(true);
+    });
   });
 });

@@ -52,13 +52,25 @@ export function SignUpForm() {
         password: values.password,
         passwordConfirmation: values.passwordConfirmation,
       });
-      const user = await getMe();
-      setUser(user);
-      toast.success("Аккаунт создан. Проверьте почту для подтверждения.");
-      startTransition(() => {
-        router.push("/");
-        router.refresh();
-      });
+
+      try {
+        const user = await getMe();
+        setUser(user);
+        toast.success("Аккаунт создан. Проверьте почту для подтверждения.");
+        startTransition(() => {
+          router.push("/");
+          router.refresh();
+        });
+      } catch {
+        setUser(null);
+        toast.success(
+          "Аккаунт создан. Теперь войдите в систему и подтвердите почту.",
+        );
+        startTransition(() => {
+          router.push("/sign-in");
+          router.refresh();
+        });
+      }
     } catch (error) {
       toast.error(extractApiError(error, "Не удалось создать аккаунт."));
     } finally {

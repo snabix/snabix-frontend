@@ -1,4 +1,5 @@
 import axios from "axios";
+import { notifyUnauthorized } from "@/src/features/auth/session/auth-events";
 import { publicEnv } from "@/src/shared/config/env";
 import { clearAuthSession } from "@/src/shared/lib/auth-session";
 
@@ -50,6 +51,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       clearAuthSession();
+      notifyUnauthorized();
     }
 
     return Promise.reject(error);

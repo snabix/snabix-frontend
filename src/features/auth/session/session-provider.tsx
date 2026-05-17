@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useRef } from "react";
 import { getMe, useUserStore } from "@/src/entities/user";
+import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
 import {
   clearAuthSession,
   shouldHydrateSession,
@@ -47,6 +48,20 @@ export function SessionProvider() {
 
     hydrateSession();
   }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearUser();
+      setLoading(false);
+      setHasCheckedSession(true);
+    };
+
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    };
+  }, [clearUser, setHasCheckedSession, setLoading]);
 
   return null;
 }

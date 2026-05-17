@@ -16,6 +16,22 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 import { Label } from "@/src/shared/ui/shadcn/label";
 import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
 
+function getRedirectParam() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return new URLSearchParams(window.location.search).get("redirectTo");
+}
+
+function resolveRedirectPath(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
+}
+
 export function SignInForm() {
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
@@ -38,7 +54,7 @@ export function SignInForm() {
       setUser(user);
       toast.success("Вы вошли в аккаунт.");
       startTransition(() => {
-        router.push("/");
+        router.push(resolveRedirectPath(getRedirectParam()));
         router.refresh();
       });
     } catch (error) {

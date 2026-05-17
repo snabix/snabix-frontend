@@ -82,9 +82,9 @@
 
 - [x] Root categories и branch загружаются.
 - [x] Есть Zustand-cache для категорий.
-- [ ] `ListingForm` не использует `useCategoryStore`, а грузит категории локально, из-за чего есть дублирование.
-- [ ] Нужен отдельный cache для `category attributes`.
-- [ ] Нужно учитывать `placeholder`, `helpText`, `defaultValue`, `groupName`, `showInCard` в UI формы.
+- [x] `ListingForm` использует `useCategoryStore` вместо локальных category-запросов.
+- [x] Добавлен отдельный cache для `category attributes`.
+- [x] UI формы учитывает `placeholder`, `helpText`, `defaultValue`, `groupName`, `showInCard`.
 
 ### Listings
 

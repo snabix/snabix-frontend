@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle, PackagePlus, Settings2, Wrench } from "lucide-react";
 import { toast } from "sonner";
-import { getCategoryAttributes, listRootCategories, showCategoryBranch } from "@/src/entities/category/api/list-categories";
 import type { CategoryAttributeDefinition, CategoryNode } from "@/src/entities/category/model/types";
+import { useCategoryStore } from "@/src/entities/category/model/store";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
 import type { CreateListingPayload } from "@/src/features/listing/api/create-listing";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
@@ -36,6 +36,11 @@ type BranchOption = {
   label: string;
 };
 
+type AttributeGroup = {
+  name: string;
+  items: CategoryAttributeDefinition[];
+};
+
 const listingTypeCards = [
   {
     icon: PackagePlus,
@@ -62,12 +67,21 @@ export function ListingForm({
   onSubmit,
 }: ListingFormProps) {
   const router = useRouter();
-  const [roots, setRoots] = useState<CategoryNode[]>([]);
+  const roots = useCategoryStore((state) => state.roots);
+  const rootsStatus = useCategoryStore((state) => state.rootsStatus);
+  const rootsErrorMessage = useCategoryStore((state) => state.rootsErrorMessage);
+  const branches = useCategoryStore((state) => state.branches);
+  const branchStatuses = useCategoryStore((state) => state.branchStatuses);
+  const branchErrorMessages = useCategoryStore((state) => state.branchErrorMessages);
+  const categoryAttributes = useCategoryStore((state) => state.categoryAttributes);
+  const categoryAttributeStatuses = useCategoryStore((state) => state.categoryAttributeStatuses);
+  const categoryAttributeErrorMessages = useCategoryStore((state) => state.categoryAttributeErrorMessages);
+  const loadRoots = useCategoryStore((state) => state.loadRoots);
+  const loadBranch = useCategoryStore((state) => state.loadBranch);
+  const loadCategoryAttributes = useCategoryStore((state) => state.loadCategoryAttributes);
   const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
   const [selectedRootId, setSelectedRootId] = useState<number | null>(null);
-  const [branch, setBranch] = useState<CategoryNode | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(initialListing?.category?.id ?? null);
-  const [attributes, setAttributes] = useState<CategoryAttributeDefinition[]>([]);
   const [attributeValues, setAttributeValues] = useState<Record<number, ListingAttributeValue>>(
     () => valuesFromListing(initialListing),
   );
@@ -77,42 +91,17 @@ export function ListingForm({
   const [currency, setCurrency] = useState(initialListing?.currency ?? "RUB");
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
-  const [isLoadingRoots, setIsLoadingRoots] = useState(true);
-  const [isLoadingBranch, setIsLoadingBranch] = useState(false);
-  const [isLoadingAttributes, setIsLoadingAttributes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const loadRoots = async () => {
-      try {
-        setIsLoadingRoots(true);
-        const loadedRoots = await listRootCategories();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setRoots(loadedRoots);
-        const preferredRoot = loadedRoots.find((root) => root.catalogType === activeType) ?? loadedRoots[0] ?? null;
-
-        setSelectedRootId((currentRootId) => currentRootId ?? preferredRoot?.id ?? null);
-      } catch (error) {
-        toast.error(extractApiError(error, "Не удалось загрузить категории."));
-      } finally {
-        if (isMounted) {
-          setIsLoadingRoots(false);
-        }
-      }
-    };
-
     void loadRoots();
+  }, [loadRoots]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [activeType]);
+  useEffect(() => {
+    if (rootsStatus === "error" && rootsErrorMessage !== null) {
+      toast.error(rootsErrorMessage);
+    }
+  }, [rootsErrorMessage, rootsStatus]);
 
   const filteredRoots = useMemo(
     () => roots.filter((root) => root.catalogType === activeType),
@@ -132,38 +121,26 @@ export function ListingForm({
   }, [filteredRoots, selectedRootId]);
 
   useEffect(() => {
-    let isMounted = true;
-
     if (effectiveSelectedRootId === null) {
       return;
     }
 
-    const loadBranch = async () => {
-      try {
-        setIsLoadingBranch(true);
-        const loadedBranch = await showCategoryBranch(effectiveSelectedRootId);
+    void loadBranch(effectiveSelectedRootId);
+  }, [effectiveSelectedRootId, loadBranch]);
 
-        if (isMounted) {
-          setBranch(loadedBranch);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setBranch(null);
-          toast.error(extractApiError(error, "Не удалось загрузить ветку категорий."));
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingBranch(false);
-        }
-      }
-    };
+  useEffect(() => {
+    if (
+      effectiveSelectedRootId !== null
+      && branchStatuses[effectiveSelectedRootId] === "error"
+      && branchErrorMessages[effectiveSelectedRootId] !== null
+    ) {
+      toast.error(branchErrorMessages[effectiveSelectedRootId]);
+    }
+  }, [branchErrorMessages, branchStatuses, effectiveSelectedRootId]);
 
-    void loadBranch();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [effectiveSelectedRootId]);
+  const branch = effectiveSelectedRootId !== null
+    ? branches[effectiveSelectedRootId] ?? null
+    : null;
 
   const branchOptions = useMemo(
     () => (branch !== null ? flattenBranchOptions(branch) : []),
@@ -183,50 +160,45 @@ export function ListingForm({
   }, [branch, branchOptions, selectedCategoryId]);
 
   useEffect(() => {
-    let isMounted = true;
-
     if (effectiveSelectedCategoryId === null) {
       return;
     }
 
-    const loadAttributes = async () => {
-      try {
-        setIsLoadingAttributes(true);
-        const loadedAttributes = await getCategoryAttributes(effectiveSelectedCategoryId);
+    void loadCategoryAttributes(effectiveSelectedCategoryId);
+  }, [effectiveSelectedCategoryId, loadCategoryAttributes]);
 
-        if (!isMounted) {
-          return;
-        }
+  const attributes = useMemo(
+    () => (effectiveSelectedCategoryId !== null
+      ? categoryAttributes[effectiveSelectedCategoryId] ?? []
+      : []),
+    [categoryAttributes, effectiveSelectedCategoryId],
+  );
 
-        setAttributes(loadedAttributes);
-        setAttributeValues((currentValues) => {
-          const nextValues: Record<number, ListingAttributeValue> = {};
+  useEffect(() => {
+    if (
+      effectiveSelectedCategoryId !== null
+      && categoryAttributeStatuses[effectiveSelectedCategoryId] === "error"
+      && categoryAttributeErrorMessages[effectiveSelectedCategoryId] !== null
+    ) {
+      toast.error(categoryAttributeErrorMessages[effectiveSelectedCategoryId]);
+    }
+  }, [categoryAttributeErrorMessages, categoryAttributeStatuses, effectiveSelectedCategoryId]);
 
-          for (const attribute of loadedAttributes) {
-            nextValues[attribute.id] = currentValues[attribute.id] ?? defaultAttributeValue(attribute.type);
-          }
-
-          return nextValues;
-        });
-      } catch (error) {
-        if (isMounted) {
-          setAttributes([]);
-          setAttributeValues({});
-          toast.error(extractApiError(error, "Не удалось загрузить характеристики категории."));
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingAttributes(false);
-        }
-      }
-    };
-
-    void loadAttributes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [effectiveSelectedCategoryId]);
+  const isLoadingRoots = rootsStatus === "idle" || rootsStatus === "loading";
+  const isLoadingBranch = effectiveSelectedRootId !== null
+    && (
+      branchStatuses[effectiveSelectedRootId] === undefined
+      || branchStatuses[effectiveSelectedRootId] === "loading"
+    );
+  const isLoadingAttributes = effectiveSelectedCategoryId !== null
+    && (
+      categoryAttributeStatuses[effectiveSelectedCategoryId] === undefined
+      || categoryAttributeStatuses[effectiveSelectedCategoryId] === "loading"
+    );
+  const groupedAttributes = useMemo(
+    () => groupAttributesByName(attributes),
+    [attributes],
+  );
 
   const effectiveCondition = activeType === LISTING_TYPE_SERVICE
     ? LISTING_CONDITION_NOT_APPLICABLE
@@ -273,7 +245,7 @@ export function ListingForm({
       currency: currency.trim() === "" ? null : currency.trim().toUpperCase(),
       isNegotiable,
       ...(mode === "create" ? { saveAsDraft } : {}),
-      attributeValues,
+      attributeValues: buildAttributePayload(attributes, attributeValues),
     };
 
     try {
@@ -328,8 +300,6 @@ export function ListingForm({
                     setActiveType(card.value);
                     setSelectedRootId(null);
                     setSelectedCategoryId(null);
-                    setBranch(null);
-                    setAttributes([]);
                     setAttributeValues({});
                   }}
                   type="button"
@@ -353,8 +323,6 @@ export function ListingForm({
                 onChange={(value) => {
                   setSelectedRootId(Number(value));
                   setSelectedCategoryId(null);
-                  setBranch(null);
-                  setAttributes([]);
                   setAttributeValues({});
                 }}
                 value={effectiveSelectedRootId ?? ""}
@@ -372,7 +340,6 @@ export function ListingForm({
                 disabled={isLoadingBranch || branchOptions.length === 0}
                 onChange={(value) => {
                   setSelectedCategoryId(Number(value));
-                  setAttributes([]);
                   setAttributeValues({});
                 }}
                 value={effectiveSelectedCategoryId ?? ""}
@@ -466,29 +433,58 @@ export function ListingForm({
               У этой категории пока нет характеристик. Объявление можно сохранить без них.
             </div>
           ) : (
-            attributes.map((attribute) => (
-              <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--surface)] p-4" key={attribute.id}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-black text-[var(--brand-deep)]">
-                      {attribute.name}
-                      {attribute.unit ? `, ${attribute.unit}` : ""}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                      {attribute.typeLabel}
-                    </p>
-                  </div>
-                  {attribute.isRequired ? (
-                    <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--brand-deep)]">
-                      обязательно
-                    </span>
-                  ) : null}
+            groupedAttributes.map((group) => (
+              <section className="grid gap-3" key={group.name}>
+                <div>
+                  <h3 className="font-heading text-base font-black text-[var(--brand-deep)]">
+                    {group.name}
+                  </h3>
+                  <div className="mt-2 h-px bg-[linear-gradient(90deg,var(--border-soft),transparent)]" />
                 </div>
 
-                <div className="mt-4">
-                  {renderAttributeInput(attribute, attributeValues[attribute.id], handleAttributeChange, handleMultiselectChange)}
-                </div>
-              </div>
+                {group.items.map((attribute) => (
+                  <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--surface)] p-4" key={attribute.id}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-black text-[var(--brand-deep)]">
+                          {attribute.name}
+                          {attribute.unit ? `, ${attribute.unit}` : ""}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                          {attribute.typeLabel}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap justify-end gap-2">
+                        {attribute.showInCard ? (
+                          <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                            в карточке
+                          </span>
+                        ) : null}
+                        {attribute.isRequired ? (
+                          <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--brand-deep)]">
+                            обязательно
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      {renderAttributeInput(
+                        attribute,
+                        getAttributeValue(attribute, attributeValues),
+                        handleAttributeChange,
+                        handleMultiselectChange,
+                      )}
+                    </div>
+
+                    {attribute.helpText ?? attribute.description ? (
+                      <p className="mt-3 text-xs font-semibold leading-5 text-[var(--text-muted)]">
+                        {attribute.helpText ?? attribute.description}
+                      </p>
+                    ) : null}
+                  </div>
+                ))}
+              </section>
             ))
           )}
         </div>
@@ -579,7 +575,7 @@ function renderAttributeInput(
     return (
       <Input
         onChange={(event) => onChange(attribute.id, event.target.value)}
-        placeholder={`Введите ${attribute.name.toLowerCase()}`}
+        placeholder={attribute.placeholder ?? `Введите ${attribute.name.toLowerCase()}`}
         value={typeof value === "string" ? value : ""}
       />
     );
@@ -590,7 +586,7 @@ function renderAttributeInput(
       <Input
         inputMode="decimal"
         onChange={(event) => onChange(attribute.id, event.target.value === "" ? null : Number(event.target.value))}
-        placeholder="Введите число"
+        placeholder={attribute.placeholder ?? "Введите число"}
         value={typeof value === "number" ? String(value) : ""}
       />
     );
@@ -608,7 +604,7 @@ function renderAttributeInput(
   if (attribute.type === ATTRIBUTE_TYPE_SELECT) {
     return (
       <Select onChange={(nextValue) => onChange(attribute.id, nextValue)} value={typeof value === "string" ? value : ""}>
-        <option value="">Выберите значение</option>
+        <option value="">{attribute.placeholder ?? "Выберите значение"}</option>
         {(attribute.options ?? []).map((option) => (
           <option key={option} value={option}>
             {option}
@@ -640,6 +636,7 @@ function renderAttributeInput(
     return (
       <Input
         onChange={(event) => onChange(attribute.id, event.target.value)}
+        placeholder={attribute.placeholder ?? undefined}
         type="date"
         value={typeof value === "string" ? value : ""}
       />
@@ -647,6 +644,44 @@ function renderAttributeInput(
   }
 
   return null;
+}
+
+function groupAttributesByName(attributes: CategoryAttributeDefinition[]): AttributeGroup[] {
+  const groups = new Map<string, CategoryAttributeDefinition[]>();
+
+  for (const attribute of attributes) {
+    const groupName = attribute.groupName?.trim() || "Основные характеристики";
+    const groupItems = groups.get(groupName) ?? [];
+
+    groupItems.push(attribute);
+    groups.set(groupName, groupItems);
+  }
+
+  return Array.from(groups, ([name, items]) => ({ items, name }));
+}
+
+function getAttributeValue(
+  attribute: CategoryAttributeDefinition,
+  values: Record<number, ListingAttributeValue>,
+): ListingAttributeValue {
+  if (Object.hasOwn(values, attribute.id)) {
+    return values[attribute.id];
+  }
+
+  return defaultAttributeValue(attribute);
+}
+
+function buildAttributePayload(
+  attributes: CategoryAttributeDefinition[],
+  values: Record<number, ListingAttributeValue>,
+): Record<number, ListingAttributeValue> {
+  const payload: Record<number, ListingAttributeValue> = {};
+
+  for (const attribute of attributes) {
+    payload[attribute.id] = getAttributeValue(attribute, values);
+  }
+
+  return payload;
 }
 
 function flattenBranchOptions(root: CategoryNode): BranchOption[] {
@@ -666,16 +701,62 @@ function flattenBranchOptions(root: CategoryNode): BranchOption[] {
   return options;
 }
 
-function defaultAttributeValue(type: number): ListingAttributeValue {
-  if (type === ATTRIBUTE_TYPE_MULTISELECT) {
-    return [];
+function defaultAttributeValue(attribute: CategoryAttributeDefinition): ListingAttributeValue {
+  const defaultValue = normalizeDefaultValue(attribute.defaultValue);
+
+  if (attribute.type === ATTRIBUTE_TYPE_MULTISELECT) {
+    return Array.isArray(defaultValue) ? defaultValue.map(String) : [];
   }
 
-  if (type === ATTRIBUTE_TYPE_BOOLEAN) {
+  if (attribute.type === ATTRIBUTE_TYPE_BOOLEAN) {
+    if (typeof defaultValue === "boolean") {
+      return defaultValue;
+    }
+
+    if (typeof defaultValue === "string") {
+      return defaultValue === "true" || defaultValue === "1";
+    }
+
     return false;
   }
 
+  if (attribute.type === ATTRIBUTE_TYPE_NUMBER) {
+    if (typeof defaultValue === "number") {
+      return defaultValue;
+    }
+
+    if (typeof defaultValue === "string" && defaultValue.trim() !== "") {
+      const parsedValue = Number(defaultValue);
+
+      return Number.isNaN(parsedValue) ? null : parsedValue;
+    }
+
+    return null;
+  }
+
+  if (typeof defaultValue === "string") {
+    return defaultValue;
+  }
+
   return null;
+}
+
+function normalizeDefaultValue(
+  defaultValue: CategoryAttributeDefinition["defaultValue"],
+): unknown {
+  if (defaultValue === null) {
+    return null;
+  }
+
+  if (Array.isArray(defaultValue)) {
+    return defaultValue;
+  }
+
+  if (typeof defaultValue === "object" && "value" in defaultValue) {
+    return defaultValue.value;
+  }
+
+  return defaultValue;
 }
 
 function valuesFromListing(listing?: ListingItem): Record<number, ListingAttributeValue> {

@@ -32,7 +32,7 @@ export function SignInForm() {
       setUser(user);
       message.success("Вы вошли в аккаунт.");
       startTransition(() => {
-        router.push("/");
+        router.push(resolveRedirectPath(getRedirectParam()));
         router.refresh();
       });
     } catch (error) {
@@ -104,4 +104,20 @@ export function SignInForm() {
       </p>
     </div>
   );
+}
+
+function getRedirectParam(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return new URLSearchParams(window.location.search).get("redirectTo");
+}
+
+function resolveRedirectPath(value: string | null): string {
+  if (value === null || !value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
 }

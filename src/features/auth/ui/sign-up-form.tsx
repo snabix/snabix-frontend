@@ -7,7 +7,7 @@ import { App, Button, Checkbox, Form, Input } from "antd";
 import { getMe, useUserStore } from "@/src/entities/user";
 import { signUp } from "@/src/features/auth/api";
 import { SignUpFormValues } from "@/src/features/auth/lib/auth-form-values";
-import { extractAccessToken, saveAccessToken } from "@/src/shared/lib/access-token";
+import { extractAccessToken, removeAccessToken, saveAccessToken } from "@/src/shared/lib/access-token";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 export function SignUpForm() {
@@ -32,11 +32,25 @@ export function SignUpForm() {
         saveAccessToken(token);
       }
 
-      const user = await getMe();
-      setUser(user);
+      try {
+        const user = await getMe();
+
+        setUser(user);
+        message.success("Аккаунт создан. Проверьте почту для подтверждения.");
+        startTransition(() => {
+          router.push("/");
+          router.refresh();
+        });
+
+        return;
+      } catch {
+        setUser(null);
+        removeAccessToken();
+      }
+
       message.success("Аккаунт создан. Проверьте почту для подтверждения.");
       startTransition(() => {
-        router.push("/");
+        router.push("/sign-in");
         router.refresh();
       });
     } catch (error) {

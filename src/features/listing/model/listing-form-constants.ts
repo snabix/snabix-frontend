@@ -1,0 +1,13 @@
+export const LISTING_TYPE_PRODUCT = 1;
+export const LISTING_TYPE_SERVICE = 2;
+export const LISTING_CONDITION_NEW = 1;
+export const LISTING_CONDITION_USED = 2;
+export const LISTING_CONDITION_NOT_APPLICABLE = 3;
+
+export const ATTRIBUTE_TYPE_TEXT = 1;
+export const ATTRIBUTE_TYPE_NUMBER = 2;
+export const ATTRIBUTE_TYPE_BOOLEAN = 3;
+export const ATTRIBUTE_TYPE_SELECT = 4;
+export const ATTRIBUTE_TYPE_MULTISELECT = 5;
+export const ATTRIBUTE_TYPE_DATE = 6;
+

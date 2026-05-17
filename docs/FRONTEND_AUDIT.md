@@ -49,9 +49,9 @@
 
 ### Что Нарушено Или Рисково
 
-- [ ] В `features/listing/ui/listing-form.tsx` слишком много ответственности: загрузка категорий, загрузка характеристик, состояние формы, рендер типов полей, submit-логика.
-- [ ] `listing-form.tsx` нужно разбить на `model/use-listing-form-state`, `ui/category-picker`, `ui/attribute-fields`, `ui/listing-submit-actions`.
-- [ ] В форме объявлений нет schema-валидации через `zod/react-hook-form`, в отличие от auth/profile.
+- [x] `features/listing/ui/listing-form.tsx` разгружен: загрузка данных, состояние формы, рендер характеристик и submit-логика разделены.
+- [x] `listing-form.tsx` разбит на `model/use-listing-form-state`, `ui/category-picker`, `ui/attribute-fields`, `ui/listing-submit-actions`.
+- [x] В форме объявлений добавлена schema-валидация через `zod/react-hook-form`.
 - [ ] `attributeValues` строятся как `Record<number, value>`, но JS-ключи фактически строки; пока работает, но лучше нормализовать через `Record<string, value>` или DTO mapper.
 - [ ] Для денежных значений используется `Number(input)` без защиты от `NaN`, дробей и локального ввода.
 - [ ] Нет единого слоя API DTO mapping: frontend напрямую верит backend response shape.
@@ -127,10 +127,10 @@
 
 ## Рекомендованный План
 
-1. [ ] Разбить `ListingForm` на маленькие FSD-компоненты и hooks.
-2. [ ] Добавить `zod`-схему объявления и client-side DTO mapper.
+1. [x] Разбить `ListingForm` на маленькие FSD-компоненты и hooks.
+2. [x] Добавить `zod`-схему объявления.
 3. [x] Реализовать `AuthGuard` для account routes.
-4. [ ] Добавить кеш характеристик категорий.
+4. [x] Добавить кеш характеристик категорий.
 5. [ ] Добавить UI статусов и фильтры в `/account/listings`.
 6. [ ] Подготовить media upload для объявлений.
 7. [ ] Добавить E2E smoke-тесты после стабилизации create/edit listing flow.

@@ -1,5 +1,3 @@
-"use client";
-
 import { type ClipboardEvent, type KeyboardEvent, useEffect, useRef } from "react";
 import { LoaderCircle, MailCheck } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";

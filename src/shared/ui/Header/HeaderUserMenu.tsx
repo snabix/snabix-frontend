@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { LogOut, UserRound } from "lucide-react";
 import { getUserFullName, type User } from "@/src/entities/user";

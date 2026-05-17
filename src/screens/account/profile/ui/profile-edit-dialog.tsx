@@ -1,5 +1,3 @@
-"use client";
-
 import { Save, Pencil } from "lucide-react";
 import type {
   FieldErrors,

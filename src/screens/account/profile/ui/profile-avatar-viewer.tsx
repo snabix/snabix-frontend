@@ -1,5 +1,3 @@
-"use client";
-
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Camera, Move, X, ZoomIn } from "lucide-react";
 import type {

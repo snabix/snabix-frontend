@@ -1,5 +1,3 @@
-"use client";
-
 import { LayoutGrid, X } from "lucide-react";
 
 type CatalogToggleButtonProps = {

@@ -1,5 +1,3 @@
-"use client";
-
 import { LayoutGrid, LoaderCircle } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import type { CategoryNode } from "@/src/entities/category";

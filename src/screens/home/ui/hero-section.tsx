@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Button, Input } from "antd";
 import { ArrowRight, Search, Sparkles } from "lucide-react";
 import { heroStats } from "@/src/shared/lib/mock-data";
+import { Button } from "@/src/shared/ui/shadcn/button";
+import { Input } from "@/src/shared/ui/shadcn/input";
 
 export function HeroSection() {
   return (
@@ -29,14 +30,16 @@ export function HeroSection() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/sign-up">
               <Button
-                className="active-button !h-12 !rounded-[18px] !border-none !px-6 !font-semibold"
-                type="primary"
+                className="active-button h-12 rounded-[18px] px-6 font-semibold"
               >
                 Начать сейчас
               </Button>
             </Link>
             <Link href="#about">
-              <Button className="!h-12 !rounded-[18px] !border-[var(--border-soft)] !px-6 !font-semibold">
+              <Button
+                className="h-12 rounded-[18px] px-6 font-semibold"
+                variant="outline"
+              >
                 Узнать больше
               </Button>
             </Link>
@@ -51,11 +54,16 @@ export function HeroSection() {
             Первая точка входа в продукт
           </h2>
           <div className="mt-6">
-            <Input
-              className="!h-14 !rounded-[20px]"
-              placeholder="Поиск по товарам, услугам и категориям"
-              prefix={<Search className="h-4 w-4 text-[var(--accent)]" />}
-            />
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--accent)]"
+                strokeWidth={2.2}
+              />
+              <Input
+                className="h-14 rounded-[20px] pl-12"
+                placeholder="Поиск по товарам, услугам и категориям"
+              />
+            </div>
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {heroStats.map((item) => (

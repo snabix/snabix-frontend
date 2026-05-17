@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useEffectEvent } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { getMe, useUserStore } from "@/src/entities/user";
 import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
-import { getAccessToken, removeAccessToken } from "@/src/shared/lib/access-token";
+import {
+  clearAuthSession,
+  shouldHydrateSession,
+} from "@/src/shared/lib/auth-session";
 
 export function SessionProvider() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const hasHydratedSessionRef = useRef(false);
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
   const setLoading = useUserStore((state) => state.setLoading);
@@ -17,9 +18,7 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
-    const accessToken = getAccessToken();
-
-    if (!accessToken) {
+    if (!shouldHydrateSession()) {
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
@@ -33,7 +32,7 @@ export function SessionProvider() {
       setUser(user);
     } catch {
       clearUser();
-      removeAccessToken();
+      clearAuthSession();
     } finally {
       setLoading(false);
       setHasCheckedSession(true);
@@ -41,25 +40,28 @@ export function SessionProvider() {
   });
 
   useEffect(() => {
+    if (hasHydratedSessionRef.current) {
+      return;
+    }
+
+    hasHydratedSessionRef.current = true;
+
     hydrateSession();
   }, []);
 
   useEffect(() => {
     const handleUnauthorized = () => {
       clearUser();
-      removeAccessToken();
       setLoading(false);
       setHasCheckedSession(true);
-
-      if (pathname.startsWith("/account")) {
-        router.replace(`/sign-in?redirectTo=${encodeURIComponent(pathname)}`);
-      }
     };
 
     window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
 
-    return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
-  }, [clearUser, pathname, router, setHasCheckedSession, setLoading]);
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    };
+  }, [clearUser, setHasCheckedSession, setLoading]);
 
   return null;
 }

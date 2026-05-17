@@ -1,9 +1,3 @@
-export const publicNavigation = [
-    { label: "О платформе", href: "#about" },
-    { label: "Возможности", href: "#features" },
-    { label: "Преимущества", href: "#benefits" },
-] as const;
-
 export const accountNavigation = [
     { label: "Профиль", href: "/account/profile", key: "profile" },
     { label: "Объявления", href: "/account/listings", key: "listings" },

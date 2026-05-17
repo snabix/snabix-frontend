@@ -317,8 +317,8 @@ export function ProfilePage() {
         <AccountLayout>
             <div className="grid gap-6">
                 <section className="surface-card relative overflow-hidden rounded-[34px] p-6 sm:p-8">
-                    <div className="pointer-events-none absolute -right-12 -top-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(222,26,26,0.22),transparent_72%)]" />
-                    <div className="pointer-events-none absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(26,34,56,0.12),transparent_72%)]" />
+                    <div className="pointer-events-none absolute -right-12 -top-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--brand)_22%,transparent),transparent_72%)]" />
+                    <div className="pointer-events-none absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--foreground)_12%,transparent),transparent_72%)]" />
 
                     <div className="relative flex flex-col gap-8 xl:flex-row xl:items-start xl:justify-between">
                         <div className="flex items-start gap-5">
@@ -333,7 +333,7 @@ export function ProfilePage() {
                                     onClick={() => setIsAvatarViewerOpen(true)}
                                     type="button"
                                 >
-                                    <Avatar className="grid size-24 place-items-center rounded-full border-4 border-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--background)] shadow-[0_18px_38px_rgba(26,34,56,0.18)]">
+                                    <Avatar className="grid size-24 place-items-center rounded-full border-4 border-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--background)] shadow-[var(--shadow-card)]">
                                         <AvatarImage src={user?.avatar?.url ?? undefined} />
                                         <AvatarFallback>
                                             <UserRound
@@ -386,7 +386,7 @@ export function ProfilePage() {
 
                         <div className="grid gap-3 xl:min-w-[260px]">
                             <Button
-                                className="h-12 rounded-2xl px-5 text-white"
+                                className="h-12 rounded-2xl px-5 text-[var(--active-button-text)]"
                                 onClick={handleEdit}
                                 type="button"
                             >

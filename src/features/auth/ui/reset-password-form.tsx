@@ -86,7 +86,7 @@ export function ResetPasswordForm({
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.email.message}
             </p>
           ) : null}
@@ -100,7 +100,7 @@ export function ResetPasswordForm({
             {...register("password")}
           />
           {errors.password ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.password.message}
             </p>
           ) : null}
@@ -114,7 +114,7 @@ export function ResetPasswordForm({
             {...register("passwordConfirmation")}
           />
           {errors.passwordConfirmation ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.passwordConfirmation.message}
             </p>
           ) : null}

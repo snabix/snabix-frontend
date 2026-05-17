@@ -320,7 +320,7 @@ export function ListingForm({
                   className={[
                     "rounded-[24px] border p-5 text-left transition duration-200",
                     isActive
-                      ? "border-transparent bg-[var(--active-button-bg)] text-white shadow-[0_16px_32px_rgba(0,70,67,0.18)]"
+                      ? "border-transparent bg-[var(--active-button-bg)] text-[var(--active-button-text)] shadow-[var(--shadow-card)]"
                       : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)]",
                   ].join(" ")}
                   key={card.value}
@@ -334,11 +334,11 @@ export function ListingForm({
                   }}
                   type="button"
                 >
-                  <div className={`grid size-12 place-items-center rounded-2xl ${isActive ? "bg-white/12 text-white" : "bg-[var(--accent-soft)]"}`}>
+                  <div className={`grid size-12 place-items-center rounded-2xl ${isActive ? "bg-[color-mix(in_srgb,var(--active-button-text)_14%,transparent)] text-[var(--active-button-text)]" : "bg-[var(--accent-soft)]"}`}>
                     <Icon size={22} />
                   </div>
                   <p className="mt-4 text-lg font-black">{card.title}</p>
-                  <p className={`mt-2 text-sm leading-7 ${isActive ? "text-white/80" : "text-[var(--text-muted)]"}`}>
+                  <p className={`mt-2 text-sm leading-7 ${isActive ? "text-[color-mix(in_srgb,var(--active-button-text)_82%,transparent)]" : "text-[var(--text-muted)]"}`}>
                     {card.description}
                   </p>
                 </button>

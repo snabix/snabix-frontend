@@ -144,7 +144,7 @@ export function AccountSidebar() {
                                 "hover:bg-[var(--accent-soft)]",
                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2",
                                 isActive
-                                    ? "active-button text-white shadow-[0_16px_28px_rgba(0,70,67,0.16)]"
+                                    ? "active-button text-[var(--active-button-text)] shadow-[var(--shadow-card)]"
                                     : "text-[var(--brand-deep)]",
                                 isCollapsed ? "justify-center" : "justify-start gap-3",
                             ].join(" ")}
@@ -157,7 +157,7 @@ export function AccountSidebar() {
                       "relative z-10 grid size-9 shrink-0 place-items-center rounded-xl",
                       "transition-colors duration-200",
                       isActive
-                          ? "bg-white/10 text-white"
+                          ? "bg-[color-mix(in_srgb,var(--active-button-text)_14%,transparent)] text-[var(--active-button-text)]"
                           : "bg-[var(--accent-soft)] text-[var(--text-muted)] group-hover:text-[var(--accent)]",
                   ].join(" ")}
               >

@@ -37,7 +37,7 @@ function FieldError({ message }: { message?: string }) {
   }
 
   return (
-    <p className="text-sm text-red-600 dark:text-red-400">
+    <p className="text-sm text-[var(--danger)]">
       {message}
     </p>
   );

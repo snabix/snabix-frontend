@@ -38,11 +38,11 @@ export function ProfileAvatarViewer({
 }: ProfileAvatarViewerProps) {
   return (
     <div
-      className="fixed inset-0 z-50 grid bg-[rgba(10,14,24,0.82)] px-4 py-5 text-[var(--brand-deep)] backdrop-blur-md sm:px-6"
+      className="fixed inset-0 z-50 grid bg-[color-mix(in_srgb,var(--brand)_82%,transparent)] px-4 py-5 text-[var(--brand-deep)] backdrop-blur-md sm:px-6"
       onClick={onAvatarViewerClose}
     >
       <div
-        className="mx-auto my-auto grid w-full max-w-6xl gap-5 rounded-[36px] border border-white/10 bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-4 shadow-[0_28px_90px_rgba(10,14,24,0.36)] sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_380px]"
+        className="mx-auto my-auto grid w-full max-w-6xl gap-5 rounded-[36px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-4 shadow-[var(--shadow-soft)] sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_380px]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="relative overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--surface)_90%,transparent),color-mix(in_srgb,var(--accent-soft)_70%,transparent))] p-5 sm:p-8">
@@ -57,11 +57,11 @@ export function ProfileAvatarViewer({
 
           <div className="flex min-h-[360px] items-center justify-center sm:min-h-[540px]">
             {avatarDraft ? (
-              <div className="relative grid size-[min(76vw,480px)] place-items-center overflow-hidden rounded-[38px] bg-[linear-gradient(160deg,#121318,#1b2030)] shadow-[0_30px_90px_rgba(10,14,24,0.32)]">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0_58%,rgba(8,10,16,0.58)_58.4%_100%)]" />
+              <div className="relative grid size-[min(76vw,480px)] place-items-center overflow-hidden rounded-[38px] bg-[linear-gradient(160deg,var(--brand),color-mix(in_srgb,var(--brand)_84%,var(--foreground)))] shadow-[var(--shadow-soft)]">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0_58%,color-mix(in_srgb,var(--brand)_58%,transparent)_58.4%_100%)]" />
 
                 <div
-                  className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[#09090B] active:cursor-grabbing"
+                  className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[var(--brand)] active:cursor-grabbing"
                   onPointerDown={onAvatarMovePointerDown}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -74,16 +74,16 @@ export function ProfileAvatarViewer({
                     }}
                   />
 
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full ring-2 ring-white/95">
-                    <span className="absolute bottom-0 left-1/3 top-0 w-px bg-white/50" />
-                    <span className="absolute bottom-0 left-2/3 top-0 w-px bg-white/50" />
-                    <span className="absolute left-0 right-0 top-1/3 h-px bg-white/50" />
-                    <span className="absolute left-0 right-0 top-2/3 h-px bg-white/50" />
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full ring-2 ring-[color-mix(in_srgb,var(--foreground)_92%,transparent)]">
+                    <span className="absolute bottom-0 left-1/3 top-0 w-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                    <span className="absolute bottom-0 left-2/3 top-0 w-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                    <span className="absolute left-0 right-0 top-1/3 h-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                    <span className="absolute left-0 right-0 top-2/3 h-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
                   </div>
                 </div>
               </div>
             ) : avatarUrl ? (
-              <div className="overflow-hidden rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-4 shadow-[0_24px_80px_rgba(26,34,56,0.16)]">
+              <div className="overflow-hidden rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-4 shadow-[var(--shadow-soft)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   alt="Аватар пользователя"
@@ -93,7 +93,7 @@ export function ProfileAvatarViewer({
               </div>
             ) : (
               <button
-                className="grid size-[min(72vw,300px)] place-items-center rounded-[38px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--accent)] shadow-[0_24px_80px_rgba(26,34,56,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                className="grid size-[min(72vw,300px)] place-items-center rounded-[38px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--accent)] shadow-[var(--shadow-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                 onClick={onAvatarSelect}
                 type="button"
               >

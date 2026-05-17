@@ -53,7 +53,7 @@ export function HomePage() {
       <main className="pb-12 pt-6">
         <Container>
           <section className="surface-card relative overflow-hidden rounded-[34px] p-7 sm:p-10">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,rgba(222,26,26,0.16),transparent_72%)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--brand)_16%,transparent),transparent_72%)]" />
 
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
@@ -139,7 +139,7 @@ export function HomePage() {
                         </h3>
                       </div>
 
-                      <div className="rounded-full bg-[color-mix(in_srgb,var(--surface)_84%,white)] p-2 text-[var(--accent)]">
+                      <div className="rounded-full bg-[color-mix(in_srgb,var(--surface)_84%,var(--background))] p-2 text-[var(--accent)]">
                         <BadgeCheck className="h-5 w-5" />
                       </div>
                     </div>

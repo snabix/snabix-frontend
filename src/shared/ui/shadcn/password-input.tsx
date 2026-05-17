@@ -13,7 +13,7 @@ const PasswordInput = React.forwardRef<
   return (
     <div
       className={cn(
-        "flex h-12 w-full items-center rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 shadow-[inset_0_1px_0_rgba(250,250,250,0.65)]",
+        "flex h-12 w-full items-center rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 shadow-[inset_0_1px_0_var(--border-soft)]",
         "focus-within:ring-4 focus-within:ring-[color-mix(in_srgb,var(--accent)_12%,transparent)]",
         className,
       )}

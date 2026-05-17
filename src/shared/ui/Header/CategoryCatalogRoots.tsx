@@ -27,7 +27,7 @@ export function CategoryCatalogRoots({
   rootsErrorMessage,
   rootsStatus,
 }: CategoryCatalogRootsProps) {
-  const activeRootButtonClass = "bg-[color-mix(in_srgb,var(--accent-soft)_82%,white)] text-[var(--brand-deep)]";
+  const activeRootButtonClass = "bg-[color-mix(in_srgb,var(--accent-soft)_82%,var(--background))] text-[var(--brand-deep)]";
 
   return (
     <aside className="surface-card flex h-full min-h-0 flex-col overflow-hidden rounded-[24px] p-4 sm:p-5">
@@ -66,7 +66,7 @@ export function CategoryCatalogRoots({
                     "transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
                     isActive
                       ? activeRootButtonClass
-                      : "bg-transparent text-[var(--brand-deep)] hover:bg-[color-mix(in_srgb,var(--accent-soft)_82%,white)]",
+                      : "bg-transparent text-[var(--brand-deep)] hover:bg-[color-mix(in_srgb,var(--accent-soft)_82%,var(--background))]",
                   ].join(" ")}
                   onClick={() => onRootClick(category.id)}
                   onFocus={() => onRootFocus(category.id)}

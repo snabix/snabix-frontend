@@ -31,7 +31,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   if (!hasCheckedSession || isLoading) {
     return (
-      <div className="rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-8 text-center shadow-[0_24px_80px_rgba(0,70,67,0.10)]">
+      <div className="rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-8 text-center shadow-[var(--shadow-soft)]">
         <p className="text-sm font-semibold text-[var(--brand-deep)]">
           Проверяем сессию...
         </p>

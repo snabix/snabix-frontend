@@ -9,7 +9,7 @@ export function Logo({href = "/"}: LogoProps) {
     return (
         <Link className="flex items-center gap-3" href={href}>
       <span
-          className="relative flex h-[50px] w-[50px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,var(--brand),var(--accent))] shadow-[0_12px_24px_rgba(0,70,67,0.14)]">
+          className="relative flex h-[50px] w-[50px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,var(--brand),var(--accent))] shadow-[var(--shadow-card)]">
         <Image
             alt="SNABIX"
             className="h-full w-full object-cover"

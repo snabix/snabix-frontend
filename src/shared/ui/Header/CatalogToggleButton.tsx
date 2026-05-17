@@ -15,7 +15,7 @@ export function CatalogToggleButton({
     <button
       aria-expanded={isOpen}
       aria-haspopup="dialog"
-      className="active-button mr-6 inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-5 text-sm font-bold leading-none shadow-[0_14px_28px_rgba(0,70,67,0.14)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+      className="active-button mr-6 inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-5 text-sm font-bold leading-none shadow-[var(--shadow-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
       onClick={onToggle}
       type="button"
     >

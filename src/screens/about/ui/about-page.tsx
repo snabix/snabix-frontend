@@ -34,7 +34,7 @@ export function AboutPage() {
       <main className="pb-14 pt-6">
         <Container>
           <section className="surface-card relative overflow-hidden rounded-[34px] p-7 sm:p-10">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,rgba(222,26,26,0.16),transparent_70%)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--brand)_16%,transparent),transparent_70%)]" />
 
             <div className="relative max-w-4xl">
               <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
@@ -93,7 +93,7 @@ export function AboutPage() {
 
               <div className="mt-4 grid gap-3">
                 {principles.map((principle) => (
-                  <div className="rounded-[20px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,white)] px-4 py-3 text-sm leading-7 text-[var(--brand-deep)]" key={principle}>
+                  <div className="rounded-[20px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,var(--background))] px-4 py-3 text-sm leading-7 text-[var(--brand-deep)]" key={principle}>
                     {principle}
                   </div>
                 ))}

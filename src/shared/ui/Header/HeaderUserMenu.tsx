@@ -30,7 +30,7 @@ export function HeaderUserMenu({
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Открыть меню пользователя"
-          className="grid h-[50px] w-[50px] place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] shadow-[0_14px_28px_rgba(0,70,67,0.08)] outline-none hover:border-[var(--accent)] focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+          className="grid h-[50px] w-[50px] place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] shadow-[var(--shadow-card)] outline-none hover:border-[var(--accent)] focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
           type="button"
         >
           <Avatar className="size-11 font-bold">
@@ -51,7 +51,7 @@ export function HeaderUserMenu({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+          className="text-[var(--danger)] focus:text-[var(--danger)]"
           disabled={isPending}
           onClick={onLogout}
         >

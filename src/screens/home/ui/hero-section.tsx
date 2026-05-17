@@ -7,8 +7,8 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 export function HeroSection() {
   return (
     <section className="hero-shell relative overflow-hidden rounded-[44px] px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
-      <div className="animate-orb absolute -right-12 top-0 h-56 w-56 rounded-full bg-[rgba(0,70,67,0.12)] blur-3xl dark:bg-[rgba(250,250,250,0.1)]" />
-      <div className="absolute bottom-0 left-0 h-52 w-52 rounded-full bg-[rgba(0,70,67,0.08)] blur-3xl dark:bg-[rgba(250,250,250,0.08)]" />
+      <div className="animate-orb absolute -right-12 top-0 h-56 w-56 rounded-full bg-[color-mix(in_srgb,var(--accent)_26%,transparent)] blur-3xl dark:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]" />
+      <div className="absolute bottom-0 left-0 h-52 w-52 rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_12%,transparent)] blur-3xl dark:bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)]" />
 
       <div className="relative grid gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:items-center">
         <div>

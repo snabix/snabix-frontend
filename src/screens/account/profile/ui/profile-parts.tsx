@@ -14,8 +14,8 @@ export function EmailVerificationBadge({ verified }: { verified: boolean }) {
       className={[
         "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold",
         verified
-          ? "bg-emerald-500/10 text-emerald-600"
-          : "bg-red-500/10 text-red-600",
+          ? "bg-[var(--accent-soft)] text-[var(--accent)]"
+          : "bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
       ].join(" ")}
     >
       {verified ? (
@@ -38,9 +38,9 @@ export function ProfileStatusPill({
 }) {
   const toneClassName = {
     accent: "bg-[var(--accent-soft)] text-[var(--accent)]",
-    danger: "bg-red-500/10 text-red-600 dark:text-red-400",
+    danger: "bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
     neutral: "bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] text-[var(--text-muted)]",
-    success: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    success: "bg-[var(--accent-soft)] text-[var(--accent)]",
   }[tone];
 
   return (
@@ -69,7 +69,7 @@ export function ProfileDataField({
   empty?: string;
 }) {
   return (
-    <div className="profile-data-field rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-5 shadow-[0_18px_38px_rgba(26,34,56,0.06)]">
+    <div className="profile-data-field rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-5 shadow-[var(--shadow-card)]">
       <div className="flex items-start justify-between gap-4">
         <div className="grid gap-1.5">
           <p className="font-heading text-[0.78rem] font-extrabold uppercase tracking-[0.18em] text-[var(--text-muted)]">

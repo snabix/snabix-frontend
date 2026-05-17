@@ -4,31 +4,52 @@ import type { CategoryNode } from "@/src/entities/category/model/types";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 type CategoryStatus = "idle" | "loading" | "success" | "error";
+type LoadCategoryOptions = {
+  force?: boolean;
+};
+
+const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
+
+function hasFreshTimestamp(timestamp: number | null | undefined): boolean {
+  if (typeof timestamp !== "number") {
+    return false;
+  }
+
+  return Date.now() - timestamp < CATEGORY_CACHE_TTL_MS;
+}
 
 type CategoryStore = {
   roots: CategoryNode[];
   rootsStatus: CategoryStatus;
   rootsErrorMessage: string | null;
+  rootsFetchedAt: number | null;
   branches: Record<number, CategoryNode>;
   branchStatuses: Record<number, CategoryStatus>;
   branchErrorMessages: Record<number, string | null>;
-  loadRoots: () => Promise<void>;
-  loadBranch: (categoryId: number) => Promise<void>;
+  branchesFetchedAt: Record<number, number | null>;
+  loadRoots: (options?: LoadCategoryOptions) => Promise<void>;
+  loadBranch: (categoryId: number, options?: LoadCategoryOptions) => Promise<void>;
   resetRootError: () => void;
   resetBranchError: (categoryId: number) => void;
+  invalidateRoots: () => void;
+  invalidateBranch: (categoryId: number) => void;
 };
 
 export const useCategoryStore = create<CategoryStore>((set, get) => ({
   roots: [],
   rootsStatus: "idle",
   rootsErrorMessage: null,
+  rootsFetchedAt: null,
   branches: {},
   branchStatuses: {},
   branchErrorMessages: {},
-  loadRoots: async () => {
-    const { roots, rootsStatus } = get();
+  branchesFetchedAt: {},
+  loadRoots: async (options) => {
+    const { roots, rootsFetchedAt, rootsStatus } = get();
+    const forceReload = options?.force === true;
+    const hasFreshRoots = roots.length > 0 && hasFreshTimestamp(rootsFetchedAt);
 
-    if (roots.length > 0 || rootsStatus === "loading") {
+    if ((!forceReload && hasFreshRoots) || rootsStatus === "loading") {
       return;
     }
 
@@ -42,6 +63,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 
       set({
         roots: items,
+        rootsFetchedAt: Date.now(),
         rootsStatus: "success",
         rootsErrorMessage: null,
       });
@@ -55,10 +77,12 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       });
     }
   },
-  loadBranch: async (categoryId: number) => {
-    const { branches, branchStatuses } = get();
+  loadBranch: async (categoryId: number, options) => {
+    const { branches, branchesFetchedAt, branchStatuses } = get();
+    const forceReload = options?.force === true;
+    const hasFreshBranch = Boolean(branches[categoryId]) && hasFreshTimestamp(branchesFetchedAt[categoryId]);
 
-    if (branches[categoryId] || branchStatuses[categoryId] === "loading") {
+    if ((!forceReload && hasFreshBranch) || branchStatuses[categoryId] === "loading") {
       return;
     }
 
@@ -80,6 +104,10 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
         branches: {
           ...state.branches,
           [categoryId]: branch,
+        },
+        branchesFetchedAt: {
+          ...state.branchesFetchedAt,
+          [categoryId]: Date.now(),
         },
         branchStatuses: {
           ...state.branchStatuses,
@@ -116,6 +144,22 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       branchErrorMessages: {
         ...state.branchErrorMessages,
         [categoryId]: null,
+      },
+    })),
+  invalidateRoots: () =>
+    set({
+      rootsFetchedAt: null,
+      rootsStatus: "idle",
+    }),
+  invalidateBranch: (categoryId: number) =>
+    set((state) => ({
+      branchesFetchedAt: {
+        ...state.branchesFetchedAt,
+        [categoryId]: null,
+      },
+      branchStatuses: {
+        ...state.branchStatuses,
+        [categoryId]: "idle",
       },
     })),
 }));

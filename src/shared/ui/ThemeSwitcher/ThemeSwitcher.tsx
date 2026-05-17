@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dropdown, type MenuProps } from "antd";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -20,57 +19,39 @@ export function ThemeSwitcher() {
   }
 
   const isDark = resolvedTheme === "dark";
-
-  const themeItems: MenuProps["items"] = [
-    {
-      key: "light",
-      label: (
-        <div className="flex items-center gap-2 py-1">
-          <Sun size={16} className="text-[var(--foreground)]" />
-          <span>Светлая тема</span>
-        </div>
-      ),
-      onClick: () => setTheme("light"),
-    },
-    {
-      key: "dark",
-      label: (
-        <div className="flex items-center gap-2 py-1">
-          <Moon size={16} className="text-[var(--foreground)]" />
-          <span>Темная тема</span>
-        </div>
-      ),
-      onClick: () => setTheme("dark"),
-    },
-    {
-      key: "system",
-      label: (
-        <div className="flex items-center gap-2 py-1">
-          <div className="size-4 rounded-full border border-current" />
-          <span>Система</span>
-        </div>
-      ),
-      onClick: () => setTheme("system"),
-    },
-  ];
+  const handleToggle = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
 
   return (
-    <Dropdown
-      menu={{ items: themeItems }}
-      placement="bottomRight"
-      trigger={["click"]}
+    <button
+      aria-label={isDark ? "Включить светлую тему" : "Включить темную тему"}
+      className={[
+        "inline-flex h-11 items-center gap-3 rounded-full ",
+        "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)]",
+        "hover:border-[var(--accent)]",
+        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
+      ].join(" ")}
+      onClick={handleToggle}
+      type="button"
     >
-      <button
-        aria-label="Переключатель темы"
-        className="interactive-lift grid size-10 place-items-center rounded-full border border-[var(--border-soft)] bg-transparent transition-colors duration-200 hover:bg-[var(--accent-soft)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-        type="button"
+      <span
+        className={[
+          "relative h-6 w-11 rounded-full border transition-colors duration-300",
+          isDark
+            ? "border-[var(--accent)] bg-[var(--active-button-bg)]"
+            : "border-[var(--border-soft)] bg-[var(--accent-soft)]",
+        ].join(" ")}
       >
-        {isDark ? (
-          <Moon size={20} className="text-[var(--foreground)]" />
-        ) : (
-          <Sun size={20} className="text-[var(--foreground)]" />
-        )}
-      </button>
-    </Dropdown>
+        <span
+          className={[
+            "absolute top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-full bg-[var(--surface)] text-[var(--brand-deep)] shadow-sm transition-transform duration-300",
+            isDark ? "translate-x-[20px]" : "translate-x-[2px]",
+          ].join(" ")}
+        >
+          {isDark ? <Moon size={12} /> : <Sun size={12} />}
+        </span>
+      </span>
+    </button>
   );
 }

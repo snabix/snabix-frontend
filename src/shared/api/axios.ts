@@ -1,12 +1,10 @@
 import axios from "axios";
 import { notifyUnauthorized } from "@/src/features/auth/session/auth-events";
-import { getAccessToken } from "@/src/shared/lib/access-token";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-const apiOrigin = apiUrl ? new URL(apiUrl).origin : undefined;
+import { publicEnv } from "@/src/shared/config/env";
+import { clearAuthSession } from "@/src/shared/lib/auth-session";
 
 const csrfApi = axios.create({
-  baseURL: apiOrigin,
+  baseURL: publicEnv.apiOrigin,
   timeout: 10000,
   withCredentials: true,
   withXSRFToken: true,
@@ -28,7 +26,7 @@ async function ensureCsrfCookie() {
 }
 
 export const api = axios.create({
-  baseURL: apiUrl,
+  baseURL: publicEnv.apiUrl,
   timeout: 10000,
   withCredentials: true,
   withXSRFToken: true,
@@ -45,12 +43,6 @@ api.interceptors.request.use(async (config) => {
     await ensureCsrfCookie();
   }
 
-  const token = getAccessToken();
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
   return config;
 });
 
@@ -58,6 +50,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      clearAuthSession();
       notifyUnauthorized();
     }
 

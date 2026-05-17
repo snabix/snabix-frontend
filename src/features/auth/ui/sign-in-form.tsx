@@ -2,41 +2,65 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { App, Button, Form, Input } from "antd";
+import { useState, useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { getMe, useUserStore } from "@/src/entities/user";
 import { signIn } from "@/src/features/auth/api";
+import { signInSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignInFormValues } from "@/src/features/auth/lib/auth-form-values";
-import {
-  extractAccessToken,
-  saveAccessToken,
-} from "@/src/shared/lib/access-token";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { Button } from "@/src/shared/ui/shadcn/button";
+import { Input } from "@/src/shared/ui/shadcn/input";
+import { Label } from "@/src/shared/ui/shadcn/label";
+import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
+
+function getRedirectParam() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return new URLSearchParams(window.location.search).get("redirectTo");
+}
+
+function resolveRedirectPath(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
+}
 
 export function SignInForm() {
   const router = useRouter();
-  const { message } = App.useApp();
   const setUser = useUserStore((state) => state.setUser);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+  });
 
-  const handleSubmit = async (values: SignInFormValues) => {
+  const onSubmit = async (values: SignInFormValues) => {
+    setIsSubmitting(true);
+
     try {
-      const response = await signIn(values);
-      const token = extractAccessToken(response);
-
-      if (token) {
-        saveAccessToken(token);
-      }
-
+      await signIn(values);
       const user = await getMe();
       setUser(user);
-      message.success("Вы вошли в аккаунт.");
+      toast.success("Вы вошли в аккаунт.");
       startTransition(() => {
         router.push(resolveRedirectPath(getRedirectParam()));
         router.refresh();
       });
     } catch (error) {
-      message.error(extractApiError(error, "Не удалось выполнить вход."));
+      toast.error(extractApiError(error, "Не удалось выполнить вход."));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -49,26 +73,27 @@ export function SignInForm() {
         Введите данные, чтобы продолжить работу.
       </p>
 
-      <Form<SignInFormValues>
+      <form
         autoComplete="off"
-        className="mt-7"
-        layout="vertical"
-        onFinish={handleSubmit}
-        requiredMark={false}
+        className="mt-7 space-y-5"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Укажите email." },
-            { type: "email", message: "Введите корректный email." },
-          ]}
-        >
-          <Input className="auth-input" placeholder="you@example.com" />
-        </Form.Item>
+        <div className="space-y-2">
+          <Label htmlFor="sign-in-email">Email</Label>
+          <Input
+            id="sign-in-email"
+            placeholder="you@example.com"
+            {...register("email")}
+          />
+          {errors.email ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.email.message}
+            </p>
+          ) : null}
+        </div>
 
         <div className="mb-2 flex items-center justify-between gap-3">
-          <span className="text-sm text-[var(--brand-deep)]">Пароль</span>
+          <Label htmlFor="sign-in-password">Пароль</Label>
           <Link
             className="text-sm font-semibold text-[var(--accent)]"
             href="/forgot-password"
@@ -77,24 +102,27 @@ export function SignInForm() {
           </Link>
         </div>
 
-        <Form.Item
-          className="auth-form-item-without-label"
-          name="password"
-          rules={[{ required: true, message: "Введите пароль." }]}
-        >
-          <Input.Password className="auth-input" placeholder="Введите пароль" />
-        </Form.Item>
+        <div className="space-y-2">
+          <PasswordInput
+            id="sign-in-password"
+            placeholder="Введите пароль"
+            {...register("password")}
+          />
+          {errors.password ? (
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {errors.password.message}
+            </p>
+          ) : null}
+        </div>
 
         <Button
-          block
-          className="auth-primary-button mt-1"
-          htmlType="submit"
-          loading={isPending}
-          type="primary"
+          className="auth-primary-button mt-1 w-full"
+          disabled={isSubmitting || isPending}
+          type="submit"
         >
           Войти
         </Button>
-      </Form>
+      </form>
 
       <p className="mt-6 text-center text-sm text-[var(--text-muted)]">
         Нет аккаунта на платформе?{" "}
@@ -104,20 +132,4 @@ export function SignInForm() {
       </p>
     </div>
   );
-}
-
-function getRedirectParam(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return new URLSearchParams(window.location.search).get("redirectTo");
-}
-
-function resolveRedirectPath(value: string | null): string {
-  if (value === null || !value.startsWith("/") || value.startsWith("//")) {
-    return "/";
-  }
-
-  return value;
 }

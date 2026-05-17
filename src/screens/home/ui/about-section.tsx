@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function AboutSection() {
   return (
     <section id="about" className="section-divider mt-16">
@@ -17,6 +19,13 @@ export function AboutSection() {
             интерфейсом, ясной структурой, удобной навигацией и архитектурой,
             готовой к росту.
           </p>
+
+          <Link
+            className="mt-5 inline-flex items-center text-sm font-semibold text-[var(--accent)] transition-opacity hover:opacity-80"
+            href="/about"
+          >
+            Подробнее о проекте
+          </Link>
         </div>
       </div>
     </section>

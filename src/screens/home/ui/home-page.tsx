@@ -13,6 +13,7 @@ import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
 
 export function HomePage() {
   const [items, setItems] = useState<PublicListingItem[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export function HomePage() {
     const loadItems = async () => {
       try {
         setIsLoading(true);
+        setErrorMessage(null);
         const listings = await listPublicListings();
 
         if (!isMounted) {
@@ -33,7 +35,11 @@ export function HomePage() {
           return;
         }
 
-        toast.error(extractApiError(error, "Не удалось загрузить объявления."));
+        const message = extractApiError(error, "Не удалось загрузить объявления.");
+
+        setErrorMessage(message);
+        setItems([]);
+        toast.error(message);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -106,6 +112,24 @@ export function HomePage() {
                   <LoaderCircle className="h-5 w-5 animate-spin" />
                   Данные загружаются...
                 </div>
+              </div>
+            ) : errorMessage !== null ? (
+              <div className="surface-card rounded-[30px] p-8 text-center">
+                <p className="font-heading text-2xl font-extrabold text-[var(--brand-deep)]">
+                  Витрина временно недоступна
+                </p>
+                <p className="section-copy mx-auto mt-3 max-w-2xl text-sm leading-7">
+                  Мы не смогли получить объявления с сервера. Можно обновить
+                  страницу чуть позже или перейти в личный кабинет, если нужно
+                  продолжить работу с объявлениями.
+                </p>
+                <Button
+                  className="mt-6 rounded-[18px] px-5 py-6"
+                  onClick={() => window.location.reload()}
+                  type="button"
+                >
+                  Обновить страницу
+                </Button>
               </div>
             ) : items.length === 0 ? (
               <div className="surface-card rounded-[30px] p-8 text-center">

@@ -52,14 +52,14 @@
 - [x] `features/listing/ui/listing-form.tsx` разгружен: загрузка данных, состояние формы, рендер характеристик и submit-логика разделены.
 - [x] `listing-form.tsx` разбит на `model/use-listing-form-state`, `ui/category-picker`, `ui/attribute-fields`, `ui/listing-submit-actions`.
 - [x] В форме объявлений добавлена schema-валидация через `zod/react-hook-form`.
-- [ ] `attributeValues` строятся как `Record<number, value>`, но JS-ключи фактически строки; пока работает, но лучше нормализовать через `Record<string, value>` или DTO mapper.
-- [ ] Для денежных значений используется `Number(input)` без защиты от `NaN`, дробей и локального ввода.
+- [x] `attributeValues` нормализованы под `Record<string, value>` во frontend-state и payload mapper.
+- [x] Денежные значения валидируются и парсятся как целые числа без копеек.
 - [ ] Нет единого слоя API DTO mapping: frontend напрямую верит backend response shape.
 - [ ] `shouldHydrateSession()` всегда возвращает `true`, а `clearAuthSession()` пустой. Это нормально для cookie-only MVP, но название функций вводит в заблуждение.
-- [ ] В публичной главной странице нет graceful fallback, если API недоступен при статической сборке/первом клиентском запросе.
+- [x] В публичной главной странице добавлен graceful fallback, если API объявлений недоступен.
 - [ ] Используются barrel imports местами из feature API, местами из entity. Нужно унифицировать.
-- [ ] В кодовой базе еще остались `antd` и `@ant-design/nextjs-registry`, хотя целевое направление UI-библиотеки — `shadcn/ui`.
-- [ ] Нужно завершить миграцию оставшихся `antd`-компонентов на `shadcn/ui` и только после этого удалить `antd`-зависимости.
+- [x] `antd` и `@ant-design/nextjs-registry` удалены из зависимостей и импортов.
+- [x] Миграция оставшихся `antd`-компонентов на `shadcn/ui` завершена.
 
 ## API И Backend-Интеграция
 

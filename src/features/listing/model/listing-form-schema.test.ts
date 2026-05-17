@@ -28,11 +28,10 @@ describe("listingFormSchema", () => {
     const result = listingFormSchema.safeParse({
       title: "Ноутбук",
       description: "Рабочий ноутбук.",
-      price: "дорого",
+      price: "12.50",
       currency: "RUBLE",
     });
 
     expect(result.success).toBe(false);
   });
 });
-

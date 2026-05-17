@@ -10,13 +10,16 @@ import {
   ATTRIBUTE_TYPE_TEXT,
 } from "@/src/features/listing/model/listing-form-constants";
 import type { AttributeGroup } from "@/src/features/listing/model/attribute-values";
-import { getAttributeValue } from "@/src/features/listing/model/attribute-values";
+import {
+  getAttributeValue,
+  parseAttributeNumber,
+} from "@/src/features/listing/model/attribute-values";
 import { ListingFormSelect } from "@/src/features/listing/ui/listing-form-field";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
 
 type AttributeFieldsProps = {
-  attributeValues: Record<number, ListingAttributeValue>;
+  attributeValues: Record<string, ListingAttributeValue>;
   groupedAttributes: AttributeGroup[];
   isLoading: boolean;
   onAttributeChange: (attributeId: number, value: ListingAttributeValue) => void;
@@ -142,7 +145,7 @@ function renderAttributeInput(
     return (
       <Input
         inputMode="decimal"
-        onChange={(event) => onChange(attribute.id, event.target.value === "" ? null : Number(event.target.value))}
+        onChange={(event) => onChange(attribute.id, parseAttributeNumber(event.target.value))}
         placeholder={attribute.placeholder ?? "Введите число"}
         value={typeof value === "number" ? String(value) : ""}
       />

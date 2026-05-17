@@ -29,10 +29,12 @@ export function groupAttributesByName(
 
 export function getAttributeValue(
   attribute: CategoryAttributeDefinition,
-  values: Record<number, ListingAttributeValue>,
+  values: Record<string, ListingAttributeValue>,
 ): ListingAttributeValue {
-  if (Object.hasOwn(values, attribute.id)) {
-    return values[attribute.id];
+  const attributeKey = String(attribute.id);
+
+  if (Object.hasOwn(values, attributeKey)) {
+    return values[attributeKey];
   }
 
   return defaultAttributeValue(attribute);
@@ -40,27 +42,39 @@ export function getAttributeValue(
 
 export function buildAttributePayload(
   attributes: CategoryAttributeDefinition[],
-  values: Record<number, ListingAttributeValue>,
-): Record<number, ListingAttributeValue> {
-  const payload: Record<number, ListingAttributeValue> = {};
+  values: Record<string, ListingAttributeValue>,
+): Record<string, ListingAttributeValue> {
+  const payload: Record<string, ListingAttributeValue> = {};
 
   for (const attribute of attributes) {
-    payload[attribute.id] = getAttributeValue(attribute, values);
+    payload[String(attribute.id)] = getAttributeValue(attribute, values);
   }
 
   return payload;
 }
 
+export function parseAttributeNumber(value: string): number | null {
+  const normalizedValue = value.trim().replace(",", ".");
+
+  if (normalizedValue === "") {
+    return null;
+  }
+
+  const parsedValue = Number(normalizedValue);
+
+  return Number.isFinite(parsedValue) ? parsedValue : null;
+}
+
 export function valuesFromListing(
   listing?: ListingItem,
-): Record<number, ListingAttributeValue> {
+): Record<string, ListingAttributeValue> {
   if (listing === undefined) {
     return {};
   }
 
   return Object.fromEntries(
     listing.attributeValues.map((attributeValue) => [
-      attributeValue.attributeDefinitionId,
+      String(attributeValue.attributeDefinitionId),
       attributeValue.value,
     ]),
   );
@@ -93,9 +107,7 @@ function defaultAttributeValue(
     }
 
     if (typeof defaultValue === "string" && defaultValue.trim() !== "") {
-      const parsedValue = Number(defaultValue);
-
-      return Number.isNaN(parsedValue) ? null : parsedValue;
+      return parseAttributeNumber(defaultValue);
     }
 
     return null;
@@ -125,4 +137,3 @@ function normalizeDefaultValue(
 
   return defaultValue;
 }
-

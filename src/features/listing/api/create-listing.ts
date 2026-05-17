@@ -16,7 +16,7 @@ export type CreateListingPayload = {
   contactPhone?: string | null;
   contactEmail?: string | null;
   saveAsDraft?: boolean;
-  attributeValues: Record<number, ListingAttributeValue>;
+  attributeValues: Record<string, ListingAttributeValue>;
 };
 
 type ListingResponse = {

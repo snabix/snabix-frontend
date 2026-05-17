@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidIntegerMoney } from "@/src/features/listing/model/listing-money";
 
 export const listingFormSchema = z.object({
   title: z.string().trim().min(1, "Укажите заголовок объявления."),
@@ -6,8 +7,8 @@ export const listingFormSchema = z.object({
   price: z
     .string()
     .trim()
-    .refine((value) => value === "" || !Number.isNaN(Number(value)), {
-      message: "Цена должна быть числом.",
+    .refine(isValidIntegerMoney, {
+      message: "Цена должна быть целым числом без копеек.",
     }),
   currency: z
     .string()
@@ -18,4 +19,3 @@ export const listingFormSchema = z.object({
 });
 
 export type ListingFormValues = z.infer<typeof listingFormSchema>;
-

@@ -22,6 +22,7 @@ import {
   listingFormSchema,
   type ListingFormValues,
 } from "@/src/features/listing/model/listing-form-schema";
+import { parseIntegerMoney } from "@/src/features/listing/model/listing-money";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 type UseListingFormStateOptions = {
@@ -51,7 +52,7 @@ export function useListingFormState({
   const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
   const [selectedRootId, setSelectedRootId] = useState<number | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(initialListing?.category?.id ?? null);
-  const [attributeValues, setAttributeValues] = useState<Record<number, ListingAttributeValue>>(
+  const [attributeValues, setAttributeValues] = useState<Record<string, ListingAttributeValue>>(
     () => valuesFromListing(initialListing),
   );
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
@@ -202,17 +203,20 @@ export function useListingFormState({
   const handleAttributeChange = (attributeId: number, value: ListingAttributeValue) => {
     setAttributeValues((currentValues) => ({
       ...currentValues,
-      [attributeId]: value,
+      [String(attributeId)]: value,
     }));
   };
 
   const handleMultiselectChange = (attributeId: number, optionValue: string, checked: boolean) => {
     setAttributeValues((currentValues) => {
-      const current = Array.isArray(currentValues[attributeId]) ? currentValues[attributeId] as string[] : [];
+      const attributeKey = String(attributeId);
+      const current = Array.isArray(currentValues[attributeKey])
+        ? currentValues[attributeKey] as string[]
+        : [];
 
       return {
         ...currentValues,
-        [attributeId]: checked
+        [attributeKey]: checked
           ? Array.from(new Set([...current, optionValue]))
           : current.filter((item) => item !== optionValue),
       };
@@ -238,7 +242,7 @@ export function useListingFormState({
       condition: effectiveCondition,
       title: values.title.trim(),
       description: values.description.trim(),
-      price: values.price.trim() === "" ? null : Number(values.price),
+      price: parseIntegerMoney(values.price),
       currency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
       isNegotiable,
       ...(mode === "create" ? { saveAsDraft } : {}),

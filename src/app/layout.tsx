@@ -1,6 +1,6 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import "./globals.css";
-import {Providers} from "@/src/app/providers";
+import { Providers } from "@/src/app/providers";
 
 export const metadata: Metadata = {
     title: {
@@ -11,15 +11,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
+  children,
+}: Readonly<{
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="ru" suppressHydrationWarning className="h-full antialiased">
-        <body className="min-h-full">
+  return (
+    <html className="h-full antialiased" data-scroll-behavior="smooth" lang="ru" suppressHydrationWarning>
+      <body className="min-h-full">
         <Providers>{children}</Providers>
-        </body>
-        </html>
-    );
+      </body>
+    </html>
+  );
 }

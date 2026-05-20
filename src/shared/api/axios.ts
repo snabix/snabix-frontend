@@ -49,9 +49,17 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+
+    if (status === 401 || status === 419) {
       clearCookieSessionState();
-      notifyUnauthorized();
+      notifyUnauthorized({
+        reason: status === 419 ? "csrf-token-mismatch" : "unauthenticated",
+        message:
+          status === 419
+            ? "Сессия безопасности устарела. Войдите в аккаунт снова."
+            : "Сессия истекла. Войдите в аккаунт снова.",
+      });
     }
 
     return Promise.reject(error);

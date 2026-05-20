@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef } from "react";
+import { toast } from "sonner";
 import { getMe, useUserStore } from "@/src/entities/user";
-import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
+import {
+  AUTH_UNAUTHORIZED_EVENT,
+  type AuthUnauthorizedEventDetail,
+} from "@/src/features/auth/session/auth-events";
 import {
   clearCookieSessionState,
   shouldCheckCookieSession,
@@ -50,10 +54,16 @@ export function SessionProvider() {
   }, []);
 
   useEffect(() => {
-    const handleUnauthorized = () => {
+    const handleUnauthorized = (event: Event) => {
+      const detail = (event as CustomEvent<AuthUnauthorizedEventDetail>).detail;
+
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
+
+      if (detail?.message) {
+        toast.warning(detail.message);
+      }
     };
 
     window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);

@@ -1,6 +1,9 @@
 import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
+import {
+  AUTH_UNAUTHORIZED_EVENT,
+  notifyUnauthorized,
+} from "@/src/features/auth/session/auth-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
 import type { User } from "@/src/entities/user";
@@ -9,10 +12,12 @@ const {
   getMeMock,
   clearCookieSessionStateMock,
   shouldCheckCookieSessionMock,
+  toastWarningMock,
 } = vi.hoisted(() => ({
   getMeMock: vi.fn<() => Promise<User>>(),
   clearCookieSessionStateMock: vi.fn<() => void>(),
   shouldCheckCookieSessionMock: vi.fn<() => boolean>(),
+  toastWarningMock: vi.fn<(message: string) => void>(),
 }));
 
 vi.mock("@/src/entities/user", async () => {
@@ -38,6 +43,12 @@ vi.mock("@/src/shared/lib/auth-session", async () => {
   };
 });
 
+vi.mock("sonner", () => ({
+  toast: {
+    warning: toastWarningMock,
+  },
+}));
+
 const mockUser: User = {
   id: "1",
   email: "user@example.com",
@@ -54,6 +65,7 @@ describe("SessionProvider", () => {
     getMeMock.mockReset();
     clearCookieSessionStateMock.mockReset();
     shouldCheckCookieSessionMock.mockReset();
+    toastWarningMock.mockReset();
     useUserStore.setState(useUserStore.getInitialState(), true);
   });
 
@@ -126,5 +138,31 @@ describe("SessionProvider", () => {
       expect(state.isLoading).toBe(false);
       expect(state.hasCheckedSession).toBe(true);
     });
+
+    expect(toastWarningMock).not.toHaveBeenCalled();
+  });
+
+  it("shows session expiration message when unauthorized event has detail", async () => {
+    shouldCheckCookieSessionMock.mockReturnValue(true);
+    getMeMock.mockResolvedValue(mockUser);
+
+    render(<SessionProvider />);
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toEqual(mockUser);
+    });
+
+    notifyUnauthorized({
+      reason: "csrf-token-mismatch",
+      message: "Сессия безопасности устарела. Войдите в аккаунт снова.",
+    });
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toBeNull();
+    });
+
+    expect(toastWarningMock).toHaveBeenCalledWith(
+      "Сессия безопасности устарела. Войдите в аккаунт снова.",
+    );
   });
 });

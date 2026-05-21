@@ -44,7 +44,7 @@
 
 - [x] В `src/app/account` нет общего `layout.tsx`; каждая account page вручную оборачивает контент в `AccountLayout`. Это работает, но легко забыть guard/layout на новой странице.
 - [x] `AccountLayout` содержит `AuthGuard` только вокруг `children`, но Header рендерится до проверки сессии. Это нормально для UX, но приватные данные в Header должны оставаться защищенными store-состоянием.
-- [ ] Некоторые feature imports идут глубоко из внутренних путей (`features/profile/avatar/lib/...`). Для FSD лучше добавить публичные index-файлы на границах slice.
+- [x] Некоторые feature imports идут глубоко из внутренних путей (`features/profile/avatar/lib/...`). Для FSD лучше добавить публичные index-файлы на границах slice.
 - [ ] Profile page содержит много интерактивной логики: форма, email verification, avatar viewer/editor, cooldown. Ее стоит разделить на feature hooks/components.
 - [ ] Tests лежат рядом с исходниками. Это допустимо, но пользователь хотел отдельную `tests` директорию для frontend: нужно принять правило и перенести unit/integration tests централизованно.
 

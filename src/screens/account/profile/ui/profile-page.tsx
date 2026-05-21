@@ -3,6 +3,7 @@
 import {
     Camera,
     ChevronRight,
+    KeyRound,
     Mail,
     MapPin,
     Pencil,
@@ -11,6 +12,7 @@ import {
     UserRound,
 } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
+import { ChangePasswordForm } from "@/src/features/auth/ui/change-password-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
@@ -225,6 +227,34 @@ export function ProfilePage() {
                             label="Город"
                             value="Черкесск"
                         />
+                    </div>
+                </section>
+
+                <section className="surface-card rounded-[32px] p-6 sm:p-8">
+                    <div className="mb-6 flex items-start gap-3">
+                        <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+                            <KeyRound aria-hidden="true" size={20} />
+                        </div>
+
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+                                Безопасность
+                            </p>
+
+                            <h2 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
+                                Смена пароля
+                            </h2>
+
+                            <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
+                                Обновите пароль, если хотите усилить защиту аккаунта
+                                или подозреваете, что текущий пароль мог стать известен
+                                кому-то еще.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="max-w-xl">
+                        <ChangePasswordForm />
                     </div>
                 </section>
             </div>

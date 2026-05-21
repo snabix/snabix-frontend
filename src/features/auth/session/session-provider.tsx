@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getMe, useUserStore } from "@/src/entities/user";
 import {
+  AUTH_CONTINUE_MESSAGE,
   AUTH_UNAUTHORIZED_EVENT,
   type AuthUnauthorizedEventDetail,
 } from "@/src/features/auth/session/auth-events";
@@ -14,6 +16,8 @@ import {
 
 export function SessionProvider() {
   const hasHydratedSessionRef = useRef(false);
+  const pathname = usePathname();
+  const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
   const setLoading = useUserStore((state) => state.setLoading);
@@ -56,13 +60,15 @@ export function SessionProvider() {
   useEffect(() => {
     const handleUnauthorized = (event: Event) => {
       const detail = (event as CustomEvent<AuthUnauthorizedEventDetail>).detail;
+      const shouldRedirectToSignIn = pathname.startsWith("/account");
 
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
 
-      if (detail?.message) {
-        toast.warning(detail.message);
+      if (detail?.message && shouldRedirectToSignIn) {
+        toast.info(AUTH_CONTINUE_MESSAGE);
+        router.replace(`/sign-in?redirectTo=${encodeURIComponent(pathname)}`);
       }
     };
 
@@ -71,7 +77,7 @@ export function SessionProvider() {
     return () => {
       window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
     };
-  }, [clearUser, setHasCheckedSession, setLoading]);
+  }, [clearUser, pathname, router, setHasCheckedSession, setLoading]);
 
   return null;
 }

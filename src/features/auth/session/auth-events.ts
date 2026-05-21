@@ -9,10 +9,13 @@ export type AuthUnauthorizedEventDetail = {
   message: string;
 };
 
+export const AUTH_CONTINUE_MESSAGE =
+  "Пожалуйста, войдите в аккаунт, чтобы продолжить.";
+
 export function notifyUnauthorized(
   detail: AuthUnauthorizedEventDetail = {
     reason: "unauthenticated",
-    message: "Сессия истекла. Войдите в аккаунт снова.",
+    message: AUTH_CONTINUE_MESSAGE,
   },
 ) {
   if (typeof window === "undefined") {

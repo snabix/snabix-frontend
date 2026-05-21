@@ -1,6 +1,7 @@
 import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  AUTH_CONTINUE_MESSAGE,
   AUTH_UNAUTHORIZED_EVENT,
   notifyUnauthorized,
 } from "@/src/features/auth/session/auth-events";
@@ -12,12 +13,16 @@ const {
   getMeMock,
   clearCookieSessionStateMock,
   shouldCheckCookieSessionMock,
-  toastWarningMock,
+  pathnameMock,
+  replaceMock,
+  toastInfoMock,
 } = vi.hoisted(() => ({
   getMeMock: vi.fn<() => Promise<User>>(),
   clearCookieSessionStateMock: vi.fn<() => void>(),
   shouldCheckCookieSessionMock: vi.fn<() => boolean>(),
-  toastWarningMock: vi.fn<(message: string) => void>(),
+  pathnameMock: vi.fn<() => string>(),
+  replaceMock: vi.fn<(href: string) => void>(),
+  toastInfoMock: vi.fn<(message: string) => void>(),
 }));
 
 vi.mock("@/src/entities/user", async () => {
@@ -45,8 +50,15 @@ vi.mock("@/src/shared/lib/auth-session", async () => {
 
 vi.mock("sonner", () => ({
   toast: {
-    warning: toastWarningMock,
+    info: toastInfoMock,
   },
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: pathnameMock,
+  useRouter: () => ({
+    replace: replaceMock,
+  }),
 }));
 
 const mockUser: User = {
@@ -65,7 +77,10 @@ describe("SessionProvider", () => {
     getMeMock.mockReset();
     clearCookieSessionStateMock.mockReset();
     shouldCheckCookieSessionMock.mockReset();
-    toastWarningMock.mockReset();
+    pathnameMock.mockReset();
+    replaceMock.mockReset();
+    toastInfoMock.mockReset();
+    pathnameMock.mockReturnValue("/account/profile");
     useUserStore.setState(useUserStore.getInitialState(), true);
   });
 
@@ -139,10 +154,11 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(toastWarningMock).not.toHaveBeenCalled();
+    expect(toastInfoMock).not.toHaveBeenCalled();
+    expect(replaceMock).not.toHaveBeenCalled();
   });
 
-  it("shows session expiration message when unauthorized event has detail", async () => {
+  it("shows friendly sign-in prompt and redirects protected pages on unauthorized event", async () => {
     shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
@@ -154,15 +170,16 @@ describe("SessionProvider", () => {
 
     notifyUnauthorized({
       reason: "csrf-token-mismatch",
-      message: "Сессия безопасности устарела. Войдите в аккаунт снова.",
+      message: AUTH_CONTINUE_MESSAGE,
     });
 
     await waitFor(() => {
       expect(useUserStore.getState().user).toBeNull();
     });
 
-    expect(toastWarningMock).toHaveBeenCalledWith(
-      "Сессия безопасности устарела. Войдите в аккаунт снова.",
+    expect(toastInfoMock).toHaveBeenCalledWith(AUTH_CONTINUE_MESSAGE);
+    expect(replaceMock).toHaveBeenCalledWith(
+      "/sign-in?redirectTo=%2Faccount%2Fprofile",
     );
   });
 });

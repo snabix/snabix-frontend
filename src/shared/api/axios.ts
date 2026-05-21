@@ -1,5 +1,8 @@
 import axios from "axios";
-import { notifyUnauthorized } from "@/src/features/auth/session/auth-events";
+import {
+  AUTH_CONTINUE_MESSAGE,
+  notifyUnauthorized,
+} from "@/src/features/auth/session/auth-events";
 import { publicEnv } from "@/src/shared/config/env";
 import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 
@@ -55,10 +58,7 @@ api.interceptors.response.use(
       clearCookieSessionState();
       notifyUnauthorized({
         reason: status === 419 ? "csrf-token-mismatch" : "unauthenticated",
-        message:
-          status === 419
-            ? "Сессия безопасности устарела. Войдите в аккаунт снова."
-            : "Сессия истекла. Войдите в аккаунт снова.",
+        message: AUTH_CONTINUE_MESSAGE,
       });
     }
 

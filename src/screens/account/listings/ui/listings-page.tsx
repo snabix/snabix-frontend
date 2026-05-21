@@ -6,6 +6,7 @@ import { LoaderCircle, PackagePlus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
+import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 
@@ -13,6 +14,7 @@ export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
+  const [listingToDelete, setListingToDelete] = useState<ListingItem | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -43,17 +45,16 @@ export function ListingsPage() {
     };
   }, []);
 
-  const handleDelete = async (listingId: string) => {
-    const shouldDelete = window.confirm("Удалить объявление? Это действие нельзя отменить.");
-
-    if (!shouldDelete) {
+  const handleDeleteConfirm = async () => {
+    if (listingToDelete === null) {
       return;
     }
 
     try {
-      setDeletingListingId(listingId);
-      await deleteListing(listingId);
-      setListings((currentListings) => currentListings.filter((listing) => listing.id !== listingId));
+      setDeletingListingId(listingToDelete.id);
+      await deleteListing(listingToDelete.id);
+      setListings((currentListings) => currentListings.filter((listing) => listing.id !== listingToDelete.id));
+      setListingToDelete(null);
       toast.success("Объявление удалено.");
     } catch (error) {
       toast.error(extractApiError(error, "Не удалось удалить объявление."));
@@ -63,7 +64,8 @@ export function ListingsPage() {
   };
 
   return (
-    <div className="grid gap-6">
+    <>
+      <div className="grid gap-6">
         <section className="surface-card relative overflow-hidden rounded-[32px] p-6 sm:p-8">
           <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_28%,transparent),transparent_70%)]" />
           <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -132,13 +134,26 @@ export function ListingsPage() {
                     isDeleting={deletingListingId === listing.id}
                     key={listing.id}
                     listing={listing}
-                    onDelete={handleDelete}
+                    onDelete={() => setListingToDelete(listing)}
                   />
                 ))}
               </div>
             )}
           </div>
         </section>
-    </div>
+      </div>
+
+      <DeleteListingDialog
+        isDeleting={deletingListingId !== null}
+        isOpen={listingToDelete !== null}
+        listingTitle={listingToDelete?.title}
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={(isOpen) => {
+          if (!isOpen && deletingListingId === null) {
+            setListingToDelete(null);
+          }
+        }}
+      />
+    </>
   );
 }

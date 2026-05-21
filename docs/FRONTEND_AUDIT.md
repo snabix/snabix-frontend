@@ -107,7 +107,7 @@
 - [ ] Нет UI для публикации черновика после редактирования.
 - [ ] Нет UI пагинации и фильтров в `/account/listings`.
 - [ ] Нет media upload для объявления.
-- [ ] Delete использует `window.confirm`; лучше заменить на shadcn dialog с понятным destructive state.
+- [x] Delete использует `window.confirm`; лучше заменить на shadcn dialog с понятным destructive state.
 - [ ] После сохранения форма пушит на `/account/listings/{id}`; маршрут есть, но нужно проверить детали страницы в браузере с реальным API.
 
 ## UI/UX

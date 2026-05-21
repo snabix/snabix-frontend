@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { ListingItem } from "@/src/entities/listing";
 import { deleteListing, showListing } from "@/src/features/listing/api";
+import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 
@@ -19,6 +20,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   const [listing, setListing] = useState<ListingItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -47,14 +49,15 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     };
   }, [listingId]);
 
-  const handleDelete = async () => {
-    if (listing === null || !window.confirm("Удалить объявление?")) {
+  const handleDeleteConfirm = async () => {
+    if (listing === null) {
       return;
     }
 
     try {
       setIsDeleting(true);
       await deleteListing(listing.id);
+      setIsDeleteDialogOpen(false);
       toast.success("Объявление удалено.");
       router.push("/account/listings");
       router.refresh();
@@ -83,7 +86,8 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   }
 
   return (
-    <article className="grid gap-6">
+    <>
+      <article className="grid gap-6">
           <section className="surface-card overflow-hidden rounded-[32px]">
             <div className="min-h-56 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_20%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_12%,var(--surface)))]" />
             <div className="p-6 sm:p-8">
@@ -119,7 +123,12 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                       Редактировать
                     </Link>
                   </Button>
-                  <Button disabled={isDeleting} onClick={handleDelete} type="button" variant="destructive">
+                  <Button
+                    disabled={isDeleting}
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    type="button"
+                    variant="destructive"
+                  >
                     <Trash2 size={17} />
                     Удалить
                   </Button>
@@ -164,7 +173,16 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
               </div>
             </section>
           ) : null}
-    </article>
+      </article>
+
+      <DeleteListingDialog
+        isDeleting={isDeleting}
+        isOpen={isDeleteDialogOpen}
+        listingTitle={listing.title}
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={setIsDeleteDialogOpen}
+      />
+    </>
   );
 }
 

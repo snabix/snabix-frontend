@@ -8,7 +8,6 @@ import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
 
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
@@ -64,8 +63,7 @@ export function ListingsPage() {
   };
 
   return (
-    <AccountLayout>
-      <div className="grid gap-6">
+    <div className="grid gap-6">
         <section className="surface-card relative overflow-hidden rounded-[32px] p-6 sm:p-8">
           <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_28%,transparent),transparent_70%)]" />
           <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -141,7 +139,6 @@ export function ListingsPage() {
             )}
           </div>
         </section>
-      </div>
-    </AccountLayout>
+    </div>
   );
 }

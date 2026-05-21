@@ -36,7 +36,6 @@ import { updateProfile } from "@/src/features/profile/update-profile/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
 import {
     EmailVerificationBadge,
     ProfileDataField,
@@ -314,7 +313,7 @@ export function ProfilePage() {
     };
 
     return (
-        <AccountLayout>
+        <>
             <div className="grid gap-6">
                 <section className="surface-card relative overflow-hidden rounded-[34px] p-6 sm:p-8">
                     <div className="pointer-events-none absolute -right-12 -top-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--brand)_22%,transparent),transparent_72%)]" />
@@ -517,6 +516,6 @@ export function ProfilePage() {
                     onResend={handleResendVerification}
                 />
             ) : null}
-        </AccountLayout>
+        </>
     );
 }

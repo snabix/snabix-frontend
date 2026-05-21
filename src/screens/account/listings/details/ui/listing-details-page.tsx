@@ -9,7 +9,6 @@ import type { ListingItem } from "@/src/entities/listing";
 import { deleteListing, showListing } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
 
 type ListingDetailsPageProps = {
   listingId: string;
@@ -66,19 +65,25 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
+        <LoaderCircle className="animate-spin" size={18} />
+        Загружаем объявление
+      </div>
+    );
+  }
+
+  if (listing === null) {
+    return (
+      <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
+        Объявление не найдено или недоступно.
+      </div>
+    );
+  }
+
   return (
-    <AccountLayout>
-      {isLoading ? (
-        <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
-          <LoaderCircle className="animate-spin" size={18} />
-          Загружаем объявление
-        </div>
-      ) : listing === null ? (
-        <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
-          Объявление не найдено или недоступно.
-        </div>
-      ) : (
-        <article className="grid gap-6">
+    <article className="grid gap-6">
           <section className="surface-card overflow-hidden rounded-[32px]">
             <div className="min-h-56 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_20%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_12%,var(--surface)))]" />
             <div className="p-6 sm:p-8">
@@ -159,9 +164,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
               </div>
             </section>
           ) : null}
-        </article>
-      )}
-    </AccountLayout>
+    </article>
   );
 }
 

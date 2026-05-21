@@ -7,7 +7,6 @@ import type { ListingItem } from "@/src/entities/listing";
 import { showListing, updateListing } from "@/src/features/listing/api";
 import { ListingForm } from "@/src/features/listing/ui/listing-form";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
 
 type EditListingPageProps = {
   listingId: string;
@@ -44,24 +43,28 @@ export function EditListingPage({ listingId }: EditListingPageProps) {
     };
   }, [listingId]);
 
+  if (isLoading) {
+    return (
+      <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
+        <LoaderCircle className="animate-spin" size={18} />
+        Загружаем объявление
+      </div>
+    );
+  }
+
+  if (listing === null) {
+    return (
+      <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
+        Объявление не найдено или недоступно.
+      </div>
+    );
+  }
+
   return (
-    <AccountLayout>
-      {isLoading ? (
-        <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
-          <LoaderCircle className="animate-spin" size={18} />
-          Загружаем объявление
-        </div>
-      ) : listing === null ? (
-        <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
-          Объявление не найдено или недоступно.
-        </div>
-      ) : (
-        <ListingForm
-          initialListing={listing}
-          mode="edit"
-          onSubmit={(payload) => updateListing(listing.id, payload)}
-        />
-      )}
-    </AccountLayout>
+    <ListingForm
+      initialListing={listing}
+      mode="edit"
+      onSubmit={(payload) => updateListing(listing.id, payload)}
+    />
   );
 }

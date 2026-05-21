@@ -9,17 +9,13 @@ import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { CategoryCatalog } from "@/src/shared/ui/Header/CategoryCatalog";
 import { CatalogToggleButton } from "@/src/shared/ui/Header/CatalogToggleButton";
-import { HeaderAuthActions } from "@/src/shared/ui/Header/HeaderAuthActions";
-import { HeaderUserMenu } from "@/src/shared/ui/Header/HeaderUserMenu";
+import { HeaderSessionActions } from "@/src/shared/ui/Header/HeaderSessionActions";
 import { useHeaderState } from "@/src/shared/ui/Header/use-header-state";
-import { ThemeSwitcher } from "@/src/shared/ui/ThemeSwitcher/ThemeSwitcher";
 import { Container } from "@/src/shared/ui/container";
 import { Logo } from "@/src/shared/ui/logo";
 
 export function Header() {
   const router = useRouter();
-  const user = useUserStore((state) => state.user);
-  const hasCheckedSession = useUserStore((state) => state.hasCheckedSession);
   const clearUser = useUserStore((state) => state.clearUser);
   const [isPending, startTransition] = useTransition();
   const {
@@ -69,24 +65,10 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-3">
-            <ThemeSwitcher />
-
-            {!hasCheckedSession ? (
-              <div className="flex items-center gap-3">
-                <div className="h-11 w-28 rounded-[18px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)]" />
-                <div className="h-11 w-32 rounded-[18px] bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]" />
-              </div>
-            ) : user ? (
-              <div className="flex items-center gap-3">
-                <HeaderUserMenu
-                  isPending={isPending}
-                  onLogout={handleLogout}
-                  user={user}
-                />
-              </div>
-            ) : (
-              <HeaderAuthActions />
-            )}
+            <HeaderSessionActions
+              isPending={isPending}
+              onLogoutAction={handleLogout}
+            />
           </div>
         </div>
       </Container>

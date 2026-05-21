@@ -1,16 +1,6 @@
 "use client";
 
 import {
-    type ChangeEvent,
-    type PointerEvent as ReactPointerEvent,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
     Camera,
     ChevronRight,
     Mail,
@@ -20,22 +10,12 @@ import {
     ShieldCheck,
     UserRound,
 } from "lucide-react";
-import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
-import { resendEmailVerification, verifyEmailCode } from "@/src/features/auth/api";
-import {
-    AVATAR_MAX_OFFSET,
-    type AvatarDraft,
-    type AvatarOffset,
-    clampAvatarOffset,
-    createEditedAvatarFile,
-    profileFormSchema,
-    updateProfile,
-    uploadProfileAvatar,
-} from "@/src/features/profile";
-import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
+import { useEmailVerification } from "@/src/screens/account/profile/model/use-email-verification";
+import { useProfileEditor } from "@/src/screens/account/profile/model/use-profile-editor";
 import {
     EmailVerificationBadge,
     ProfileDataField,
@@ -45,272 +25,50 @@ import {
 import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
 import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
 import { ProfileEditDialog } from "@/src/screens/account/profile/ui/profile-edit-dialog";
-import type { ProfileFormValues } from "@/src/screens/account/profile/ui/profile-types";
 
 export function ProfilePage() {
-    const avatarInputRef = useRef<HTMLInputElement | null>(null);
-
     const user = useUserStore((state) => state.user);
-    const setUser = useUserStore((state) => state.setUser);
-
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isAvatarSubmitting, setIsAvatarSubmitting] = useState(false);
-    const [isAvatarViewerOpen, setIsAvatarViewerOpen] = useState(false);
-    const [verificationCode, setVerificationCode] = useState("");
-    const [isConfirmingVerification, setIsConfirmingVerification] = useState(false);
-    const [isResendingVerification, setIsResendingVerification] = useState(false);
-    const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0);
-    const [avatarDraft, setAvatarDraft] = useState<AvatarDraft | null>(null);
-    const [avatarScale, setAvatarScale] = useState(1);
-    const [avatarOffset, setAvatarOffset] = useState<AvatarOffset>({ x: 0, y: 0 });
-
-    const isEmailVerified = Boolean(user?.emailVerifiedAt);
-    const profileInitialValues = useMemo<ProfileFormValues>(() => ({
-        firstName: user?.firstName ?? "",
-        lastName: user?.lastName ?? "",
-        email: user?.email ?? "",
-        phoneNumber: user?.phoneNumber ?? "",
-        region: "КЧР",
-        city: "Черкесск",
-    }), [user?.email, user?.firstName, user?.lastName, user?.phoneNumber]);
     const {
-        formState: { errors },
+        handleConfirmVerification,
+        handleResendVerification,
+        handleVerificationCodeChange,
+        isConfirmingVerification,
+        isEmailVerified,
+        isResendingVerification,
+        isVerificationDialogOpen,
+        openVerificationDialog,
+        resendCooldownSeconds,
+        setIsVerificationDialogOpen,
+        verificationCode,
+    } = useEmailVerification();
+    const {
+        errors,
+        handleCancel,
+        handleEdit,
+        handleProfileSubmit,
         handleSubmit,
+        isProfileModalOpen,
+        isSubmitting,
         register,
-        reset,
-    } = useForm<ProfileFormValues>({
-        defaultValues: profileInitialValues,
-        resolver: zodResolver(profileFormSchema),
+    } = useProfileEditor({
+        onEmailVerificationRequired: openVerificationDialog,
     });
-
-    useEffect(() => {
-        return () => {
-            if (avatarDraft?.previewUrl) {
-                URL.revokeObjectURL(avatarDraft.previewUrl);
-            }
-        };
-    }, [avatarDraft]);
-
-    useEffect(() => {
-        reset(profileInitialValues);
-    }, [profileInitialValues, reset]);
-
-    useEffect(() => {
-        if (resendCooldownSeconds <= 0) {
-            return;
-        }
-
-        const timer = window.setInterval(() => {
-            setResendCooldownSeconds((currentValue) => (
-                currentValue > 0 ? currentValue - 1 : 0
-            ));
-        }, 1000);
-
-        return () => {
-            window.clearInterval(timer);
-        };
-    }, [resendCooldownSeconds]);
-
-    const handleEdit = () => {
-        reset(profileInitialValues);
-        setIsProfileModalOpen(true);
-    };
-
-    const handleCancel = () => {
-        setIsProfileModalOpen(false);
-    };
-
-    const onSubmit = async (values: ProfileFormValues) => {
-        setIsSubmitting(true);
-
-        try {
-            const previousEmail = user?.email ?? null;
-            const wasEmailVerified = isEmailVerified;
-            const updatedUser = await updateProfile({
-                firstName: values.firstName,
-                lastName: values.lastName,
-                email: values.email,
-                phoneNumber: values.phoneNumber?.trim() || null,
-            });
-
-            setUser(updatedUser);
-            setIsProfileModalOpen(false);
-
-            if (
-                previousEmail !== null
-                && previousEmail !== updatedUser.email
-                && wasEmailVerified
-                && !updatedUser.emailVerifiedAt
-            ) {
-                setVerificationCode("");
-                setResendCooldownSeconds(60);
-                setIsVerificationDialogOpen(true);
-                toast.success("Профиль обновлен. Новый email нужно подтвердить повторно.");
-            } else {
-                toast.success("Профиль обновлен.");
-            }
-        } catch (error) {
-            toast.error(extractApiError(error, "Не удалось обновить профиль."));
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleAvatarSelect = () => {
-        avatarInputRef.current?.click();
-    };
-
-    const handleAvatarViewerClose = () => {
-        setIsAvatarViewerOpen(false);
-        setAvatarDraft(null);
-        setAvatarScale(1);
-        setAvatarOffset({ x: 0, y: 0 });
-    };
-
-    const handleAvatarChange = async (
-        event: ChangeEvent<HTMLInputElement>,
-    ) => {
-        const file = event.target.files?.[0];
-
-        event.target.value = "";
-
-        if (!file) {
-            return;
-        }
-
-        if (file.size > 3 * 1024 * 1024) {
-            toast.error("Размер аватара не должен превышать 3 МБ.");
-            return;
-        }
-
-        if (!file.type.startsWith("image/")) {
-            toast.error("Для аватара можно загрузить только изображение.");
-            return;
-        }
-
-        setAvatarDraft({
-            file,
-            previewUrl: URL.createObjectURL(file),
-        });
-        setAvatarScale(1);
-        setAvatarOffset({ x: 0, y: 0 });
-        setIsAvatarViewerOpen(true);
-    };
-
-    const handleAvatarSave = async () => {
-        if (!avatarDraft) {
-            return;
-        }
-
-        setIsAvatarSubmitting(true);
-
-        try {
-            const avatarFile = await createEditedAvatarFile(
-                avatarDraft,
-                avatarScale,
-                avatarOffset,
-            );
-            const updatedUser = await uploadProfileAvatar(avatarFile);
-
-            setUser(updatedUser);
-            setIsAvatarViewerOpen(false);
-            setAvatarDraft(null);
-            setAvatarScale(1);
-            setAvatarOffset({ x: 0, y: 0 });
-            toast.success("Аватар обновлен.");
-        } catch (error) {
-            toast.error(extractApiError(error, "Не удалось обновить аватар."));
-        } finally {
-            setIsAvatarSubmitting(false);
-        }
-    };
-
-    const handleAvatarMovePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-        event.preventDefault();
-
-        const startX = event.clientX;
-        const startY = event.clientY;
-        const startOffset = avatarOffset;
-
-        const handlePointerMove = (moveEvent: PointerEvent) => {
-            setAvatarOffset({
-                x: clampAvatarOffset(startOffset.x + moveEvent.clientX - startX, -AVATAR_MAX_OFFSET, AVATAR_MAX_OFFSET),
-                y: clampAvatarOffset(startOffset.y + moveEvent.clientY - startY, -AVATAR_MAX_OFFSET, AVATAR_MAX_OFFSET),
-            });
-        };
-
-        const handlePointerUp = () => {
-            window.removeEventListener("pointermove", handlePointerMove);
-            window.removeEventListener("pointerup", handlePointerUp);
-            document.body.style.userSelect = "";
-        };
-
-        document.body.style.userSelect = "none";
-        window.addEventListener("pointermove", handlePointerMove);
-        window.addEventListener("pointerup", handlePointerUp);
-    };
-
-    const handleAvatarDraftReset = () => {
-        setAvatarDraft(null);
-        setAvatarScale(1);
-        setAvatarOffset({ x: 0, y: 0 });
-    };
-
-    const handleResendVerification = async () => {
-        setIsResendingVerification(true);
-
-        try {
-            const result = await resendEmailVerification();
-
-            setResendCooldownSeconds(result.cooldownSeconds);
-
-            if (result.sent) {
-                setVerificationCode("");
-                toast.success(result.message);
-            } else {
-                toast.message(result.message);
-            }
-        } catch (error) {
-            toast.error(extractApiError(error, "Не удалось отправить письмо повторно."));
-        } finally {
-            setIsResendingVerification(false);
-        }
-    };
-
-    const handleVerificationCodeChange = (value: string) => {
-        setVerificationCode(value.replace(/\D/g, "").slice(0, 6));
-    };
-
-    const handleConfirmVerification = async () => {
-        if (verificationCode.length !== 6) {
-            return;
-        }
-
-        setIsConfirmingVerification(true);
-
-        try {
-            const result = await verifyEmailCode({
-                code: verificationCode,
-            });
-
-            if (user) {
-                setUser({
-                    ...user,
-                    emailVerifiedAt: result.verified ? new Date().toISOString() : user.emailVerifiedAt,
-                });
-            }
-
-            setVerificationCode("");
-            setIsVerificationDialogOpen(false);
-            toast.success(result.message);
-        } catch (error) {
-            toast.error(extractApiError(error, "Не удалось подтвердить email."));
-        } finally {
-            setIsConfirmingVerification(false);
-        }
-    };
+    const {
+        avatarDraft,
+        avatarInputRef,
+        avatarOffset,
+        avatarScale,
+        handleAvatarChange,
+        handleAvatarMovePointerDown,
+        handleAvatarSave,
+        handleAvatarSelect,
+        handleAvatarViewerClose,
+        isAvatarSubmitting,
+        isAvatarViewerOpen,
+        resetAvatarDraft,
+        setAvatarScale,
+        setIsAvatarViewerOpen,
+    } = useAvatarEditor();
 
     return (
         <>
@@ -478,7 +236,7 @@ export function ProfilePage() {
                     avatarScale={avatarScale}
                     avatarUrl={user?.avatar?.url}
                     isAvatarSubmitting={isAvatarSubmitting}
-                    onAvatarDraftReset={handleAvatarDraftReset}
+                    onAvatarDraftReset={resetAvatarDraft}
                     onAvatarMovePointerDown={handleAvatarMovePointerDown}
                     onAvatarSave={handleAvatarSave}
                     onAvatarScaleChange={(value) => setAvatarScale(value[0] ?? 1)}
@@ -498,7 +256,7 @@ export function ProfilePage() {
                         handleCancel();
                     }
                 }}
-                onSubmit={onSubmit}
+                onSubmit={handleProfileSubmit}
                 register={register}
             />
 

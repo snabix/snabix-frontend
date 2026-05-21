@@ -45,7 +45,7 @@
 - [x] В `src/app/account` нет общего `layout.tsx`; каждая account page вручную оборачивает контент в `AccountLayout`. Это работает, но легко забыть guard/layout на новой странице.
 - [x] `AccountLayout` содержит `AuthGuard` только вокруг `children`, но Header рендерится до проверки сессии. Это нормально для UX, но приватные данные в Header должны оставаться защищенными store-состоянием.
 - [x] Некоторые feature imports идут глубоко из внутренних путей (`features/profile/avatar/lib/...`). Для FSD лучше добавить публичные index-файлы на границах slice.
-- [ ] Profile page содержит много интерактивной логики: форма, email verification, avatar viewer/editor, cooldown. Ее стоит разделить на feature hooks/components.
+- [x] Profile page содержит много интерактивной логики: форма, email verification, avatar viewer/editor, cooldown. Ее стоит разделить на feature hooks/components.
 - [ ] Tests лежат рядом с исходниками. Это допустимо, но пользователь хотел отдельную `tests` директорию для frontend: нужно принять правило и перенести unit/integration tests централизованно.
 
 ## API Интеграция
@@ -74,7 +74,7 @@
 
 Что добавить:
 
-- [ ] Разделить `ProfilePage` на `useProfileEditor`, `useAvatarEditor`, `useEmailVerification` и маленькие UI-компоненты.
+- [x] Разделить `ProfilePage` на `useProfileEditor`, `useAvatarEditor`, `useEmailVerification` и маленькие UI-компоненты.
 - [ ] Добавить tests на avatar editor: scale/offset/file type/max size.
 - [ ] Добавить optimistic/rollback strategy для профиля и аватара.
 - [ ] Убрать hardcoded region/city, когда backend начнет отдавать location fields.
@@ -169,7 +169,7 @@
 2. [ ] Выделить `UpdateListingPayload` без `saveAsDraft`.
 3. [ ] Добавить frontend action/UI для `submit-for-review`.
 4. [x] Вынести `src/app/account/layout.tsx` и убрать ручное оборачивание страниц в `AccountLayout`.
-5. [ ] Разделить `ProfilePage` на feature hooks и маленькие компоненты.
+5. [x] Разделить `ProfilePage` на feature hooks и маленькие компоненты.
 6. [ ] Подключить change password endpoint.
 7. [ ] Добавить pagination/filter UI для account listings.
 8. [ ] Ввести отдельную директорию frontend tests.

@@ -3,6 +3,4 @@ export type ProfileFormValues = {
   lastName: string;
   email: string;
   phoneNumber?: string;
-  region?: string;
-  city?: string;
 };

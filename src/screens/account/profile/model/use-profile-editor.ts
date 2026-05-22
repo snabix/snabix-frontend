@@ -27,15 +27,11 @@ export function useProfileEditor({
     lastName: user?.lastName ?? "",
     email: user?.email ?? "",
     phoneNumber: user?.phoneNumber ?? "",
-    region: user?.region ?? "",
-    city: user?.city ?? "",
   }), [
-    user?.city,
     user?.email,
     user?.firstName,
     user?.lastName,
     user?.phoneNumber,
-    user?.region,
   ]);
   const {
     formState: { errors },

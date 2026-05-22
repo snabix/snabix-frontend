@@ -26,14 +26,43 @@ type CitiesByRegion = Record<string, LocationCity[]>;
 export function ProfileAddressesSection() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const addresses = user?.addresses ?? [];
+  const addressesKey = addresses
+    .map((address) => [
+      address.id,
+      address.region.id,
+      address.city?.id ?? "",
+      address.label ?? "",
+      address.addressLine ?? "",
+      address.isPrimary ? "1" : "0",
+    ].join(":"))
+    .join("|");
+
+  return (
+    <ProfileAddressesEditor
+      initialAddresses={addresses}
+      key={addressesKey}
+      onUserChange={setUser}
+      user={user}
+    />
+  );
+}
+
+type ProfileAddressesEditorProps = {
+  initialAddresses: UserAddress[];
+  onUserChange: ReturnType<typeof useUserStore.getState>["setUser"];
+  user: ReturnType<typeof useUserStore.getState>["user"];
+};
+
+function ProfileAddressesEditor({
+  initialAddresses,
+  onUserChange,
+  user,
+}: ProfileAddressesEditorProps) {
   const [regions, setRegions] = useState<LocationRegion[]>([]);
   const [citiesByRegion, setCitiesByRegion] = useState<CitiesByRegion>({});
-  const [drafts, setDrafts] = useState<AddressDraft[]>(() => toDrafts(user?.addresses ?? []));
+  const [drafts, setDrafts] = useState<AddressDraft[]>(() => toDrafts(initialAddresses));
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setDrafts(toDrafts(user?.addresses ?? []));
-  }, [user?.addresses]);
 
   useEffect(() => {
     let isMounted = true;
@@ -131,7 +160,7 @@ export function ProfileAddressesSection() {
         const addresses = await replaceProfileAddresses(toPayload(drafts));
 
         if (user) {
-          setUser({
+          onUserChange({
             ...user,
             addresses,
           });
@@ -205,7 +234,7 @@ export function ProfileAddressesSection() {
                       <option value="">Выберите регион</option>
                       {regions.map((region) => (
                         <option key={region.id} value={region.id}>
-                          {region.label}
+                          {region.fullName || region.name}
                         </option>
                       ))}
                     </select>
@@ -222,7 +251,7 @@ export function ProfileAddressesSection() {
                       <option value="">Весь регион</option>
                       {cities.map((city) => (
                         <option key={city.id} value={city.id}>
-                          {city.label}
+                          {city.name}
                         </option>
                       ))}
                     </select>

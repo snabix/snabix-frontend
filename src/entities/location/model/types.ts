@@ -1,6 +1,7 @@
 export type LocationRegion = {
   id: number;
   name: string;
+  fullName: string;
   label: string;
   type: string | null;
 };

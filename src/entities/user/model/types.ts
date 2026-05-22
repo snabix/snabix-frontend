@@ -18,6 +18,7 @@ export interface UserAddress {
   region: {
     id: number;
     name: string;
+    fullName?: string;
     label: string;
   };
   city: {

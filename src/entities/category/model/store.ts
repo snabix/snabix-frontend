@@ -1,6 +1,13 @@
 import { create } from "zustand";
-import { listRootCategories, showCategoryBranch } from "@/src/entities/category/api/list-categories";
-import type { CategoryNode } from "@/src/entities/category/model/types";
+import {
+  getCategoryAttributes,
+  listRootCategories,
+  showCategoryBranch,
+} from "@/src/entities/category/api/list-categories";
+import type {
+  CategoryAttributeDefinition,
+  CategoryNode,
+} from "@/src/entities/category/model/types";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 type CategoryStatus = "idle" | "loading" | "success" | "error";
@@ -27,12 +34,19 @@ type CategoryStore = {
   branchStatuses: Record<number, CategoryStatus>;
   branchErrorMessages: Record<number, string | null>;
   branchesFetchedAt: Record<number, number | null>;
+  categoryAttributes: Record<number, CategoryAttributeDefinition[]>;
+  categoryAttributeStatuses: Record<number, CategoryStatus>;
+  categoryAttributeErrorMessages: Record<number, string | null>;
+  categoryAttributesFetchedAt: Record<number, number | null>;
   loadRoots: (options?: LoadCategoryOptions) => Promise<void>;
   loadBranch: (categoryId: number, options?: LoadCategoryOptions) => Promise<void>;
+  loadCategoryAttributes: (categoryId: number, options?: LoadCategoryOptions) => Promise<void>;
   resetRootError: () => void;
   resetBranchError: (categoryId: number) => void;
+  resetCategoryAttributesError: (categoryId: number) => void;
   invalidateRoots: () => void;
   invalidateBranch: (categoryId: number) => void;
+  invalidateCategoryAttributes: (categoryId: number) => void;
 };
 
 export const useCategoryStore = create<CategoryStore>((set, get) => ({
@@ -44,6 +58,10 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
   branchStatuses: {},
   branchErrorMessages: {},
   branchesFetchedAt: {},
+  categoryAttributes: {},
+  categoryAttributeStatuses: {},
+  categoryAttributeErrorMessages: {},
+  categoryAttributesFetchedAt: {},
   loadRoots: async (options) => {
     const { roots, rootsFetchedAt, rootsStatus } = get();
     const forceReload = options?.force === true;
@@ -134,6 +152,68 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       }));
     }
   },
+  loadCategoryAttributes: async (categoryId: number, options) => {
+    const {
+      categoryAttributes,
+      categoryAttributesFetchedAt,
+      categoryAttributeStatuses,
+    } = get();
+    const forceReload = options?.force === true;
+    const hasFreshAttributes = Boolean(categoryAttributes[categoryId])
+      && hasFreshTimestamp(categoryAttributesFetchedAt[categoryId]);
+
+    if ((!forceReload && hasFreshAttributes) || categoryAttributeStatuses[categoryId] === "loading") {
+      return;
+    }
+
+    set((state) => ({
+      categoryAttributeStatuses: {
+        ...state.categoryAttributeStatuses,
+        [categoryId]: "loading",
+      },
+      categoryAttributeErrorMessages: {
+        ...state.categoryAttributeErrorMessages,
+        [categoryId]: null,
+      },
+    }));
+
+    try {
+      const attributes = await getCategoryAttributes(categoryId);
+
+      set((state) => ({
+        categoryAttributes: {
+          ...state.categoryAttributes,
+          [categoryId]: attributes,
+        },
+        categoryAttributesFetchedAt: {
+          ...state.categoryAttributesFetchedAt,
+          [categoryId]: Date.now(),
+        },
+        categoryAttributeStatuses: {
+          ...state.categoryAttributeStatuses,
+          [categoryId]: "success",
+        },
+        categoryAttributeErrorMessages: {
+          ...state.categoryAttributeErrorMessages,
+          [categoryId]: null,
+        },
+      }));
+    } catch (error) {
+      set((state) => ({
+        categoryAttributeStatuses: {
+          ...state.categoryAttributeStatuses,
+          [categoryId]: "error",
+        },
+        categoryAttributeErrorMessages: {
+          ...state.categoryAttributeErrorMessages,
+          [categoryId]: extractApiError(
+            error,
+            "Не удалось загрузить характеристики категории.",
+          ),
+        },
+      }));
+    }
+  },
   resetRootError: () => set({ rootsStatus: "idle", rootsErrorMessage: null }),
   resetBranchError: (categoryId: number) =>
     set((state) => ({
@@ -143,6 +223,17 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       },
       branchErrorMessages: {
         ...state.branchErrorMessages,
+        [categoryId]: null,
+      },
+    })),
+  resetCategoryAttributesError: (categoryId: number) =>
+    set((state) => ({
+      categoryAttributeStatuses: {
+        ...state.categoryAttributeStatuses,
+        [categoryId]: "idle",
+      },
+      categoryAttributeErrorMessages: {
+        ...state.categoryAttributeErrorMessages,
         [categoryId]: null,
       },
     })),
@@ -159,6 +250,17 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       },
       branchStatuses: {
         ...state.branchStatuses,
+        [categoryId]: "idle",
+      },
+    })),
+  invalidateCategoryAttributes: (categoryId: number) =>
+    set((state) => ({
+      categoryAttributesFetchedAt: {
+        ...state.categoryAttributesFetchedAt,
+        [categoryId]: null,
+      },
+      categoryAttributeStatuses: {
+        ...state.categoryAttributeStatuses,
         [categoryId]: "idle",
       },
     })),

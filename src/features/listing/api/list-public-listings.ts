@@ -1,14 +1,15 @@
-import { api } from "@/src/shared/api";
 import type { PublicListingItem } from "@/src/entities/listing";
-
-type ListPublicListingsResponse = {
-  data: PublicListingItem[];
-};
+import {
+  api,
+  type ApiDataResponse,
+  type ApiPaginatedData,
+  unwrapApiItems,
+} from "@/src/shared/api";
 
 export async function listPublicListings(limit = 24): Promise<PublicListingItem[]> {
-  const response = await api.get<ListPublicListingsResponse>("/public/listings", {
-    params: { limit },
+  const response = await api.get<ApiDataResponse<ApiPaginatedData<PublicListingItem>>>("/public/listings", {
+    params: { perPage: limit },
   });
 
-  return response.data.data;
+  return unwrapApiItems(response.data);
 }

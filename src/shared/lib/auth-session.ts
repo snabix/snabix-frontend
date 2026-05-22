@@ -1,7 +1,7 @@
-export function shouldHydrateSession() {
+export function shouldCheckCookieSession() {
   return true;
 }
 
-export function clearAuthSession() {
+export function clearCookieSessionState() {
   //
 }

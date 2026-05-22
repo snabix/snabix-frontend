@@ -33,7 +33,7 @@ const AUTO_COLLAPSE_WIDTH = 150;
 
 export function AccountSidebar() {
     const pathname = usePathname();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
     const [width, setWidth] = useState(DEFAULT_WIDTH);
 
     const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {

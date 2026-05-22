@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { SearchX } from "lucide-react";
 import { toast } from "sonner";
 import type { ListingItem } from "@/src/entities/listing";
-import { showListing } from "@/src/features/listing/api/show-listing";
-import { updateListing } from "@/src/features/listing/api/update-listing";
+import { showListing, updateListing } from "@/src/features/listing/api";
 import { ListingForm } from "@/src/features/listing/ui/listing-form";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
+import { EmptyState } from "@/src/shared/ui/empty-state";
+import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 type EditListingPageProps = {
   listingId: string;
@@ -45,24 +45,25 @@ export function EditListingPage({ listingId }: EditListingPageProps) {
     };
   }, [listingId]);
 
+  if (isLoading) {
+    return <SkeletonPanel className="min-h-80" />;
+  }
+
+  if (listing === null) {
+    return (
+      <EmptyState
+        description="Проверьте ссылку или вернитесь к списку своих объявлений."
+        icon={SearchX}
+        title="Объявление не найдено"
+      />
+    );
+  }
+
   return (
-    <AccountLayout>
-      {isLoading ? (
-        <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
-          <LoaderCircle className="animate-spin" size={18} />
-          Загружаем объявление
-        </div>
-      ) : listing === null ? (
-        <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
-          Объявление не найдено или недоступно.
-        </div>
-      ) : (
-        <ListingForm
-          initialListing={listing}
-          mode="edit"
-          onSubmit={(payload) => updateListing(listing.id, payload)}
-        />
-      )}
-    </AccountLayout>
+    <ListingForm
+      initialListing={listing}
+      mode="edit"
+      onSubmit={(payload) => updateListing(listing.id, payload)}
+    />
   );
 }

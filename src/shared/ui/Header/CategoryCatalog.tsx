@@ -1,5 +1,3 @@
-"use client";
-
 import { createPortal } from "react-dom";
 import { CategoryCatalogBranch } from "@/src/shared/ui/Header/CategoryCatalogBranch";
 import { CategoryCatalogRoots } from "@/src/shared/ui/Header/CategoryCatalogRoots";

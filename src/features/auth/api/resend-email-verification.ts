@@ -1,17 +1,15 @@
-import { api } from "@/src/shared/api/axios";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 
-type ResendEmailVerificationResponse = {
-  data: {
-    sent: boolean;
-    message: string;
-    cooldownSeconds: number;
-  };
+type ResendEmailVerificationPayload = {
+  sent: boolean;
+  message: string;
+  cooldownSeconds: number;
 };
 
 export async function resendEmailVerification() {
-  const response = await api.post<ResendEmailVerificationResponse>(
+  const response = await api.post<ApiDataResponse<ResendEmailVerificationPayload>>(
     "/auth/email-verification-notification",
   );
 
-  return response.data.data;
+  return unwrapApiData(response.data);
 }

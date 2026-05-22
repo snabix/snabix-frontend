@@ -1,39 +1,32 @@
-import { api } from "@/src/shared/api";
-import type { CategoryAttributeDefinition, CategoryNode } from "@/src/entities/category/model/types";
+import type {
+  CategoryAttributeDefinition,
+  CategoryNode,
+} from "@/src/entities/category";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 
-type ListCategoriesResponse = {
-  data: CategoryNode[];
-};
-
-type ShowCategoryBranchResponse = {
-  data: CategoryNode;
-};
-
-type GetCategoryAttributesResponse = {
-  data: {
-    category: Pick<CategoryNode, "id" | "catalogType" | "catalogTypeLabel" | "parentId" | "name" | "slug">;
-    items: CategoryAttributeDefinition[];
-  };
+type CategoryAttributesPayload = {
+  category: Pick<CategoryNode, "id" | "catalogType" | "catalogTypeLabel" | "parentId" | "name" | "slug">;
+  items: CategoryAttributeDefinition[];
 };
 
 export async function listRootCategories(): Promise<CategoryNode[]> {
-  const response = await api.get<ListCategoriesResponse>("/categories/list");
+  const response = await api.get<ApiDataResponse<CategoryNode[]>>("/categories/list");
 
-  return response.data.data;
+  return unwrapApiData(response.data);
 }
 
 export async function showCategoryBranch(categoryId: number): Promise<CategoryNode> {
-  const response = await api.get<ShowCategoryBranchResponse>(
+  const response = await api.get<ApiDataResponse<CategoryNode>>(
     `/categories/${categoryId}/branch`,
   );
 
-  return response.data.data;
+  return unwrapApiData(response.data);
 }
 
 export async function getCategoryAttributes(categoryId: number): Promise<CategoryAttributeDefinition[]> {
-  const response = await api.get<GetCategoryAttributesResponse>(
+  const response = await api.get<ApiDataResponse<CategoryAttributesPayload>>(
     `/categories/${categoryId}/attributes`,
   );
 
-  return response.data.data.items;
+  return unwrapApiData(response.data).items;
 }

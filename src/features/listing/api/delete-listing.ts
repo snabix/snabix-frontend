@@ -1,13 +1,11 @@
-import { api } from "@/src/shared/api";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 
-type DeleteListingResponse = {
-  data: {
-    deleted: boolean;
-  };
+type DeleteListingPayload = {
+  deleted: boolean;
 };
 
 export async function deleteListing(listingId: string): Promise<boolean> {
-  const response = await api.delete<DeleteListingResponse>(`/listings/${listingId}`);
+  const response = await api.delete<ApiDataResponse<DeleteListingPayload>>(`/listings/${listingId}`);
 
-  return response.data.data.deleted;
+  return unwrapApiData(response.data).deleted;
 }

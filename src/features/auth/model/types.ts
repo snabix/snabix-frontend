@@ -29,3 +29,14 @@ export type ResetPasswordPayload = {
   password: string;
   passwordConfirmation: string;
 };
+
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  password: string;
+  passwordConfirmation: string;
+};
+
+export type ChangePasswordResponse = {
+  changed: boolean;
+  message: string;
+};

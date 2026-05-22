@@ -1,12 +1,13 @@
-import { api } from "@/src/shared/api";
-import type { ListingItem } from "@/src/features/listing/api/create-listing";
-
-type ListListingsResponse = {
-  data: ListingItem[];
-};
+import type { ListingItem } from "@/src/entities/listing";
+import {
+  api,
+  type ApiDataResponse,
+  type ApiPaginatedData,
+  unwrapApiItems,
+} from "@/src/shared/api";
 
 export async function listListings(): Promise<ListingItem[]> {
-  const response = await api.get<ListListingsResponse>("/listings");
+  const response = await api.get<ApiDataResponse<ApiPaginatedData<ListingItem>>>("/listings");
 
-  return response.data.data;
+  return unwrapApiItems(response.data);
 }

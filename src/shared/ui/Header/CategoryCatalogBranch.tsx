@@ -1,8 +1,8 @@
-"use client";
-
-import { LayoutGrid, LoaderCircle } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import type { CategoryNode } from "@/src/entities/category";
+import { EmptyState } from "@/src/shared/ui/empty-state";
+import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogBranchProps = {
   activeBranch: CategoryNode | null;
@@ -30,11 +30,16 @@ export function CategoryCatalogBranch({
   return (
     <section className="surface-card h-full min-h-0 overflow-hidden rounded-[24px] p-5 sm:p-7">
       {rootsStatus === "loading" && !hasLoadedCategories ? (
-        <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
-          <LoaderCircle className="animate-spin text-[var(--brand-deep)]" size={34} />
-          <p className="text-sm font-semibold text-[var(--text-muted)]">
-            Данные загружаются...
-          </p>
+        <div className="grid min-h-[28rem] content-start gap-5">
+          <Skeleton className="h-10 w-2/5" />
+          <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3">
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+          </div>
         </div>
       ) : null}
 
@@ -69,11 +74,13 @@ export function CategoryCatalogBranch({
           </div>
 
           {activeBranchStatus === "loading" && activeBranch === null ? (
-            <div className="flex min-h-[22rem] flex-col items-center justify-center gap-4 rounded-[28px] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-center">
-              <LoaderCircle className="animate-spin text-[var(--brand-deep)]" size={34} />
-              <p className="text-sm font-semibold text-[var(--text-muted)]">
-                Данные загружаются...
-              </p>
+            <div className="grid min-h-[22rem] content-start gap-5 rounded-[28px] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-5">
+              <Skeleton className="h-8 w-2/5" />
+              <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3">
+                <Skeleton className="h-24" />
+                <Skeleton className="h-24" />
+                <Skeleton className="h-24" />
+              </div>
             </div>
           ) : null}
 
@@ -129,29 +136,21 @@ export function CategoryCatalogBranch({
           ) : null}
 
           {activeBranchStatus === "success" && activeBranch !== null && activeBranch.children.length === 0 ? (
-            <div className="rounded-[20px] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] px-6 py-10 text-center">
-              <p className="text-lg font-black text-[var(--brand-deep)]">
-                В этой категории пока нет вложенных разделов
-              </p>
-            </div>
+            <EmptyState
+              description="Как только раздел наполнят подкатегориями, они появятся в этом каталоге."
+              icon={LayoutGrid}
+              title="В этой категории пока нет вложенных разделов"
+            />
           ) : null}
         </div>
       ) : null}
 
       {(rootsStatus === "success" || hasLoadedCategories) && activeRoot === null ? (
-        <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
-          <div className="grid size-14 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-            <LayoutGrid aria-hidden="true" size={24} />
-          </div>
-          <div>
-            <p className="text-lg font-black text-[var(--brand-deep)]">
-              Категории пока не заполнены
-            </p>
-            <p className="mt-2 max-w-md text-sm leading-7 text-[var(--text-muted)]">
-              После импорта или ручного наполнения здесь появится полное дерево каталога.
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          description="После импорта или ручного наполнения здесь появится полное дерево каталога."
+          icon={LayoutGrid}
+          title="Категории пока не заполнены"
+        />
       ) : null}
     </section>
   );

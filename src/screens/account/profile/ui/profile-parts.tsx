@@ -12,10 +12,10 @@ export function EmailVerificationBadge({ verified }: { verified: boolean }) {
   return (
     <div
       className={[
-        "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold",
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold",
         verified
-          ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-          : "bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
+          ? "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]"
+          : "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
       ].join(" ")}
     >
       {verified ? (
@@ -37,16 +37,16 @@ export function ProfileStatusPill({
   tone?: "neutral" | "success" | "danger" | "accent";
 }) {
   const toneClassName = {
-    accent: "bg-[var(--accent-soft)] text-[var(--accent)]",
-    danger: "bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
-    neutral: "bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] text-[var(--text-muted)]",
-    success: "bg-[var(--accent-soft)] text-[var(--accent)]",
+    accent: "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]",
+    danger: "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
+    neutral: "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] text-[var(--brand-deep)]",
+    success: "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]",
   }[tone];
 
   return (
     <div
       className={[
-        "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold",
+        "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-bold",
         toneClassName,
       ].join(" ")}
     >

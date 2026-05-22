@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import type { ListingItem } from "@/src/entities/listing/model/types";

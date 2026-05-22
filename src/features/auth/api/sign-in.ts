@@ -5,6 +5,7 @@ import type {
 } from "@/src/features/auth/model/types";
 
 export async function signIn(payload: SignInPayload): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/sign-in", payload);
-  return data;
+  const response = await api.post<AuthResponse>("/auth/sign-in", payload);
+
+  return response.data;
 }

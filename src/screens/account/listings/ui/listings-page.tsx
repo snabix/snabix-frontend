@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LoaderCircle, PackagePlus, Sparkles } from "lucide-react";
+import { PackagePlus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
-import { deleteListing } from "@/src/features/listing/api/delete-listing";
-import { listListings } from "@/src/features/listing/api/list-listings";
+import { deleteListing, listListings } from "@/src/features/listing/api";
+import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { AccountLayout } from "@/src/widgets/account/ui/account-layout";
+import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
+  const [listingToDelete, setListingToDelete] = useState<ListingItem | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,17 +47,16 @@ export function ListingsPage() {
     };
   }, []);
 
-  const handleDelete = async (listingId: string) => {
-    const shouldDelete = window.confirm("Удалить объявление? Это действие нельзя отменить.");
-
-    if (!shouldDelete) {
+  const handleDeleteConfirm = async () => {
+    if (listingToDelete === null) {
       return;
     }
 
     try {
-      setDeletingListingId(listingId);
-      await deleteListing(listingId);
-      setListings((currentListings) => currentListings.filter((listing) => listing.id !== listingId));
+      setDeletingListingId(listingToDelete.id);
+      await deleteListing(listingToDelete.id);
+      setListings((currentListings) => currentListings.filter((listing) => listing.id !== listingToDelete.id));
+      setListingToDelete(null);
       toast.success("Объявление удалено.");
     } catch (error) {
       toast.error(extractApiError(error, "Не удалось удалить объявление."));
@@ -65,7 +66,7 @@ export function ListingsPage() {
   };
 
   return (
-    <AccountLayout>
+    <>
       <div className="grid gap-6">
         <section className="surface-card relative overflow-hidden rounded-[32px] p-6 sm:p-8">
           <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_28%,transparent),transparent_70%)]" />
@@ -110,24 +111,18 @@ export function ListingsPage() {
 
           <div className="mt-6">
             {isLoading ? (
-              <div className="flex min-h-48 items-center justify-center gap-3 rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] text-sm font-semibold text-[var(--text-muted)]">
-                <LoaderCircle className="animate-spin" size={18} />
-                Загружаем ваши объявления
-              </div>
+              <SkeletonPanel className="min-h-48 border border-dashed border-[var(--border-soft)] shadow-none" />
             ) : listings.length === 0 ? (
-              <div className="grid min-h-56 place-items-center rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] p-8 text-center">
-                <div>
-                  <p className="font-heading text-2xl font-black text-[var(--brand-deep)]">
-                    Объявлений пока нет
-                  </p>
-                  <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-[var(--text-muted)]">
-                    Создайте первый черновик, выберите категорию и заполните подготовленные характеристики.
-                  </p>
-                  <Button asChild className="mt-5">
+              <EmptyState
+                action={
+                  <Button asChild>
                     <Link href="/account/listings/create">Создать объявление</Link>
                   </Button>
-                </div>
-              </div>
+                }
+                description="Создайте первый черновик, выберите категорию и заполните подготовленные характеристики."
+                icon={PackagePlus}
+                title="Объявлений пока нет"
+              />
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {listings.map((listing) => (
@@ -135,7 +130,7 @@ export function ListingsPage() {
                     isDeleting={deletingListingId === listing.id}
                     key={listing.id}
                     listing={listing}
-                    onDelete={handleDelete}
+                    onDelete={() => setListingToDelete(listing)}
                   />
                 ))}
               </div>
@@ -143,6 +138,18 @@ export function ListingsPage() {
           </div>
         </section>
       </div>
-    </AccountLayout>
+
+      <DeleteListingDialog
+        isDeleting={deletingListingId !== null}
+        isOpen={listingToDelete !== null}
+        listingTitle={listingToDelete?.title}
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={(isOpen) => {
+          if (!isOpen && deletingListingId === null) {
+            setListingToDelete(null);
+          }
+        }}
+      />
+    </>
   );
 }

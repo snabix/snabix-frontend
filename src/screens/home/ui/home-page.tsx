@@ -2,17 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BadgeCheck, LoaderCircle } from "lucide-react";
+import { BadgeCheck, PackageOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { listPublicListings } from "@/src/features/listing/api/list-public-listings";
 import type { PublicListingItem } from "@/src/entities/listing";
+import { listPublicListings } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Container } from "@/src/shared/ui/container";
+import { EmptyState } from "@/src/shared/ui/empty-state";
+import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
 
 export function HomePage() {
   const [items, setItems] = useState<PublicListingItem[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +24,7 @@ export function HomePage() {
     const loadItems = async () => {
       try {
         setIsLoading(true);
+        setErrorMessage(null);
         const listings = await listPublicListings();
 
         if (!isMounted) {
@@ -33,7 +37,11 @@ export function HomePage() {
           return;
         }
 
-        toast.error(extractApiError(error, "Не удалось загрузить объявления."));
+        const message = extractApiError(error, "Не удалось загрузить объявления.");
+
+        setErrorMessage(message);
+        setItems([]);
+        toast.error(message);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -101,22 +109,28 @@ export function HomePage() {
             </div>
 
             {isLoading ? (
-              <div className="surface-card flex min-h-[280px] items-center justify-center rounded-[30px]">
-                <div className="flex items-center gap-3 text-[var(--text-muted)]">
-                  <LoaderCircle className="h-5 w-5 animate-spin" />
-                  Данные загружаются...
-                </div>
-              </div>
+              <SkeletonPanel className="min-h-[280px]" />
+            ) : errorMessage !== null ? (
+              <EmptyState
+                action={
+                  <Button
+                    className="rounded-[18px] px-5 py-6"
+                    onClick={() => window.location.reload()}
+                    type="button"
+                  >
+                    Обновить страницу
+                  </Button>
+                }
+                description="Мы не смогли получить объявления с сервера. Можно обновить страницу чуть позже или перейти в личный кабинет, если нужно продолжить работу с объявлениями."
+                icon={RefreshCw}
+                title="Витрина временно недоступна"
+              />
             ) : items.length === 0 ? (
-              <div className="surface-card rounded-[30px] p-8 text-center">
-                <p className="font-heading text-2xl font-extrabold text-[var(--brand-deep)]">
-                  Пока нет опубликованных объявлений
-                </p>
-                <p className="section-copy mt-3 text-sm leading-7">
-                  После запуска первых публикаций здесь появится живая витрина
-                  товаров и услуг.
-                </p>
-              </div>
+              <EmptyState
+                description="После запуска первых публикаций здесь появится живая витрина товаров и услуг."
+                icon={PackageOpen}
+                title="Пока нет опубликованных объявлений"
+              />
             ) : (
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {items.map((item) => (

@@ -1,11 +1,9 @@
-"use client";
-
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Camera, Move, X, ZoomIn } from "lucide-react";
 import type {
   AvatarDraft,
   AvatarOffset,
-} from "@/src/features/profile/avatar/lib/avatar-editor";
+} from "@/src/features/profile";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Slider } from "@/src/shared/ui/shadcn/slider";
 

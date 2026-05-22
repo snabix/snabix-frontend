@@ -41,3 +41,14 @@ export const resetPasswordSchema = z
     message: "Пароли не совпадают.",
     path: ["passwordConfirmation"],
   });
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Введите текущий пароль."),
+    password: z.string().min(8, "Минимум 8 символов."),
+    passwordConfirmation: z.string().min(1, "Повторите новый пароль."),
+  })
+  .refine((values) => values.password === values.passwordConfirmation, {
+    message: "Пароли не совпадают.",
+    path: ["passwordConfirmation"],
+  });

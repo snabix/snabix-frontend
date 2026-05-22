@@ -32,7 +32,7 @@ export function HeaderSessionActions({
       ) : user ? (
         <HeaderUserMenu
           isPending={isPending}
-          onLogout={onLogoutAction}
+          onLogoutAction={onLogoutAction}
           user={user}
         />
       ) : (

@@ -4,11 +4,28 @@ export interface User {
   firstName: string;
   lastName: string;
   phoneNumber: string | null;
-  region?: string | null;
-  city?: string | null;
+  addresses: UserAddress[];
   isActive: boolean;
   emailVerifiedAt: string | null;
   avatar: UserAvatar | null;
+}
+
+export interface UserAddress {
+  id: string;
+  label: string | null;
+  addressLine: string | null;
+  isPrimary: boolean;
+  region: {
+    id: number;
+    name: string;
+    fullName?: string;
+    label: string;
+  };
+  city: {
+    id: number;
+    name: string;
+    label: string;
+  } | null;
 }
 
 export interface UserAvatar {

@@ -5,7 +5,6 @@ import {
     ChevronRight,
     KeyRound,
     Mail,
-    MapPin,
     Pencil,
     Phone,
     ShieldCheck,
@@ -26,6 +25,7 @@ import {
 } from "@/src/screens/account/profile/ui/profile-parts";
 import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
 import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
+import { ProfileAddressesSection } from "@/src/screens/account/profile/ui/profile-addresses-section";
 import { ProfileEditDialog } from "@/src/screens/account/profile/ui/profile-edit-dialog";
 
 export function ProfilePage() {
@@ -199,36 +199,7 @@ export function ProfilePage() {
                     </div>
                 </section>
 
-                <section className="surface-card rounded-[32px] p-6 sm:p-8">
-                    <div className="mb-6 flex items-start gap-3">
-                        <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                            <MapPin aria-hidden="true" size={20} />
-                        </div>
-
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                                Адресация
-                            </p>
-
-                            <h2 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
-                                Местоположение
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <ProfileDataField
-                            icon={MapPin}
-                            label="Регион"
-                            value={user?.region}
-                        />
-                        <ProfileDataField
-                            icon={MapPin}
-                            label="Город"
-                            value={user?.city}
-                        />
-                    </div>
-                </section>
+                <ProfileAddressesSection />
 
                 <section className="surface-card rounded-[32px] p-6 sm:p-8">
                     <div className="mb-6 flex items-start gap-3">

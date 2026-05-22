@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useUserStore } from "@/src/entities/user";
+import { type User, useUserStore } from "@/src/entities/user";
 import {
   profileFormSchema,
   updateProfile,
@@ -27,9 +27,16 @@ export function useProfileEditor({
     lastName: user?.lastName ?? "",
     email: user?.email ?? "",
     phoneNumber: user?.phoneNumber ?? "",
-    region: "КЧР",
-    city: "Черкесск",
-  }), [user?.email, user?.firstName, user?.lastName, user?.phoneNumber]);
+    region: user?.region ?? "",
+    city: user?.city ?? "",
+  }), [
+    user?.city,
+    user?.email,
+    user?.firstName,
+    user?.lastName,
+    user?.phoneNumber,
+    user?.region,
+  ]);
   const {
     formState: { errors },
     handleSubmit,
@@ -57,8 +64,25 @@ export function useProfileEditor({
     setIsSubmitting(true);
 
     try {
+      const previousUser = user;
       const previousEmail = user?.email ?? null;
       const wasEmailVerified = isEmailVerified;
+      const optimisticUser: User | null = previousUser
+        ? {
+            ...previousUser,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phoneNumber: values.phoneNumber?.trim() || null,
+            emailVerifiedAt:
+              previousEmail !== values.email ? null : previousUser.emailVerifiedAt,
+          }
+        : null;
+
+      if (optimisticUser) {
+        setUser(optimisticUser);
+      }
+
       const updatedUser = await updateProfile({
         firstName: values.firstName,
         lastName: values.lastName,
@@ -81,6 +105,7 @@ export function useProfileEditor({
         toast.success("Профиль обновлен.");
       }
     } catch (error) {
+      setUser(user);
       toast.error(extractApiError(error, "Не удалось обновить профиль."));
     } finally {
       setIsSubmitting(false);

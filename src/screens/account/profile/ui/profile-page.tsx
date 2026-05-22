@@ -220,12 +220,12 @@ export function ProfilePage() {
                         <ProfileDataField
                             icon={MapPin}
                             label="Регион"
-                            value="КЧР"
+                            value={user?.region}
                         />
                         <ProfileDataField
                             icon={MapPin}
                             label="Город"
-                            value="Черкесск"
+                            value={user?.city}
                         />
                     </div>
                 </section>

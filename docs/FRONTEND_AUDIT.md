@@ -16,7 +16,7 @@
 ## Результаты Команд
 
 - `npm run lint` прошел.
-- `npm run test` прошел: 8 файлов, 27 тестов.
+- `npm run test` прошел: 14 файлов, 41 тест.
 - `npm run build` прошел.
 
 ## Архитектура
@@ -60,10 +60,10 @@
 
 Что добавить:
 
-- [ ] Подключить `POST /api/v1/auth/change-password` к странице безопасности/профиля.
-- [ ] Добавить UI для session expiration banner/toast в едином месте, если backend возвращает `401/419`.
-- [ ] Добавить integration tests sign-in -> me -> account redirect.
-- [ ] Добавить E2E smoke для forgot/reset password.
+- [x] Подключить `POST /api/v1/auth/change-password` к странице безопасности/профиля.
+- [x] Добавить UI для session expiration banner/toast в едином месте, если backend возвращает `401/419`.
+- [x] Добавить integration tests sign-in -> me -> account redirect.
+- [x] Добавить E2E smoke для forgot/reset password.
 
 ### Profile
 
@@ -75,9 +75,9 @@
 Что добавить:
 
 - [x] Разделить `ProfilePage` на `useProfileEditor`, `useAvatarEditor`, `useEmailVerification` и маленькие UI-компоненты.
-- [ ] Добавить tests на avatar editor: scale/offset/file type/max size.
-- [ ] Добавить optimistic/rollback strategy для профиля и аватара.
-- [ ] Убрать hardcoded region/city, когда backend начнет отдавать location fields.
+- [x] Добавить tests на avatar editor: scale/offset/file type/max size.
+- [x] Добавить optimistic/rollback strategy для профиля и аватара.
+- [x] Убрать hardcoded region/city, когда backend начнет отдавать location fields.
 
 ### Categories
 
@@ -122,9 +122,9 @@
 
 Что добавить:
 
-- [ ] Проверить contrast всех кнопок и badge в dark theme после смены палитры.
-- [ ] У унифицированных empty states должен быть shared component, а не локальная верстка в каждой странице.
-- [ ] Добавить skeleton вместо простых loader-блоков на profile/listings/categories.
+- [x] Проверить contrast всех кнопок и badge в dark theme после смены палитры.
+- [x] У унифицированных empty states должен быть shared component, а не локальная верстка в каждой странице.
+- [x] Добавить skeleton вместо простых loader-блоков на profile/listings/categories.
 - [x] Account sidebar должен стать layout-level компонентом через `src/app/account/layout.tsx`.
 - [ ] Mobile drawer/sidebar нужно проверить в браузере, потому что сейчас sidebar скрыт на `lg` и нет явного mobile account navigation в `AccountLayout`.
 - [ ] Главная страница пока больше brand/landing, чем marketplace entry point. Следующий шаг: поиск, быстрые категории, trust badges, карточки объявлений.
@@ -148,7 +148,7 @@
 - [ ] Добавить tests для listing API adapters с `items/meta`.
 - [ ] Добавить integration test create listing draft/pending review.
 - [ ] Добавить integration test submit draft for review.
-- [ ] Добавить tests для profile avatar upload/editor.
+- [x] Добавить tests для profile avatar upload/editor.
 - [ ] Добавить E2E smoke: sign-in, profile, create draft, submit for review.
 
 ## AGENTS.md
@@ -170,7 +170,7 @@
 3. [ ] Добавить frontend action/UI для `submit-for-review`.
 4. [x] Вынести `src/app/account/layout.tsx` и убрать ручное оборачивание страниц в `AccountLayout`.
 5. [x] Разделить `ProfilePage` на feature hooks и маленькие компоненты.
-6. [ ] Подключить change password endpoint.
+6. [x] Подключить change password endpoint.
 7. [ ] Добавить pagination/filter UI для account listings.
 8. [ ] Ввести отдельную директорию frontend tests.
 9. [ ] Добавить browser/E2E smoke для auth/profile/listings.

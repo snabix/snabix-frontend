@@ -1,6 +1,7 @@
-import { ChevronRight, LoaderCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import type { CategoryNode } from "@/src/entities/category";
+import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogRootsProps = {
   activeRootId: number | null;
@@ -30,8 +31,11 @@ export function CategoryCatalogRoots({
   return (
     <aside className="surface-card flex h-full min-h-0 flex-col overflow-hidden rounded-[24px] p-4 sm:p-5">
       {rootsStatus === "loading" && !hasLoadedCategories ? (
-        <div className="mt-4 flex min-h-[18rem] items-center justify-center">
-          <LoaderCircle className="animate-spin text-[var(--brand-deep)]" size={30} />
+        <div className="mt-4 grid min-h-[18rem] content-start gap-2">
+          <Skeleton className="h-[72px] rounded-[5px]" />
+          <Skeleton className="h-[72px] rounded-[5px]" />
+          <Skeleton className="h-[72px] rounded-[5px]" />
+          <Skeleton className="h-[72px] rounded-[5px]" />
         </div>
       ) : null}
 

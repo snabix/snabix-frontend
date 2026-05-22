@@ -19,6 +19,7 @@ import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 export function useAvatarEditor() {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [isAvatarSubmitting, setIsAvatarSubmitting] = useState(false);
   const [isAvatarViewerOpen, setIsAvatarViewerOpen] = useState(false);
@@ -92,6 +93,22 @@ export function useAvatarEditor() {
         avatarScale,
         avatarOffset,
       );
+      const previousUser = user;
+
+      if (previousUser) {
+        setUser({
+          ...previousUser,
+          avatar: {
+            id: previousUser.avatar?.id ?? -1,
+            url: avatarDraft.previewUrl,
+            fileName: avatarFile.name,
+            mimeType: avatarFile.type || avatarDraft.file.type || null,
+            size: avatarFile.size,
+            humanReadableSize: "До сохранения",
+          },
+        });
+      }
+
       const updatedUser = await uploadProfileAvatar(avatarFile);
 
       setUser(updatedUser);
@@ -99,6 +116,7 @@ export function useAvatarEditor() {
       resetAvatarDraft();
       toast.success("Аватар обновлен.");
     } catch (error) {
+      setUser(user);
       toast.error(extractApiError(error, "Не удалось обновить аватар."));
     } finally {
       setIsAvatarSubmitting(false);

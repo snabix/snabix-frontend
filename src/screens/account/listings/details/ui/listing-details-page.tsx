@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, LoaderCircle, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, SearchX, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { ListingItem } from "@/src/entities/listing";
 import { deleteListing, showListing } from "@/src/features/listing/api";
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 type ListingDetailsPageProps = {
   listingId: string;
@@ -69,19 +71,16 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   };
 
   if (isLoading) {
-    return (
-      <div className="surface-card flex min-h-80 items-center justify-center gap-3 rounded-[30px] text-sm font-semibold text-[var(--text-muted)]">
-        <LoaderCircle className="animate-spin" size={18} />
-        Загружаем объявление
-      </div>
-    );
+    return <SkeletonPanel className="min-h-80" />;
   }
 
   if (listing === null) {
     return (
-      <div className="surface-card rounded-[30px] p-8 text-center text-[var(--brand-deep)]">
-        Объявление не найдено или недоступно.
-      </div>
+      <EmptyState
+        description="Возможно, объявление удалено, скрыто или у вас больше нет доступа к нему."
+        icon={SearchX}
+        title="Объявление не найдено"
+      />
     );
   }
 

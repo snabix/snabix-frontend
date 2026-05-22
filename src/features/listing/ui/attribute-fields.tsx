@@ -1,4 +1,3 @@
-import { LoaderCircle } from "lucide-react";
 import type { CategoryAttributeDefinition } from "@/src/entities/category";
 import type { ListingAttributeValue } from "@/src/entities/listing";
 import {
@@ -16,7 +15,9 @@ import {
 } from "@/src/features/listing/model/attribute-values";
 import { ListingFormSelect } from "@/src/features/listing/ui/listing-form-field";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
+import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Input } from "@/src/shared/ui/shadcn/input";
+import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type AttributeFieldsProps = {
   attributeValues: Record<string, ListingAttributeValue>;
@@ -41,14 +42,16 @@ export function AttributeFields({
   return (
     <div className="mt-6 grid gap-4">
       {isLoading ? (
-        <div className="flex min-h-40 items-center justify-center gap-3 rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] text-sm font-semibold text-[var(--text-muted)]">
-          <LoaderCircle className="animate-spin" size={18} />
-          Подготавливаем поля
+        <div className="grid min-h-40 gap-3 rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] p-5">
+          <Skeleton className="h-5 w-1/3" />
+          <Skeleton className="h-12" />
+          <Skeleton className="h-12" />
         </div>
       ) : attributesCount === 0 ? (
-        <div className="rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] p-5 text-sm leading-7 text-[var(--text-muted)]">
-          У этой категории пока нет характеристик. Объявление можно сохранить без них.
-        </div>
+        <EmptyState
+          description="Объявление можно сохранить без них. Когда администратор добавит характеристики, форма начнет показывать дополнительные поля."
+          title="У этой категории пока нет характеристик"
+        />
       ) : (
         groupedAttributes.map((group) => (
           <section className="grid gap-3" key={group.name}>

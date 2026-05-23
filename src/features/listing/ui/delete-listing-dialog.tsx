@@ -12,6 +12,7 @@ import {
 type DeleteListingDialogProps = {
   isDeleting: boolean;
   isOpen: boolean;
+  itemsCount?: number;
   listingTitle?: string | null;
   onConfirm: () => void;
   onOpenChange: (isOpen: boolean) => void;
@@ -20,10 +21,13 @@ type DeleteListingDialogProps = {
 export function DeleteListingDialog({
   isDeleting,
   isOpen,
+  itemsCount = 1,
   listingTitle,
   onConfirm,
   onOpenChange,
 }: DeleteListingDialogProps) {
+  const isBulkDelete = itemsCount > 1;
+
   return (
     <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent className="max-w-[520px]">
@@ -33,11 +37,15 @@ export function DeleteListingDialog({
           </div>
 
           <DialogTitle className="mt-4">
-            Удалить объявление?
+            {isBulkDelete ? "Удалить выбранные объявления?" : "Удалить объявление?"}
           </DialogTitle>
 
           <DialogDescription className="mt-2">
-            {listingTitle ? (
+            {isBulkDelete ? (
+              <>
+                Выбранные объявления ({itemsCount}) будут удалены без возможности восстановления.
+              </>
+            ) : listingTitle ? (
               <>
                 Объявление <span className="font-semibold text-[var(--brand-deep)]">&quot;{listingTitle}&quot;</span> будет удалено
                 без возможности восстановления.

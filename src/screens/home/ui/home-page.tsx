@@ -11,7 +11,6 @@ import { Button } from "@/src/shared/ui/shadcn/button";
 import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
-import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
 
 export function HomePage() {
   const [items, setItems] = useState<PublicListingItem[]>([]);
@@ -57,8 +56,7 @@ export function HomePage() {
   }, []);
 
   return (
-    <PublicLayout>
-      <main className="pb-12 pt-6">
+    <main className="pb-12 pt-6">
         <Container>
           <section className="surface-card relative overflow-hidden rounded-[34px] p-7 sm:p-10">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--brand)_16%,transparent),transparent_72%)]" />
@@ -182,7 +180,6 @@ export function HomePage() {
             )}
           </section>
         </Container>
-      </main>
-    </PublicLayout>
+    </main>
   );
 }

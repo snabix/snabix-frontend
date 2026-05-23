@@ -28,6 +28,12 @@ export type ListingItem = {
   contactName: string | null;
   contactPhone: string | null;
   contactEmail: string | null;
+  imageUrl?: string | null;
+  isFavorite?: boolean;
+  sellerRating?: number | null;
+  city?: string | null;
+  region?: string | null;
+  fullLocation?: string | null;
   viewsCount: number;
   isFeatured: boolean;
   rejectionReason: string | null;

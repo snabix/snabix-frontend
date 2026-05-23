@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { PackagePlus, Sparkles } from "lucide-react";
+import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
@@ -14,9 +14,14 @@ import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
+  const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedListingIds, setSelectedListingIds] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
-  const [listingToDelete, setListingToDelete] = useState<ListingItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<
+    { type: "single"; listing: ListingItem } | { type: "bulk" } | null
+  >(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,22 +53,70 @@ export function ListingsPage() {
   }, []);
 
   const handleDeleteConfirm = async () => {
-    if (listingToDelete === null) {
+    if (deleteTarget === null) {
       return;
     }
 
     try {
-      setDeletingListingId(listingToDelete.id);
-      await deleteListing(listingToDelete.id);
-      setListings((currentListings) => currentListings.filter((listing) => listing.id !== listingToDelete.id));
-      setListingToDelete(null);
-      toast.success("Объявление удалено.");
+      if (deleteTarget.type === "single") {
+        setDeletingListingId(deleteTarget.listing.id);
+        await deleteListing(deleteTarget.listing.id);
+        setListings((currentListings) => currentListings.filter((listing) => listing.id !== deleteTarget.listing.id));
+        setSelectedListingIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+
+          nextIds.delete(deleteTarget.listing.id);
+
+          return nextIds;
+        });
+        toast.success("Объявление удалено.");
+      } else {
+        const idsToDelete = Array.from(selectedListingIds);
+
+        setDeletingListingId("bulk");
+        await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
+        setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
+        setSelectedListingIds(new Set());
+        toast.success("Выбранные объявления удалены.");
+      }
+
+      setDeleteTarget(null);
     } catch (error) {
-      toast.error(extractApiError(error, "Не удалось удалить объявление."));
+      toast.error(extractApiError(error, "Не удалось удалить выбранные объявления."));
     } finally {
       setDeletingListingId(null);
     }
   };
+
+  const handleFavoriteToggle = (listingId: string) => {
+    setFavoriteListingIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (nextIds.has(listingId)) {
+        nextIds.delete(listingId);
+      } else {
+        nextIds.add(listingId);
+      }
+
+      return nextIds;
+    });
+  };
+
+  const handleSelectToggle = (listingId: string) => {
+    setSelectedListingIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (nextIds.has(listingId)) {
+        nextIds.delete(listingId);
+      } else {
+        nextIds.add(listingId);
+      }
+
+      return nextIds;
+    });
+  };
+
+  const selectedCount = selectedListingIds.size;
 
   return (
     <>
@@ -101,11 +154,54 @@ export function ListingsPage() {
                 Карточки объявлений
               </h2>
               <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                Сетка рассчитана на четыре карточки в ряд на больших экранах.
+                Переключайте компактную сетку и широкий список под текущий сценарий просмотра.
               </p>
             </div>
-            <div className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-              {listings.length} всего
+            <div className="flex flex-wrap items-center gap-3">
+              {selectedCount > 0 ? (
+                <Button
+                  disabled={deletingListingId !== null}
+                  onClick={() => setDeleteTarget({ type: "bulk" })}
+                  type="button"
+                  variant="destructive"
+                >
+                  <Trash2 size={16} />
+                  Удалить выбранные ({selectedCount})
+                </Button>
+              ) : null}
+              <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
+                <button
+                  aria-label="Показать объявления сеткой"
+                  className={[
+                    "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+                    viewMode === "grid"
+                      ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+                      : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+                  ].join(" ")}
+                  onClick={() => setViewMode("grid")}
+                  type="button"
+                >
+                  <LayoutGrid size={16} />
+                  Сетка
+                </button>
+                <button
+                  aria-label="Показать объявления списком"
+                  className={[
+                    "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+                    viewMode === "list"
+                      ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+                      : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+                  ].join(" ")}
+                  onClick={() => setViewMode("list")}
+                  type="button"
+                >
+                  <List size={16} />
+                  Список
+                </button>
+              </div>
+              <div className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
+                {listings.length} всего
+              </div>
             </div>
           </div>
 
@@ -124,13 +220,18 @@ export function ListingsPage() {
                 title="Объявлений пока нет"
               />
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
                 {listings.map((listing) => (
                   <ListingCard
-                    isDeleting={deletingListingId === listing.id}
+                    isFavorite={favoriteListingIds.has(listing.id)}
+                    isDeleting={deletingListingId === listing.id || (deletingListingId === "bulk" && selectedListingIds.has(listing.id))}
+                    isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
-                    onDelete={() => setListingToDelete(listing)}
+                    onFavoriteToggle={handleFavoriteToggle}
+                    onDelete={() => setDeleteTarget({ type: "single", listing })}
+                    onSelectToggle={handleSelectToggle}
+                    viewMode={viewMode}
                   />
                 ))}
               </div>
@@ -141,12 +242,13 @@ export function ListingsPage() {
 
       <DeleteListingDialog
         isDeleting={deletingListingId !== null}
-        isOpen={listingToDelete !== null}
-        listingTitle={listingToDelete?.title}
+        isOpen={deleteTarget !== null}
+        itemsCount={deleteTarget?.type === "bulk" ? selectedCount : 1}
+        listingTitle={deleteTarget?.type === "single" ? deleteTarget.listing.title : null}
         onConfirm={handleDeleteConfirm}
         onOpenChange={(isOpen) => {
           if (!isOpen && deletingListingId === null) {
-            setListingToDelete(null);
+            setDeleteTarget(null);
           }
         }}
       />

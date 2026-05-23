@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, MessageSquareText, Settings, Store, UserRound } from "lucide-react";
 import { getUserFullName, type User } from "@/src/entities/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import {
@@ -12,13 +14,20 @@ import {
 
 type HeaderUserMenuProps = {
   isPending: boolean;
-  onLogout: () => void;
+  onLogoutAction: () => void;
   user: User;
 };
 
+const userMenuItems = [
+  { href: "/account/profile", icon: UserRound, label: "Профиль" },
+  { href: "/account/listings", icon: Store, label: "Мои объявления" },
+  { href: "/account/reviews", icon: MessageSquareText, label: "Мои отзывы" },
+  { href: "/account/settings", icon: Settings, label: "Настройки" },
+];
+
 export function HeaderUserMenu({
   isPending,
-  onLogout,
+  onLogoutAction,
   user,
 }: HeaderUserMenuProps) {
   const userName = getUserFullName(user);
@@ -41,17 +50,19 @@ export function HeaderUserMenu({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <Link className="flex items-center gap-2" href="/account/profile">
-            <UserRound size={16} />
-            <span>Профиль</span>
-          </Link>
-        </DropdownMenuItem>
+        {userMenuItems.map(({ href, icon: Icon, label }) => (
+          <DropdownMenuItem asChild key={href}>
+            <Link className="flex items-center gap-2" href={href}>
+              <Icon size={16} />
+              <span>{label}</span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-[var(--danger)] focus:text-[var(--danger)]"
           disabled={isPending}
-          onClick={onLogout}
+          onClick={onLogoutAction}
         >
           <LogOut size={16} />
           <span>Выход</span>

@@ -1,22 +1,25 @@
 import Link from "next/link";
 import { Heart, MapPin, Star, Trash2 } from "lucide-react";
-import type { ListingItem } from "@/src/entities/listing/model/types";
+import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
 import { cn } from "@/src/shared/lib/utils";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 
 type ListingCardProps = {
+  detailsHref?: string;
   isFavorite?: boolean;
   isDeleting?: boolean;
   isSelected?: boolean;
-  listing: ListingItem;
+  listing: ListingItem | PublicListingItem;
   onFavoriteToggle?: (listingId: string) => void;
-  onDelete: (listingId: string) => void;
+  onDelete?: (listingId: string) => void;
   onSelectToggle?: (listingId: string) => void;
+  showStatus?: boolean;
   viewMode?: "grid" | "list";
 };
 
 export function ListingCard({
+  detailsHref,
   isFavorite,
   isDeleting = false,
   isSelected = false,
@@ -24,8 +27,10 @@ export function ListingCard({
   onFavoriteToggle,
   onDelete,
   onSelectToggle,
+  showStatus = true,
   viewMode = "grid",
 }: ListingCardProps) {
+  const href = detailsHref ?? `/account/listings/${listing.id}`;
   const favorite = isFavorite ?? listing.isFavorite ?? false;
   const formattedPrice = listing.price === null
     ? "Цена не указана"
@@ -78,20 +83,24 @@ export function ListingCard({
         />
       </button>
 
-      <label className="pointer-events-auto absolute left-4 top-4 z-30 grid size-11 cursor-pointer place-items-center rounded-full border border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] shadow-[var(--shadow-card)]">
-        <span className="sr-only">
-          {isSelected ? "Снять выбор объявления" : "Выбрать объявление"}
-        </span>
-        <Checkbox
-          checked={isSelected}
-          className="border-[color-mix(in_srgb,var(--surface)_82%,transparent)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)]"
-          onCheckedChange={() => onSelectToggle?.(listing.id)}
-        />
-      </label>
+      {onSelectToggle ? (
+        <label className="pointer-events-auto absolute left-4 top-4 z-30 grid size-11 cursor-pointer place-items-center rounded-full border border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] shadow-[var(--shadow-card)]">
+          <span className="sr-only">
+            {isSelected ? "Снять выбор объявления" : "Выбрать объявление"}
+          </span>
+          <Checkbox
+            checked={isSelected}
+            className="border-[color-mix(in_srgb,var(--surface)_82%,transparent)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)]"
+            onCheckedChange={() => onSelectToggle(listing.id)}
+          />
+        </label>
+      ) : null}
 
-      <div className="absolute bottom-4 left-4 rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
-        {listing.statusLabel}
-      </div>
+      {showStatus ? (
+        <div className="absolute bottom-4 left-4 rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
+          {listing.statusLabel}
+        </div>
+      ) : null}
     </div>
   );
 
@@ -106,7 +115,7 @@ export function ListingCard({
       <Link
         aria-label={`Открыть объявление ${listing.title}`}
         className="absolute inset-0 z-10"
-        href={`/account/listings/${listing.id}`}
+        href={href}
       />
       {imageBlock}
 
@@ -147,18 +156,20 @@ export function ListingCard({
           </div>
         </div>
 
-        <div className="pointer-events-auto relative z-30 mt-auto flex justify-end">
-          <Button
-            aria-label={`Удалить объявление ${listing.title}`}
-            disabled={isDeleting}
-            onClick={() => onDelete(listing.id)}
-            size="icon"
-            type="button"
-            variant="destructive"
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
+        {onDelete ? (
+          <div className="pointer-events-auto relative z-30 mt-auto flex justify-end">
+            <Button
+              aria-label={`Удалить объявление ${listing.title}`}
+              disabled={isDeleting}
+              onClick={() => onDelete(listing.id)}
+              size="icon"
+              type="button"
+              variant="destructive"
+            >
+              <Trash2 size={16} />
+            </Button>
+          </div>
+        ) : null}
       </div>
     </article>
   );

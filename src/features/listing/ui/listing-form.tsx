@@ -1,12 +1,13 @@
 import { Settings2 } from "lucide-react";
 import type { ListingItem } from "@/src/entities/listing";
-import type { CreateListingPayload } from "@/src/features/listing/api";
+import type { CreateListingPayload, UpdateListingPayload } from "@/src/features/listing/api";
 import { LISTING_TYPE_PRODUCT } from "@/src/features/listing/model/listing-form-constants";
 import { conditionOptions } from "@/src/features/listing/model/listing-form-options";
 import { useListingFormState } from "@/src/features/listing/model/use-listing-form-state";
 import { AttributeFields } from "@/src/features/listing/ui/attribute-fields";
 import { CategoryPicker } from "@/src/features/listing/ui/category-picker";
 import { ListingFormField, ListingFormSelect } from "@/src/features/listing/ui/listing-form-field";
+import { ListingImageUploader } from "@/src/features/listing/ui/listing-image-uploader";
 import { ListingSubmitActions } from "@/src/features/listing/ui/listing-submit-actions";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
@@ -14,7 +15,7 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 type ListingFormProps = {
   initialListing?: ListingItem;
   mode: "create" | "edit";
-  onSubmit: (payload: CreateListingPayload) => Promise<ListingItem>;
+  onSubmit: (payload: CreateListingPayload | UpdateListingPayload) => Promise<ListingItem>;
 };
 
 export function ListingForm({
@@ -37,6 +38,7 @@ export function ListingForm({
     handleMultiselectChange,
     handleRootChange,
     handleTypeChange,
+    imageFiles,
     isFormBusy,
     isLoadingAttributes,
     isLoadingBranch,
@@ -44,6 +46,7 @@ export function ListingForm({
     isNegotiable,
     isSubmitting,
     setCondition,
+    setImageFiles,
     setIsNegotiable,
     submitForm,
   } = useListingFormState({ initialListing, mode, onSubmit });
@@ -97,6 +100,12 @@ export function ListingForm({
               {...register("description")}
             />
           </ListingFormField>
+
+          <ListingImageUploader
+            files={imageFiles}
+            isDisabled={isFormBusy}
+            onChange={setImageFiles}
+          />
 
           <div className="grid gap-4 md:grid-cols-2">
             <ListingFormField error={errors.price?.message} label="Цена">

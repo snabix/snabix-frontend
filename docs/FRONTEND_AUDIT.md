@@ -101,11 +101,11 @@
 
 Что исправить:
 
-- [ ] `listPublicListings()` и `listListings()` все еще ожидают `ApiDataResponse<...[]>`, хотя backend уже возвращает `data.items` и `data.meta`. Сейчас это ключевой интеграционный риск.
-- [ ] `UpdateListingPayload` пока alias на `CreateListingPayload`; нужно выделить отдельный тип без `saveAsDraft`.
-- [ ] Нет frontend API/action для `POST /api/v1/listings/{listingId}/submit-for-review`.
-- [ ] Нет UI для публикации черновика после редактирования.
-- [ ] Нет UI пагинации и фильтров в `/account/listings`.
+- [x] `listPublicListings()` и `listListings()` все еще ожидают `ApiDataResponse<...[]>`, хотя backend уже возвращает `data.items` и `data.meta`. Сейчас это ключевой интеграционный риск.
+- [x] `UpdateListingPayload` пока alias на `CreateListingPayload`; нужно выделить отдельный тип без `saveAsDraft`.
+- [x] Нет frontend API/action для `POST /api/v1/listings/{listingId}/submit-for-review`.
+- [x] Нет UI для публикации черновика после редактирования.
+- [x] Нет UI пагинации и фильтров в `/account/listings`.
 - [ ] Нет media upload для объявления.
 - [x] Delete использует `window.confirm`; лучше заменить на shadcn dialog с понятным destructive state.
 - [ ] После сохранения форма пушит на `/account/listings/{id}`; маршрут есть, но нужно проверить детали страницы в браузере с реальным API.
@@ -165,13 +165,13 @@
 
 ## Обновленный План
 
-1. [ ] Исправить listing API adapters под backend `items/meta`.
-2. [ ] Выделить `UpdateListingPayload` без `saveAsDraft`.
-3. [ ] Добавить frontend action/UI для `submit-for-review`.
+1. [x] Исправить listing API adapters под backend `items/meta`.
+2. [x] Выделить `UpdateListingPayload` без `saveAsDraft`.
+3. [x] Добавить frontend action/UI для `submit-for-review`.
 4. [x] Вынести `src/app/account/layout.tsx` и убрать ручное оборачивание страниц в `AccountLayout`.
 5. [x] Разделить `ProfilePage` на feature hooks и маленькие компоненты.
 6. [x] Подключить change password endpoint.
-7. [ ] Добавить pagination/filter UI для account listings.
+7. [x] Добавить pagination/filter UI для account listings.
 8. [ ] Ввести отдельную директорию frontend tests.
 9. [ ] Добавить browser/E2E smoke для auth/profile/listings.
 

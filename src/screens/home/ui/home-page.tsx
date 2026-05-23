@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BadgeCheck, PackageOpen, RefreshCw } from "lucide-react";
+import { PackageOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import type { PublicListingItem } from "@/src/entities/listing";
+import { ListingCard, type PublicListingItem } from "@/src/entities/listing";
 import { listPublicListings } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
@@ -15,6 +15,7 @@ import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 export function HomePage() {
   const [items, setItems] = useState<PublicListingItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,13 +25,13 @@ export function HomePage() {
       try {
         setIsLoading(true);
         setErrorMessage(null);
-        const listings = await listPublicListings();
+        const listings = await listPublicListings({ perPage: 24 });
 
         if (!isMounted) {
           return;
         }
 
-        setItems(listings);
+        setItems(listings.items);
       } catch (error) {
         if (!isMounted) {
           return;
@@ -54,6 +55,20 @@ export function HomePage() {
       isMounted = false;
     };
   }, []);
+
+  const handleFavoriteToggle = (listingId: string) => {
+    setFavoriteListingIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (nextIds.has(listingId)) {
+        nextIds.delete(listingId);
+      } else {
+        nextIds.add(listingId);
+      }
+
+      return nextIds;
+    });
+  };
 
   return (
     <main className="pb-12 pt-6">
@@ -130,51 +145,16 @@ export function HomePage() {
                 title="Пока нет опубликованных объявлений"
               />
             ) : (
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {items.map((item) => (
-                  <article className="surface-card rounded-[28px] p-5" key={item.id}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          <span className="rounded-full bg-[color-mix(in_srgb,var(--brand)_12%,transparent)] px-3 py-1 text-xs font-semibold text-[var(--brand-deep)]">
-                            {item.typeLabel}
-                          </span>
-                          {item.isFeatured ? (
-                            <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] px-3 py-1 text-xs font-semibold text-[var(--brand-deep)]">
-                              Рекомендуем
-                            </span>
-                          ) : null}
-                        </div>
-
-                        <h3 className="font-heading text-2xl font-extrabold text-[var(--brand-deep)]">
-                          {item.title}
-                        </h3>
-                      </div>
-
-                      <div className="rounded-full bg-[color-mix(in_srgb,var(--surface)_84%,var(--background))] p-2 text-[var(--accent)]">
-                        <BadgeCheck className="h-5 w-5" />
-                      </div>
-                    </div>
-
-                    <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-                      {item.description}
-                    </p>
-
-                    <div className="mt-5 space-y-2 text-sm text-[var(--brand-deep)]">
-                      <div>
-                        <span className="font-semibold">Категория:</span>{" "}
-                        {item.category?.name ?? "—"}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Цена:</span>{" "}
-                        {item.price !== null ? `${new Intl.NumberFormat("ru-RU").format(item.price)} ${item.currency ?? ""}` : "По договорённости"}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Просмотры:</span>{" "}
-                        {item.viewsCount}
-                      </div>
-                    </div>
-                  </article>
+                  <ListingCard
+                    detailsHref={`/account/listings/${item.id}`}
+                    isFavorite={favoriteListingIds.has(item.id)}
+                    key={item.id}
+                    listing={item}
+                    onFavoriteToggle={handleFavoriteToggle}
+                    showStatus={false}
+                  />
                 ))}
               </div>
             )}

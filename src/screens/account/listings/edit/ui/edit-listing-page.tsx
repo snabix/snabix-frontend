@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SearchX } from "lucide-react";
 import { toast } from "sonner";
 import type { ListingItem } from "@/src/entities/listing";
-import { showListing, updateListing } from "@/src/features/listing/api";
+import { showListing, updateListing, type UpdateListingPayload } from "@/src/features/listing/api";
 import { ListingForm } from "@/src/features/listing/ui/listing-form";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { EmptyState } from "@/src/shared/ui/empty-state";
@@ -63,7 +63,7 @@ export function EditListingPage({ listingId }: EditListingPageProps) {
     <ListingForm
       initialListing={listing}
       mode="edit"
-      onSubmit={(payload) => updateListing(listing.id, payload)}
+      onSubmit={(payload) => updateListing(listing.id, payload as UpdateListingPayload)}
     />
   );
 }

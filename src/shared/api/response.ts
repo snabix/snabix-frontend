@@ -27,3 +27,9 @@ export function unwrapApiItems<TItem>(
 ): TItem[] {
   return response.data.items;
 }
+
+export function unwrapApiPagination<TItem>(
+  response: ApiDataResponse<ApiPaginatedData<TItem>>,
+): ApiPaginatedData<TItem> {
+  return response.data;
+}

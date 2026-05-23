@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
-import type { CreateListingPayload } from "@/src/features/listing/api";
+import type { CreateListingPayload, UpdateListingPayload } from "@/src/features/listing/api";
 import {
   buildAttributePayload,
   groupAttributesByName,
@@ -28,7 +28,7 @@ import { extractApiError } from "@/src/shared/lib/extract-api-error";
 type UseListingFormStateOptions = {
   initialListing?: ListingItem;
   mode: "create" | "edit";
-  onSubmit: (payload: CreateListingPayload) => Promise<ListingItem>;
+  onSubmit: (payload: CreateListingPayload | UpdateListingPayload) => Promise<ListingItem>;
 };
 
 export function useListingFormState({
@@ -56,6 +56,7 @@ export function useListingFormState({
     () => valuesFromListing(initialListing),
   );
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -236,7 +237,7 @@ export function useListingFormState({
       return;
     }
 
-    const payload: CreateListingPayload = {
+    const payload: CreateListingPayload | UpdateListingPayload = {
       categoryId: effectiveSelectedCategoryId,
       type: activeType,
       condition: effectiveCondition,
@@ -280,6 +281,7 @@ export function useListingFormState({
     handleMultiselectChange,
     handleRootChange,
     handleTypeChange,
+    imageFiles,
     isFormBusy,
     isLoadingAttributes,
     isLoadingBranch,
@@ -287,6 +289,7 @@ export function useListingFormState({
     isNegotiable,
     isSubmitting,
     setCondition,
+    setImageFiles,
     setIsNegotiable,
     submitForm,
   };

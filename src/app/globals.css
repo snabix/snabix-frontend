@@ -69,6 +69,27 @@ html {
     scroll-behavior: smooth;
 }
 
+@keyframes listing-actions-dropdown-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.listing-actions-dropdown {
+    transform-origin: top right;
+    will-change: opacity, transform;
+}
+
+.listing-actions-dropdown[data-state="open"] {
+    animation: listing-actions-dropdown-in 170ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 body {
     background: var(--background);
     color: var(--foreground);

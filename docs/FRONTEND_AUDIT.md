@@ -106,7 +106,7 @@
 - [x] Нет frontend API/action для `POST /api/v1/listings/{listingId}/submit-for-review`.
 - [x] Нет UI для публикации черновика после редактирования.
 - [x] Нет UI пагинации и фильтров в `/account/listings`.
-- [ ] Нет media upload для объявления.
+- [x] Нет media upload для объявления.
 - [x] Delete использует `window.confirm`; лучше заменить на shadcn dialog с понятным destructive state.
 - [ ] После сохранения форма пушит на `/account/listings/{id}`; маршрут есть, но нужно проверить детали страницы в браузере с реальным API.
 

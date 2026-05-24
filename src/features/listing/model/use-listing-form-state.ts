@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
-import type { CreateListingPayload, UpdateListingPayload } from "@/src/features/listing/api";
+import { uploadListingMedia, type CreateListingPayload, type UpdateListingPayload } from "@/src/features/listing/api";
 import {
   buildAttributePayload,
   groupAttributesByName,
@@ -253,6 +253,10 @@ export function useListingFormState({
     try {
       setIsSubmitting(true);
       const savedListing = await onSubmit(payload);
+
+      if (imageFiles.length > 0) {
+        await uploadListingMedia(savedListing.id, imageFiles);
+      }
 
       toast.success(mode === "create"
         ? (saveAsDraft ? "Черновик объявления сохранён." : "Объявление отправлено на проверку.")

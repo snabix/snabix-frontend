@@ -195,42 +195,45 @@ export function ListingsPage() {
                 Переключайте компактную сетку и широкий список под текущий сценарий просмотра.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <select
-                aria-label="Фильтр по статусу объявления"
-                className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-                onChange={(event) => handleStatusFilterChange(event.target.value)}
-                value={statusFilter}
-              >
-                {listingStatusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                aria-label="Фильтр по типу объявления"
-                className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-                onChange={(event) => handleTypeFilterChange(event.target.value)}
-                value={typeFilter}
-              >
-                {listingTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {selectedCount > 0 ? (
-                <Button
-                  disabled={deletingListingId !== null}
-                  onClick={() => setDeleteTarget("bulk")}
-                  type="button"
-                  variant="destructive"
+            <div className="flex w-full flex-wrap items-center justify-between gap-3 lg:w-auto">
+              <div className="flex flex-wrap items-center gap-3">
+                <select
+                  aria-label="Фильтр по статусу объявления"
+                  className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+                  onChange={(event) => handleStatusFilterChange(event.target.value)}
+                  value={statusFilter}
                 >
-                  <Trash2 size={16} />
-                  Удалить выбранные ({selectedCount})
-                </Button>
-              ) : null}
+                  {listingStatusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  aria-label="Фильтр по типу объявления"
+                  className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+                  onChange={(event) => handleTypeFilterChange(event.target.value)}
+                  value={typeFilter}
+                >
+                  {listingTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {selectedCount > 0 ? (
+                  <Button
+                    disabled={deletingListingId !== null}
+                    onClick={() => setDeleteTarget("bulk")}
+                    type="button"
+                    variant="destructive"
+                  >
+                    <Trash2 size={16} />
+                    Удалить выбранные ({selectedCount})
+                  </Button>
+                ) : null}
+              </div>
+
               <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
                 <button
                   aria-label="Показать объявления сеткой"
@@ -260,9 +263,6 @@ export function ListingsPage() {
                   <List size={16} />
                   Список
                 </button>
-              </div>
-              <div className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-                {paginationMeta.total} всего
               </div>
             </div>
           </div>

@@ -1,180 +1,179 @@
 # Frontend Audit
 
-Дата повторного аудита: 2026-05-20
+Дата аудита: 2026-05-24
 
-Контекст продукта: Snabix - marketplace-платформа для товаров и услуг. Frontend должен быть понятным публичным каталогом, аккуратным личным кабинетом и безопасным SPA-клиентом для backend API.
+Контекст: Snabix frontend - Next.js 16 App Router marketplace UI для публичных страниц, авторизации, личного кабинета, профиля, объявлений, категорий и будущего каталога. Архитектура следует Feature-Sliced Design: `app -> screens -> widgets -> features -> entities -> shared`.
 
 ## Проверка
 
-- [x] Повторно просмотрены `AGENTS.md`, `package.json`, App Router routes, FSD-слои, auth/session, categories, listings, profile, shared API.
-- [x] Проверено, что проект перешел с Ant Design на shadcn/Radix-based компоненты.
-- [x] Проверены frontend API adapters относительно текущих backend endpoints.
-- [x] Проверены unit tests, lint и production build.
-- [ ] Нужна браузерная проверка через запущенный frontend: mobile header, profile avatar flow, create/edit listing.
-- [ ] Нужны E2E smoke tests для основных user journeys.
+- [x] Изучены `AGENTS.md`, `package.json`, App Router routes, `src/app`, `src/screens`, `src/widgets`, `src/features`, `src/entities`, `src/shared`.
+- [x] Проверены API adapters, auth/session flow, category store, listing forms, media upload, profile/avatar, theme/UI.
+- [x] Выполнен `npm run lint`.
+- [x] Выполнен `npm run test`: `14 passed`, `42 tests`.
+- [x] Выполнен `npm run build`.
 
-## Результаты Команд
+## Реализовано
 
-- `npm run lint` прошел.
-- `npm run test` прошел: 14 файлов, 41 тест.
-- `npm run build` прошел.
+- [x] Next.js App Router с route groups для auth.
+- [x] FSD-структура в целом соблюдается.
+- [x] Глобальный публичный layout с Header/Footer.
+- [x] Account layout через `src/app/account/layout.tsx`.
+- [x] AuthGuard для account routes.
+- [x] Cookie/Sanctum axios client с CSRF-cookie перед unsafe methods.
+- [x] Единый flow для `401/419`: очистка local session state и redirect на sign-in для account routes.
+- [x] Sign in, sign up, forgot password, reset password UI.
+- [x] Change password form реализована и покрыта тестом.
+- [x] User profile, profile edit dialog, email verification dialog.
+- [x] Avatar viewer/editor/upload flow покрыт тестами.
+- [x] Profile addresses подключены к backend regions/cities.
+- [x] Category Zustand cache для roots, branch и category attributes.
+- [x] Listing create/edit form использует zod/react-hook-form.
+- [x] Listing form использует category store вместо локального дублирования загрузки.
+- [x] Attribute values используют string keys.
+- [x] Money parsing ограничен целыми числами.
+- [x] Create/update listing payloads разделены.
+- [x] Submit-for-review action подключен.
+- [x] Listing list adapters работают с `data.items` и `data.meta`.
+- [x] Account listings имеют фильтры, пагинацию, grid/list view, bulk delete.
+- [x] Listing media upload подключен к форме.
+- [x] Listing cards показывают gallery controls для нескольких изображений.
+- [x] Listing details page имеет gallery, breadcrumbs, actions dropdown.
+- [x] Public home показывает публичные объявления без private fields.
+- [x] Public home имеет фильтры `category/type/minPrice/maxPrice/sort` и pagination для публичной витрины.
+- [x] shadcn/Radix используется как основной UI-kit.
+- [x] Ant Design зависимости удалены из `package.json`.
+- [x] Theme support реализован через CSS variables и `next-themes`.
+- [x] EmptyState и Skeleton shared components используются в ключевых местах.
 
 ## Архитектура
 
-Текущая структура близка к FSD:
+### Сильные стороны
 
-- `src/app` - App Router, route-level composition.
-- `src/screens` - композиция страниц.
-- `src/widgets` - крупные layout-блоки.
-- `src/features` - пользовательские действия: auth, listing, profile.
-- `src/entities` - бизнес-сущности: user, category, listing.
-- `src/shared` - API-клиент, UI, config, utils.
+- [x] `src/app` в основном отвечает за routing/layout, а не хранит всю page logic.
+- [x] `src/screens` собирает страницы и держит крупную композицию.
+- [x] `src/features` содержит пользовательские действия: auth, listing, profile.
+- [x] `src/entities` хранит user/category/listing/location модели и API.
+- [x] `src/shared` содержит api client, ui-kit, config, utils.
+- [x] API adapters отделены от UI и используют unwrap helpers.
+- [x] Zustand stores используются точечно: user session и category cache.
+- [x] Большая profile логика уже частично вынесена в hooks.
+- [x] Listing form разбит на model/ui части.
 
-Что хорошо:
+### Риски и нарушения
 
-- [x] App Router почти не содержит бизнес-логики.
-- [x] Auth/session flow вынесен в feature layer.
-- [x] Category cache хранится в Zustand и используется формой объявления.
-- [x] Listing form разбита на hook/model и UI-компоненты.
-- [x] Zod/react-hook-form используется в listing и profile/auth формах.
-- [x] API-клиент централизован в `shared/api`.
-- [x] Анти-паттерн Ant Design зависимости устранен: в `package.json` нет `antd` и `@ant-design/nextjs-registry`.
+- [ ] В `src/app/globals.css` остались `.ant-*` классы после миграции с Ant Design. Это не ломает UI, но засоряет дизайн-систему и может вводить в заблуждение.
+- [ ] Tests лежат рядом с исходниками. Это допустимо, но команда ранее хотела отдельную директорию tests; нужно принять единый стандарт.
+- [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
+- [ ] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
+- [ ] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
+- [ ] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
+- [ ] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
+- [ ] Нет contract tests, которые защищают frontend adapters от изменения backend DTO.
+- [ ] Нет E2E smoke для auth/profile/listings в браузере.
+- [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
+- [ ] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
+- [ ] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
+- [ ] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
+- [ ] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
 
-Что рисково:
-
-- [x] В `src/app/account` нет общего `layout.tsx`; каждая account page вручную оборачивает контент в `AccountLayout`. Это работает, но легко забыть guard/layout на новой странице.
-- [x] `AccountLayout` содержит `AuthGuard` только вокруг `children`, но Header рендерится до проверки сессии. Это нормально для UX, но приватные данные в Header должны оставаться защищенными store-состоянием.
-- [x] Некоторые feature imports идут глубоко из внутренних путей (`features/profile/avatar/lib/...`). Для FSD лучше добавить публичные index-файлы на границах slice.
-- [x] Profile page содержит много интерактивной логики: форма, email verification, avatar viewer/editor, cooldown. Ее стоит разделить на feature hooks/components.
-- [ ] Tests лежат рядом с исходниками. Это допустимо, но пользователь хотел отдельную `tests` директорию для frontend: нужно принять правило и перенести unit/integration tests централизованно.
-
-## API Интеграция
+## API И Контракты
 
 ### Auth
 
-- [x] `sign-in`, `sign-up`, `forgot-password`, `reset-password`, `logout`, `me`, `resend verification`, `verify code` подключены.
-- [x] Axios использует `withCredentials`, `withXSRFToken` и предварительный `/sanctum/csrf-cookie` для unsafe methods.
-- [x] `401/419` очищают cookie-session state и отправляют auth event.
-- [x] `AuthGuard` редиректит account routes на `/sign-in?redirectTo=...`.
-- [x] Registration UX не зависит от автоматического логина после sign-up.
+- [x] `sign-in` подключен.
+- [x] `sign-up` не зависит от auto-login после регистрации.
+- [x] `forgot-password` подключен.
+- [x] `reset-password` скрывает token от пользователя.
+- [x] `change-password` подключен.
+- [x] `me` hydrate flow есть.
+- [x] `401/419` обрабатываются единым событием.
 
-Что добавить:
-
-- [x] Подключить `POST /api/v1/auth/change-password` к странице безопасности/профиля.
-- [x] Добавить UI для session expiration banner/toast в едином месте, если backend возвращает `401/419`.
-- [x] Добавить integration tests sign-in -> me -> account redirect.
-- [x] Добавить E2E smoke для forgot/reset password.
+Задачи:
+- [ ] Добавить E2E smoke `sign-in -> me -> account redirect`.
+- [ ] Добавить E2E smoke forgot/reset password.
+- [ ] Документировать пользовательский UX для истекшей сессии без технического текста.
 
 ### Profile
 
-- [x] Profile API и avatar upload вынесены в `features/profile`.
-- [x] Avatar upload проверяет размер и тип файла на клиенте.
-- [x] Profile edit вынесен в dialog, а просмотр профиля отделен от редактирования.
-- [x] Email verification dialog учитывает cooldown.
+- [x] Profile data view/edit dialog.
+- [x] Avatar view/upload/editor.
+- [x] Addresses section с region/city.
+- [x] Change password form.
 
-Что добавить:
-
-- [x] Разделить `ProfilePage` на `useProfileEditor`, `useAvatarEditor`, `useEmailVerification` и маленькие UI-компоненты.
-- [x] Добавить tests на avatar editor: scale/offset/file type/max size.
-- [x] Добавить optimistic/rollback strategy для профиля и аватара.
-- [x] Убрать hardcoded region/city, когда backend начнет отдавать location fields.
+Задачи:
+- [ ] Добавить optimistic/rollback strategy для profile update.
+- [ ] Добавить browser tests на avatar viewer/editor close/upload.
+- [ ] Улучшить empty/loading states addresses.
 
 ### Categories
 
-- [x] Root categories и branch загружаются.
-- [x] Zustand cache для categories и category attributes есть.
-- [x] Listing form учитывает `placeholder`, `helpText`, `defaultValue`, `groupName`, `showInCard`.
+- [x] Root categories загружаются через store.
+- [x] Branch cache есть.
+- [x] Category attributes cache есть.
+- [x] `placeholder`, `helpText`, `defaultValue`, `groupName`, `showInCard` частично используются.
 
-Что добавить:
-
-- [ ] Реализовать frontend dependency rules: поле B показывается только если поле A имеет нужное значение.
-- [ ] Добавить UI для grouped sections с collapse/summary при большом количестве характеристик.
-- [ ] Добавить graceful fallback для недоступного category API в header catalog.
-- [ ] Добавить tests для category attribute cache invalidation.
+Задачи:
+- [ ] Реализовать `/categories` catalog page.
+- [ ] Реализовать category branch page или category drill-down UI.
+- [ ] Применить `dependencyRules` в listing form.
+- [ ] Добавить tests на conditional attribute visibility.
 
 ### Listings
 
-- [x] Create listing соответствует backend behavior: `pending_review` или `saveAsDraft`.
-- [x] Public listing type отделен от private listing type.
-- [x] Money parsing валидирует целые числа без копеек.
-- [x] Attribute values нормализованы через string keys.
+- [x] Create listing.
+- [x] Edit listing.
+- [x] Show own listing.
+- [x] List owned listings с pagination/filter UI.
+- [x] Bulk delete через checkbox.
+- [x] Submit draft for review.
+- [x] Upload listing images.
+- [x] Public listing cards.
+- [x] Listing image carousel в cards и details.
 
-Что исправить:
-
-- [x] `listPublicListings()` и `listListings()` все еще ожидают `ApiDataResponse<...[]>`, хотя backend уже возвращает `data.items` и `data.meta`. Сейчас это ключевой интеграционный риск.
-- [x] `UpdateListingPayload` пока alias на `CreateListingPayload`; нужно выделить отдельный тип без `saveAsDraft`.
-- [x] Нет frontend API/action для `POST /api/v1/listings/{listingId}/submit-for-review`.
-- [x] Нет UI для публикации черновика после редактирования.
-- [x] Нет UI пагинации и фильтров в `/account/listings`.
-- [x] Нет media upload для объявления.
-- [x] Delete использует `window.confirm`; лучше заменить на shadcn dialog с понятным destructive state.
-- [ ] После сохранения форма пушит на `/account/listings/{id}`; маршрут есть, но нужно проверить детали страницы в браузере с реальным API.
-
-## UI/UX
-
-Что хорошо:
-
-- [x] Палитра переведена на OAT `#FFF0E1` и INDIGO `#C8C3FF`.
-- [x] Есть единый градиентный background и CSS variables.
-- [x] Header/Footer/PublicLayout разделены.
-- [x] Главная страница имеет hero, about, carousel и дополнительные секции.
-- [x] 404 страница реализована через `not-found.tsx`.
-
-Что добавить:
-
-- [x] Проверить contrast всех кнопок и badge в dark theme после смены палитры.
-- [x] У унифицированных empty states должен быть shared component, а не локальная верстка в каждой странице.
-- [x] Добавить skeleton вместо простых loader-блоков на profile/listings/categories.
-- [x] Account sidebar должен стать layout-level компонентом через `src/app/account/layout.tsx`.
-- [ ] Mobile drawer/sidebar нужно проверить в браузере, потому что сейчас sidebar скрыт на `lg` и нет явного mobile account navigation в `AccountLayout`.
-- [ ] Главная страница пока больше brand/landing, чем marketplace entry point. Следующий шаг: поиск, быстрые категории, trust badges, карточки объявлений.
-
-## Тестирование
-
-Текущее покрытие:
-
-- [x] Env config tests.
-- [x] Auth session tests.
-- [x] AuthGuard tests.
-- [x] SessionProvider tests.
-- [x] Category store tests.
-- [x] Listing attribute values tests.
-- [x] Listing money tests.
-- [x] Listing form schema tests.
-
-Что добавить:
-
-- [ ] Перенести frontend tests в отдельную директорию `tests` или `src/__tests__` после выбора правила. Я рекомендую `tests/unit`, `tests/integration`, `tests/e2e`, чтобы не смешивать product код и проверки.
-- [ ] Добавить tests для listing API adapters с `items/meta`.
+Задачи:
+- [ ] Реализовать публичную страницу `/listings`.
+- [x] Подключить public filters, когда backend отдаст category/type/price/sort.
+- [ ] Добавить frontend UI для existing media management: delete, reorder, set main image.
+- [ ] Добавить tests для listing API adapters: create/update/list/public/media.
 - [ ] Добавить integration test create listing draft/pending review.
-- [ ] Добавить integration test submit draft for review.
-- [x] Добавить tests для profile avatar upload/editor.
-- [ ] Добавить E2E smoke: sign-in, profile, create draft, submit for review.
+- [ ] Проверить edit flow: если media upload после save падает, нужен понятный partial success UX.
 
-## AGENTS.md
+## UI И Дизайн-Система
 
-Во время аудита frontend `AGENTS.md` был обновлен: раньше он содержал только предупреждение про Next.js и не фиксировал проектные правила.
+- [x] Палитра OAT `#FFF0E1` и INDIGO `#C8C3FF` вынесена в CSS variables.
+- [x] Dark/light theme есть.
+- [x] ThemeSwitcher используется в user menu.
+- [x] Shared Button/Input/Dialog/Checkbox/Avatar/Skeleton/EmptyState есть.
 
-Что зафиксировано:
+Задачи:
+- [ ] Удалить legacy `.ant-*` CSS из `globals.css`.
+- [ ] Проверить contrast всех кнопок, badges, destructive states в dark theme.
+- [ ] Унифицировать naming shared UI директорий.
+- [ ] Добавить shared pagination component вместо локальной верстки.
+- [ ] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.
+- [ ] Провести browser QA mobile header, footer, account sidebar, listing cards.
 
-- [x] Явно указана FSD-структура проекта.
-- [x] Зафиксировано, что UI-библиотека - shadcn/Radix, а Ant Design не используется.
-- [x] Зафиксировано правило API adapters: не доверять backend shape напрямую, использовать DTO unwrap/mappers.
-- [x] Зафиксированы обязательные frontend tests для новых forms/API adapters.
-- [x] Зафиксирована палитра OAT/INDIGO и запрет случайных цветов вне CSS variables.
+## Уязвимые Места
 
-## Обновленный План
+- [ ] Frontend доверяет ряду DTO напрямую через TypeScript types без runtime validation на границе API.
+- [ ] Cookie/session flow зависит от корректной backend/CORS/Sanctum production настройки.
+- [ ] File upload UX пока не имеет retry/rollback для частичного падения после создания объявления.
+- [ ] Public catalog отсутствует как полноценная пользовательская точка входа.
+- [ ] Нет E2E проверок критичных пользовательских сценариев.
 
-1. [x] Исправить listing API adapters под backend `items/meta`.
-2. [x] Выделить `UpdateListingPayload` без `saveAsDraft`.
-3. [x] Добавить frontend action/UI для `submit-for-review`.
-4. [x] Вынести `src/app/account/layout.tsx` и убрать ручное оборачивание страниц в `AccountLayout`.
-5. [x] Разделить `ProfilePage` на feature hooks и маленькие компоненты.
-6. [x] Подключить change password endpoint.
-7. [x] Добавить pagination/filter UI для account listings.
-8. [ ] Ввести отдельную директорию frontend tests.
-9. [ ] Добавить browser/E2E smoke для auth/profile/listings.
+## План Задач
+
+1. [ ] Удалить legacy Ant Design CSS из `globals.css`.
+2. [ ] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
+3. [ ] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
+4. [ ] Реализовать `/categories` страницу каталога.
+5. [ ] Применить `dependencyRules` в listing form.
+6. [ ] Добавить listing media management UI: delete, reorder, main image.
+7. [ ] Добавить partial success/rollback UX для listing save + media upload.
+8. [ ] Вынести tests в отдельную директорию или зафиксировать colocated-tests как официальный стандарт.
+9. [ ] Провести browser/E2E smoke для auth/profile/listings.
+10. [ ] Провести visual QA dark/light/mobile и исправить contrast.
 
 ## Вывод
 
-Frontend уже пережил важный перелом: ушел от Ant Design, получил FSD-структуру, shadcn/Radix UI, session guard и typed forms. Главный риск сейчас - не визуальный, а контрактный: backend уже развил listing API до пагинации и отдельных действий, а frontend adapters и UI еще не полностью догнали эти изменения. Это стоит закрыть первым, потому что именно объявления являются ядром marketplace.
+Frontend уже выглядит как полноценный продуктовый интерфейс, а не шаблон: FSD в целом соблюдается, auth/session flow зрелый, объявления и профиль связаны с backend. Главные риски теперь контрактные и продуктовые: нужен публичный каталог, фильтры, media management, dependency rules и E2E/contract tests, чтобы изменения backend не ломали UI незаметно.

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
 
 type ListingImageCarouselProps = {
@@ -19,18 +18,6 @@ export function ListingImageCarousel({
   const images = normalizeImages(imageUrl, imageUrls);
   const [activeIndex, setActiveIndex] = useState(0);
   const hasMultipleImages = images.length > 1;
-
-  const showPreviousImage = () => {
-    setActiveIndex((currentIndex) => (
-      currentIndex === 0 ? images.length - 1 : currentIndex - 1
-    ));
-  };
-
-  const showNextImage = () => {
-    setActiveIndex((currentIndex) => (
-      currentIndex === images.length - 1 ? 0 : currentIndex + 1
-    ));
-  };
 
   return (
     <div className="absolute inset-0">
@@ -69,32 +56,6 @@ export function ListingImageCarousel({
               />
             ))}
           </div>
-
-          <button
-            aria-label="Показать предыдущее фото"
-            className="pointer-events-auto absolute left-3 top-1/2 z-30 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[color-mix(in_srgb,var(--surface)_62%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_42%,transparent)] text-white opacity-0 shadow-[var(--shadow-card)] transition duration-200 hover:bg-[color-mix(in_srgb,var(--brand-deep)_58%,transparent)] group-hover:opacity-100"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              showPreviousImage();
-            }}
-            type="button"
-          >
-            <ChevronLeft size={18} strokeWidth={2.5} />
-          </button>
-
-          <button
-            aria-label="Показать следующее фото"
-            className="pointer-events-auto absolute right-3 top-1/2 z-30 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[color-mix(in_srgb,var(--surface)_62%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_42%,transparent)] text-white opacity-0 shadow-[var(--shadow-card)] transition duration-200 hover:bg-[color-mix(in_srgb,var(--brand-deep)_58%,transparent)] group-hover:opacity-100"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              showNextImage();
-            }}
-            type="button"
-          >
-            <ChevronRight size={18} strokeWidth={2.5} />
-          </button>
 
           <div className="absolute bottom-3 left-1/2 z-30 flex w-28 -translate-x-1/2 gap-1.5">
             {images.map((image, index) => (

@@ -1,22 +1,64 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { PackageOpen, RefreshCw } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { LayoutGrid, List, PackageOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useCategoryStore } from "@/src/entities/category";
 import { ListingCard, type PublicListingItem } from "@/src/entities/listing";
-import { listPublicListings } from "@/src/features/listing/api";
+import { listPublicListings, type ListPublicListingsParams } from "@/src/features/listing/api";
+import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
+import {
+  defaultPublicListingFilters,
+  PublicListingFilters,
+  type PublicListingFiltersState,
+} from "./public-listing-filters";
+
+const publicListingsPerPage = 24;
+
+const defaultPaginationMeta: ApiPaginationMeta = {
+  currentPage: 1,
+  from: null,
+  lastPage: 1,
+  perPage: publicListingsPerPage,
+  to: null,
+  total: 0,
+};
 
 export function HomePage() {
   const [items, setItems] = useState<PublicListingItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
+  const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
+  const [draftFilters, setDraftFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
+  const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [, startFiltersTransition] = useTransition();
+  const roots = useCategoryStore((state) => state.roots);
+  const rootsStatus = useCategoryStore((state) => state.rootsStatus);
+  const loadRoots = useCategoryStore((state) => state.loadRoots);
+
+  useEffect(() => {
+    void loadRoots();
+  }, [loadRoots]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      startFiltersTransition(() => {
+        setPage(1);
+        setAppliedFilters(draftFilters);
+      });
+    }, 450);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [draftFilters]);
 
   useEffect(() => {
     let isMounted = true;
@@ -25,13 +67,18 @@ export function HomePage() {
       try {
         setIsLoading(true);
         setErrorMessage(null);
-        const listings = await listPublicListings({ perPage: 24 });
+        const listings = await listPublicListings({
+          ...toPublicListingParams(appliedFilters),
+          page,
+          perPage: publicListingsPerPage,
+        });
 
         if (!isMounted) {
           return;
         }
 
         setItems(listings.items);
+        setPaginationMeta(listings.meta);
       } catch (error) {
         if (!isMounted) {
           return;
@@ -41,6 +88,7 @@ export function HomePage() {
 
         setErrorMessage(message);
         setItems([]);
+        setPaginationMeta(defaultPaginationMeta);
         toast.error(message);
       } finally {
         if (isMounted) {
@@ -54,7 +102,7 @@ export function HomePage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [appliedFilters, page]);
 
   const handleFavoriteToggle = (listingId: string) => {
     setFavoriteListingIds((currentIds) => {
@@ -68,6 +116,12 @@ export function HomePage() {
 
       return nextIds;
     });
+  };
+
+  const handleFiltersReset = () => {
+    setDraftFilters(defaultPublicListingFilters);
+    setAppliedFilters(defaultPublicListingFilters);
+    setPage(1);
   };
 
   return (
@@ -110,56 +164,147 @@ export function HomePage() {
           </section>
 
           <section className="mt-8">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-                  Последние публикации
-                </p>
-                <h2 className="font-heading mt-2 text-3xl font-extrabold text-[var(--brand-deep)]">
-                  Объявления товаров и услуг
-                </h2>
+            <div className="grid gap-5 xl:flex xl:items-start">
+              <PublicListingFilters
+                categories={roots}
+                filters={draftFilters}
+                isCategoriesLoading={rootsStatus === "loading"}
+                isLoading={isLoading}
+                onChange={setDraftFilters}
+                onReset={handleFiltersReset}
+              />
+
+              <div className="min-w-0 flex-1">
+                {isLoading ? (
+                  <SkeletonPanel className="min-h-[280px]" />
+                ) : errorMessage !== null ? (
+                  <EmptyState
+                    action={
+                      <Button
+                        className="rounded-[18px] px-5 py-6"
+                        onClick={() => window.location.reload()}
+                        type="button"
+                      >
+                        Обновить страницу
+                      </Button>
+                    }
+                    description="Мы не смогли получить объявления с сервера. Можно обновить страницу чуть позже или перейти в личный кабинет, если нужно продолжить работу с объявлениями."
+                    icon={RefreshCw}
+                    title="Витрина временно недоступна"
+                  />
+                ) : items.length === 0 ? (
+                  <EmptyState
+                    description="После запуска первых публикаций здесь появится живая витрина товаров и услуг."
+                    icon={PackageOpen}
+                    title="Пока нет опубликованных объявлений"
+                  />
+                ) : (
+                  <>
+                    <div className="mb-5 flex justify-end">
+                      <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
+                        <button
+                          aria-label="Показать объявления сеткой"
+                          className={[
+                            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+                            viewMode === "grid"
+                              ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+                              : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+                          ].join(" ")}
+                          onClick={() => setViewMode("grid")}
+                          type="button"
+                        >
+                          <LayoutGrid size={16} />
+                          Сетка
+                        </button>
+                        <button
+                          aria-label="Показать объявления списком"
+                          className={[
+                            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+                            viewMode === "list"
+                              ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+                              : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+                          ].join(" ")}
+                          onClick={() => setViewMode("list")}
+                          type="button"
+                        >
+                          <List size={16} />
+                          Список
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
+                      {items.map((item) => (
+                        <ListingCard
+                          detailsHref={`/account/listings/${item.id}`}
+                          isFavorite={favoriteListingIds.has(item.id)}
+                          key={item.id}
+                          listing={item}
+                          onFavoriteToggle={handleFavoriteToggle}
+                          showStatus={false}
+                          viewMode={viewMode}
+                        />
+                      ))}
+                    </div>
+
+                    {paginationMeta.lastPage > 1 ? (
+                      <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
+                        <p className="text-sm font-semibold text-[var(--text-muted)]">
+                          {paginationMeta.from ?? 0}-{paginationMeta.to ?? 0} из {paginationMeta.total}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            disabled={page <= 1 || isLoading}
+                            onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+                            type="button"
+                            variant="outline"
+                          >
+                            Назад
+                          </Button>
+                          <span className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
+                            {paginationMeta.currentPage} / {paginationMeta.lastPage}
+                          </span>
+                          <Button
+                            disabled={page >= paginationMeta.lastPage || isLoading}
+                            onClick={() => setPage((currentPage) => Math.min(currentPage + 1, paginationMeta.lastPage))}
+                            type="button"
+                            variant="outline"
+                          >
+                            Вперед
+                          </Button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </div>
             </div>
-
-            {isLoading ? (
-              <SkeletonPanel className="min-h-[280px]" />
-            ) : errorMessage !== null ? (
-              <EmptyState
-                action={
-                  <Button
-                    className="rounded-[18px] px-5 py-6"
-                    onClick={() => window.location.reload()}
-                    type="button"
-                  >
-                    Обновить страницу
-                  </Button>
-                }
-                description="Мы не смогли получить объявления с сервера. Можно обновить страницу чуть позже или перейти в личный кабинет, если нужно продолжить работу с объявлениями."
-                icon={RefreshCw}
-                title="Витрина временно недоступна"
-              />
-            ) : items.length === 0 ? (
-              <EmptyState
-                description="После запуска первых публикаций здесь появится живая витрина товаров и услуг."
-                icon={PackageOpen}
-                title="Пока нет опубликованных объявлений"
-              />
-            ) : (
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {items.map((item) => (
-                  <ListingCard
-                    detailsHref={`/account/listings/${item.id}`}
-                    isFavorite={favoriteListingIds.has(item.id)}
-                    key={item.id}
-                    listing={item}
-                    onFavoriteToggle={handleFavoriteToggle}
-                    showStatus={false}
-                  />
-                ))}
-              </div>
-            )}
           </section>
         </Container>
     </main>
   );
+}
+
+function toPublicListingParams(filters: PublicListingFiltersState): ListPublicListingsParams {
+  return {
+    categoryId: toOptionalNumber(filters.categoryId),
+    maxPrice: toOptionalNumber(filters.maxPrice),
+    minPrice: toOptionalNumber(filters.minPrice),
+    sort: filters.sort,
+    type: toOptionalNumber(filters.type),
+  };
+}
+
+function toOptionalNumber(value: string): number | undefined {
+  const normalizedValue = value.trim();
+
+  if (normalizedValue === "") {
+    return undefined;
+  }
+
+  const parsedValue = Number(normalizedValue);
+
+  return Number.isFinite(parsedValue) && parsedValue >= 0
+    ? parsedValue
+    : undefined;
 }

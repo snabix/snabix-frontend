@@ -40,11 +40,31 @@ export function ListingCard({
     ? "Нет рейтинга"
     : listing.sellerRating.toFixed(1);
 
+  const favoriteButton = (
+    <button
+      aria-label={favorite ? "Удалить объявление из избранного" : "Добавить объявление в избранное"}
+      className={cn(
+        "pointer-events-auto z-30 grid size-11 place-items-center rounded-full border shadow-[var(--shadow-card)] transition-colors",
+        favorite
+          ? "border-[color-mix(in_srgb,#ef4444_36%,transparent)] bg-[color-mix(in_srgb,#ef4444_14%,var(--surface))] text-[#ef4444]"
+          : "border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] text-white hover:bg-[color-mix(in_srgb,var(--brand-deep)_48%,transparent)]",
+      )}
+      onClick={() => onFavoriteToggle?.(listing.id)}
+      type="button"
+    >
+      <Heart
+        fill={favorite ? "currentColor" : "none"}
+        size={19}
+        strokeWidth={2.4}
+      />
+    </button>
+  );
+
   const imageBlock = (
     <div
       className={cn(
         "pointer-events-none relative overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]",
-        viewMode === "list" ? "min-h-44 md:min-h-full md:w-64 md:shrink-0" : "aspect-square min-h-56",
+        viewMode === "list" ? "min-h-[300px] md:min-h-full md:w-[420px] md:shrink-0" : "min-h-[340px]",
       )}
     >
       <ListingImageCarousel
@@ -54,23 +74,11 @@ export function ListingCard({
         viewMode={viewMode}
       />
 
-      <button
-        aria-label={favorite ? "Удалить объявление из избранного" : "Добавить объявление в избранное"}
-        className={cn(
-          "pointer-events-auto absolute right-4 top-4 z-30 grid size-11 place-items-center rounded-full border shadow-[var(--shadow-card)] transition-colors",
-          favorite
-            ? "border-[color-mix(in_srgb,#ef4444_36%,transparent)] bg-[color-mix(in_srgb,#ef4444_14%,var(--surface))] text-[#ef4444]"
-            : "border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] text-white hover:bg-[color-mix(in_srgb,var(--brand-deep)_48%,transparent)]",
-        )}
-        onClick={() => onFavoriteToggle?.(listing.id)}
-        type="button"
-      >
-        <Heart
-          fill={favorite ? "currentColor" : "none"}
-          size={19}
-          strokeWidth={2.4}
-        />
-      </button>
+      {viewMode === "grid" ? (
+        <div className="absolute right-4 top-4 z-30">
+          {favoriteButton}
+        </div>
+      ) : null}
 
       {onSelectToggle ? (
         <label className="pointer-events-auto absolute left-4 top-4 z-30 grid size-11 cursor-pointer place-items-center rounded-full border border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] shadow-[var(--shadow-card)]">
@@ -98,7 +106,7 @@ export function ListingCard({
       className={cn(
         "group relative overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] shadow-[var(--shadow-card)] transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]",
         isSelected && "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]",
-        viewMode === "list" ? "grid md:grid-cols-[auto_minmax(0,1fr)]" : "grid min-h-[360px]",
+        viewMode === "list" ? "grid min-h-[300px] md:grid-cols-[auto_minmax(0,1fr)]" : "grid h-[490px] grid-rows-[7fr_3fr]",
       )}
     >
       <Link
@@ -108,32 +116,32 @@ export function ListingCard({
       />
       {imageBlock}
 
-      <div className="pointer-events-none relative grid gap-4 p-5">
-        <div>
-          <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--brand-deep)]">
-              {listing.typeLabel}
-            </span>
-            {listing.category?.name ? (
-              <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)]">
-                {listing.category.name}
-              </span>
-            ) : null}
-          </div>
+      <div
+        className={cn(
+          "pointer-events-none relative px-3 pb-[5px] pt-3",
+          viewMode === "list"
+            ? "grid content-between gap-6 p-5 md:grid-cols-[minmax(0,1fr)_auto]"
+            : "grid gap-2",
+        )}
+      >
+        <div className="min-w-0">
+          {viewMode === "list" ? (
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              Детали товара
+            </p>
+          ) : null}
 
-          <h3 className="mt-4 line-clamp-2 text-xl font-black leading-tight text-[var(--brand-deep)]">
+          <h3 className="line-clamp-2 text-base font-black leading-tight text-[var(--brand-deep)]">
             {listing.title}
           </h3>
 
-          <p className="mt-2 text-lg font-black text-[var(--brand-deep)]">
-            {formattedPrice}
-          </p>
+          {viewMode === "grid" ? (
+            <p className="mt-1.5 text-base font-black text-[var(--brand-deep)]">
+              {formattedPrice}
+            </p>
+          ) : null}
 
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--text-muted)]">
-            {listing.description}
-          </p>
-
-          <div className="mt-3 grid gap-2 text-sm font-semibold text-[var(--text-muted)]">
+          <div className="mt-2 grid gap-1 text-xs font-semibold text-[var(--text-muted)]">
             <span className="inline-flex items-center gap-1.5">
               <MapPin size={16} />
               {viewMode === "list" ? fullLocation : city}
@@ -144,6 +152,15 @@ export function ListingCard({
             </span>
           </div>
         </div>
+
+        {viewMode === "list" ? (
+          <div className="pointer-events-none flex items-start justify-between gap-3 md:min-w-48 md:justify-end">
+            <p className="rounded-2xl bg-[color-mix(in_srgb,var(--accent-soft)_74%,transparent)] px-4 py-2 text-base font-black text-[var(--brand-deep)]">
+              {formattedPrice}
+            </p>
+            {favoriteButton}
+          </div>
+        ) : null}
       </div>
     </article>
   );

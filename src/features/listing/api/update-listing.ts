@@ -2,7 +2,7 @@ import type { ListingItem } from "@/src/entities/listing";
 import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 import type { CreateListingPayload } from "./create-listing";
 
-export type UpdateListingPayload = CreateListingPayload;
+export type UpdateListingPayload = Omit<CreateListingPayload, "saveAsDraft">;
 
 export async function updateListing(
   listingId: string,

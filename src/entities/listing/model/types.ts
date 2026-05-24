@@ -12,6 +12,8 @@ export type ListingItem = {
     parentId: number | null;
     name: string;
     slug: string;
+    fullName?: string | null;
+    path?: string | null;
   } | null;
   type: number;
   typeLabel: string;
@@ -29,10 +31,14 @@ export type ListingItem = {
   contactPhone: string | null;
   contactEmail: string | null;
   imageUrl?: string | null;
+  imageUrls?: string[];
   isFavorite?: boolean;
   sellerRating?: number | null;
   city?: string | null;
   region?: string | null;
+  street?: string | null;
+  house?: string | null;
+  addressLine?: string | null;
   fullLocation?: string | null;
   viewsCount: number;
   isFeatured: boolean;

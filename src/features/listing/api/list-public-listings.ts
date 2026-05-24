@@ -3,13 +3,31 @@ import {
   api,
   type ApiDataResponse,
   type ApiPaginatedData,
-  unwrapApiItems,
+  unwrapApiPagination,
 } from "@/src/shared/api";
 
-export async function listPublicListings(limit = 24): Promise<PublicListingItem[]> {
+export type ListPublicListingsParams = {
+  page?: number;
+  perPage?: number;
+  categoryId?: number;
+  type?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: "newest" | "oldest" | "price_asc" | "price_desc" | "popular";
+};
+
+export async function listPublicListings(params: ListPublicListingsParams = {}): Promise<ApiPaginatedData<PublicListingItem>> {
   const response = await api.get<ApiDataResponse<ApiPaginatedData<PublicListingItem>>>("/public/listings", {
-    params: { perPage: limit },
+    params: {
+      page: params.page ?? 1,
+      perPage: params.perPage ?? 24,
+      categoryId: params.categoryId,
+      type: params.type,
+      minPrice: params.minPrice,
+      maxPrice: params.maxPrice,
+      sort: params.sort,
+    },
   });
 
-  return unwrapApiItems(response.data);
+  return unwrapApiPagination(response.data);
 }

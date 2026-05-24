@@ -6,22 +6,53 @@ import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
+import {
+  LISTING_TYPE_PRODUCT,
+  LISTING_TYPE_SERVICE,
+} from "@/src/features/listing/model/listing-form-constants";
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
+import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
+const listingStatusOptions = [
+  { label: "Все статусы", value: "" },
+  { label: "Черновик", value: "1" },
+  { label: "На проверке", value: "2" },
+  { label: "Опубликовано", value: "3" },
+  { label: "Отклонено", value: "4" },
+  { label: "В архиве", value: "5" },
+];
+
+const listingTypeOptions = [
+  { label: "Все типы", value: "" },
+  { label: "Товары", value: String(LISTING_TYPE_PRODUCT) },
+  { label: "Услуги", value: String(LISTING_TYPE_SERVICE) },
+];
+
+const defaultPaginationMeta: ApiPaginationMeta = {
+  currentPage: 1,
+  from: null,
+  lastPage: 1,
+  perPage: 12,
+  to: null,
+  total: 0,
+};
+
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
+  const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedListingIds, setSelectedListingIds] = useState<Set<string>>(new Set());
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<
-    { type: "single"; listing: ListingItem } | { type: "bulk" } | null
-  >(null);
+  const [deleteTarget, setDeleteTarget] = useState<"bulk" | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,10 +60,17 @@ export function ListingsPage() {
     const loadListings = async () => {
       try {
         setIsLoading(true);
-        const items = await listListings();
+        const result = await listListings({
+          page,
+          perPage: paginationMeta.perPage,
+          status: statusFilter === "" ? null : Number(statusFilter),
+          type: typeFilter === "" ? null : Number(typeFilter),
+        });
 
         if (isMounted) {
-          setListings(items);
+          setListings(result.items);
+          setPaginationMeta(result.meta);
+          setSelectedListingIds(new Set());
         }
       } catch (error) {
         if (isMounted) {
@@ -50,7 +88,7 @@ export function ListingsPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [page, paginationMeta.perPage, statusFilter, typeFilter]);
 
   const handleDeleteConfirm = async () => {
     if (deleteTarget === null) {
@@ -58,27 +96,17 @@ export function ListingsPage() {
     }
 
     try {
-      if (deleteTarget.type === "single") {
-        setDeletingListingId(deleteTarget.listing.id);
-        await deleteListing(deleteTarget.listing.id);
-        setListings((currentListings) => currentListings.filter((listing) => listing.id !== deleteTarget.listing.id));
-        setSelectedListingIds((currentIds) => {
-          const nextIds = new Set(currentIds);
+      const idsToDelete = Array.from(selectedListingIds);
 
-          nextIds.delete(deleteTarget.listing.id);
-
-          return nextIds;
-        });
-        toast.success("Объявление удалено.");
-      } else {
-        const idsToDelete = Array.from(selectedListingIds);
-
-        setDeletingListingId("bulk");
-        await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
-        setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
-        setSelectedListingIds(new Set());
-        toast.success("Выбранные объявления удалены.");
-      }
+      setDeletingListingId("bulk");
+      await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
+      setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
+      setPaginationMeta((currentMeta) => ({
+        ...currentMeta,
+        total: Math.max(currentMeta.total - idsToDelete.length, 0),
+      }));
+      setSelectedListingIds(new Set());
+      toast.success("Выбранные объявления удалены.");
 
       setDeleteTarget(null);
     } catch (error) {
@@ -117,6 +145,16 @@ export function ListingsPage() {
   };
 
   const selectedCount = selectedListingIds.size;
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setPage(1);
+  };
+
+  const handleTypeFilterChange = (value: string) => {
+    setTypeFilter(value);
+    setPage(1);
+  };
 
   return (
     <>
@@ -157,18 +195,45 @@ export function ListingsPage() {
                 Переключайте компактную сетку и широкий список под текущий сценарий просмотра.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              {selectedCount > 0 ? (
-                <Button
-                  disabled={deletingListingId !== null}
-                  onClick={() => setDeleteTarget({ type: "bulk" })}
-                  type="button"
-                  variant="destructive"
+            <div className="flex w-full flex-wrap items-center justify-between gap-3 lg:w-auto">
+              <div className="flex flex-wrap items-center gap-3">
+                <select
+                  aria-label="Фильтр по статусу объявления"
+                  className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+                  onChange={(event) => handleStatusFilterChange(event.target.value)}
+                  value={statusFilter}
                 >
-                  <Trash2 size={16} />
-                  Удалить выбранные ({selectedCount})
-                </Button>
-              ) : null}
+                  {listingStatusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  aria-label="Фильтр по типу объявления"
+                  className="h-11 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+                  onChange={(event) => handleTypeFilterChange(event.target.value)}
+                  value={typeFilter}
+                >
+                  {listingTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {selectedCount > 0 ? (
+                  <Button
+                    disabled={deletingListingId !== null}
+                    onClick={() => setDeleteTarget("bulk")}
+                    type="button"
+                    variant="destructive"
+                  >
+                    <Trash2 size={16} />
+                    Удалить выбранные ({selectedCount})
+                  </Button>
+                ) : null}
+              </div>
+
               <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
                 <button
                   aria-label="Показать объявления сеткой"
@@ -199,9 +264,6 @@ export function ListingsPage() {
                   Список
                 </button>
               </div>
-              <div className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-                {listings.length} всего
-              </div>
             </div>
           </div>
 
@@ -224,12 +286,10 @@ export function ListingsPage() {
                 {listings.map((listing) => (
                   <ListingCard
                     isFavorite={favoriteListingIds.has(listing.id)}
-                    isDeleting={deletingListingId === listing.id || (deletingListingId === "bulk" && selectedListingIds.has(listing.id))}
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
                     onFavoriteToggle={handleFavoriteToggle}
-                    onDelete={() => setDeleteTarget({ type: "single", listing })}
                     onSelectToggle={handleSelectToggle}
                     viewMode={viewMode}
                   />
@@ -237,14 +297,43 @@ export function ListingsPage() {
               </div>
             )}
           </div>
+
+          {paginationMeta.lastPage > 1 ? (
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
+              <p className="text-sm font-semibold text-[var(--text-muted)]">
+                {paginationMeta.from ?? 0}-{paginationMeta.to ?? 0} из {paginationMeta.total}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  disabled={page <= 1 || isLoading}
+                  onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+                  type="button"
+                  variant="outline"
+                >
+                  Назад
+                </Button>
+                <span className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
+                  {paginationMeta.currentPage} / {paginationMeta.lastPage}
+                </span>
+                <Button
+                  disabled={page >= paginationMeta.lastPage || isLoading}
+                  onClick={() => setPage((currentPage) => Math.min(currentPage + 1, paginationMeta.lastPage))}
+                  type="button"
+                  variant="outline"
+                >
+                  Вперед
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </section>
       </div>
 
       <DeleteListingDialog
         isDeleting={deletingListingId !== null}
         isOpen={deleteTarget !== null}
-        itemsCount={deleteTarget?.type === "bulk" ? selectedCount : 1}
-        listingTitle={deleteTarget?.type === "single" ? deleteTarget.listing.title : null}
+        itemsCount={selectedCount}
+        listingTitle={null}
         onConfirm={handleDeleteConfirm}
         onOpenChange={(isOpen) => {
           if (!isOpen && deletingListingId === null) {

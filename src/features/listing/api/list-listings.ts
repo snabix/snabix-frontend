@@ -3,11 +3,21 @@ import {
   api,
   type ApiDataResponse,
   type ApiPaginatedData,
-  unwrapApiItems,
+  unwrapApiPagination,
 } from "@/src/shared/api";
 
-export async function listListings(): Promise<ListingItem[]> {
-  const response = await api.get<ApiDataResponse<ApiPaginatedData<ListingItem>>>("/listings");
+export type ListListingsParams = {
+  categoryId?: number | null;
+  page?: number;
+  perPage?: number;
+  status?: number | null;
+  type?: number | null;
+};
 
-  return unwrapApiItems(response.data);
+export async function listListings(params: ListListingsParams = {}): Promise<ApiPaginatedData<ListingItem>> {
+  const response = await api.get<ApiDataResponse<ApiPaginatedData<ListingItem>>>("/listings", {
+    params,
+  });
+
+  return unwrapApiPagination(response.data);
 }

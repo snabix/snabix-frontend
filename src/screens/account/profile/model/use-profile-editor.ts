@@ -57,12 +57,13 @@ export function useProfileEditor({
   };
 
   const handleProfileSubmit = async (values: ProfileFormValues) => {
+    const previousUser = user;
+    const previousEmail = previousUser?.email ?? null;
+    const wasEmailVerified = isEmailVerified;
+
     setIsSubmitting(true);
 
     try {
-      const previousUser = user;
-      const previousEmail = user?.email ?? null;
-      const wasEmailVerified = isEmailVerified;
       const optimisticUser: User | null = previousUser
         ? {
             ...previousUser,
@@ -101,7 +102,7 @@ export function useProfileEditor({
         toast.success("Профиль обновлен.");
       }
     } catch (error) {
-      setUser(user);
+      setUser(previousUser);
       toast.error(extractApiError(error, "Не удалось обновить профиль."));
     } finally {
       setIsSubmitting(false);

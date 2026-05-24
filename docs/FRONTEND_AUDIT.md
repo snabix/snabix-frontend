@@ -74,7 +74,7 @@
 - [ ] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
 - [ ] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
 - [ ] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
-- [ ] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
+- [x] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
 
 ## API И Контракты
 
@@ -101,9 +101,9 @@
 - [x] Change password form.
 
 Задачи:
-- [ ] Добавить optimistic/rollback strategy для profile update.
-- [ ] Добавить browser tests на avatar viewer/editor close/upload.
-- [ ] Улучшить empty/loading states addresses.
+- [x] Добавить optimistic/rollback strategy для profile update.
+- [x] Добавить browser tests на avatar viewer/editor close/upload.
+- [x] Улучшить empty/loading states addresses.
 
 ### Categories
 

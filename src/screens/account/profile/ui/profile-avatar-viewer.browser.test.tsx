@@ -1,0 +1,89 @@
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
+import type { AvatarDraft } from "@/src/features/profile";
+
+const defaultProps = {
+  avatarDraft: null,
+  avatarOffset: { x: 0, y: 0 },
+  avatarScale: 1,
+  avatarUrl: "https://cdn.snabix.test/avatar.png",
+  isAvatarSubmitting: false,
+  onAvatarDraftReset: vi.fn(),
+  onAvatarMovePointerDown: vi.fn(),
+  onAvatarSave: vi.fn(),
+  onAvatarScaleChange: vi.fn(),
+  onAvatarSelect: vi.fn(),
+  onAvatarViewerClose: vi.fn(),
+};
+
+const avatarDraft: AvatarDraft = {
+  file: new File(["avatar"], "avatar.png", { type: "image/png" }),
+  previewUrl: "blob:avatar-preview",
+};
+
+describe("ProfileAvatarViewer browser interactions", () => {
+  it("closes when user clicks outside the avatar panel", () => {
+    const onAvatarViewerClose = vi.fn();
+    const { container } = render(
+      <ProfileAvatarViewer
+        {...defaultProps}
+        onAvatarViewerClose={onAvatarViewerClose}
+      />,
+    );
+
+    fireEvent.click(container.firstElementChild as Element);
+
+    expect(onAvatarViewerClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not close when user clicks inside the avatar panel", () => {
+    const onAvatarViewerClose = vi.fn();
+
+    render(
+      <ProfileAvatarViewer
+        {...defaultProps}
+        onAvatarViewerClose={onAvatarViewerClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Просмотр аватара"));
+
+    expect(onAvatarViewerClose).not.toHaveBeenCalled();
+  });
+
+  it("starts avatar upload from viewer action", () => {
+    const onAvatarSelect = vi.fn();
+
+    render(
+      <ProfileAvatarViewer
+        {...defaultProps}
+        onAvatarSelect={onAvatarSelect}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Загрузить новое изображение" }));
+
+    expect(onAvatarSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows editor controls and saves selected avatar draft", () => {
+    const onAvatarSave = vi.fn();
+
+    render(
+      <ProfileAvatarViewer
+        {...defaultProps}
+        avatarDraft={avatarDraft}
+        avatarUrl={null}
+        onAvatarSave={onAvatarSave}
+      />,
+    );
+
+    expect(screen.getByText("Редактор аватара")).toBeInTheDocument();
+    expect(screen.getByText("100%")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Сохранить аватар" }));
+
+    expect(onAvatarSave).toHaveBeenCalledTimes(1);
+  });
+});

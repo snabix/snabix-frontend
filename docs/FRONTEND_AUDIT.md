@@ -68,7 +68,7 @@
 - [ ] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
 - [ ] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
 - [ ] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
-- [ ] Нет contract tests, которые защищают frontend adapters от изменения backend DTO.
+- [x] Нет contract tests, которые защищают frontend adapters от изменения backend DTO.
 - [ ] Нет E2E smoke для auth/profile/listings в браузере.
 - [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
 - [ ] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
@@ -164,7 +164,7 @@
 ## План Задач
 
 1. [x] Удалить legacy Ant Design CSS из `globals.css`.
-2. [ ] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
+2. [x] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
 3. [ ] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
 4. [ ] Реализовать `/categories` страницу каталога.
 5. [ ] Применить `dependencyRules` в listing form.

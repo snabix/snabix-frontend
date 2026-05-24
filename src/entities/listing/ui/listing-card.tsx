@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { Heart, MapPin, Star, Trash2 } from "lucide-react";
+import { Heart, MapPin, Star } from "lucide-react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
 import { cn } from "@/src/shared/lib/utils";
-import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
+import { ListingImageCarousel } from "./listing-image-carousel";
 
 type ListingCardProps = {
   detailsHref?: string;
   isFavorite?: boolean;
-  isDeleting?: boolean;
   isSelected?: boolean;
   listing: ListingItem | PublicListingItem;
   onFavoriteToggle?: (listingId: string) => void;
-  onDelete?: (listingId: string) => void;
   onSelectToggle?: (listingId: string) => void;
   showStatus?: boolean;
   viewMode?: "grid" | "list";
@@ -21,11 +19,9 @@ type ListingCardProps = {
 export function ListingCard({
   detailsHref,
   isFavorite,
-  isDeleting = false,
   isSelected = false,
   listing,
   onFavoriteToggle,
-  onDelete,
   onSelectToggle,
   showStatus = true,
   viewMode = "grid",
@@ -48,22 +44,15 @@ export function ListingCard({
     <div
       className={cn(
         "pointer-events-none relative overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]",
-        viewMode === "list" ? "min-h-44 md:min-h-full md:w-64 md:shrink-0" : "min-h-40",
+        viewMode === "list" ? "min-h-44 md:min-h-full md:w-64 md:shrink-0" : "aspect-square min-h-56",
       )}
     >
-      {listing.imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          alt={listing.title}
-          className="h-full w-full object-cover"
-          src={listing.imageUrl}
-        />
-      ) : (
-        <>
-          <div className="absolute -right-8 -top-10 size-28 rounded-full bg-[color-mix(in_srgb,var(--foreground)_18%,transparent)] blur-sm" />
-          <div className="absolute bottom-5 left-5 h-16 w-32 rounded-[26px] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)]" />
-        </>
-      )}
+      <ListingImageCarousel
+        imageUrl={listing.imageUrl}
+        imageUrls={listing.imageUrls}
+        title={listing.title}
+        viewMode={viewMode}
+      />
 
       <button
         aria-label={favorite ? "Удалить объявление из избранного" : "Добавить объявление в избранное"}
@@ -155,21 +144,6 @@ export function ListingCard({
             </span>
           </div>
         </div>
-
-        {onDelete ? (
-          <div className="pointer-events-auto relative z-30 mt-auto flex justify-end">
-            <Button
-              aria-label={`Удалить объявление ${listing.title}`}
-              disabled={isDeleting}
-              onClick={() => onDelete(listing.id)}
-              size="icon"
-              type="button"
-              variant="destructive"
-            >
-              <Trash2 size={16} />
-            </Button>
-          </div>
-        ) : null}
       </div>
     </article>
   );

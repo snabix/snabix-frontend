@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, ImageIcon, MapPin, MoreHorizontal, Pencil, SearchX, Trash2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, ImageIcon, MapPin, MoreHorizontal, Pencil, SearchX, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { ListingItem } from "@/src/entities/listing";
@@ -319,14 +319,22 @@ function ListingGallery({
   selectedIndex: number;
   title: string;
 }) {
+  const hasMultipleImages = images.filter(Boolean).length > 1;
+  const showPreviousImage = () => {
+    onSelect(selectedIndex === 0 ? images.length - 1 : selectedIndex - 1);
+  };
+  const showNextImage = () => {
+    onSelect(selectedIndex === images.length - 1 ? 0 : selectedIndex + 1);
+  };
+
   return (
     <div className="grid gap-4">
-      <div className="relative grid aspect-[16/11] place-items-center overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]">
+      <div className="relative mx-auto grid aspect-square w-full max-w-[800px] place-items-center overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-4 shadow-[var(--shadow-card)]">
         {selectedImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             alt={title}
-            className="h-full w-full object-cover"
+            className="max-h-full max-w-full object-contain"
             src={selectedImage}
           />
         ) : (
@@ -335,14 +343,40 @@ function ListingGallery({
             <span className="text-sm font-black">Изображения пока не загружены</span>
           </div>
         )}
+
+        {hasMultipleImages ? (
+          <>
+            <button
+              aria-label="Показать предыдущее изображение"
+              className="absolute left-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
+              onClick={showPreviousImage}
+              type="button"
+            >
+              <ChevronLeft size={20} strokeWidth={2.5} />
+            </button>
+
+            <button
+              aria-label="Показать следующее изображение"
+              className="absolute right-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
+              onClick={showNextImage}
+              type="button"
+            >
+              <ChevronRight size={20} strokeWidth={2.5} />
+            </button>
+
+            <div className="absolute bottom-4 left-1/2 rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_58%,transparent)] px-3 py-1 text-xs font-black text-white shadow-[var(--shadow-card)]">
+              {selectedIndex + 1} / {images.length}
+            </div>
+          </>
+        ) : null}
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-1">
+      <div className="mx-auto flex max-w-[800px] gap-3 overflow-x-auto pb-1">
         {images.map((image, index) => (
           <button
             aria-label={`Показать изображение ${index + 1}`}
             className={[
-              "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] transition",
+              "size-24 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition",
               selectedIndex === index
                 ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                 : "border-[var(--border-soft)] hover:border-[var(--accent)]",
@@ -355,7 +389,7 @@ function ListingGallery({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 alt={`${title} ${index + 1}`}
-                className="h-full w-full object-cover"
+                className="h-full w-full rounded-xl object-contain"
                 src={image}
               />
             ) : (

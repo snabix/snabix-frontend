@@ -52,9 +52,7 @@ export function ListingsPage() {
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<
-    { type: "single"; listing: ListingItem } | { type: "bulk" } | null
-  >(null);
+  const [deleteTarget, setDeleteTarget] = useState<"bulk" | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -98,35 +96,17 @@ export function ListingsPage() {
     }
 
     try {
-      if (deleteTarget.type === "single") {
-        setDeletingListingId(deleteTarget.listing.id);
-        await deleteListing(deleteTarget.listing.id);
-        setListings((currentListings) => currentListings.filter((listing) => listing.id !== deleteTarget.listing.id));
-        setPaginationMeta((currentMeta) => ({
-          ...currentMeta,
-          total: Math.max(currentMeta.total - 1, 0),
-        }));
-        setSelectedListingIds((currentIds) => {
-          const nextIds = new Set(currentIds);
+      const idsToDelete = Array.from(selectedListingIds);
 
-          nextIds.delete(deleteTarget.listing.id);
-
-          return nextIds;
-        });
-        toast.success("Объявление удалено.");
-      } else {
-        const idsToDelete = Array.from(selectedListingIds);
-
-        setDeletingListingId("bulk");
-        await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
-        setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
-        setPaginationMeta((currentMeta) => ({
-          ...currentMeta,
-          total: Math.max(currentMeta.total - idsToDelete.length, 0),
-        }));
-        setSelectedListingIds(new Set());
-        toast.success("Выбранные объявления удалены.");
-      }
+      setDeletingListingId("bulk");
+      await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
+      setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
+      setPaginationMeta((currentMeta) => ({
+        ...currentMeta,
+        total: Math.max(currentMeta.total - idsToDelete.length, 0),
+      }));
+      setSelectedListingIds(new Set());
+      toast.success("Выбранные объявления удалены.");
 
       setDeleteTarget(null);
     } catch (error) {
@@ -243,7 +223,7 @@ export function ListingsPage() {
               {selectedCount > 0 ? (
                 <Button
                   disabled={deletingListingId !== null}
-                  onClick={() => setDeleteTarget({ type: "bulk" })}
+                  onClick={() => setDeleteTarget("bulk")}
                   type="button"
                   variant="destructive"
                 >
@@ -306,12 +286,10 @@ export function ListingsPage() {
                 {listings.map((listing) => (
                   <ListingCard
                     isFavorite={favoriteListingIds.has(listing.id)}
-                    isDeleting={deletingListingId === listing.id || (deletingListingId === "bulk" && selectedListingIds.has(listing.id))}
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
                     onFavoriteToggle={handleFavoriteToggle}
-                    onDelete={() => setDeleteTarget({ type: "single", listing })}
                     onSelectToggle={handleSelectToggle}
                     viewMode={viewMode}
                   />
@@ -354,8 +332,8 @@ export function ListingsPage() {
       <DeleteListingDialog
         isDeleting={deletingListingId !== null}
         isOpen={deleteTarget !== null}
-        itemsCount={deleteTarget?.type === "bulk" ? selectedCount : 1}
-        listingTitle={deleteTarget?.type === "single" ? deleteTarget.listing.title : null}
+        itemsCount={selectedCount}
+        listingTitle={null}
         onConfirm={handleDeleteConfirm}
         onOpenChange={(isOpen) => {
           if (!isOpen && deletingListingId === null) {

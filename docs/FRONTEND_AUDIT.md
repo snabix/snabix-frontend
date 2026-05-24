@@ -61,7 +61,7 @@
 
 ### Риски и нарушения
 
-- [ ] В `src/app/globals.css` остались `.ant-*` классы после миграции с Ant Design. Это не ломает UI, но засоряет дизайн-систему и может вводить в заблуждение.
+- [x] В `src/app/globals.css` остались `.ant-*` классы после миграции с Ant Design. Это не ломает UI, но засоряет дизайн-систему и может вводить в заблуждение.
 - [ ] Tests лежат рядом с исходниками. Это допустимо, но команда ранее хотела отдельную директорию tests; нужно принять единый стандарт.
 - [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
 - [ ] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
@@ -146,7 +146,7 @@
 - [x] Shared Button/Input/Dialog/Checkbox/Avatar/Skeleton/EmptyState есть.
 
 Задачи:
-- [ ] Удалить legacy `.ant-*` CSS из `globals.css`.
+- [x] Удалить legacy `.ant-*` CSS из `globals.css`.
 - [ ] Проверить contrast всех кнопок, badges, destructive states в dark theme.
 - [ ] Унифицировать naming shared UI директорий.
 - [ ] Добавить shared pagination component вместо локальной верстки.
@@ -163,7 +163,7 @@
 
 ## План Задач
 
-1. [ ] Удалить legacy Ant Design CSS из `globals.css`.
+1. [x] Удалить legacy Ant Design CSS из `globals.css`.
 2. [ ] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
 3. [ ] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
 4. [ ] Реализовать `/categories` страницу каталога.

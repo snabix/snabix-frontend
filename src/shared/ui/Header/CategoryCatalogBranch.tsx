@@ -1,4 +1,5 @@
 import { LayoutGrid } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import type { CategoryNode } from "@/src/entities/category";
 import { EmptyState } from "@/src/shared/ui/empty-state";
@@ -10,6 +11,7 @@ type CategoryCatalogBranchProps = {
   activeBranchStatus: "idle" | "loading" | "success" | "error";
   activeRoot: CategoryNode | null;
   hasLoadedCategories: boolean;
+  onCategorySelect: () => void;
   onRetryBranch: () => void;
   onRetryRoots: () => void;
   rootsErrorMessage: string | null;
@@ -22,6 +24,7 @@ export function CategoryCatalogBranch({
   activeBranchStatus,
   activeRoot,
   hasLoadedCategories,
+  onCategorySelect,
   onRetryBranch,
   onRetryRoots,
   rootsErrorMessage,
@@ -109,9 +112,13 @@ export function CategoryCatalogBranch({
                     key={category.id}
                     className="min-w-0"
                   >
-                    <p className="text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)]">
+                    <Link
+                      className="text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition hover:text-[var(--accent)]"
+                      href={`/listings?categoryId=${category.id}`}
+                      onClick={onCategorySelect}
+                    >
                       {category.name}
-                    </p>
+                    </Link>
 
                     {category.children.length > 0 ? (
                       <ul className="mt-3 grid gap-2">
@@ -120,7 +127,13 @@ export function CategoryCatalogBranch({
                             key={child.id}
                             className="text-sm leading-6 text-[var(--text-muted)]"
                           >
-                            {child.name}
+                            <Link
+                              className="transition hover:text-[var(--brand-deep)]"
+                              href={`/listings?categoryId=${child.id}`}
+                              onClick={onCategorySelect}
+                            >
+                              {child.name}
+                            </Link>
                           </li>
                         ))}
                       </ul>

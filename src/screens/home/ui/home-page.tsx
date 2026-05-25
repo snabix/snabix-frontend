@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { LayoutGrid, List, PackageOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { useCategoryStore } from "@/src/entities/category";
 import { ListingCard, type PublicListingItem } from "@/src/entities/listing";
 import { listPublicListings, type ListPublicListingsParams } from "@/src/features/listing/api";
 import type { ApiPaginationMeta } from "@/src/shared/api";
@@ -19,7 +18,7 @@ import {
   type PublicListingFiltersState,
 } from "./public-listing-filters";
 
-const publicListingsPerPage = 24;
+const publicListingsPerPage = 15;
 
 const defaultPaginationMeta: ApiPaginationMeta = {
   currentPage: 1,
@@ -41,13 +40,6 @@ export function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [, startFiltersTransition] = useTransition();
-  const roots = useCategoryStore((state) => state.roots);
-  const rootsStatus = useCategoryStore((state) => state.rootsStatus);
-  const loadRoots = useCategoryStore((state) => state.loadRoots);
-
-  useEffect(() => {
-    void loadRoots();
-  }, [loadRoots]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -164,11 +156,16 @@ export function HomePage() {
           </section>
 
           <section className="mt-8">
+            <div className="mb-5 flex justify-end">
+              <ViewModeSwitcher
+                onChange={setViewMode}
+                value={viewMode}
+              />
+            </div>
+
             <div className="grid gap-5 xl:flex xl:items-start">
               <PublicListingFilters
-                categories={roots}
                 filters={draftFilters}
-                isCategoriesLoading={rootsStatus === "loading"}
                 isLoading={isLoading}
                 onChange={setDraftFilters}
                 onReset={handleFiltersReset}
@@ -200,39 +197,6 @@ export function HomePage() {
                   />
                 ) : (
                   <>
-                    <div className="mb-5 flex justify-end">
-                      <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
-                        <button
-                          aria-label="Показать объявления сеткой"
-                          className={[
-                            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
-                            viewMode === "grid"
-                              ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
-                              : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
-                          ].join(" ")}
-                          onClick={() => setViewMode("grid")}
-                          type="button"
-                        >
-                          <LayoutGrid size={16} />
-                          Сетка
-                        </button>
-                        <button
-                          aria-label="Показать объявления списком"
-                          className={[
-                            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
-                            viewMode === "list"
-                              ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
-                              : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
-                          ].join(" ")}
-                          onClick={() => setViewMode("list")}
-                          type="button"
-                        >
-                          <List size={16} />
-                          Список
-                        </button>
-                      </div>
-                    </div>
-
                     <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
                       {items.map((item) => (
                         <ListingCard
@@ -248,10 +212,7 @@ export function HomePage() {
                     </div>
 
                     {paginationMeta.lastPage > 1 ? (
-                      <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
-                        <p className="text-sm font-semibold text-[var(--text-muted)]">
-                          {paginationMeta.from ?? 0}-{paginationMeta.to ?? 0} из {paginationMeta.total}
-                        </p>
+                      <div className="mt-7 flex flex-wrap items-center justify-end gap-4 border-t border-[var(--border-soft)] pt-5">
                         <div className="flex items-center gap-2">
                           <Button
                             disabled={page <= 1 || isLoading}
@@ -285,9 +246,49 @@ export function HomePage() {
   );
 }
 
+function ViewModeSwitcher({
+  onChange,
+  value,
+}: {
+  onChange: (value: "grid" | "list") => void;
+  value: "grid" | "list";
+}) {
+  return (
+    <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
+      <button
+        aria-label="Показать объявления сеткой"
+        className={[
+          "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+          value === "grid"
+            ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+            : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+        ].join(" ")}
+        onClick={() => onChange("grid")}
+        type="button"
+      >
+        <LayoutGrid size={16} />
+        Сетка
+      </button>
+      <button
+        aria-label="Показать объявления списком"
+        className={[
+          "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
+          value === "list"
+            ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
+            : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
+        ].join(" ")}
+        onClick={() => onChange("list")}
+        type="button"
+      >
+        <List size={16} />
+        Список
+      </button>
+    </div>
+  );
+}
+
 function toPublicListingParams(filters: PublicListingFiltersState): ListPublicListingsParams {
   return {
-    categoryId: toOptionalNumber(filters.categoryId),
     maxPrice: toOptionalNumber(filters.maxPrice),
     minPrice: toOptionalNumber(filters.minPrice),
     sort: filters.sort,

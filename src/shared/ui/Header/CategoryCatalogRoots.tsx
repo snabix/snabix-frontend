@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import type { CategoryNode } from "@/src/entities/category";
 import { Skeleton } from "@/src/shared/ui/skeleton";
@@ -7,6 +8,7 @@ type CategoryCatalogRootsProps = {
   activeRootId: number | null;
   hasLoadedCategories: boolean;
   onRetry: () => void;
+  onCategorySelect: () => void;
   onRootClick: (categoryId: number) => void;
   onRootFocus: (categoryId: number) => void;
   onRootHover: (categoryId: number) => void;
@@ -18,6 +20,7 @@ type CategoryCatalogRootsProps = {
 export function CategoryCatalogRoots({
   activeRootId,
   hasLoadedCategories,
+  onCategorySelect,
   onRetry,
   onRootClick,
   onRootFocus,
@@ -61,7 +64,7 @@ export function CategoryCatalogRoots({
               const isActive = category.id === activeRootId;
 
               return (
-                <button
+                <Link
                   key={category.id}
                   className={[
                     "group relative flex min-h-[72px] w-full items-center overflow-hidden rounded-[5px] px-5 py-4 text-left",
@@ -70,10 +73,13 @@ export function CategoryCatalogRoots({
                       ? activeRootButtonClass
                       : "bg-transparent text-[var(--brand-deep)] hover:bg-[color-mix(in_srgb,var(--accent-soft)_82%,var(--background))]",
                   ].join(" ")}
-                  onClick={() => onRootClick(category.id)}
+                  href={`/listings?categoryId=${category.id}`}
+                  onClick={() => {
+                    onRootClick(category.id);
+                    onCategorySelect();
+                  }}
                   onFocus={() => onRootFocus(category.id)}
                   onMouseEnter={() => onRootHover(category.id)}
-                  type="button"
                 >
                   <div className="flex w-full items-center justify-between gap-4">
                     <div className="min-w-0 flex-1">
@@ -98,7 +104,7 @@ export function CategoryCatalogRoots({
                       />
                     </span>
                   </div>
-                </button>
+                </Link>
               );
             })}
           </div>

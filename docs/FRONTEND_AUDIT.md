@@ -64,7 +64,7 @@
 - [x] В `src/app/globals.css` остались `.ant-*` классы после миграции с Ant Design. Это не ломает UI, но засоряет дизайн-систему и может вводить в заблуждение.
 - [ ] Tests лежат рядом с исходниками. Это допустимо, но команда ранее хотела отдельную директорию tests; нужно принять единый стандарт.
 - [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
-- [ ] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
+- [x] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
 - [ ] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
 - [ ] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
 - [ ] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
@@ -72,7 +72,7 @@
 - [ ] Нет E2E smoke для auth/profile/listings в браузере.
 - [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
 - [ ] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
-- [ ] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
+- [x] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
 - [ ] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
 - [x] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
 
@@ -113,8 +113,8 @@
 - [x] `placeholder`, `helpText`, `defaultValue`, `groupName`, `showInCard` частично используются.
 
 Задачи:
-- [ ] Реализовать `/categories` catalog page.
-- [ ] Реализовать category branch page или category drill-down UI.
+- [x] Реализовать `/categories` catalog page.
+- [x] Реализовать category branch page или category drill-down UI.
 - [ ] Применить `dependencyRules` в listing form.
 - [ ] Добавить tests на conditional attribute visibility.
 
@@ -131,7 +131,7 @@
 - [x] Listing image carousel в cards и details.
 
 Задачи:
-- [ ] Реализовать публичную страницу `/listings`.
+- [x] Реализовать публичную страницу `/listings`.
 - [x] Подключить public filters, когда backend отдаст category/type/price/sort.
 - [ ] Добавить frontend UI для existing media management: delete, reorder, set main image.
 - [ ] Добавить tests для listing API adapters: create/update/list/public/media.
@@ -158,15 +158,15 @@
 - [ ] Frontend доверяет ряду DTO напрямую через TypeScript types без runtime validation на границе API.
 - [ ] Cookie/session flow зависит от корректной backend/CORS/Sanctum production настройки.
 - [ ] File upload UX пока не имеет retry/rollback для частичного падения после создания объявления.
-- [ ] Public catalog отсутствует как полноценная пользовательская точка входа.
+- [x] Public catalog отсутствует как полноценная пользовательская точка входа.
 - [ ] Нет E2E проверок критичных пользовательских сценариев.
 
 ## План Задач
 
 1. [x] Удалить legacy Ant Design CSS из `globals.css`.
 2. [x] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
-3. [ ] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
-4. [ ] Реализовать `/categories` страницу каталога.
+3. [x] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
+4. [x] Реализовать `/categories` страницу каталога.
 5. [ ] Применить `dependencyRules` в listing form.
 6. [ ] Добавить listing media management UI: delete, reorder, main image.
 7. [ ] Добавить partial success/rollback UX для listing save + media upload.

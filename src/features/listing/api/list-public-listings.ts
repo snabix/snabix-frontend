@@ -20,7 +20,7 @@ export async function listPublicListings(params: ListPublicListingsParams = {}):
   const response = await api.get<ApiDataResponse<ApiPaginatedData<PublicListingItem>>>("/public/listings", {
     params: {
       page: params.page ?? 1,
-      perPage: params.perPage ?? 24,
+      perPage: params.perPage ?? 15,
       categoryId: params.categoryId,
       type: params.type,
       minPrice: params.minPrice,

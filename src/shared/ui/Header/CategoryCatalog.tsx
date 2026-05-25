@@ -52,6 +52,7 @@ export function CategoryCatalog({
           <CategoryCatalogRoots
             activeRootId={activeRoot?.id ?? null}
             hasLoadedCategories={hasLoadedCategories}
+            onCategorySelect={onToggle}
             onRetry={resetRootError}
             onRootClick={setActiveRootImmediately}
             onRootFocus={setActiveRootImmediately}
@@ -67,6 +68,7 @@ export function CategoryCatalog({
             activeBranchStatus={activeBranchStatus}
             activeRoot={activeRoot}
             hasLoadedCategories={hasLoadedCategories}
+            onCategorySelect={onToggle}
             onRetryBranch={retryActiveBranch}
             onRetryRoots={resetRootError}
             rootsErrorMessage={rootsErrorMessage}

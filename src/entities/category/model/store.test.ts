@@ -62,6 +62,7 @@ const categoryAttributes: CategoryAttributeDefinition[] = [
     appliesToChildren: true,
     categoryId: 2,
     defaultValue: null,
+    dependencyRules: null,
     description: null,
     groupName: "Основные",
     helpText: "Укажите бренд устройства.",

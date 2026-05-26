@@ -133,19 +133,32 @@ export function PublicListingFilters({
                 && filters.maxPrice === option.maxPrice;
 
               return (
-                <label
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] px-4 py-3 text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)]"
+                <button
+                  aria-pressed={isChecked}
+                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] px-4 py-3 text-left text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isLoading}
                   key={option.label}
+                  onClick={() => updatePricePreset(option.minPrice, option.maxPrice)}
+                  type="button"
                 >
-                  <input
-                    checked={isChecked}
-                    className="size-4 accent-[var(--brand)]"
-                    disabled={isLoading}
-                    onChange={() => updatePricePreset(option.minPrice, option.maxPrice)}
-                    type="checkbox"
-                  />
-                  {option.label}
-                </label>
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      "grid size-4 shrink-0 place-items-center rounded-[5px] border transition-colors",
+                      isChecked
+                        ? "border-[var(--brand)] bg-[var(--brand)]"
+                        : "border-[var(--border-strong)] bg-[var(--surface)]",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "size-1.5 rounded-full bg-[var(--surface)] transition-opacity",
+                        isChecked ? "opacity-100" : "opacity-0",
+                      ].join(" ")}
+                    />
+                  </span>
+                  <span>{option.label}</span>
+                </button>
               );
             })}
           </div>

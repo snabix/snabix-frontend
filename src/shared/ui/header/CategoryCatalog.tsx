@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
-import { CategoryCatalogBranch } from "@/src/shared/ui/Header/CategoryCatalogBranch";
-import { CategoryCatalogRoots } from "@/src/shared/ui/Header/CategoryCatalogRoots";
-import { useCategoryCatalog } from "@/src/shared/ui/Header/use-category-catalog";
+import { CategoryCatalogBranch } from "@/src/shared/ui/header/CategoryCatalogBranch";
+import { CategoryCatalogRoots } from "@/src/shared/ui/header/CategoryCatalogRoots";
+import { useCategoryCatalog } from "@/src/shared/ui/header/use-category-catalog";
 
 type CategoryCatalogProps = {
   isOpen: boolean;

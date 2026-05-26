@@ -113,7 +113,7 @@ export function CategoryCatalogBranch({
                     className="min-w-0"
                   >
                     <Link
-                      className="text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition hover:text-[var(--accent)]"
+                      className="inline-flex text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
                       href={`/listings?categoryId=${category.id}`}
                       onClick={onCategorySelect}
                     >
@@ -128,7 +128,7 @@ export function CategoryCatalogBranch({
                             className="text-sm leading-6 text-[var(--text-muted)]"
                           >
                             <Link
-                              className="transition hover:text-[var(--brand-deep)]"
+                              className="transition-colors duration-200 hover:text-[var(--brand)]"
                               href={`/listings?categoryId=${child.id}`}
                               onClick={onCategorySelect}
                             >

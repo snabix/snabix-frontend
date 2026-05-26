@@ -65,13 +65,13 @@
 - [ ] Tests лежат рядом с исходниками. Это допустимо, но команда ранее хотела отдельную директорию tests; нужно принять единый стандарт.
 - [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
 - [x] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
-- [ ] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
+- [x] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
 - [ ] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
 - [ ] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
 - [x] Нет contract tests, которые защищают frontend adapters от изменения backend DTO.
 - [ ] Нет E2E smoke для auth/profile/listings в браузере.
 - [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
-- [ ] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
+- [x] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
 - [x] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
 - [ ] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
 - [x] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
@@ -148,7 +148,7 @@
 Задачи:
 - [x] Удалить legacy `.ant-*` CSS из `globals.css`.
 - [ ] Проверить contrast всех кнопок, badges, destructive states в dark theme.
-- [ ] Унифицировать naming shared UI директорий.
+- [x] Унифицировать naming shared UI директорий.
 - [ ] Добавить shared pagination component вместо локальной верстки.
 - [ ] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.
 - [ ] Провести browser QA mobile header, footer, account sidebar, listing cards.

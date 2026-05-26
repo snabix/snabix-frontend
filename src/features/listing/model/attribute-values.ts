@@ -53,6 +53,26 @@ export function buildAttributePayload(
   return payload;
 }
 
+export function filterVisibleAttributes(
+  attributes: CategoryAttributeDefinition[],
+  values: Record<string, ListingAttributeValue>,
+): CategoryAttributeDefinition[] {
+  return attributes.filter((attribute) => isAttributeVisible(attribute, attributes, values));
+}
+
+export function pruneHiddenAttributeValues(
+  attributes: CategoryAttributeDefinition[],
+  values: Record<string, ListingAttributeValue>,
+): Record<string, ListingAttributeValue> {
+  const visibleAttributeIds = new Set(
+    filterVisibleAttributes(attributes, values).map((attribute) => String(attribute.id)),
+  );
+
+  return Object.fromEntries(
+    Object.entries(values).filter(([attributeId]) => visibleAttributeIds.has(attributeId)),
+  );
+}
+
 export function parseAttributeNumber(value: string): number | null {
   const normalizedValue = value.trim().replace(",", ".");
 
@@ -136,4 +156,128 @@ function normalizeDefaultValue(
   }
 
   return defaultValue;
+}
+
+function isAttributeVisible(
+  attribute: CategoryAttributeDefinition,
+  attributes: CategoryAttributeDefinition[],
+  values: Record<string, ListingAttributeValue>,
+  visitedAttributeIds: Set<number> = new Set(),
+): boolean {
+  const rules = attribute.dependencyRules ?? [];
+
+  if (rules.length === 0) {
+    return true;
+  }
+
+  if (visitedAttributeIds.has(attribute.id)) {
+    return false;
+  }
+
+  const nextVisitedAttributeIds = new Set(visitedAttributeIds);
+
+  nextVisitedAttributeIds.add(attribute.id);
+
+  return rules.every((rule) => {
+    const dependencyAttribute = findDependencyAttribute(rule, attributes);
+
+    if (dependencyAttribute === null) {
+      return false;
+    }
+
+    if (!isAttributeVisible(dependencyAttribute, attributes, values, nextVisitedAttributeIds)) {
+      return false;
+    }
+
+    const currentValue = getAttributeValue(dependencyAttribute, values);
+
+    return matchesDependencyRule(currentValue, rule.operator, rule.value);
+  });
+}
+
+function findDependencyAttribute(
+  rule: NonNullable<CategoryAttributeDefinition["dependencyRules"]>[number],
+  attributes: CategoryAttributeDefinition[],
+): CategoryAttributeDefinition | null {
+  if (rule.attributeDefinitionId !== undefined) {
+    return attributes.find((attribute) => attribute.id === rule.attributeDefinitionId) ?? null;
+  }
+
+  if (rule.attributeSlug !== undefined && rule.attributeSlug.trim() !== "") {
+    return attributes.find((attribute) => attribute.slug === rule.attributeSlug) ?? null;
+  }
+
+  return null;
+}
+
+function matchesDependencyRule(
+  currentValue: ListingAttributeValue,
+  operator: NonNullable<CategoryAttributeDefinition["dependencyRules"]>[number]["operator"],
+  expectedValue: unknown,
+): boolean {
+  if (operator === "filled") {
+    return isFilledAttributeValue(currentValue);
+  }
+
+  if (operator === "empty") {
+    return !isFilledAttributeValue(currentValue);
+  }
+
+  if (operator === "equals") {
+    return compareAttributeValue(currentValue, expectedValue);
+  }
+
+  if (operator === "not_equals") {
+    return !compareAttributeValue(currentValue, expectedValue);
+  }
+
+  if (operator === "in") {
+    return isValueInExpectedList(currentValue, expectedValue);
+  }
+
+  if (operator === "not_in") {
+    return !isValueInExpectedList(currentValue, expectedValue);
+  }
+
+  return true;
+}
+
+function isFilledAttributeValue(value: ListingAttributeValue): boolean {
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (typeof value === "string") {
+    return value.trim() !== "";
+  }
+
+  return value !== null;
+}
+
+function compareAttributeValue(currentValue: ListingAttributeValue, expectedValue: unknown): boolean {
+  if (Array.isArray(currentValue)) {
+    return currentValue.some((item) => compareScalarValue(item, expectedValue));
+  }
+
+  return compareScalarValue(currentValue, expectedValue);
+}
+
+function isValueInExpectedList(currentValue: ListingAttributeValue, expectedValue: unknown): boolean {
+  const expectedValues = Array.isArray(expectedValue)
+    ? expectedValue
+    : [expectedValue];
+
+  if (Array.isArray(currentValue)) {
+    return currentValue.some((item) => expectedValues.some((expectedItem) => compareScalarValue(item, expectedItem)));
+  }
+
+  return expectedValues.some((expectedItem) => compareScalarValue(currentValue, expectedItem));
+}
+
+function compareScalarValue(currentValue: ListingAttributeValue, expectedValue: unknown): boolean {
+  if (currentValue === null || expectedValue === null || expectedValue === undefined) {
+    return currentValue === expectedValue;
+  }
+
+  return String(currentValue) === String(expectedValue);
 }

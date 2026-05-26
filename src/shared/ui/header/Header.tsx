@@ -7,10 +7,10 @@ import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
 import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { CategoryCatalog } from "@/src/shared/ui/Header/CategoryCatalog";
-import { CatalogToggleButton } from "@/src/shared/ui/Header/CatalogToggleButton";
-import { HeaderSessionActions } from "@/src/shared/ui/Header/HeaderSessionActions";
-import { useHeaderState } from "@/src/shared/ui/Header/use-header-state";
+import { CategoryCatalog } from "@/src/shared/ui/header/CategoryCatalog";
+import { CatalogToggleButton } from "@/src/shared/ui/header/CatalogToggleButton";
+import { HeaderSessionActions } from "@/src/shared/ui/header/HeaderSessionActions";
+import { useHeaderState } from "@/src/shared/ui/header/use-header-state";
 import { Container } from "@/src/shared/ui/container";
 import { Logo } from "@/src/shared/ui/logo";
 

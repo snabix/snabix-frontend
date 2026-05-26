@@ -279,14 +279,36 @@ function CategoryBranchPanel({
     return null;
   }
 
+  const breadcrumbs = findCategoryPath(branch, selectedCategoryId) ?? [branch];
+
   return (
     <section className="mt-6 rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-5 shadow-[var(--shadow-card)]">
       <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
         <Link className="hover:text-[var(--brand-deep)]" href="/listings">
           Все объявления
         </Link>
-        <ChevronRight aria-hidden="true" size={15} />
-        <span className="text-[var(--brand-deep)]">{branch.name}</span>
+        {breadcrumbs.map((category, index) => {
+          const isLast = index === breadcrumbs.length - 1;
+
+          return (
+            <div
+              className="contents"
+              key={category.id}
+            >
+              <ChevronRight aria-hidden="true" size={15} />
+              {isLast ? (
+                <span className="text-[var(--brand-deep)]">{category.name}</span>
+              ) : (
+                <Link
+                  className="transition hover:text-[var(--brand-deep)]"
+                  href={`/listings?categoryId=${category.id}`}
+                >
+                  {category.name}
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {branch.children.length > 0 ? (
@@ -309,6 +331,28 @@ function CategoryBranchPanel({
       )}
     </section>
   );
+}
+
+function findCategoryPath(
+  category: CategoryNode,
+  targetCategoryId: number | undefined,
+  path: CategoryNode[] = [],
+): CategoryNode[] | null {
+  const nextPath = [...path, category];
+
+  if (category.id === targetCategoryId) {
+    return nextPath;
+  }
+
+  for (const child of category.children) {
+    const childPath = findCategoryPath(child, targetCategoryId, nextPath);
+
+    if (childPath !== null) {
+      return childPath;
+    }
+  }
+
+  return null;
 }
 
 function ViewModeSwitcher({

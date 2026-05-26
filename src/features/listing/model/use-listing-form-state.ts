@@ -8,7 +8,9 @@ import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing"
 import { uploadListingMedia, type CreateListingPayload, type UpdateListingPayload } from "@/src/features/listing/api";
 import {
   buildAttributePayload,
+  filterVisibleAttributes,
   groupAttributesByName,
+  pruneHiddenAttributeValues,
   valuesFromListing,
 } from "@/src/features/listing/model/attribute-values";
 import { flattenBranchOptions } from "@/src/features/listing/model/category-options";
@@ -152,6 +154,10 @@ export function useListingFormState({
       : []),
     [categoryAttributes, effectiveSelectedCategoryId],
   );
+  const visibleAttributes = useMemo(
+    () => filterVisibleAttributes(attributes, attributeValues),
+    [attributes, attributeValues],
+  );
 
   useEffect(() => {
     if (
@@ -175,8 +181,8 @@ export function useListingFormState({
       || categoryAttributeStatuses[effectiveSelectedCategoryId] === "loading"
     );
   const groupedAttributes = useMemo(
-    () => groupAttributesByName(attributes),
-    [attributes],
+    () => groupAttributesByName(visibleAttributes),
+    [visibleAttributes],
   );
   const effectiveCondition = activeType === LISTING_TYPE_SERVICE
     ? LISTING_CONDITION_NOT_APPLICABLE
@@ -202,10 +208,14 @@ export function useListingFormState({
   };
 
   const handleAttributeChange = (attributeId: number, value: ListingAttributeValue) => {
-    setAttributeValues((currentValues) => ({
-      ...currentValues,
-      [String(attributeId)]: value,
-    }));
+    setAttributeValues((currentValues) => {
+      const nextValues = {
+        ...currentValues,
+        [String(attributeId)]: value,
+      };
+
+      return pruneHiddenAttributeValues(attributes, nextValues);
+    });
   };
 
   const handleMultiselectChange = (attributeId: number, optionValue: string, checked: boolean) => {
@@ -215,12 +225,14 @@ export function useListingFormState({
         ? currentValues[attributeKey] as string[]
         : [];
 
-      return {
+      const nextValues = {
         ...currentValues,
         [attributeKey]: checked
           ? Array.from(new Set([...current, optionValue]))
           : current.filter((item) => item !== optionValue),
       };
+
+      return pruneHiddenAttributeValues(attributes, nextValues);
     });
   };
 
@@ -247,7 +259,7 @@ export function useListingFormState({
       currency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
       isNegotiable,
       ...(mode === "create" ? { saveAsDraft } : {}),
-      attributeValues: buildAttributePayload(attributes, attributeValues),
+      attributeValues: buildAttributePayload(visibleAttributes, attributeValues),
     };
 
     try {

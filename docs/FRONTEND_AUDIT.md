@@ -151,17 +151,20 @@
 - [x] Унифицировать naming shared UI директорий.
 - [x] Добавить shared pagination component вместо локальной верстки.
 - [x] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.
+- [x] Устранить риск hydration mismatch в theme/toaster flow.
 - [ ] Провести browser QA mobile header, footer, account sidebar, listing cards.
 
 Примечание: browser QA оставлен открытым, потому что текущая Codex browser-среда блокирует локальные URL (`localhost`, `127.0.0.1`, network IP). Кодовая сборка и тесты проходят, но ручная проверка в реальном браузере еще нужна.
 
 ## Уязвимые Места
 
-- [ ] Frontend доверяет ряду DTO напрямую через TypeScript types без runtime validation на границе API.
-- [ ] Cookie/session flow зависит от корректной backend/CORS/Sanctum production настройки.
-- [ ] File upload UX пока не имеет retry/rollback для частичного падения после создания объявления.
+- [x] Frontend доверяет ряду DTO напрямую через TypeScript types без runtime validation на границе API.
+- [x] Cookie/session flow зависит от корректной backend/CORS/Sanctum production настройки.
+- [x] File upload UX пока не имеет retry/rollback для частичного падения после создания объявления.
 - [x] Public catalog отсутствует как полноценная пользовательская точка входа.
 - [ ] Нет E2E проверок критичных пользовательских сценариев.
+
+Примечание: cookie/session production flow закрыт на frontend-уровне через документированный checklist `docs/SANCTUM_SESSION_PRODUCTION.md`; финальная проверка все равно должна выполняться на реальном production/staging окружении backend.
 
 ## План Задач
 
@@ -169,9 +172,9 @@
 2. [x] Добавить contract tests для ключевых API adapters: auth me, listings, public listings, category attributes.
 3. [x] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
 4. [x] Реализовать `/categories` страницу каталога.
-5. [ ] Применить `dependencyRules` в listing form.
+5. [x] Применить `dependencyRules` в listing form.
 6. [ ] Добавить listing media management UI: delete, reorder, main image.
-7. [ ] Добавить partial success/rollback UX для listing save + media upload.
+7. [x] Добавить partial success/rollback UX для listing save + media upload.
 8. [ ] Вынести tests в отдельную директорию или зафиксировать colocated-tests как официальный стандарт.
 9. [ ] Провести browser/E2E smoke для auth/profile/listings.
 10. [ ] Провести visual QA dark/light/mobile и исправить contrast.

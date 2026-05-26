@@ -1,5 +1,11 @@
 import type { ListingItem } from "@/src/entities/listing";
-import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
+import {
+  api,
+  listingItemSchema,
+  parseApiContract,
+  type ApiDataResponse,
+  unwrapApiData,
+} from "@/src/shared/api";
 
 export async function uploadListingMedia(
   listingId: string,
@@ -11,7 +17,7 @@ export async function uploadListingMedia(
     formData.append("images[]", image);
   });
 
-  const response = await api.post<ApiDataResponse<ListingItem>>(
+  const response = await api.post<ApiDataResponse<unknown>>(
     `/listings/${listingId}/media`,
     formData,
     {
@@ -21,5 +27,9 @@ export async function uploadListingMedia(
     },
   );
 
-  return unwrapApiData(response.data);
+  return parseApiContract(
+    listingItemSchema,
+    unwrapApiData(response.data),
+    "Ответ загрузки изображений объявления не соответствует ожидаемому формату.",
+  );
 }

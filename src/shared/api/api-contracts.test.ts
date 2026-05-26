@@ -193,6 +193,7 @@ describe("api adapter contracts", () => {
         appliesToChildren: true,
         categoryId: 5,
         defaultValue: null,
+        dependencyRules: null,
         description: "Объем оперативной памяти.",
         groupName: "Характеристики",
         helpText: "Укажите значение как на устройстве.",

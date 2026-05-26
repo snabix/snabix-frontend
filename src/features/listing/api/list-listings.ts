@@ -1,6 +1,9 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
   api,
+  listingItemSchema,
+  paginatedContractSchema,
+  parseApiContract,
   type ApiDataResponse,
   type ApiPaginatedData,
   unwrapApiPagination,
@@ -15,9 +18,13 @@ export type ListListingsParams = {
 };
 
 export async function listListings(params: ListListingsParams = {}): Promise<ApiPaginatedData<ListingItem>> {
-  const response = await api.get<ApiDataResponse<ApiPaginatedData<ListingItem>>>("/listings", {
+  const response = await api.get<ApiDataResponse<unknown>>("/listings", {
     params,
   });
 
-  return unwrapApiPagination(response.data);
+  return parseApiContract(
+    paginatedContractSchema(listingItemSchema),
+    unwrapApiPagination(response.data as ApiDataResponse<ApiPaginatedData<unknown>>),
+    "Ответ списка объявлений пользователя не соответствует ожидаемому формату.",
+  ) as ApiPaginatedData<ListingItem>;
 }

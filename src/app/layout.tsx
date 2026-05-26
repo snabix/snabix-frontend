@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className="h-full antialiased" data-scroll-behavior="smooth" lang="ru" suppressHydrationWarning>
-      <body className="min-h-full">
+      <body className="min-h-full" suppressHydrationWarning>
         <Providers>
           <div className="flex min-h-screen flex-col">
             <Header />

@@ -61,6 +61,8 @@ export function useListingFormState({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaRetryListingId, setMediaRetryListingId] = useState<string | null>(null);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const form = useForm<ListingFormValues>({
     defaultValues: {
@@ -187,7 +189,7 @@ export function useListingFormState({
   const effectiveCondition = activeType === LISTING_TYPE_SERVICE
     ? LISTING_CONDITION_NOT_APPLICABLE
     : (condition === LISTING_CONDITION_NOT_APPLICABLE ? LISTING_CONDITION_USED : condition);
-  const isFormBusy = isSubmitting || isLoadingRoots || isLoadingBranch || isLoadingAttributes;
+  const isFormBusy = isSubmitting || isUploadingMedia || isLoadingRoots || isLoadingBranch || isLoadingAttributes;
 
   const handleTypeChange = (type: number) => {
     setActiveType(type);
@@ -240,6 +242,29 @@ export function useListingFormState({
     void form.handleSubmit((values) => handleValidSubmit(values, saveAsDraft))();
   };
 
+  const retryMediaUpload = async () => {
+    if (mediaRetryListingId === null || imageFiles.length === 0) {
+      return;
+    }
+
+    try {
+      setIsUploadingMedia(true);
+      await uploadListingMedia(mediaRetryListingId, imageFiles);
+      setImageFiles([]);
+      setMediaRetryListingId(null);
+      toast.success("Фотографии объявления загружены.");
+      router.push(`/account/listings/${mediaRetryListingId}`);
+      router.refresh();
+    } catch (error) {
+      toast.error(extractApiError(
+        error,
+        "Объявление сохранено, но фотографии пока не загрузились. Проверьте соединение и повторите попытку.",
+      ));
+    } finally {
+      setIsUploadingMedia(false);
+    }
+  };
+
   const handleValidSubmit = async (
     values: ListingFormValues,
     saveAsDraft = false,
@@ -267,7 +292,21 @@ export function useListingFormState({
       const savedListing = await onSubmit(payload);
 
       if (imageFiles.length > 0) {
-        await uploadListingMedia(savedListing.id, imageFiles);
+        try {
+          setIsUploadingMedia(true);
+          await uploadListingMedia(savedListing.id, imageFiles);
+          setImageFiles([]);
+          setMediaRetryListingId(null);
+        } catch (error) {
+          setMediaRetryListingId(savedListing.id);
+          toast.error(extractApiError(
+            error,
+            "Объявление сохранено, но фотографии пока не загрузились. Проверьте соединение и повторите попытку.",
+          ));
+          return;
+        } finally {
+          setIsUploadingMedia(false);
+        }
       }
 
       toast.success(mode === "create"
@@ -304,6 +343,9 @@ export function useListingFormState({
     isLoadingRoots,
     isNegotiable,
     isSubmitting,
+    isUploadingMedia,
+    mediaRetryListingId,
+    retryMediaUpload,
     setCondition,
     setImageFiles,
     setIsNegotiable,

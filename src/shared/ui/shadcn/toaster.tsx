@@ -1,10 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { useTheme } from "next-themes";
 
 export function AppToaster() {
     const { resolvedTheme } = useTheme();
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        const frame = requestAnimationFrame(() => setIsMounted(true));
+
+        return () => cancelAnimationFrame(frame);
+    }, []);
+
+    if (!isMounted) {
+        return null;
+    }
 
     return (
         <Toaster

@@ -1,8 +1,18 @@
-import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
+import {
+  api,
+  parseApiContract,
+  type ApiDataResponse,
+  unwrapApiData,
+  userSchema,
+} from "@/src/shared/api";
 import type { User } from "@/src/entities/user";
 
 export const getMe = async (): Promise<User> => {
-  const response = await api.get<ApiDataResponse<User>>("/auth/me");
+  const response = await api.get<ApiDataResponse<unknown>>("/auth/me");
 
-  return unwrapApiData(response.data);
+  return parseApiContract(
+    userSchema,
+    unwrapApiData(response.data),
+    "Ответ профиля пользователя не соответствует ожидаемому формату.",
+  );
 };

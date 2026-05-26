@@ -2,31 +2,60 @@ import type {
   CategoryAttributeDefinition,
   CategoryNode,
 } from "@/src/entities/category";
-import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
-
-type CategoryAttributesPayload = {
-  category: Pick<CategoryNode, "id" | "catalogType" | "catalogTypeLabel" | "parentId" | "name" | "slug">;
-  items: CategoryAttributeDefinition[];
-};
+import { z } from "zod";
+import {
+  api,
+  categoryAttributeDefinitionSchema,
+  categoryNodeSchema,
+  parseApiContract,
+  type ApiDataResponse,
+  unwrapApiData,
+} from "@/src/shared/api";
 
 export async function listRootCategories(): Promise<CategoryNode[]> {
-  const response = await api.get<ApiDataResponse<CategoryNode[]>>("/categories/list");
+  const response = await api.get<ApiDataResponse<unknown>>("/categories/list");
 
-  return unwrapApiData(response.data);
+  return parseApiContract(
+    categoryNodeSchema.array(),
+    unwrapApiData(response.data),
+    "Ответ списка категорий не соответствует ожидаемому формату.",
+  ) as CategoryNode[];
 }
 
 export async function showCategoryBranch(categoryId: number): Promise<CategoryNode> {
-  const response = await api.get<ApiDataResponse<CategoryNode>>(
+  const response = await api.get<ApiDataResponse<unknown>>(
     `/categories/${categoryId}/branch`,
   );
 
-  return unwrapApiData(response.data);
+  return parseApiContract(
+    categoryNodeSchema,
+    unwrapApiData(response.data),
+    "Ответ ветки категории не соответствует ожидаемому формату.",
+  ) as CategoryNode;
 }
 
 export async function getCategoryAttributes(categoryId: number): Promise<CategoryAttributeDefinition[]> {
-  const response = await api.get<ApiDataResponse<CategoryAttributesPayload>>(
+  const response = await api.get<ApiDataResponse<unknown>>(
     `/categories/${categoryId}/attributes`,
   );
 
-  return unwrapApiData(response.data).items;
+  const payload = parseApiContract(
+    categoryAttributesPayloadSchema,
+    unwrapApiData(response.data),
+    "Ответ характеристик категории не соответствует ожидаемому формату.",
+  );
+
+  return payload.items as CategoryAttributeDefinition[];
 }
+
+const categoryAttributesPayloadSchema = z.object({
+  category: z.object({
+    id: z.number(),
+    catalogType: z.number(),
+    catalogTypeLabel: z.string(),
+    parentId: z.number().nullable(),
+    name: z.string(),
+    slug: z.string(),
+  }).passthrough(),
+  items: z.array(categoryAttributeDefinitionSchema),
+}).passthrough();

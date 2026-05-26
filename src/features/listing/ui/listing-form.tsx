@@ -45,6 +45,9 @@ export function ListingForm({
     isLoadingRoots,
     isNegotiable,
     isSubmitting,
+    isUploadingMedia,
+    mediaRetryListingId,
+    retryMediaUpload,
     setCondition,
     setImageFiles,
     setIsNegotiable,
@@ -168,7 +171,10 @@ export function ListingForm({
         <ListingSubmitActions
           isDisabled={isFormBusy}
           isSubmitting={isSubmitting}
+          isUploadingMedia={isUploadingMedia}
+          mediaRetryListingId={mediaRetryListingId}
           mode={mode}
+          onRetryMediaUpload={retryMediaUpload}
           onSubmit={submitForm}
         />
       </aside>

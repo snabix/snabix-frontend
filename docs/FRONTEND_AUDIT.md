@@ -149,9 +149,11 @@
 - [x] Удалить legacy `.ant-*` CSS из `globals.css`.
 - [x] Проверить contrast всех кнопок, badges, destructive states в dark theme.
 - [x] Унифицировать naming shared UI директорий.
-- [ ] Добавить shared pagination component вместо локальной верстки.
-- [ ] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.
+- [x] Добавить shared pagination component вместо локальной верстки.
+- [x] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.
 - [ ] Провести browser QA mobile header, footer, account sidebar, listing cards.
+
+Примечание: browser QA оставлен открытым, потому что текущая Codex browser-среда блокирует локальные URL (`localhost`, `127.0.0.1`, network IP). Кодовая сборка и тесты проходят, но ручная проверка в реальном браузере еще нужна.
 
 ## Уязвимые Места
 

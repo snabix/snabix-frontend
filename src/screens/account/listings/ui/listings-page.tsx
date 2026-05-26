@@ -14,6 +14,7 @@ import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-di
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { EmptyState } from "@/src/shared/ui/empty-state";
+import { Pagination } from "@/src/shared/ui/pagination";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
@@ -298,34 +299,14 @@ export function ListingsPage() {
             )}
           </div>
 
-          {paginationMeta.lastPage > 1 ? (
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
-              <p className="text-sm font-semibold text-[var(--text-muted)]">
-                {paginationMeta.from ?? 0}-{paginationMeta.to ?? 0} из {paginationMeta.total}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  disabled={page <= 1 || isLoading}
-                  onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
-                  type="button"
-                  variant="outline"
-                >
-                  Назад
-                </Button>
-                <span className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-                  {paginationMeta.currentPage} / {paginationMeta.lastPage}
-                </span>
-                <Button
-                  disabled={page >= paginationMeta.lastPage || isLoading}
-                  onClick={() => setPage((currentPage) => Math.min(currentPage + 1, paginationMeta.lastPage))}
-                  type="button"
-                  variant="outline"
-                >
-                  Вперед
-                </Button>
-              </div>
-            </div>
-          ) : null}
+          <Pagination
+            align="between"
+            isLoading={isLoading}
+            meta={paginationMeta}
+            onPageChange={setPage}
+            page={page}
+            showRange
+          />
         </section>
       </div>
 

@@ -3,7 +3,7 @@ import { Heart, MapPin, Star } from "lucide-react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
 import { cn } from "@/src/shared/lib/utils";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
-import { ListingImageCarousel } from "./listing-image-carousel";
+import { ListingMediaGallery } from "./listing-media-gallery";
 
 type ListingCardProps = {
   detailsHref?: string;
@@ -67,11 +67,10 @@ export function ListingCard({
         viewMode === "list" ? "min-h-[300px] md:min-h-full md:w-[420px] md:shrink-0" : "min-h-[340px]",
       )}
     >
-      <ListingImageCarousel
+      <ListingMediaGallery
         imageUrl={listing.imageUrl}
         imageUrls={listing.imageUrls}
         title={listing.title}
-        viewMode={viewMode}
       />
 
       {viewMode === "grid" ? (

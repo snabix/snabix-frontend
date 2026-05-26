@@ -11,6 +11,7 @@ import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
+import { Pagination } from "@/src/shared/ui/pagination";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 import {
   defaultPublicListingFilters,
@@ -211,31 +212,12 @@ export function HomePage() {
                       ))}
                     </div>
 
-                    {paginationMeta.lastPage > 1 ? (
-                      <div className="mt-7 flex flex-wrap items-center justify-end gap-4 border-t border-[var(--border-soft)] pt-5">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            disabled={page <= 1 || isLoading}
-                            onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
-                            type="button"
-                            variant="outline"
-                          >
-                            Назад
-                          </Button>
-                          <span className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-                            {paginationMeta.currentPage} / {paginationMeta.lastPage}
-                          </span>
-                          <Button
-                            disabled={page >= paginationMeta.lastPage || isLoading}
-                            onClick={() => setPage((currentPage) => Math.min(currentPage + 1, paginationMeta.lastPage))}
-                            type="button"
-                            variant="outline"
-                          >
-                            Вперед
-                          </Button>
-                        </div>
-                      </div>
-                    ) : null}
+                    <Pagination
+                      isLoading={isLoading}
+                      meta={paginationMeta}
+                      onPageChange={setPage}
+                      page={page}
+                    />
                   </>
                 )}
               </div>

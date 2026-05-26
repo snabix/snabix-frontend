@@ -23,7 +23,7 @@ const buttonVariants = cva(
         outline:
           "border border-[var(--border-soft)] bg-transparent text-[var(--brand-deep)] hover:bg-[var(--accent-soft)]",
         destructive:
-          "bg-[var(--active-button-bg)] text-[var(--active-button-text)] shadow-[var(--shadow-card)] hover:opacity-95",
+          "bg-[var(--danger-bg)] text-[var(--danger-text)] shadow-[var(--shadow-card)] hover:opacity-95 focus-visible:ring-[var(--danger-soft)]",
       },
       size: {
         default: "h-11 px-5 py-2",

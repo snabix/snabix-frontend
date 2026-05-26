@@ -15,7 +15,7 @@ export function EmailVerificationBadge({ verified }: { verified: boolean }) {
         "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold",
         verified
           ? "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]"
-          : "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
+          : "border-[color-mix(in_srgb,var(--danger)_42%,var(--border-soft))] bg-[var(--danger-soft)] text-[var(--danger)]",
       ].join(" ")}
     >
       {verified ? (
@@ -38,7 +38,7 @@ export function ProfileStatusPill({
 }) {
   const toneClassName = {
     accent: "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]",
-    danger: "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--brand-deep)]",
+    danger: "border-[color-mix(in_srgb,var(--danger)_42%,var(--border-soft))] bg-[var(--danger-soft)] text-[var(--danger)]",
     neutral: "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] text-[var(--brand-deep)]",
     success: "border-[color-mix(in_srgb,var(--accent)_42%,var(--border-soft))] bg-[var(--accent-soft)] text-[var(--brand-deep)]",
   }[tone];

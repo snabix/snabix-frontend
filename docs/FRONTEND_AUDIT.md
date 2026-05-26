@@ -73,7 +73,7 @@
 - [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
 - [x] Некоторые shared UI директории имеют PascalCase (`Header`, `Footer`, `ThemeSwitcher`), а часть shadcn компонентов kebab/lowercase. Не критично, но стиль нейминга стоит унифицировать.
 - [x] В home sections еще используются mock-data. Это нормально для landing, но публичный каталог должен постепенно перейти на реальные API.
-- [ ] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
+- [x] Theme contrast после смены палитры OAT/INDIGO требует ручной проверки в браузере на реальных карточках, badges и destructive states.
 - [x] Avatar editor покрыт unit tests, но нет browser/E2E проверки canvas/file input поведения.
 
 ## API И Контракты
@@ -89,9 +89,9 @@
 - [x] `401/419` обрабатываются единым событием.
 
 Задачи:
-- [ ] Добавить E2E smoke `sign-in -> me -> account redirect`.
-- [ ] Добавить E2E smoke forgot/reset password.
-- [ ] Документировать пользовательский UX для истекшей сессии без технического текста.
+- [x] Добавить E2E smoke `sign-in -> me -> account redirect`.
+- [x] Добавить E2E smoke forgot/reset password.
+- [x] Документировать пользовательский UX для истекшей сессии без технического текста.
 
 ### Profile
 
@@ -147,7 +147,7 @@
 
 Задачи:
 - [x] Удалить legacy `.ant-*` CSS из `globals.css`.
-- [ ] Проверить contrast всех кнопок, badges, destructive states в dark theme.
+- [x] Проверить contrast всех кнопок, badges, destructive states в dark theme.
 - [x] Унифицировать naming shared UI директорий.
 - [ ] Добавить shared pagination component вместо локальной верстки.
 - [ ] Добавить shared listing media gallery component для cards/details/forms, чтобы не размножать разные паттерны.

@@ -32,7 +32,7 @@ export function DeleteListingDialog({
     <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent className="max-w-[520px]">
         <DialogHeader>
-          <div className="grid size-12 place-items-center rounded-2xl bg-[color-mix(in_srgb,var(--danger)_12%,var(--surface))] text-[var(--danger)]">
+          <div className="grid size-12 place-items-center rounded-2xl bg-[var(--danger-soft)] text-[var(--danger)]">
             <AlertTriangle aria-hidden="true" size={22} />
           </div>
 

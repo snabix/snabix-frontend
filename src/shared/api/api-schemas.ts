@@ -137,6 +137,13 @@ const listingBaseSchema = z.object({
   isNegotiable: z.boolean(),
   imageUrl: nullableStringSchema.optional(),
   imageUrls: z.array(z.string()).optional(),
+  media: z.array(z.object({
+    id: z.number(),
+    url: z.string(),
+    fileName: z.string(),
+    order: z.number(),
+    isMain: z.boolean(),
+  }).passthrough()).optional(),
   isFavorite: z.boolean().optional(),
   sellerRating: z.number().nullable().optional(),
   city: nullableStringSchema.optional(),

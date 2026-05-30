@@ -4,8 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
-import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
-import { uploadListingMedia, type CreateListingPayload, type UpdateListingPayload } from "@/src/features/listing/api";
+import type { ListingAttributeValue, ListingItem, ListingMediaItem } from "@/src/entities/listing";
+import {
+  deleteListingMedia,
+  reorderListingMedia,
+  setMainListingMedia,
+  uploadListingMedia,
+  type CreateListingPayload,
+  type UpdateListingPayload,
+} from "@/src/features/listing/api";
 import {
   buildAttributePayload,
   filterVisibleAttributes,
@@ -58,6 +65,7 @@ export function useListingFormState({
     () => valuesFromListing(initialListing),
   );
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
+  const [existingMedia, setExistingMedia] = useState<ListingMediaItem[]>(() => initialListing?.media ?? []);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -242,6 +250,70 @@ export function useListingFormState({
     void form.handleSubmit((values) => handleValidSubmit(values, saveAsDraft))();
   };
 
+  const syncExistingMedia = (listing: ListingItem) => {
+    setExistingMedia(listing.media ?? []);
+  };
+
+  const handleDeleteExistingMedia = async (mediaId: number) => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const previousMedia = existingMedia;
+    setExistingMedia((items) => items.filter((item) => item.id !== mediaId));
+
+    try {
+      const listing = await deleteListingMedia(initialListing.id, mediaId);
+      syncExistingMedia(listing);
+      toast.success("Изображение удалено.");
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось удалить изображение."));
+    }
+  };
+
+  const handleSetMainExistingMedia = async (mediaId: number) => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const nextMedia = moveMediaToFront(existingMedia, mediaId);
+    const previousMedia = existingMedia;
+    setExistingMedia(markMainMedia(nextMedia));
+
+    try {
+      const listing = await setMainListingMedia(initialListing.id, mediaId);
+      syncExistingMedia(listing);
+      toast.success("Главное фото обновлено.");
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось выбрать главное фото."));
+    }
+  };
+
+  const handleReorderExistingMedia = async (mediaId: number, direction: "left" | "right") => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const previousMedia = existingMedia;
+    const nextMedia = reorderMediaLocally(existingMedia, mediaId, direction);
+
+    if (nextMedia === existingMedia) {
+      return;
+    }
+
+    setExistingMedia(markMainMedia(nextMedia));
+
+    try {
+      const listing = await reorderListingMedia(initialListing.id, nextMedia.map((media) => media.id));
+      syncExistingMedia(listing);
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось изменить порядок изображений."));
+    }
+  };
+
   const retryMediaUpload = async () => {
     if (mediaRetryListingId === null || imageFiles.length === 0) {
       return;
@@ -331,11 +403,15 @@ export function useListingFormState({
     filteredRoots,
     form,
     groupedAttributes,
+    handleDeleteExistingMedia,
     handleAttributeChange,
     handleCategoryChange,
     handleMultiselectChange,
+    handleReorderExistingMedia,
     handleRootChange,
+    handleSetMainExistingMedia,
     handleTypeChange,
+    existingMedia,
     imageFiles,
     isFormBusy,
     isLoadingAttributes,
@@ -351,4 +427,56 @@ export function useListingFormState({
     setIsNegotiable,
     submitForm,
   };
+}
+
+function moveMediaToFront(media: ListingMediaItem[], mediaId: number): ListingMediaItem[] {
+  const selectedMedia = media.find((item) => item.id === mediaId);
+
+  if (selectedMedia === undefined) {
+    return media;
+  }
+
+  return [
+    selectedMedia,
+    ...media.filter((item) => item.id !== mediaId),
+  ];
+}
+
+function reorderMediaLocally(
+  media: ListingMediaItem[],
+  mediaId: number,
+  direction: "left" | "right",
+): ListingMediaItem[] {
+  const currentIndex = media.findIndex((item) => item.id === mediaId);
+
+  if (currentIndex === -1) {
+    return media;
+  }
+
+  const nextIndex = direction === "left" ? currentIndex - 1 : currentIndex + 1;
+
+  if (nextIndex < 0 || nextIndex >= media.length) {
+    return media;
+  }
+
+  const nextMedia = [...media];
+  const currentMediaItem = nextMedia[currentIndex];
+  const nextMediaItem = nextMedia[nextIndex];
+
+  if (currentMediaItem === undefined || nextMediaItem === undefined) {
+    return media;
+  }
+
+  nextMedia[currentIndex] = nextMediaItem;
+  nextMedia[nextIndex] = currentMediaItem;
+
+  return nextMedia;
+}
+
+function markMainMedia(media: ListingMediaItem[]): ListingMediaItem[] {
+  return media.map((item, index) => ({
+    ...item,
+    isMain: index === 0,
+    order: index + 1,
+  }));
 }

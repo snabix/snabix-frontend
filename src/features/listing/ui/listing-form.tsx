@@ -33,11 +33,15 @@ export function ListingForm({
     filteredRoots,
     form,
     groupedAttributes,
+    handleDeleteExistingMedia,
     handleAttributeChange,
     handleCategoryChange,
     handleMultiselectChange,
+    handleReorderExistingMedia,
     handleRootChange,
+    handleSetMainExistingMedia,
     handleTypeChange,
+    existingMedia,
     imageFiles,
     isFormBusy,
     isLoadingAttributes,
@@ -105,9 +109,13 @@ export function ListingForm({
           </ListingFormField>
 
           <ListingImageUploader
+            existingMedia={existingMedia}
             files={imageFiles}
             isDisabled={isFormBusy}
+            onDeleteExisting={handleDeleteExistingMedia}
             onChange={setImageFiles}
+            onReorderExisting={handleReorderExistingMedia}
+            onSetMainExisting={handleSetMainExistingMedia}
           />
 
           <div className="grid gap-4 md:grid-cols-2">

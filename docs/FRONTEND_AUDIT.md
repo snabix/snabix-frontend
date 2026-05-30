@@ -66,8 +66,8 @@
 - [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
 - [x] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
 - [x] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
-- [ ] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
-- [ ] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
+- [x] Listing media UI поддерживает upload, но нет reorder/delete existing images/set main image.
+- [x] Existing images в edit form не управляются как полноценная media collection; новые файлы добавляются отдельным upload после save.
 - [x] Нет contract tests, которые защищают frontend adapters от изменения backend DTO.
 - [ ] Нет E2E smoke для auth/profile/listings в браузере.
 - [ ] Header/Footer показываются глобально, но browser/mobile визуальная проверка после последних изменений не зафиксирована.
@@ -133,10 +133,10 @@
 Задачи:
 - [x] Реализовать публичную страницу `/listings`.
 - [x] Подключить public filters, когда backend отдаст category/type/price/sort.
-- [ ] Добавить frontend UI для existing media management: delete, reorder, set main image.
-- [ ] Добавить tests для listing API adapters: create/update/list/public/media.
-- [ ] Добавить integration test create listing draft/pending review.
-- [ ] Проверить edit flow: если media upload после save падает, нужен понятный partial success UX.
+- [x] Добавить frontend UI для existing media management: delete, reorder, set main image.
+- [x] Добавить tests для listing API adapters: create/update/list/public/media.
+- [x] Добавить integration test create listing draft/pending review.
+- [x] Проверить edit flow: если media upload после save падает, нужен понятный partial success UX.
 
 ## UI И Дизайн-Система
 
@@ -173,7 +173,7 @@
 3. [x] Реализовать `/listings` публичную страницу с pagination и будущими фильтрами.
 4. [x] Реализовать `/categories` страницу каталога.
 5. [x] Применить `dependencyRules` в listing form.
-6. [ ] Добавить listing media management UI: delete, reorder, main image.
+6. [x] Добавить listing media management UI: delete, reorder, main image.
 7. [x] Добавить partial success/rollback UX для listing save + media upload.
 8. [ ] Вынести tests в отдельную директорию или зафиксировать colocated-tests как официальный стандарт.
 9. [ ] Провести browser/E2E smoke для auth/profile/listings.

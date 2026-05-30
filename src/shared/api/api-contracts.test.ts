@@ -1,10 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getCategoryAttributes } from "@/src/entities/category/api/list-categories";
 import { getMe } from "@/src/entities/user";
-import { listListings, listPublicListings } from "@/src/features/listing/api";
+import {
+  createListing,
+  deleteListingMedia,
+  listListings,
+  listPublicListings,
+  reorderListingMedia,
+  setMainListingMedia,
+  updateListing,
+  uploadListingMedia,
+} from "@/src/features/listing/api";
 import { api } from "@/src/shared/api";
 
 const apiGetMock = vi.spyOn(api, "get");
+const apiPostMock = vi.spyOn(api, "post");
+const apiPatchMock = vi.spyOn(api, "patch");
+const apiDeleteMock = vi.spyOn(api, "delete");
 
 const paginationMeta = {
   currentPage: 1,
@@ -49,6 +61,22 @@ const listingContract = {
     "https://cdn.snabix.test/listing-1/main.png",
     "https://cdn.snabix.test/listing-1/second.png",
   ],
+  media: [
+    {
+      fileName: "main.png",
+      id: 101,
+      isMain: true,
+      order: 1,
+      url: "https://cdn.snabix.test/listing-1/main.png",
+    },
+    {
+      fileName: "second.png",
+      id: 102,
+      isMain: false,
+      order: 2,
+      url: "https://cdn.snabix.test/listing-1/second.png",
+    },
+  ],
   isFeatured: false,
   isNegotiable: true,
   price: 85000,
@@ -67,6 +95,9 @@ const listingContract = {
 describe("api adapter contracts", () => {
   beforeEach(() => {
     apiGetMock.mockReset();
+    apiPostMock.mockReset();
+    apiPatchMock.mockReset();
+    apiDeleteMock.mockReset();
   });
 
   it("keeps auth me response shape for user session", async () => {
@@ -140,6 +171,45 @@ describe("api adapter contracts", () => {
     });
   });
 
+  it("sends create listing payload and validates created listing contract", async () => {
+    const payload = {
+      attributeValues: {},
+      categoryId: 5,
+      condition: 2,
+      currency: "RUB",
+      description: "Игровой ноутбук.",
+      isNegotiable: true,
+      price: 85000,
+      saveAsDraft: true,
+      title: "Игровой ноутбук",
+      type: 1,
+    };
+
+    apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
+
+    await expect(createListing(payload)).resolves.toEqual(listingContract);
+    expect(apiPostMock).toHaveBeenCalledWith("/listings", payload);
+  });
+
+  it("sends update listing payload without saveAsDraft and validates listing contract", async () => {
+    const payload = {
+      attributeValues: {},
+      categoryId: 5,
+      condition: 2,
+      currency: "RUB",
+      description: "Игровой ноутбук.",
+      isNegotiable: true,
+      price: 85000,
+      title: "Игровой ноутбук",
+      type: 1,
+    };
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+
+    await expect(updateListing("listing-1", payload)).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith("/listings/listing-1", payload);
+  });
+
   it("unwraps public listings pagination contract with media fields", async () => {
     const publicListingContract = { ...listingContract };
 
@@ -185,6 +255,37 @@ describe("api adapter contracts", () => {
         type: 1,
       },
     });
+  });
+
+  it("validates media upload and management adapter contracts", async () => {
+    const file = new File(["content"], "listing.png", { type: "image/png" });
+
+    apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(uploadListingMedia("listing-1", [file])).resolves.toEqual(listingContract);
+    expect(apiPostMock).toHaveBeenCalledWith(
+      "/listings/listing-1/media",
+      expect.any(FormData),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(reorderListingMedia("listing-1", [102, 101])).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith(
+      "/listings/listing-1/media/reorder",
+      { mediaIds: [102, 101] },
+    );
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(setMainListingMedia("listing-1", 102)).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith("/listings/listing-1/media/102/main");
+
+    apiDeleteMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(deleteListingMedia("listing-1", 101)).resolves.toEqual(listingContract);
+    expect(apiDeleteMock).toHaveBeenCalledWith("/listings/listing-1/media/101");
   });
 
   it("returns category attributes items from category attributes contract", async () => {

@@ -137,6 +137,7 @@ function renderAttributeInput(
   if (attribute.type === ATTRIBUTE_TYPE_TEXT) {
     return (
       <Input
+        aria-label={attribute.name}
         onChange={(event) => onChange(attribute.id, event.target.value)}
         placeholder={attribute.placeholder ?? `Введите ${attribute.name.toLowerCase()}`}
         value={typeof value === "string" ? value : ""}
@@ -147,6 +148,7 @@ function renderAttributeInput(
   if (attribute.type === ATTRIBUTE_TYPE_NUMBER) {
     return (
       <Input
+        aria-label={attribute.name}
         inputMode="decimal"
         onChange={(event) => onChange(attribute.id, parseAttributeNumber(event.target.value))}
         placeholder={attribute.placeholder ?? "Введите число"}
@@ -158,7 +160,11 @@ function renderAttributeInput(
   if (attribute.type === ATTRIBUTE_TYPE_BOOLEAN) {
     return (
       <label className="flex items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3">
-        <Checkbox checked={Boolean(value)} onCheckedChange={(checked) => onChange(attribute.id, Boolean(checked))} />
+        <Checkbox
+          aria-label={attribute.name}
+          checked={Boolean(value)}
+          onCheckedChange={(checked) => onChange(attribute.id, Boolean(checked))}
+        />
         <span className="text-sm font-semibold text-[var(--brand-deep)]">Да, параметр актуален</span>
       </label>
     );
@@ -166,7 +172,11 @@ function renderAttributeInput(
 
   if (attribute.type === ATTRIBUTE_TYPE_SELECT) {
     return (
-      <ListingFormSelect onChange={(nextValue) => onChange(attribute.id, nextValue)} value={typeof value === "string" ? value : ""}>
+      <ListingFormSelect
+        aria-label={attribute.name}
+        onChange={(nextValue) => onChange(attribute.id, nextValue)}
+        value={typeof value === "string" ? value : ""}
+      >
         <option value="">{attribute.placeholder ?? "Выберите значение"}</option>
         {(attribute.options ?? []).map((option) => (
           <option key={option} value={option}>
@@ -185,6 +195,7 @@ function renderAttributeInput(
         {(attribute.options ?? []).map((option) => (
           <label className="flex items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3" key={option}>
             <Checkbox
+              aria-label={`${attribute.name}: ${option}`}
               checked={selectedValues.includes(option)}
               onCheckedChange={(checked) => onMultiselectChange(attribute.id, option, Boolean(checked))}
             />
@@ -198,6 +209,7 @@ function renderAttributeInput(
   if (attribute.type === ATTRIBUTE_TYPE_DATE) {
     return (
       <Input
+        aria-label={attribute.name}
         onChange={(event) => onChange(attribute.id, event.target.value)}
         placeholder={attribute.placeholder ?? undefined}
         type="date"

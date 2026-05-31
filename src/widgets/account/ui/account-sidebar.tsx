@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { PointerEvent, useState } from "react";
 import {
     FileDown,
+    Heart,
     MessageSquareText,
     PanelLeftClose,
     PanelLeftOpen,
@@ -20,6 +21,7 @@ import {
 const iconByKey: Record<AccountNavigationKey, typeof UserRound> = {
     profile: UserRound,
     listings: Tags,
+    favorites: Heart,
     reviews: MessageSquareText,
     settings: Settings,
     export: FileDown,

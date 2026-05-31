@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import type { CategoryNode } from "@/src/entities/category";
+import { renderCategoryIcon, type CategoryNode } from "@/src/entities/category";
 import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogRootsProps = {
@@ -82,6 +82,16 @@ export function CategoryCatalogRoots({
                   onMouseEnter={() => onRootHover(category.id)}
                 >
                   <div className="flex w-full items-center justify-between gap-4">
+                    <span
+                      className={[
+                        "grid size-10 shrink-0 place-items-center rounded-2xl transition-colors",
+                        isActive
+                          ? "bg-[var(--accent-soft)] text-[var(--brand)]"
+                          : "bg-[var(--accent-soft)] text-[var(--brand-deep)] group-hover:text-[var(--brand)]",
+                      ].join(" ")}
+                    >
+                      {renderCategoryIcon(category, 18)}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <p className="text-[16px] font-bold leading-6 transition-colors duration-200">
                         {category.name}

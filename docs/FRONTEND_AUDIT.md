@@ -35,11 +35,15 @@
 - [x] Submit-for-review action подключен.
 - [x] Listing list adapters работают с `data.items` и `data.meta`.
 - [x] Account listings имеют фильтры, пагинацию, grid/list view, bulk delete.
+- [x] Account favorites page подключена к backend избранного.
+- [x] Settings page реализована как UI-макет будущих настроек аккаунта.
 - [x] Listing media upload подключен к форме.
 - [x] Listing cards показывают gallery controls для нескольких изображений.
 - [x] Listing details page имеет gallery, breadcrumbs, actions dropdown.
 - [x] Public home показывает публичные объявления без private fields.
 - [x] Public home имеет фильтры `category/type/minPrice/maxPrice/sort` и pagination для публичной витрины.
+- [x] Blog/news section реализован как публичный раздел `/blog` с детальными страницами материалов.
+- [x] Root category icons добавлены на frontend для визуального каталога.
 - [x] shadcn/Radix используется как основной UI-kit.
 - [x] Ant Design зависимости удалены из `package.json`.
 - [x] Theme support реализован через CSS variables и `next-themes`.
@@ -62,7 +66,7 @@
 ### Риски и нарушения
 
 - [x] В `src/app/globals.css` остались `.ant-*` классы после миграции с Ant Design. Это не ломает UI, но засоряет дизайн-систему и может вводить в заблуждение.
-- [ ] Tests лежат рядом с исходниками. Это допустимо, но команда ранее хотела отдельную директорию tests; нужно принять единый стандарт.
+- [x] Tests лежат рядом с исходниками. Принят единый стандарт: unit/integration tests остаются рядом со slice-кодом, browser/E2E tests выносятся в `tests/e2e`.
 - [x] Public listing API adapter пока передает только `page/perPage`, потому что backend еще не имеет базовых фильтров.
 - [x] UI публичного каталога как отдельной страницы пока отсутствует: есть home и account listings, но нет `/categories` и `/listings`.
 - [x] Category dependency rules отображаются в DTO, но frontend form пока не применяет условную видимость/валидацию.
@@ -115,8 +119,8 @@
 Задачи:
 - [x] Реализовать `/categories` catalog page.
 - [x] Реализовать category branch page или category drill-down UI.
-- [ ] Применить `dependencyRules` в listing form.
-- [ ] Добавить tests на conditional attribute visibility.
+- [x] Применить `dependencyRules` в listing form.
+- [x] Добавить tests на conditional attribute visibility.
 
 ### Listings
 
@@ -154,7 +158,7 @@
 - [x] Устранить риск hydration mismatch в theme/toaster flow.
 - [ ] Провести browser QA mobile header, footer, account sidebar, listing cards.
 
-Примечание: browser QA оставлен открытым, потому что текущая Codex browser-среда блокирует локальные URL (`localhost`, `127.0.0.1`, network IP). Кодовая сборка и тесты проходят, но ручная проверка в реальном браузере еще нужна.
+Примечание: browser QA оставлен открытым, потому что текущая Codex browser-среда блокирует локальные URL (`localhost`, `127.0.0.1`, network IP). Повторная попытка 2026-05-31 на `localhost`, `127.0.0.1` и network IP завершилась `ERR_BLOCKED_BY_CLIENT`. Кодовая сборка и тесты проходят, но ручная проверка в реальном браузере еще нужна.
 
 ## Уязвимые Места
 
@@ -175,7 +179,7 @@
 5. [x] Применить `dependencyRules` в listing form.
 6. [x] Добавить listing media management UI: delete, reorder, main image.
 7. [x] Добавить partial success/rollback UX для listing save + media upload.
-8. [ ] Вынести tests в отдельную директорию или зафиксировать colocated-tests как официальный стандарт.
+8. [x] Вынести tests в отдельную директорию или зафиксировать colocated-tests как официальный стандарт.
 9. [ ] Провести browser/E2E smoke для auth/profile/listings.
 10. [ ] Провести visual QA dark/light/mobile и исправить contrast.
 

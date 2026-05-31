@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { type CategoryNode, useCategoryStore } from "@/src/entities/category";
 import { ListingCard, type PublicListingItem } from "@/src/entities/listing";
 import { listPublicListings, type ListPublicListingsParams } from "@/src/features/listing/api";
+import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Button } from "@/src/shared/ui/shadcn/button";
@@ -40,7 +41,7 @@ export function PublicListingsPage({
 }: PublicListingsPageProps) {
   const [items, setItems] = useState<PublicListingItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
+  const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
   const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [draftFilters, setDraftFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
   const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(draftFilters);
@@ -117,20 +118,6 @@ export function PublicListingsPage({
       isMounted = false;
     };
   }, [appliedFilters, initialCategoryId, page]);
-
-  const handleFavoriteToggle = (listingId: string) => {
-    setFavoriteListingIds((currentIds) => {
-      const nextIds = new Set(currentIds);
-
-      if (nextIds.has(listingId)) {
-        nextIds.delete(listingId);
-      } else {
-        nextIds.add(listingId);
-      }
-
-      return nextIds;
-    });
-  };
 
   const handleFiltersReset = () => {
     setDraftFilters(defaultPublicListingFilters);
@@ -217,7 +204,7 @@ export function PublicListingsPage({
                         isFavorite={favoriteListingIds.has(item.id)}
                         key={item.id}
                         listing={item}
-                        onFavoriteToggle={handleFavoriteToggle}
+                        onFavoriteToggle={toggleFavorite}
                         showStatus={false}
                         viewMode={viewMode}
                       />

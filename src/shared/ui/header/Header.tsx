@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
@@ -61,6 +62,8 @@ export function Header() {
                 isOpen={isCatalogOpen}
                 onToggle={toggleCatalog}
               />
+              <HeaderLink href="/about">О проекте</HeaderLink>
+              <HeaderLink href="/blog">Новости и блог</HeaderLink>
             </nav>
           </div>
 
@@ -79,5 +82,22 @@ export function Header() {
         topOffset={catalogTopOffset}
       />
     </header>
+  );
+}
+
+function HeaderLink({
+  children,
+  href,
+}: {
+  children: string;
+  href: string;
+}) {
+  return (
+    <Link
+      className="rounded-full px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition-colors hover:text-[var(--accent)]"
+      href={href}
+    >
+      {children}
+    </Link>
   );
 }

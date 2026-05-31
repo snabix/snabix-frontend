@@ -6,6 +6,7 @@ import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
+import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
@@ -44,7 +45,7 @@ const defaultPaginationMeta: ApiPaginationMeta = {
 
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
-  const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
+  const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
   const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedListingIds, setSelectedListingIds] = useState<Set<string>>(new Set());
@@ -115,20 +116,6 @@ export function ListingsPage() {
     } finally {
       setDeletingListingId(null);
     }
-  };
-
-  const handleFavoriteToggle = (listingId: string) => {
-    setFavoriteListingIds((currentIds) => {
-      const nextIds = new Set(currentIds);
-
-      if (nextIds.has(listingId)) {
-        nextIds.delete(listingId);
-      } else {
-        nextIds.add(listingId);
-      }
-
-      return nextIds;
-    });
   };
 
   const handleSelectToggle = (listingId: string) => {
@@ -290,7 +277,7 @@ export function ListingsPage() {
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
-                    onFavoriteToggle={handleFavoriteToggle}
+                    onFavoriteToggle={toggleFavorite}
                     onSelectToggle={handleSelectToggle}
                     viewMode={viewMode}
                   />

@@ -1,7 +1,15 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useCategoryStore, type CategoryNode } from "@/src/entities/category";
+import {
+  useCategoryStore,
+  type CategoryAttributeDefinition,
+  type CategoryNode,
+} from "@/src/entities/category";
 import type { ListingItem } from "@/src/entities/listing";
+import {
+  ATTRIBUTE_TYPE_SELECT,
+  ATTRIBUTE_TYPE_TEXT,
+} from "@/src/features/listing/model/listing-form-constants";
 import { ListingForm } from "@/src/features/listing/ui/listing-form";
 
 const { pushMock, refreshMock, toastErrorMock, toastSuccessMock, uploadListingMediaMock } = vi.hoisted(() => ({
@@ -179,6 +187,62 @@ describe("ListingForm integration", () => {
       expect(screen.getByRole("button", { name: "Повторить загрузку фото" })).toBeInTheDocument();
     });
   });
+
+  it("shows and prunes conditional attributes by dependency rules", async () => {
+    setCategoryAttributes([
+      makeAttribute({
+        id: 10,
+        name: "Бренд",
+        options: ["Apple", "Samsung"],
+        slug: "brand",
+        type: ATTRIBUTE_TYPE_SELECT,
+        typeLabel: "Список",
+      }),
+      makeAttribute({
+        dependencyRules: [
+          {
+            attributeDefinitionId: 10,
+            operator: "equals",
+            value: "Apple",
+          },
+        ],
+        id: 11,
+        name: "Модель",
+        placeholder: "Например, iPhone 15",
+        slug: "model",
+        type: ATTRIBUTE_TYPE_TEXT,
+        typeLabel: "Текст",
+      }),
+    ]);
+
+    render(<ListingForm mode="create" onSubmit={vi.fn()} />);
+
+    expect(screen.getByLabelText("Бренд")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Модель")).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Бренд"), {
+      target: { value: "Apple" },
+    });
+
+    expect(await screen.findByLabelText("Модель")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Модель"), {
+      target: { value: "iPhone 15" },
+    });
+    fireEvent.change(screen.getByLabelText("Бренд"), {
+      target: { value: "Samsung" },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText("Модель")).not.toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText("Бренд"), {
+      target: { value: "Apple" },
+    });
+
+    expect(await screen.findByLabelText("Модель")).toHaveValue("");
+  });
 });
 
 function fillListingForm() {
@@ -191,4 +255,37 @@ function fillListingForm() {
   fireEvent.change(screen.getByLabelText("Цена"), {
     target: { value: "85000" },
   });
+}
+
+function setCategoryAttributes(attributes: CategoryAttributeDefinition[]) {
+  useCategoryStore.setState({
+    categoryAttributes: { 5: attributes },
+    categoryAttributesFetchedAt: { 5: Date.now() },
+    categoryAttributeStatuses: { 5: "success" },
+  });
+}
+
+function makeAttribute(
+  attribute: Partial<CategoryAttributeDefinition> & Pick<CategoryAttributeDefinition, "id" | "name" | "slug" | "type" | "typeLabel">,
+): CategoryAttributeDefinition {
+  return {
+    appliesToChildren: false,
+    categoryId: 5,
+    defaultValue: null,
+    dependencyRules: null,
+    description: null,
+    groupName: null,
+    helpText: null,
+    isActive: true,
+    isFilterable: false,
+    isInherited: false,
+    isRequired: false,
+    options: null,
+    placeholder: null,
+    schemaVersion: 1,
+    showInCard: false,
+    sortOrder: 1,
+    unit: null,
+    ...attribute,
+  };
 }

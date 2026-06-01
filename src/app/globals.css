@@ -12,9 +12,15 @@
     --accent-soft: color-mix(in srgb, #C8C3FF 34%, transparent);
     --active-button-bg: #C8C3FF;
     --active-button-text: #2E2A54;
+    --button-primary-bg: var(--active-button-bg);
+    --button-primary-text: var(--active-button-text);
+    --button-secondary-bg: color-mix(in srgb, var(--surface) 82%, transparent);
+    --button-secondary-text: var(--brand-deep);
+    --button-subtle-bg: transparent;
+    --button-subtle-text: var(--brand-deep);
     --danger: #8A1F35;
     --danger-bg: #8A1F35;
-    --danger-text: #FFF0E1;
+    --danger-text: #FFFFFF;
     --danger-soft: color-mix(in srgb, #8A1F35 14%, #FFF0E1);
     --metal: color-mix(in srgb, #2E2A54 42%, #FFF0E1);
     --blush: color-mix(in srgb, #C8C3FF 42%, #FFF0E1);
@@ -38,9 +44,15 @@
     --accent-soft: color-mix(in srgb, #C8C3FF 18%, transparent);
     --active-button-bg: #C8C3FF;
     --active-button-text: #17142A;
+    --button-primary-bg: var(--active-button-bg);
+    --button-primary-text: var(--active-button-text);
+    --button-secondary-bg: color-mix(in srgb, var(--surface) 86%, transparent);
+    --button-secondary-text: var(--foreground);
+    --button-subtle-bg: transparent;
+    --button-subtle-text: var(--foreground);
     --danger: #FF9BAE;
-    --danger-bg: #FF9BAE;
-    --danger-text: #17142A;
+    --danger-bg: #8A1F35;
+    --danger-text: #FFFFFF;
     --danger-soft: color-mix(in srgb, #FF9BAE 18%, transparent);
     --metal: color-mix(in srgb, #FFF0E1 66%, #17142A);
     --blush: color-mix(in srgb, #C8C3FF 28%, #17142A);
@@ -130,6 +142,14 @@ textarea {
             border-color 180ms ease,
             box-shadow 180ms ease,
             transform 180ms ease;
+}
+
+button:not(:disabled) {
+    will-change: color, background-color, border-color, box-shadow, filter;
+}
+
+button:not(:disabled):active {
+    filter: saturate(1.04) brightness(0.98);
 }
 
 ::selection {

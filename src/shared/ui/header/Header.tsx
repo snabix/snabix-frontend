@@ -63,7 +63,7 @@ export function Header() {
                 onToggle={toggleCatalog}
               />
               <HeaderLink href="/about">О проекте</HeaderLink>
-              <HeaderLink href="/blog">Новости и блог</HeaderLink>
+              <HeaderLink href="/blog">Новости</HeaderLink>
             </nav>
           </div>
 

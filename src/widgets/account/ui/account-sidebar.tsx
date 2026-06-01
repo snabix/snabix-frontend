@@ -77,7 +77,7 @@ export function AccountSidebar() {
                 "account-sidebar sticky top-24 shrink-0 overflow-hidden rounded-[30px]",
                 "border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)]",
                 "shadow-[var(--shadow-card)] backdrop-blur-xl",
-                "transition-[width] duration-300 ease-out",
+                "transition-[width] duration-[450ms] ease-[cubic-bezier(.22,1,.36,1)]",
             ].join(" ")}
             style={{ width: isCollapsed ? COLLAPSED_WIDTH : width }}
         >
@@ -89,8 +89,8 @@ export function AccountSidebar() {
             >
                 <div
                     className={[
-                        "overflow-hidden transition-all duration-300 ease-out",
-                        isCollapsed ? "max-w-0 opacity-0" : "max-w-[180px] opacity-100",
+                        "overflow-hidden transition-[max-width,opacity,transform] duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]",
+                        isCollapsed ? "max-w-0 translate-x-3 opacity-0" : "max-w-[180px] translate-x-0 opacity-100",
                     ].join(" ")}
                 >
                     <div className="font-heading whitespace-nowrap text-lg font-extrabold text-[var(--brand-deep)]">
@@ -173,9 +173,9 @@ export function AccountSidebar() {
 
                             <span
                                 className={[
-                                    "relative z-10 whitespace-nowrap transition-all duration-300 ease-out",
+                                    "relative z-10 whitespace-nowrap transition-[width,opacity,transform] duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]",
                                     isCollapsed
-                                        ? "w-0 translate-x-2 overflow-hidden opacity-0"
+                                        ? "w-0 translate-x-3 overflow-hidden opacity-0"
                                         : "w-auto translate-x-0 opacity-100",
                                 ].join(" ")}
                             >

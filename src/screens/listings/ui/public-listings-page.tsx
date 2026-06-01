@@ -364,7 +364,6 @@ function ViewModeSwitcher({
         type="button"
       >
         <LayoutGrid size={16} />
-        Сетка
       </button>
       <button
         aria-label="Показать объявления списком"
@@ -378,7 +377,6 @@ function ViewModeSwitcher({
         type="button"
       >
         <List size={16} />
-        Список
       </button>
     </div>
   );

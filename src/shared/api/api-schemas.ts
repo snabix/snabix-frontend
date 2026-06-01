@@ -48,6 +48,20 @@ export const userSchema = z.object({
   avatar: userAvatarSchema.nullable(),
 }).passthrough();
 
+export const activeUserSessionSchema = z.object({
+  id: z.string(),
+  deviceName: z.string(),
+  browser: z.string(),
+  ipAddress: nullableStringSchema,
+  type: z.enum(["desktop", "mobile", "tablet"]),
+  isCurrent: z.boolean(),
+  lastActivityAt: nullableStringSchema,
+}).passthrough();
+
+export const activeUserSessionsResponseSchema = z.object({
+  items: z.array(activeUserSessionSchema),
+}).passthrough();
+
 export const categoryNodeSchema: z.ZodType = z.lazy(() => z.object({
   id: z.number(),
   catalogType: z.number(),

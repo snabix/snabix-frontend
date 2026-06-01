@@ -1,5 +1,5 @@
-import { SettingsPage } from "@/src/screens/account/settings/ui/settings-page";
+import { redirect } from "next/navigation";
 
 export default function AccountSettingsRoutePage() {
-  return <SettingsPage />;
+  redirect("/account/settings/profile");
 }

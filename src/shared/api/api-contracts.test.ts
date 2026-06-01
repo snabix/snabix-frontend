@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getCategoryAttributes } from "@/src/entities/category/api/list-categories";
 import { getMe } from "@/src/entities/user";
+import { listActiveSessions } from "@/src/features/auth/api";
 import {
   createListing,
   deleteListingMedia,
@@ -138,6 +139,27 @@ describe("api adapter contracts", () => {
 
     await expect(getMe()).resolves.toEqual(userContract);
     expect(apiGetMock).toHaveBeenCalledWith("/auth/me");
+  });
+
+  it("keeps active sessions response shape for account security", async () => {
+    const sessionsContract = {
+      items: [
+        {
+          browser: "Chrome",
+          deviceName: "macOS устройство",
+          id: "session-1",
+          ipAddress: "127.0.0.1",
+          isCurrent: true,
+          lastActivityAt: "2026-06-01T08:30:00.000000Z",
+          type: "desktop",
+        },
+      ],
+    };
+
+    apiGetMock.mockResolvedValueOnce({ data: { data: sessionsContract } });
+
+    await expect(listActiveSessions()).resolves.toEqual(sessionsContract.items);
+    expect(apiGetMock).toHaveBeenCalledWith("/auth/sessions");
   });
 
   it("unwraps private listings pagination contract", async () => {

@@ -3,20 +3,16 @@
 import {
     Camera,
     ChevronRight,
-    KeyRound,
     Mail,
-    Pencil,
     Phone,
     ShieldCheck,
     UserRound,
 } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
-import { ChangePasswordForm } from "@/src/features/auth/ui/change-password-form";
+import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
-import { Button } from "@/src/shared/ui/shadcn/button";
 import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
 import { useEmailVerification } from "@/src/screens/account/profile/model/use-email-verification";
-import { useProfileEditor } from "@/src/screens/account/profile/model/use-profile-editor";
 import {
     EmailVerificationBadge,
     ProfileDataField,
@@ -26,7 +22,6 @@ import {
 import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
 import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
 import { ProfileAddressesSection } from "@/src/screens/account/profile/ui/profile-addresses-section";
-import { ProfileEditDialog } from "@/src/screens/account/profile/ui/profile-edit-dialog";
 
 export function ProfilePage() {
     const user = useUserStore((state) => state.user);
@@ -38,23 +33,10 @@ export function ProfilePage() {
         isEmailVerified,
         isResendingVerification,
         isVerificationDialogOpen,
-        openVerificationDialog,
         resendCooldownSeconds,
         setIsVerificationDialogOpen,
         verificationCode,
     } = useEmailVerification();
-    const {
-        errors,
-        handleCancel,
-        handleEdit,
-        handleProfileSubmit,
-        handleSubmit,
-        isProfileModalOpen,
-        isSubmitting,
-        register,
-    } = useProfileEditor({
-        onEmailVerificationRequired: openVerificationDialog,
-    });
     const {
         avatarDraft,
         avatarInputRef,
@@ -69,7 +51,6 @@ export function ProfilePage() {
         isAvatarViewerOpen,
         resetAvatarDraft,
         setAvatarScale,
-        setIsAvatarViewerOpen,
     } = useAvatarEditor();
 
     return (
@@ -83,13 +64,13 @@ export function ProfilePage() {
                         <div className="flex items-start gap-5">
                             <div className="relative shrink-0">
                                 <button
-                                    aria-label="Открыть аватар профиля"
+                                    aria-label="Загрузить новый аватар"
                                     className={[
                                         "relative grid size-24 place-items-center rounded-full",
                                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2",
                                     ].join(" ")}
                                     disabled={isAvatarSubmitting}
-                                    onClick={() => setIsAvatarViewerOpen(true)}
+                                    onClick={handleAvatarSelect}
                                     type="button"
                                 >
                                     <Avatar className="grid size-24 place-items-center rounded-full border-4 border-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--background)] shadow-[var(--shadow-card)]">
@@ -142,17 +123,6 @@ export function ProfilePage() {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="grid gap-3 xl:min-w-[260px]">
-                            <Button
-                                className="h-12 rounded-2xl px-5 text-[var(--active-button-text)]"
-                                onClick={handleEdit}
-                                type="button"
-                            >
-                                <Pencil aria-hidden="true" size={16} />
-                                Редактировать профиль
-                            </Button>
-                        </div>
                     </div>
                 </section>
 
@@ -194,72 +164,27 @@ export function ProfilePage() {
                         <ProfileDataField
                             icon={Phone}
                             label="Телефон"
-                            value={user?.phoneNumber}
+                            value={formatPhoneNumber(user?.phoneNumber)}
                         />
                     </div>
                 </section>
 
-                <ProfileAddressesSection />
-
-                <section className="surface-card rounded-[32px] p-6 sm:p-8">
-                    <div className="mb-6 flex items-start gap-3">
-                        <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                            <KeyRound aria-hidden="true" size={20} />
-                        </div>
-
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                                Безопасность
-                            </p>
-
-                            <h2 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
-                                Смена пароля
-                            </h2>
-
-                            <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
-                                Обновите пароль, если хотите усилить защиту аккаунта
-                                или подозреваете, что текущий пароль мог стать известен
-                                кому-то еще.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="max-w-xl">
-                        <ChangePasswordForm />
-                    </div>
-                </section>
+                <ProfileAddressesSection mode="view" />
             </div>
 
-            {isAvatarViewerOpen ? (
+            {isAvatarViewerOpen && avatarDraft ? (
                 <ProfileAvatarViewer
                     avatarDraft={avatarDraft}
                     avatarOffset={avatarOffset}
                     avatarScale={avatarScale}
-                    avatarUrl={user?.avatar?.url}
                     isAvatarSubmitting={isAvatarSubmitting}
                     onAvatarDraftReset={resetAvatarDraft}
                     onAvatarMovePointerDown={handleAvatarMovePointerDown}
                     onAvatarSave={handleAvatarSave}
                     onAvatarScaleChange={(value) => setAvatarScale(value[0] ?? 1)}
-                    onAvatarSelect={handleAvatarSelect}
                     onAvatarViewerClose={handleAvatarViewerClose}
                 />
             ) : null}
-
-            <ProfileEditDialog
-                errors={errors}
-                handleCancel={handleCancel}
-                handleSubmit={handleSubmit}
-                isOpen={isProfileModalOpen}
-                isSubmitting={isSubmitting}
-                onOpenChange={(isOpen) => {
-                    if (!isOpen) {
-                        handleCancel();
-                    }
-                }}
-                onSubmit={handleProfileSubmit}
-                register={register}
-            />
 
             {user?.email && !isEmailVerified ? (
                 <EmailVerificationDialog

@@ -15,7 +15,7 @@ export function BlogPage() {
           <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-                Новости и блог
+                Новости
               </p>
               <h1 className="font-heading mt-5 max-w-4xl text-4xl font-black tracking-[-0.04em] text-[var(--brand-deep)] sm:text-6xl">
                 Пишем о развитии Snabix, безопасности сделок и удобных объявлениях.

@@ -225,6 +225,25 @@ button:not(:disabled):active {
             0 18px 38px color-mix(in srgb, var(--brand-deep) 8%, transparent);
 }
 
+.bubble-surface {
+    isolation: isolate;
+}
+
+.bubble-orb {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 9999px;
+    filter: blur(34px);
+    opacity: 0.72;
+    mix-blend-mode: multiply;
+}
+
+.dark .bubble-orb {
+    opacity: 0.48;
+    mix-blend-mode: screen;
+}
+
 .auth-card {
     width: 100%;
     border: 1px solid var(--border-soft);

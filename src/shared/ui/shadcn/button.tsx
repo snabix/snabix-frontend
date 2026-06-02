@@ -25,7 +25,7 @@ const buttonVariants = cva(
         outline:
           "border border-[var(--border-soft)] bg-transparent text-[var(--button-subtle-text)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] active:bg-[color-mix(in_srgb,var(--accent-soft)_72%,var(--surface))]",
         destructive:
-          "bg-[var(--danger-bg)] text-[var(--danger-text)] shadow-[var(--shadow-card)] hover:bg-[color-mix(in_srgb,var(--danger-bg)_86%,var(--foreground))] hover:shadow-[0_18px_38px_color-mix(in_srgb,var(--danger)_20%,transparent)] active:shadow-[inset_0_2px_12px_color-mix(in_srgb,var(--foreground)_16%,transparent)] focus-visible:ring-[var(--danger-soft)]",
+          "bg-[var(--danger-bg)] !text-[var(--danger-text)] shadow-[var(--shadow-card)] hover:bg-[color-mix(in_srgb,var(--danger-bg)_86%,var(--foreground))] hover:!text-[var(--danger-text)] hover:shadow-[0_18px_38px_color-mix(in_srgb,var(--danger)_20%,transparent)] active:!text-[var(--danger-text)] active:shadow-[inset_0_2px_12px_color-mix(in_srgb,var(--foreground)_16%,transparent)] focus-visible:ring-[var(--danger-soft)] [&_svg]:!text-[var(--danger-text)] [&_svg]:!stroke-[var(--danger-text)]",
       },
       size: {
         default: "h-11 px-5 py-2",

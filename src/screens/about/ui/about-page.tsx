@@ -1,95 +1,65 @@
 import Link from "next/link";
 import {
-  BadgeCheck,
-  BookOpenCheck,
-  Compass,
-  Handshake,
+  ArrowUpRight,
+  BellRing,
   Layers3,
   MapPinned,
-  Megaphone,
-  MessagesSquare,
-  Rocket,
   Search,
   ShieldCheck,
   Sparkles,
   Store,
+  UsersRound,
+  type LucideIcon,
 } from "lucide-react";
 import { Container } from "@/src/shared/ui/container";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { PublicLayout } from "@/src/widgets/layout/ui/public-layout";
 
-const roadmapItems = [
-  {
-    badge: "Сейчас",
-    description: "Строим основу: аккаунты, профиль, объявления, категории, характеристики и аккуратную витрину товаров и услуг.",
-    icon: Store,
-    title: "Запуск ядра marketplace",
-  },
-  {
-    badge: "Следом",
-    description: "Развиваем карточки объявлений, медиа, избранное, фильтры, отзывы и понятные сценарии управления публикациями.",
-    icon: Layers3,
-    title: "Удобные объявления",
-  },
-  {
-    badge: "Рост",
-    description: "Добавим больше доверия: рейтинги продавцов, историю действий, модерацию, безопасные подсказки и прозрачные статусы.",
-    icon: ShieldCheck,
-    title: "Marketplace доверия",
-  },
-  {
-    badge: "Будущее",
-    description: "Подготовим продвижение, бизнес-витрины, локальные подборки, уведомления, улучшенный поиск и инструменты для продавцов.",
-    icon: Rocket,
-    title: "Коммерческая платформа",
-  },
+const stats = [
+  { label: "категорий", value: "120+" },
+  { label: "сценариев сделок", value: "15+" },
+  { label: "доступность", value: "24/7" },
 ];
 
-const useSteps = [
+const featureCards = [
   {
-    description: "Выберите товар или услугу, откройте каталог и сузьте выдачу через понятные фильтры.",
+    description: "Каталог, фильтры и карточки объявлений помогают быстро перейти от идеи к подходящему предложению.",
     icon: Search,
-    title: "Найдите нужное",
+    title: "Быстрый поиск",
   },
   {
-    description: "Оцените фото, цену, город, характеристики и доверительные сигналы продавца.",
-    icon: BadgeCheck,
-    title: "Проверьте объявление",
+    description: "Профили, отзывы, статусы и аккуратная модерация делают взаимодействие спокойнее и понятнее.",
+    icon: ShieldCheck,
+    inverted: true,
+    title: "Доверие к продавцу",
   },
   {
-    description: "Свяжитесь с продавцом, уточните детали и договоритесь о формате сделки.",
-    icon: MessagesSquare,
-    title: "Договоритесь напрямую",
+    description: "Избранное, уведомления и личный кабинет помогают не терять важные объявления и действия.",
+    icon: BellRing,
+    title: "Живой кабинет",
   },
   {
-    description: "Размещайте свои предложения, управляйте ими в личном кабинете и развивайте локальные продажи.",
-    icon: Megaphone,
-    title: "Публикуйте своё",
+    description: "Категории и характеристики проектируются так, чтобы товары и услуги имели разные формы.",
+    icon: Layers3,
+    title: "Гибкая структура",
   },
 ];
 
-const trustPrinciples = [
-  "Понятная структура объявления: фото, цена, категория, характеристики и локация без визуального шума.",
-  "Разделение товаров и услуг, чтобы форма публикации подстраивалась под реальный тип предложения.",
-  "Акцент на профиле продавца, рейтинге, отзывах и прозрачной истории действий.",
-  "Модерация и статусы публикаций, чтобы пользователь понимал, что происходит с объявлением.",
-];
-
-const productBlocks = [
+const principles = [
   {
-    description: "Snabix помогает находить товары и услуги рядом, не проваливая пользователя в перегруженный интерфейс.",
+    icon: Store,
+    title: "Для товаров и услуг",
+    text: "Snabix создается как единая платформа локальных предложений: от техники и вещей до услуг, вакансий и аренды.",
+  },
+  {
     icon: MapPinned,
-    title: "Локальная платформа",
+    title: "Рядом с пользователем",
+    text: "Фокус на региональности помогает быстрее находить предложения поблизости и договариваться без лишних барьеров.",
   },
   {
-    description: "Категории и характеристики проектируются гибко: электроника, авто, услуги и недвижимость могут иметь разные поля.",
-    icon: Compass,
-    title: "Гибкий каталог",
-  },
-  {
-    description: "Мы строим не просто доску объявлений, а продукт, где доверие продавцу видно уже в интерфейсе.",
-    icon: Handshake,
-    title: "Фокус на доверии",
+    icon: UsersRound,
+    title: "Понятный продавец",
+    text: "Интерфейс должен сразу отвечать на вопрос: кто продает, насколько он надежен и стоит ли ему писать.",
   },
 ];
 
@@ -97,87 +67,137 @@ export function AboutPage() {
   return (
     <PublicLayout>
       <main className="pb-16 pt-6">
-        <Container>
-          <HeroRoadmap />
-          <ProductIntro />
-          <RoadmapSection />
-          <HowToUseSection />
-          <TrustSection />
-          <FinalCta />
+        <Container className="max-w-[1240px]">
+          <section className="overflow-hidden rounded-[34px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-3 shadow-[var(--shadow-soft)] backdrop-blur-xl sm:p-4">
+            <div className="rounded-[28px] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_72%,white),color-mix(in_srgb,var(--surface)_92%,transparent))] p-4 text-[var(--brand-deep)] dark:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface)_94%,black),var(--surface))] sm:p-6 lg:p-8">
+              <HeroSection />
+              <ManifestSection />
+              <FeaturesSection />
+              <WhySection />
+            </div>
+          </section>
         </Container>
       </main>
     </PublicLayout>
   );
 }
 
-function HeroRoadmap() {
+function HeroSection() {
   return (
-    <section className="hero-shell relative overflow-hidden rounded-[40px] px-6 py-10 sm:px-10 lg:px-12 lg:py-14">
-      <div className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-[color-mix(in_srgb,var(--brand)_38%,transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-8 h-32 w-72 rounded-full bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] blur-3xl" />
-
-      <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div>
-          <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-            О компании и продукте
-          </p>
-          <h1 className="font-heading mt-5 max-w-4xl text-4xl font-black tracking-[-0.04em] text-[var(--brand-deep)] sm:text-6xl">
-            Snabix строится как понятный marketplace доверия для локальных сделок.
-          </h1>
-          <p className="section-copy mt-6 max-w-2xl text-base leading-8 sm:text-lg">
-            Это платформа объявлений, где пользователи смогут продавать товары,
-            предлагать услуги, находить нужные предложения рядом и принимать
-            решение быстрее: по карточке, профилю продавца, рейтингу и прозрачной
-            структуре объявления.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/account/listings/create">
-              <Button className="active-button rounded-[18px] px-6 py-6">
-                Разместить объявление
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button className="rounded-[18px] px-6 py-6" variant="outline">
-                Смотреть витрину
-              </Button>
-            </Link>
+    <section className="relative overflow-hidden rounded-[26px]">
+      <div className="grid gap-5 lg:grid-cols-[1fr_170px]">
+        <div className="min-w-0">
+          <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-black uppercase tracking-[0.18em]">
+            <span className="rounded-full border border-[var(--border-strong)] px-4 py-2">
+              Marketplace доверия
+            </span>
+            <span className="text-[var(--text-muted)]">
+              Товары · услуги · локальные предложения
+            </span>
           </div>
+
+          <h1 className="font-heading relative z-10 max-w-[980px] text-[clamp(4.6rem,14vw,13rem)] font-black uppercase leading-[0.76] tracking-[-0.11em] text-[var(--brand-deep)]">
+            Snabix
+            <span className="block pl-[18vw] text-[clamp(3.7rem,12vw,11rem)]">
+              Market
+            </span>
+          </h1>
+
+          <p className="mt-5 max-w-sm text-[11px] font-bold uppercase leading-5 tracking-[0.08em] text-[var(--text-muted)]">
+            Современная платформа объявлений и локальных предложений, где чистый интерфейс помогает быстрее найти, договориться и совершить сделку.
+          </p>
         </div>
 
-        <div className="surface-card relative overflow-hidden rounded-[34px] p-5 sm:p-6">
-          <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--accent)_20%,transparent),transparent_70%)]" />
-          <div className="relative grid gap-4">
-            {roadmapItems.map((item, index) => {
-              const Icon = item.icon;
+        <div className="grid content-start gap-5 pt-10 text-right max-lg:grid-cols-3 max-lg:pt-0 max-sm:grid-cols-1 max-sm:text-left">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <div className="font-heading text-4xl font-black leading-none tracking-[-0.08em]">
+                {stat.value}
+              </div>
+              <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-              return (
-                <article
-                  className="grid grid-cols-[auto_1fr] gap-4 rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-4"
-                  key={item.title}
-                >
-                  <div className="grid justify-items-center gap-2">
-                    <div className="grid size-11 place-items-center rounded-2xl bg-[var(--active-button-bg)] text-[var(--active-button-text)]">
-                      <Icon size={20} />
-                    </div>
-                    {index < roadmapItems.length - 1 ? (
-                      <span className="h-10 w-px bg-[var(--border-strong)]" />
-                    ) : null}
-                  </div>
-                  <div>
-                    <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
-                      {item.badge}
-                    </span>
-                    <h2 className="mt-3 font-heading text-xl font-black text-[var(--brand-deep)]">
-                      {item.title}
-                    </h2>
-                    <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                      {item.description}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
+      <div className="relative mt-8 overflow-hidden rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_18%,var(--surface))] shadow-[var(--shadow-card)]">
+        <MarketplaceVisual />
+        <div className="absolute bottom-5 left-5 max-w-[260px] text-white">
+          <p className="font-heading text-2xl font-black uppercase leading-[0.9] tracking-[-0.06em]">
+            Будущее локальных сделок
+          </p>
+          <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] opacity-80">
+            with Snabix
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MarketplaceVisual() {
+  return (
+    <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(135deg,#111827,#3f3a68_48%,#fff0e1)]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,rgba(255,255,255,0.46),transparent_24rem),radial-gradient(circle_at_82%_18%,rgba(200,195,255,0.38),transparent_20rem)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
+      <div className="absolute inset-x-0 bottom-16 h-28 skew-y-[-4deg] bg-[rgba(255,255,255,0.72)] blur-[1px]" />
+
+      <div className="absolute left-[18%] top-[16%] h-44 w-[38%] rounded-[30px] border border-white/55 bg-[linear-gradient(135deg,rgba(255,255,255,0.84),rgba(200,195,255,0.22))] shadow-[0_34px_80px_rgba(0,0,0,0.36)] backdrop-blur-sm" />
+      <div className="absolute left-[43%] top-[8%] h-52 w-[34%] rounded-[30px] border border-white/50 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,240,225,0.18))] shadow-[0_34px_80px_rgba(0,0,0,0.34)] backdrop-blur-sm" />
+      <div className="absolute left-[25%] top-[42%] h-40 w-[30%] rounded-[28px] border border-white/45 bg-[linear-gradient(135deg,rgba(17,24,39,0.82),rgba(200,195,255,0.18))] shadow-[0_34px_70px_rgba(0,0,0,0.42)] backdrop-blur-sm" />
+      <div className="absolute left-[52%] top-[39%] h-36 w-[27%] rounded-[28px] border border-white/40 bg-[linear-gradient(135deg,rgba(17,24,39,0.74),rgba(255,240,225,0.16))] shadow-[0_34px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm" />
+
+      <div className="absolute right-8 top-8 rounded-full border border-white/40 bg-white/18 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-white backdrop-blur">
+        Local commerce
+      </div>
+    </div>
+  );
+}
+
+function ManifestSection() {
+  return (
+    <section className="py-10 text-center sm:py-14">
+      <p className="mx-auto max-w-5xl font-heading text-[clamp(2rem,5vw,4.1rem)] font-black uppercase leading-[0.96] tracking-[-0.08em] text-[var(--brand-deep)]">
+        Snabix объединяет понятный каталог,
+        <span className="block text-[var(--text-muted)]">
+          чистые объявления, доверие к продавцу
+        </span>
+        <span className="block text-[color-mix(in_srgb,var(--brand-deep)_44%,transparent)]">
+          и локальную экспертизу
+        </span>
+      </p>
+    </section>
+  );
+}
+
+function FeaturesSection() {
+  return (
+    <section className="grid gap-4 lg:grid-cols-[0.92fr_1fr]">
+      <div className="grid gap-3">
+        {featureCards.map((card) => (
+          <FeatureCard key={card.title} {...card} />
+        ))}
+      </div>
+
+      <div className="relative min-h-[560px] overflow-hidden rounded-[24px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--brand)_52%,var(--surface)),color-mix(in_srgb,var(--background)_92%,var(--brand)))] p-5 shadow-[var(--shadow-card)]">
+        <div className="absolute inset-0 grayscale">
+          <MarketplaceVisual />
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.54))]" />
+        <div className="relative z-10 flex h-full min-h-[520px] flex-col justify-end">
+          <div className="rounded-[24px] border border-white/28 bg-white/14 p-5 text-white backdrop-blur-md">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">
+              Продуктовая идея
+            </p>
+            <h2 className="font-heading mt-3 text-4xl font-black uppercase leading-[0.9] tracking-[-0.08em]">
+              Найти. Проверить. Договориться.
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-7 opacity-82">
+              Мы проектируем Snabix как площадку, где у пользователя меньше шума,
+              больше контекста и понятный следующий шаг в каждой сделке.
+            </p>
           </div>
         </div>
       </div>
@@ -185,185 +205,117 @@ function HeroRoadmap() {
   );
 }
 
-function ProductIntro() {
+function FeatureCard({
+  description,
+  icon: Icon,
+  inverted = false,
+  title,
+}: {
+  description: string;
+  icon: LucideIcon;
+  inverted?: boolean;
+  title: string;
+}) {
   return (
-    <section className="mt-8 grid gap-5 lg:grid-cols-3">
-      {productBlocks.map((block) => {
-        const Icon = block.icon;
-
-        return (
-          <article className="surface-card interactive-lift rounded-[30px] p-6" key={block.title}>
-            <div className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--brand-deep)]">
-              <Icon size={22} />
-            </div>
-            <h2 className="font-heading mt-5 text-2xl font-black text-[var(--brand-deep)]">
-              {block.title}
-            </h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-              {block.description}
-            </p>
-          </article>
-        );
-      })}
-    </section>
+    <article
+      className={[
+        "group grid min-h-[126px] grid-cols-[1fr_auto] gap-4 rounded-[20px] border p-5 transition-colors",
+        inverted
+          ? "border-[var(--brand-deep)] bg-[var(--brand-deep)] text-[var(--background)]"
+          : "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,white)] text-[var(--brand-deep)] dark:bg-[color-mix(in_srgb,var(--surface)_84%,black)]",
+      ].join(" ")}
+    >
+      <div className="self-end">
+        <h3 className="font-heading text-right text-2xl font-black uppercase leading-[0.9] tracking-[-0.06em] sm:text-3xl">
+          {title}
+        </h3>
+        <p
+          className={[
+            "mt-4 max-w-[330px] text-[10px] font-bold uppercase leading-5 tracking-[0.08em]",
+            inverted ? "text-white/68" : "text-[var(--text-muted)]",
+          ].join(" ")}
+        >
+          {description}
+        </p>
+      </div>
+      <div
+        className={[
+          "grid size-11 place-items-center rounded-full border transition-colors",
+          inverted
+            ? "border-white/24 text-white"
+            : "border-[var(--border-soft)] text-[var(--accent)]",
+        ].join(" ")}
+      >
+        <Icon size={19} />
+      </div>
+      <ArrowUpRight
+        className={[
+          "absolute opacity-0 transition-opacity group-hover:opacity-100",
+          inverted ? "text-white" : "text-[var(--accent)]",
+        ].join(" ")}
+        size={18}
+      />
+    </article>
   );
 }
 
-function RoadmapSection() {
+function WhySection() {
   return (
-    <section className="mt-10 grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-      <div className="surface-card sticky top-24 rounded-[32px] p-7">
-        <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-          Дорожная карта
-        </p>
-        <h2 className="font-heading mt-4 text-3xl font-black tracking-[-0.03em] text-[var(--brand-deep)]">
-          Мы двигаемся от чистой доски объявлений к полноценной платформе для локальной торговли.
-        </h2>
-        <p className="mt-4 text-sm leading-7 text-[var(--text-muted)]">
-          Roadmap помогает держать продукт в фокусе: сначала стабильное ядро,
-          затем доверие, удобство продавца, модерация, продвижение и более
-          умный поиск.
-        </p>
+    <section className="mt-4 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="relative min-h-[300px] overflow-hidden rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_22%,var(--surface))] p-6">
+        <div className="absolute -bottom-24 -left-12 h-80 w-[58%] rounded-[48px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--brand)_70%,white),color-mix(in_srgb,var(--surface)_88%,transparent))] shadow-[var(--shadow-soft)]" />
+        <div className="absolute bottom-10 left-[22%] h-32 w-[34%] rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand-deep)_78%,transparent)] shadow-[var(--shadow-card)]" />
+        <div className="relative z-10 ml-auto max-w-lg text-right">
+          <h2 className="font-heading text-[clamp(2.6rem,7vw,6rem)] font-black uppercase leading-[0.82] tracking-[-0.1em] text-[var(--brand-deep)]">
+            Why
+            <span className="block">Snabix?</span>
+          </h2>
+          <Link href="/">
+            <Button className="mt-5 rounded-full" variant="outline">
+              Смотреть объявления
+              <ArrowUpRight size={16} />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4">
-        {roadmapItems.map((item, index) => {
+        {principles.map((item) => {
           const Icon = item.icon;
 
           return (
-            <article className="surface-card rounded-[30px] p-6" key={`roadmap-${item.title}`}>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                <div className="flex items-center gap-3 sm:w-44">
-                  <span className="grid size-11 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--brand-deep)]">
-                    <Icon size={20} />
-                  </span>
-                  <span className="font-heading text-2xl font-black text-[var(--brand-deep)]">
-                    0{index + 1}
-                  </span>
+            <article
+              className="rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-5"
+              key={item.title}
+            >
+              <div className="flex items-start gap-3">
+                <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+                  <Icon size={20} />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-heading text-2xl font-black text-[var(--brand-deep)]">
+                <div>
+                  <h3 className="font-heading text-xl font-black uppercase leading-none tracking-[-0.04em] text-[var(--brand-deep)]">
                     {item.title}
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-                    {item.description}
+                    {item.text}
                   </p>
                 </div>
               </div>
             </article>
           );
         })}
-      </div>
-    </section>
-  );
-}
 
-function HowToUseSection() {
-  return (
-    <section className="mt-10 surface-card rounded-[36px] p-7 sm:p-9">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-            Как пользоваться
-          </p>
-          <h2 className="font-heading mt-3 max-w-3xl text-3xl font-black tracking-[-0.03em] text-[var(--brand-deep)]">
-            Сценарий должен быть простым: найти, оценить, связаться, договориться.
-          </h2>
-        </div>
-        <BookOpenCheck className="text-[var(--accent)]" size={46} />
-      </div>
-
-      <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {useSteps.map((step, index) => {
-          const Icon = step.icon;
-
-          return (
-            <article className="rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] p-5" key={step.title}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="grid size-11 place-items-center rounded-2xl bg-[var(--active-button-bg)] text-[var(--active-button-text)]">
-                  <Icon size={20} />
-                </span>
-                <span className="text-sm font-black text-[var(--text-muted)]">
-                  шаг {index + 1}
-                </span>
-              </div>
-              <h3 className="font-heading mt-5 text-xl font-black text-[var(--brand-deep)]">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-                {step.description}
-              </p>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function TrustSection() {
-  return (
-    <section className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-      <article className="surface-card rounded-[34px] p-7 sm:p-9">
-        <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-          Наша идея
-        </p>
-        <h2 className="font-heading mt-4 text-3xl font-black tracking-[-0.03em] text-[var(--brand-deep)]">
-          Marketplace доверия: пользователь должен понимать, кому он пишет и почему этому можно уделить время.
-        </h2>
-        <p className="mt-5 text-base leading-8 text-[var(--text-muted)]">
-          У объявления мало времени, чтобы убедить человека открыть детали.
-          Поэтому Snabix делает ставку на чистую карточку, понятную категорию,
-          фотографии, характеристики и сигналы продавца. Чем меньше хаоса,
-          тем быстрее пользователь принимает решение.
-        </p>
-      </article>
-
-      <article className="surface-card rounded-[34px] p-7 sm:p-9">
-        <div className="flex items-center gap-3">
-          <Sparkles className="text-[var(--accent)]" size={26} />
-          <h3 className="font-heading text-2xl font-black text-[var(--brand-deep)]">
-            Что важно в продукте
-          </h3>
-        </div>
-        <div className="mt-5 grid gap-3">
-          {trustPrinciples.map((principle) => (
-            <div
-              className="rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] px-4 py-3 text-sm leading-7 text-[var(--brand-deep)]"
-              key={principle}
-            >
-              {principle}
-            </div>
-          ))}
-        </div>
-      </article>
-    </section>
-  );
-}
-
-function FinalCta() {
-  return (
-    <section className="mt-10 overflow-hidden rounded-[36px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_42%,var(--surface)),color-mix(in_srgb,var(--background)_82%,var(--accent)))] p-7 shadow-[var(--shadow-soft)] sm:p-9">
-      <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div>
-          <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-            Дальше будет больше
-          </p>
-          <h2 className="font-heading mt-3 text-3xl font-black tracking-[-0.03em] text-[var(--brand-deep)]">
-            Snabix развивается как аккуратная, масштабируемая и коммерчески готовая платформа.
-          </h2>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--text-muted)]">
-            Сейчас мы закладываем фундамент: архитектуру, каталог, объявления,
-            профиль, медиа и доверительные механики. Это база, на которой можно
-            строить поиск, продвижение, отзывы, модерацию и витрины бизнеса.
+        <div className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--brand-deep)] p-5 text-[var(--background)]">
+          <div className="flex items-center gap-3">
+            <Sparkles size={20} />
+            <p className="text-[10px] font-black uppercase tracking-[0.18em]">
+              Следующий шаг
+            </p>
+          </div>
+          <p className="font-heading mt-4 text-2xl font-black uppercase leading-[0.94] tracking-[-0.06em]">
+            Делаем продукт, который ощущается не шаблоном, а рабочим коммерческим marketplace.
           </p>
         </div>
-
-        <Link href="/">
-          <Button className="active-button w-full rounded-[20px] px-7 py-6 lg:w-auto">
-            Перейти к объявлениям
-          </Button>
-        </Link>
       </div>
     </section>
   );

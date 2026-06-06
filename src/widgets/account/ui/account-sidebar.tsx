@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { PointerEvent, useState } from "react";
 import {
     FileDown,
+    Heart,
     MessageSquareText,
     PanelLeftClose,
     PanelLeftOpen,
@@ -20,6 +21,7 @@ import {
 const iconByKey: Record<AccountNavigationKey, typeof UserRound> = {
     profile: UserRound,
     listings: Tags,
+    favorites: Heart,
     reviews: MessageSquareText,
     settings: Settings,
     export: FileDown,
@@ -33,7 +35,7 @@ const AUTO_COLLAPSE_WIDTH = 150;
 
 export function AccountSidebar() {
     const pathname = usePathname();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
     const [width, setWidth] = useState(DEFAULT_WIDTH);
 
     const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
@@ -75,7 +77,7 @@ export function AccountSidebar() {
                 "account-sidebar sticky top-24 shrink-0 overflow-hidden rounded-[30px]",
                 "border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)]",
                 "shadow-[var(--shadow-card)] backdrop-blur-xl",
-                "transition-[width] duration-300 ease-out",
+                "transition-[width] duration-[450ms] ease-[cubic-bezier(.22,1,.36,1)]",
             ].join(" ")}
             style={{ width: isCollapsed ? COLLAPSED_WIDTH : width }}
         >
@@ -87,8 +89,8 @@ export function AccountSidebar() {
             >
                 <div
                     className={[
-                        "overflow-hidden transition-all duration-300 ease-out",
-                        isCollapsed ? "max-w-0 opacity-0" : "max-w-[180px] opacity-100",
+                        "overflow-hidden transition-[max-width,opacity,transform] duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]",
+                        isCollapsed ? "max-w-0 translate-x-3 opacity-0" : "max-w-[180px] translate-x-0 opacity-100",
                     ].join(" ")}
                 >
                     <div className="font-heading whitespace-nowrap text-lg font-extrabold text-[var(--brand-deep)]">
@@ -144,7 +146,7 @@ export function AccountSidebar() {
                                 "hover:bg-[var(--accent-soft)]",
                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2",
                                 isActive
-                                    ? "active-button text-white shadow-[0_16px_28px_rgba(0,70,67,0.16)]"
+                                    ? "active-button text-[var(--active-button-text)] shadow-[var(--shadow-card)]"
                                     : "text-[var(--brand-deep)]",
                                 isCollapsed ? "justify-center" : "justify-start gap-3",
                             ].join(" ")}
@@ -157,7 +159,7 @@ export function AccountSidebar() {
                       "relative z-10 grid size-9 shrink-0 place-items-center rounded-xl",
                       "transition-colors duration-200",
                       isActive
-                          ? "bg-white/10 text-white"
+                          ? "bg-[color-mix(in_srgb,var(--active-button-text)_14%,transparent)] text-[var(--active-button-text)]"
                           : "bg-[var(--accent-soft)] text-[var(--text-muted)] group-hover:text-[var(--accent)]",
                   ].join(" ")}
               >
@@ -171,9 +173,9 @@ export function AccountSidebar() {
 
                             <span
                                 className={[
-                                    "relative z-10 whitespace-nowrap transition-all duration-300 ease-out",
+                                    "relative z-10 whitespace-nowrap transition-[width,opacity,transform] duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]",
                                     isCollapsed
-                                        ? "w-0 translate-x-2 overflow-hidden opacity-0"
+                                        ? "w-0 translate-x-3 overflow-hidden opacity-0"
                                         : "w-auto translate-x-0 opacity-100",
                                 ].join(" ")}
                             >

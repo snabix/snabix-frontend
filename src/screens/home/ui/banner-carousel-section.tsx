@@ -55,17 +55,8 @@ export function BannerCarouselSection() {
   }, [emblaApi]);
 
   return (
-    <section className="section-divider mt-16">
+    <section className="mt-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-            Баннеры платформы
-          </p>
-          <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
-            Карусель для ключевых сообщений и промо-блоков
-          </h2>
-        </div>
-
         <div className="flex items-center gap-2">
           <Button
             aria-label="Предыдущий баннер"
@@ -92,18 +83,27 @@ export function BannerCarouselSection() {
         <div className="flex">
           {bannerSlides.map((slide) => (
             <div className="min-w-0 shrink-0 grow-0 basis-full pl-0" key={slide.title}>
-              <div className="hero-shell overflow-hidden rounded-[36px] px-6 py-10 sm:px-10 sm:py-12">
-              <div className="max-w-3xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
-                  {slide.accent}
-                </p>
-                <h3 className="font-heading mt-4 text-3xl font-extrabold text-[var(--brand-deep)] sm:text-4xl">
-                  {slide.title}
-                </h3>
-                <p className="section-copy mt-4 text-base leading-8">
-                  {slide.description}
-                </p>
-              </div>
+              <div className="inverted-surface relative min-h-[420px] overflow-hidden rounded-[36px] border-0 shadow-[var(--shadow-soft)] outline-none ring-0 sm:min-h-[500px]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover grayscale-[0.12] transition-transform duration-700 ease-out hover:scale-[1.02]"
+                  src={slide.imageUrl}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--palette-midnight)_90%,transparent),color-mix(in_srgb,var(--palette-midnight)_58%,transparent),color-mix(in_srgb,var(--palette-midnight)_18%,transparent))]" />
+                <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--palette-midnight)_80%,transparent),transparent)]" />
+
+                <div className="relative z-10 flex min-h-[420px] max-w-4xl flex-col justify-end px-6 py-8 sm:min-h-[500px] sm:px-10 sm:py-12">
+                  <p className="w-fit rounded-full border border-white/22 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/78 backdrop-blur">
+                    {slide.accent}
+                  </p>
+                  <h3 className="font-heading mt-5 max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.05em] text-white sm:text-6xl">
+                    {slide.title}
+                  </h3>
+                  <p className="mt-5 max-w-2xl text-base font-semibold leading-8 text-white/76">
+                    {slide.description}
+                  </p>
+                </div>
               </div>
             </div>
           ))}

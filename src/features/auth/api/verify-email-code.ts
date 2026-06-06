@@ -1,22 +1,20 @@
-import { api } from "@/src/shared/api/axios";
+import { api, type ApiDataResponse, unwrapApiData } from "@/src/shared/api";
 
-type VerifyEmailCodePayload = {
+type VerifyEmailCodeRequest = {
   code: string;
 };
 
-type VerifyEmailCodeResponse = {
-  data: {
-    verified: boolean;
-    alreadyVerified: boolean;
-    message: string;
-  };
+type VerifyEmailCodePayload = {
+  verified: boolean;
+  alreadyVerified: boolean;
+  message: string;
 };
 
-export async function verifyEmailCode(payload: VerifyEmailCodePayload) {
-  const response = await api.post<VerifyEmailCodeResponse>(
+export async function verifyEmailCode(payload: VerifyEmailCodeRequest) {
+  const response = await api.post<ApiDataResponse<VerifyEmailCodePayload>>(
     "/auth/verify-email",
     payload,
   );
 
-  return response.data.data;
+  return unwrapApiData(response.data);
 }

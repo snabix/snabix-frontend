@@ -13,10 +13,10 @@ const Slider = React.forwardRef<
     ref={ref}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-white/12">
-      <SliderPrimitive.Range className="absolute h-full bg-[#2AABEE]" />
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-[var(--accent-soft)]">
+      <SliderPrimitive.Range className="absolute h-full bg-[var(--active-button-bg)]" />
     </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block size-5 rounded-full border-2 border-white bg-[#2AABEE] shadow-lg transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25" />
+    <SliderPrimitive.Thumb className="block size-5 rounded-full border-2 border-[var(--surface)] bg-[var(--active-button-bg)] shadow-lg transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]" />
   </SliderPrimitive.Root>
 ));
 

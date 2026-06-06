@@ -1,15 +1,23 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { getMe, useUserStore } from "@/src/entities/user";
-import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
 import {
-  clearAuthSession,
-  shouldHydrateSession,
+  AUTH_CONTINUE_MESSAGE,
+  AUTH_UNAUTHORIZED_EVENT,
+  type AuthUnauthorizedEventDetail,
+} from "@/src/features/auth/session/auth-events";
+import {
+  clearCookieSessionState,
+  shouldCheckCookieSession,
 } from "@/src/shared/lib/auth-session";
 
 export function SessionProvider() {
   const hasHydratedSessionRef = useRef(false);
+  const pathname = usePathname();
+  const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
   const setLoading = useUserStore((state) => state.setLoading);
@@ -18,7 +26,7 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
-    if (!shouldHydrateSession()) {
+    if (!shouldCheckCookieSession()) {
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
@@ -32,7 +40,7 @@ export function SessionProvider() {
       setUser(user);
     } catch {
       clearUser();
-      clearAuthSession();
+      clearCookieSessionState();
     } finally {
       setLoading(false);
       setHasCheckedSession(true);
@@ -50,10 +58,18 @@ export function SessionProvider() {
   }, []);
 
   useEffect(() => {
-    const handleUnauthorized = () => {
+    const handleUnauthorized = (event: Event) => {
+      const detail = (event as CustomEvent<AuthUnauthorizedEventDetail>).detail;
+      const shouldRedirectToSignIn = pathname.startsWith("/account");
+
       clearUser();
       setLoading(false);
       setHasCheckedSession(true);
+
+      if (detail?.message && shouldRedirectToSignIn) {
+        toast.info(AUTH_CONTINUE_MESSAGE);
+        router.replace(`/sign-in?redirectTo=${encodeURIComponent(pathname)}`);
+      }
     };
 
     window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
@@ -61,7 +77,7 @@ export function SessionProvider() {
     return () => {
       window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
     };
-  }, [clearUser, setHasCheckedSession, setLoading]);
+  }, [clearUser, pathname, router, setHasCheckedSession, setLoading]);
 
   return null;
 }

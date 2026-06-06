@@ -1,5 +1,11 @@
-import { api } from "@/src/shared/api";
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
+import {
+  api,
+  listingItemSchema,
+  parseApiContract,
+  type ApiDataResponse,
+  unwrapApiData,
+} from "@/src/shared/api";
 
 export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
 
@@ -16,15 +22,15 @@ export type CreateListingPayload = {
   contactPhone?: string | null;
   contactEmail?: string | null;
   saveAsDraft?: boolean;
-  attributeValues: Record<number, ListingAttributeValue>;
-};
-
-type ListingResponse = {
-  data: ListingItem;
+  attributeValues: Record<string, ListingAttributeValue>;
 };
 
 export async function createListing(payload: CreateListingPayload): Promise<ListingItem> {
-  const response = await api.post<ListingResponse>("/listings", payload);
+  const response = await api.post<ApiDataResponse<unknown>>("/listings", payload);
 
-  return response.data.data;
+  return parseApiContract(
+    listingItemSchema,
+    unwrapApiData(response.data),
+    "Ответ создания объявления не соответствует ожидаемому формату.",
+  );
 }

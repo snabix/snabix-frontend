@@ -1,6 +1,14 @@
-import type { CategoryAttributeDefinition } from "@/src/entities/category/model/types";
+import type { CategoryAttributeDefinition } from "@/src/entities/category";
 
 export type ListingAttributeValue = string | number | boolean | string[] | null;
+
+export type ListingMediaItem = {
+  id: number;
+  url: string;
+  fileName: string;
+  order: number;
+  isMain: boolean;
+};
 
 export type ListingItem = {
   id: string;
@@ -12,6 +20,8 @@ export type ListingItem = {
     parentId: number | null;
     name: string;
     slug: string;
+    fullName?: string | null;
+    path?: string | null;
   } | null;
   type: number;
   typeLabel: string;
@@ -28,6 +38,17 @@ export type ListingItem = {
   contactName: string | null;
   contactPhone: string | null;
   contactEmail: string | null;
+  imageUrl?: string | null;
+  imageUrls?: string[];
+  media?: ListingMediaItem[];
+  isFavorite?: boolean;
+  sellerRating?: number | null;
+  city?: string | null;
+  region?: string | null;
+  street?: string | null;
+  house?: string | null;
+  addressLine?: string | null;
+  fullLocation?: string | null;
   viewsCount: number;
   isFeatured: boolean;
   rejectionReason: string | null;

@@ -11,6 +11,7 @@ import { signUp } from "@/src/features/auth/api";
 import { signUpSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignUpFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
@@ -98,7 +99,7 @@ export function SignUpForm() {
               {...register("firstName")}
             />
             {errors.firstName ? (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-[var(--danger)]">
                 {errors.firstName.message}
               </p>
             ) : null}
@@ -112,7 +113,7 @@ export function SignUpForm() {
               {...register("lastName")}
             />
             {errors.lastName ? (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-[var(--danger)]">
                 {errors.lastName.message}
               </p>
             ) : null}
@@ -121,13 +122,12 @@ export function SignUpForm() {
 
         <div className="space-y-2">
           <Label htmlFor="sign-up-phone">Телефон</Label>
-          <Input
+          <PhoneInput
             id="sign-up-phone"
-            placeholder="+7 999 123-45-67"
             {...register("phoneNumber")}
           />
           {errors.phoneNumber ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.phoneNumber.message}
             </p>
           ) : null}
@@ -141,7 +141,7 @@ export function SignUpForm() {
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.email.message}
             </p>
           ) : null}
@@ -155,7 +155,7 @@ export function SignUpForm() {
             {...register("password")}
           />
           {errors.password ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.password.message}
             </p>
           ) : null}
@@ -169,7 +169,7 @@ export function SignUpForm() {
             {...register("passwordConfirmation")}
           />
           {errors.passwordConfirmation ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.passwordConfirmation.message}
             </p>
           ) : null}
@@ -190,7 +190,7 @@ export function SignUpForm() {
             )}
           />
           {errors.acceptedTerms ? (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-sm text-[var(--danger)]">
               {errors.acceptedTerms.message}
             </p>
           ) : null}

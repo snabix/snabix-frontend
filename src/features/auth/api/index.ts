@@ -5,3 +5,9 @@ export { resendEmailVerification } from "./resend-email-verification";
 export { verifyEmailCode } from "./verify-email-code";
 export { forgotPassword } from "./forgot-password";
 export { resetPassword } from "./reset-password";
+export { changePassword } from "./change-password";
+export {
+  listActiveSessions,
+  terminateOtherSessions,
+  terminateSession,
+} from "./active-sessions";

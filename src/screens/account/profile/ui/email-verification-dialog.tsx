@@ -1,5 +1,3 @@
-"use client";
-
 import { type ClipboardEvent, type KeyboardEvent, useEffect, useRef } from "react";
 import { LoaderCircle, MailCheck } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
@@ -136,7 +134,7 @@ export function EmailVerificationDialog({
           </DialogHeader>
 
           <div className="mt-7">
-            <div className="rounded-[24px] border border-[color-mix(in_srgb,var(--accent)_14%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_90%,white)] p-4 shadow-[0_18px_36px_rgba(26,34,56,0.05)]">
+            <div className="rounded-[24px] border border-[color-mix(in_srgb,var(--accent)_14%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_90%,var(--background))] p-4 shadow-[var(--shadow-card)]">
               <div className="grid grid-cols-6 gap-2.5">
                 {codeCells.map((cell, index) => (
                   <label className="relative block" key={index}>

@@ -17,6 +17,4 @@ export const profileFormSchema = z.object({
     .max(20, "Максимум 20 символов.")
     .optional()
     .or(z.literal("")),
-  region: z.string().optional(),
-  city: z.string().optional(),
 });

@@ -1,5 +1,5 @@
 import { api } from "@/src/shared/api";
-import type { ForgotPasswordPayload } from "../model/types";
+import type { ForgotPasswordPayload } from "@/src/features/auth/model/types";
 
 export async function forgotPassword(
   payload: ForgotPasswordPayload,

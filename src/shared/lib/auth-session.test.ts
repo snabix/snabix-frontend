@@ -1,15 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 describe("auth session helpers", () => {
-  it("always hydrates session in cookie-first mode", async () => {
-    const { shouldHydrateSession } = await import("@/src/shared/lib/auth-session");
+  it("always checks session in cookie-first mode", async () => {
+    const { shouldCheckCookieSession } = await import(
+      "@/src/shared/lib/auth-session"
+    );
 
-    expect(shouldHydrateSession()).toBe(true);
+    expect(shouldCheckCookieSession()).toBe(true);
   });
 
-  it("can clear auth session without throwing", async () => {
-    const { clearAuthSession } = await import("@/src/shared/lib/auth-session");
+  it("can clear cookie session state without throwing", async () => {
+    const { clearCookieSessionState } = await import(
+      "@/src/shared/lib/auth-session"
+    );
 
-    expect(() => clearAuthSession()).not.toThrow();
+    expect(() => clearCookieSessionState()).not.toThrow();
   });
 });

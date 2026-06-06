@@ -1,18 +1,28 @@
 import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AUTH_UNAUTHORIZED_EVENT } from "@/src/features/auth/session/auth-events";
+import {
+  AUTH_CONTINUE_MESSAGE,
+  AUTH_UNAUTHORIZED_EVENT,
+  notifyUnauthorized,
+} from "@/src/features/auth/session/auth-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
-import type { User } from "@/src/entities/user/model/types";
+import type { User } from "@/src/entities/user";
 
 const {
   getMeMock,
-  clearAuthSessionMock,
-  shouldHydrateSessionMock,
+  clearCookieSessionStateMock,
+  shouldCheckCookieSessionMock,
+  pathnameMock,
+  replaceMock,
+  toastInfoMock,
 } = vi.hoisted(() => ({
   getMeMock: vi.fn<() => Promise<User>>(),
-  clearAuthSessionMock: vi.fn<() => void>(),
-  shouldHydrateSessionMock: vi.fn<() => boolean>(),
+  clearCookieSessionStateMock: vi.fn<() => void>(),
+  shouldCheckCookieSessionMock: vi.fn<() => boolean>(),
+  pathnameMock: vi.fn<() => string>(),
+  replaceMock: vi.fn<(href: string) => void>(),
+  toastInfoMock: vi.fn<(message: string) => void>(),
 }));
 
 vi.mock("@/src/entities/user", async () => {
@@ -33,10 +43,23 @@ vi.mock("@/src/shared/lib/auth-session", async () => {
 
   return {
     ...actual,
-    clearAuthSession: clearAuthSessionMock,
-    shouldHydrateSession: shouldHydrateSessionMock,
+    clearCookieSessionState: clearCookieSessionStateMock,
+    shouldCheckCookieSession: shouldCheckCookieSessionMock,
   };
 });
+
+vi.mock("sonner", () => ({
+  toast: {
+    info: toastInfoMock,
+  },
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: pathnameMock,
+  useRouter: () => ({
+    replace: replaceMock,
+  }),
+}));
 
 const mockUser: User = {
   id: "1",
@@ -52,13 +75,17 @@ const mockUser: User = {
 describe("SessionProvider", () => {
   beforeEach(() => {
     getMeMock.mockReset();
-    clearAuthSessionMock.mockReset();
-    shouldHydrateSessionMock.mockReset();
+    clearCookieSessionStateMock.mockReset();
+    shouldCheckCookieSessionMock.mockReset();
+    pathnameMock.mockReset();
+    replaceMock.mockReset();
+    toastInfoMock.mockReset();
+    pathnameMock.mockReturnValue("/account/profile");
     useUserStore.setState(useUserStore.getInitialState(), true);
   });
 
   it("marks session as checked immediately when hydration is not needed", async () => {
-    shouldHydrateSessionMock.mockReturnValue(false);
+    shouldCheckCookieSessionMock.mockReturnValue(false);
 
     render(<SessionProvider />);
 
@@ -74,7 +101,7 @@ describe("SessionProvider", () => {
   });
 
   it("hydrates user when session should be restored", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);
@@ -87,11 +114,11 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearAuthSessionMock).not.toHaveBeenCalled();
+    expect(clearCookieSessionStateMock).not.toHaveBeenCalled();
   });
 
   it("clears session and removes token when getMe fails", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockRejectedValue(new Error("Unauthorized"));
 
     render(<SessionProvider />);
@@ -104,11 +131,11 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearAuthSessionMock).toHaveBeenCalledTimes(1);
+    expect(clearCookieSessionStateMock).toHaveBeenCalledTimes(1);
   });
 
   it("clears local user state when unauthorized event is received", async () => {
-    shouldHydrateSessionMock.mockReturnValue(true);
+    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);
@@ -126,5 +153,33 @@ describe("SessionProvider", () => {
       expect(state.isLoading).toBe(false);
       expect(state.hasCheckedSession).toBe(true);
     });
+
+    expect(toastInfoMock).not.toHaveBeenCalled();
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
+
+  it("shows friendly sign-in prompt and redirects protected pages on unauthorized event", async () => {
+    shouldCheckCookieSessionMock.mockReturnValue(true);
+    getMeMock.mockResolvedValue(mockUser);
+
+    render(<SessionProvider />);
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toEqual(mockUser);
+    });
+
+    notifyUnauthorized({
+      reason: "csrf-token-mismatch",
+      message: AUTH_CONTINUE_MESSAGE,
+    });
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toBeNull();
+    });
+
+    expect(toastInfoMock).toHaveBeenCalledWith(AUTH_CONTINUE_MESSAGE);
+    expect(replaceMock).toHaveBeenCalledWith(
+      "/sign-in?redirectTo=%2Faccount%2Fprofile",
+    );
   });
 });

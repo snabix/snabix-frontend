@@ -1,7 +1,10 @@
 import axios from "axios";
-import { notifyUnauthorized } from "@/src/features/auth/session/auth-events";
+import {
+  AUTH_CONTINUE_MESSAGE,
+  notifyUnauthorized,
+} from "@/src/features/auth/session/auth-events";
 import { publicEnv } from "@/src/shared/config/env";
-import { clearAuthSession } from "@/src/shared/lib/auth-session";
+import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 
 const csrfApi = axios.create({
   baseURL: publicEnv.apiOrigin,
@@ -49,9 +52,14 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      clearAuthSession();
-      notifyUnauthorized();
+    const status = error.response?.status;
+
+    if (status === 401 || status === 419) {
+      clearCookieSessionState();
+      notifyUnauthorized({
+        reason: status === 419 ? "csrf-token-mismatch" : "unauthenticated",
+        message: AUTH_CONTINUE_MESSAGE,
+      });
     }
 
     return Promise.reject(error);

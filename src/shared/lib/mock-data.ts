@@ -11,18 +11,71 @@ export const bannerSlides = [
     description:
       "Удобная витрина, простая публикация и современный кабинет пользователя.",
     accent: "от размещения до сделки",
+    imageUrl:
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85",
   },
   {
     title: "Находите нужные товары и услуги рядом",
     description:
       "Платформа помогает быстро просматривать предложения и принимать решения без лишнего шума.",
     accent: "локальный marketplace",
+    imageUrl:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=85",
   },
   {
     title: "Создаём основу для доверительного продукта",
     description:
       "Чистый дизайн, сильная архитектура и подготовка к реальному backend API.",
     accent: "готово к масштабированию",
+    imageUrl:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1800&q=85",
+  },
+];
+
+export const homeCategoryShowcase = [
+  {
+    title: "Одежда",
+    imageUrl: "/clothing.png",
+  },
+  {
+    title: "Аксессуары",
+    imageUrl: "/accessories.png",
+  },
+  {
+    title: "Детские товары",
+    imageUrl: "/children.png",
+  },
+  {
+    title: "Электроника",
+    imageUrl: "/electronics.png",
+  },
+  {
+    title: "Дом и сад",
+    imageUrl: "/home-garden.png",
+  },
+  {
+    title: "Красота и здоровье",
+    imageUrl: "/beauty-health.png",
+  },
+  {
+    title: "Строительство",
+    imageUrl: "/construction.png",
+  },
+  {
+    title: "Канцтовары",
+    imageUrl: "/stationery.png",
+  },
+  {
+    title: "Спорт",
+    imageUrl: "/sports.png",
+  },
+  {
+    title: "Животные",
+    imageUrl: "/pets.png",
+  },
+  {
+    title: "Хобби и подарки",
+    imageUrl: "/hobbies-gifts.png",
   },
 ];
 

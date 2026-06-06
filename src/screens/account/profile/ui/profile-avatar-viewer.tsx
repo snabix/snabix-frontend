@@ -1,25 +1,21 @@
-"use client";
-
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Camera, Move, X, ZoomIn } from "lucide-react";
 import type {
   AvatarDraft,
   AvatarOffset,
-} from "@/src/features/profile/avatar/lib/avatar-editor";
+} from "@/src/features/profile";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Slider } from "@/src/shared/ui/shadcn/slider";
 
 type ProfileAvatarViewerProps = {
-  avatarDraft: AvatarDraft | null;
+  avatarDraft: AvatarDraft;
   avatarOffset: AvatarOffset;
   avatarScale: number;
-  avatarUrl?: string | null;
   isAvatarSubmitting: boolean;
   onAvatarDraftReset: () => void;
   onAvatarMovePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
   onAvatarSave: () => void;
   onAvatarScaleChange: (value: number[]) => void;
-  onAvatarSelect: () => void;
   onAvatarViewerClose: () => void;
 };
 
@@ -27,22 +23,20 @@ export function ProfileAvatarViewer({
   avatarDraft,
   avatarOffset,
   avatarScale,
-  avatarUrl,
   isAvatarSubmitting,
   onAvatarDraftReset,
   onAvatarMovePointerDown,
   onAvatarSave,
   onAvatarScaleChange,
-  onAvatarSelect,
   onAvatarViewerClose,
 }: ProfileAvatarViewerProps) {
   return (
     <div
-      className="fixed inset-0 z-50 grid bg-[rgba(10,14,24,0.82)] px-4 py-5 text-[var(--brand-deep)] backdrop-blur-md sm:px-6"
+      className="fixed inset-0 z-50 grid bg-[color-mix(in_srgb,var(--brand)_82%,transparent)] px-4 py-5 text-[var(--brand-deep)] backdrop-blur-md sm:px-6"
       onClick={onAvatarViewerClose}
     >
       <div
-        className="mx-auto my-auto grid w-full max-w-6xl gap-5 rounded-[36px] border border-white/10 bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-4 shadow-[0_28px_90px_rgba(10,14,24,0.36)] sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_380px]"
+        className="mx-auto my-auto grid w-full max-w-6xl gap-5 rounded-[36px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-4 shadow-[var(--shadow-soft)] sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_380px]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="relative overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--surface)_90%,transparent),color-mix(in_srgb,var(--accent-soft)_70%,transparent))] p-5 sm:p-8">
@@ -56,50 +50,31 @@ export function ProfileAvatarViewer({
           </button>
 
           <div className="flex min-h-[360px] items-center justify-center sm:min-h-[540px]">
-            {avatarDraft ? (
-              <div className="relative grid size-[min(76vw,480px)] place-items-center overflow-hidden rounded-[38px] bg-[linear-gradient(160deg,#121318,#1b2030)] shadow-[0_30px_90px_rgba(10,14,24,0.32)]">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0_58%,rgba(8,10,16,0.58)_58.4%_100%)]" />
+            <div className="relative grid size-[min(76vw,480px)] place-items-center overflow-hidden rounded-[38px] bg-[linear-gradient(160deg,var(--brand),color-mix(in_srgb,var(--brand)_84%,var(--foreground)))] shadow-[var(--shadow-soft)]">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0_58%,color-mix(in_srgb,var(--brand)_58%,transparent)_58.4%_100%)]" />
 
-                <div
-                  className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[#09090B] active:cursor-grabbing"
-                  onPointerDown={onAvatarMovePointerDown}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt="Предпросмотр нового аватара"
-                    className="pointer-events-none h-full w-full select-none object-cover"
-                    src={avatarDraft.previewUrl}
-                    style={{
-                      transform: `translate(${avatarOffset.x}px, ${avatarOffset.y}px) scale(${avatarScale})`,
-                    }}
-                  />
-
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full ring-2 ring-white/95">
-                    <span className="absolute bottom-0 left-1/3 top-0 w-px bg-white/50" />
-                    <span className="absolute bottom-0 left-2/3 top-0 w-px bg-white/50" />
-                    <span className="absolute left-0 right-0 top-1/3 h-px bg-white/50" />
-                    <span className="absolute left-0 right-0 top-2/3 h-px bg-white/50" />
-                  </div>
-                </div>
-              </div>
-            ) : avatarUrl ? (
-              <div className="overflow-hidden rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-4 shadow-[0_24px_80px_rgba(26,34,56,0.16)]">
+              <div
+                className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[var(--brand)] active:cursor-grabbing"
+                onPointerDown={onAvatarMovePointerDown}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  alt="Аватар пользователя"
-                  className="max-h-[76vh] max-w-[94vw] rounded-[24px] object-contain"
-                  src={avatarUrl}
+                  alt="Предпросмотр нового аватара"
+                  className="pointer-events-none h-full w-full select-none object-cover"
+                  src={avatarDraft.previewUrl}
+                  style={{
+                    transform: `translate(${avatarOffset.x}px, ${avatarOffset.y}px) scale(${avatarScale})`,
+                  }}
                 />
+
+                <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full ring-2 ring-[color-mix(in_srgb,var(--foreground)_92%,transparent)]">
+                  <span className="absolute bottom-0 left-1/3 top-0 w-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                  <span className="absolute bottom-0 left-2/3 top-0 w-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                  <span className="absolute left-0 right-0 top-1/3 h-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                  <span className="absolute left-0 right-0 top-2/3 h-px bg-[color-mix(in_srgb,var(--foreground)_48%,transparent)]" />
+                </div>
               </div>
-            ) : (
-              <button
-                className="grid size-[min(72vw,300px)] place-items-center rounded-[38px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--accent)] shadow-[0_24px_80px_rgba(26,34,56,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                onClick={onAvatarSelect}
-                type="button"
-              >
-                <Camera aria-hidden="true" size={68} />
-              </button>
-            )}
+            </div>
           </div>
         </div>
 
@@ -114,12 +89,10 @@ export function ProfileAvatarViewer({
                 Аватар профиля
               </p>
               <h3 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
-                {avatarDraft ? "Редактор аватара" : "Просмотр аватара"}
+                Редактор аватара
               </h3>
               <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                {avatarDraft
-                  ? "Подберите кадр, выставьте масштаб и сразу сохраните результат."
-                  : "Можно открыть текущий аватар или загрузить новое изображение для профиля."}
+                Подберите кадр, выставьте масштаб и сразу сохраните результат.
               </p>
             </div>
           </div>
@@ -151,68 +124,52 @@ export function ProfileAvatarViewer({
                     Масштаб
                   </p>
                   <p className="text-sm leading-6 text-[var(--text-muted)]">
-                    {avatarDraft
-                      ? `Текущий масштаб ${Math.round(avatarScale * 100)}%.`
-                      : "После загрузки изображения здесь появятся инструменты редактирования."}
+                    Текущий масштаб {Math.round(avatarScale * 100)}%.
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {avatarDraft ? (
-            <div className="mt-6 rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-4">
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-bold text-[var(--brand-deep)]">
-                  Приближение
-                </p>
-                <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--accent)]">
-                  {Math.round(avatarScale * 100)}%
-                </span>
-              </div>
-
-              <Slider
-                className="mt-5"
-                max={2.4}
-                min={1}
-                onValueChange={onAvatarScaleChange}
-                step={0.01}
-                value={[avatarScale]}
-              />
+          <div className="mt-6 rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-4">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm font-bold text-[var(--brand-deep)]">
+                Приближение
+              </p>
+              <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--accent)]">
+                {Math.round(avatarScale * 100)}%
+              </span>
             </div>
-          ) : null}
+
+            <Slider
+              className="mt-5"
+              max={2.4}
+              min={1}
+              onValueChange={onAvatarScaleChange}
+              step={0.01}
+              value={[avatarScale]}
+            />
+          </div>
 
           <div className="mt-auto flex flex-col gap-3 pt-6">
-            {avatarDraft ? (
-              <>
-                <Button
-                  className="w-full"
-                  disabled={isAvatarSubmitting}
-                  onClick={onAvatarSave}
-                  type="button"
-                >
-                  {isAvatarSubmitting ? "Сохраняем..." : "Сохранить аватар"}
-                </Button>
+            <Button
+              className="w-full"
+              disabled={isAvatarSubmitting}
+              onClick={onAvatarSave}
+              type="button"
+            >
+              {isAvatarSubmitting ? "Сохраняем..." : "Сохранить аватар"}
+            </Button>
 
-                <Button
-                  className="w-full"
-                  disabled={isAvatarSubmitting}
-                  onClick={onAvatarDraftReset}
-                  type="button"
-                  variant="secondary"
-                >
-                  Сбросить выбор
-                </Button>
-              </>
-            ) : (
-              <Button
-                className="w-full"
-                onClick={onAvatarSelect}
-                type="button"
-              >
-                Загрузить новое изображение
-              </Button>
-            )}
+            <Button
+              className="w-full"
+              disabled={isAvatarSubmitting}
+              onClick={onAvatarDraftReset}
+              type="button"
+              variant="secondary"
+            >
+              Сбросить выбор
+            </Button>
           </div>
         </div>
       </div>

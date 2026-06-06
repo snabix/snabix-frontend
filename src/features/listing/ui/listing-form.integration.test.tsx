@@ -51,6 +51,7 @@ const rootCategory: CategoryNode = {
   children: [],
   depth: 0,
   description: null,
+  icon: null,
   id: 5,
   isActive: true,
   name: "Электроника",

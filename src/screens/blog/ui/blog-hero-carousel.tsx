@@ -26,7 +26,7 @@ export function BlogHeroCarousel() {
   }
 
   return (
-    <section className="relative h-[600px] overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[var(--brand-deep)] text-white shadow-[var(--shadow-soft)] max-sm:h-[500px]">
+    <section className="inverted-surface relative h-[600px] overflow-hidden rounded-[30px] border shadow-[var(--shadow-soft)] max-sm:h-[500px]">
       {blogHeroSlides.map((slide, index) => (
         <div
           aria-hidden={activeIndex !== index}
@@ -42,7 +42,7 @@ export function BlogHeroCarousel() {
             className="h-full w-full object-cover grayscale"
             src={slide.imageUrl}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(23,20,42,0.92)_0%,rgba(23,20,42,0.68)_45%,rgba(23,20,42,0.22)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--palette-midnight)_92%,transparent)_0%,color-mix(in_srgb,var(--palette-midnight)_68%,transparent)_45%,color-mix(in_srgb,var(--palette-midnight)_22%,transparent)_100%)]" />
         </div>
       ))}
 

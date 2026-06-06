@@ -70,6 +70,7 @@ export const categoryNodeSchema: z.ZodType = z.lazy(() => z.object({
   name: z.string(),
   slug: z.string(),
   description: nullableStringSchema,
+  icon: nullableStringSchema,
   sortOrder: z.number(),
   isActive: z.boolean(),
   path: nullableStringSchema,
@@ -181,4 +182,76 @@ export const listingItemSchema = listingBaseSchema.extend({
   contactPhone: nullableStringSchema,
   contactEmail: nullableStringSchema,
   rejectionReason: nullableStringSchema,
+}).passthrough();
+
+const newsMediaSchema = z.object({
+  id: z.number(),
+  url: z.string(),
+  fileName: z.string(),
+  mimeType: nullableStringSchema,
+}).passthrough();
+
+const newsAuthorSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.string(),
+}).passthrough();
+
+const newsContentBlockBaseSchema = z.object({
+  id: z.string(),
+  type: z.enum([
+    "lead",
+    "paragraph",
+    "quote",
+    "split",
+    "steps",
+    "metrics",
+    "image",
+    "gallery",
+    "table",
+    "imageGrid",
+    "cta",
+  ]),
+  typeValue: z.number(),
+  typeLabel: z.string(),
+  sortOrder: z.number(),
+}).passthrough();
+
+export const newsContentBlockSchema = newsContentBlockBaseSchema.extend({
+  text: z.string().optional(),
+  author: z.string().optional(),
+  title: z.string().optional(),
+  buttonLabel: z.string().optional(),
+  href: z.string().optional(),
+  imageUrl: z.string().optional(),
+  caption: z.string().optional(),
+  media: newsMediaSchema.optional(),
+  items: z.array(z.record(z.string(), z.unknown())).optional(),
+  columns: z.array(z.string()).optional(),
+  rows: z.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))).optional(),
+}).passthrough();
+
+export const newsPostItemSchema = z.object({
+  id: z.string(),
+  status: z.number(),
+  statusLabel: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  category: z.string(),
+  eyebrow: nullableStringSchema,
+  description: z.string(),
+  thesis: nullableStringSchema,
+  readingTime: nullableStringSchema,
+  isFeatured: z.boolean(),
+  viewsCount: z.number(),
+  imageUrl: nullableStringSchema.optional(),
+  coverMedia: newsMediaSchema.nullable(),
+  author: newsAuthorSchema.nullable(),
+  publishedAt: nullableStringSchema,
+  createdAt: nullableStringSchema,
+  updatedAt: nullableStringSchema,
+}).passthrough();
+
+export const newsPostDetailSchema = newsPostItemSchema.extend({
+  contentBlocks: z.array(newsContentBlockSchema),
 }).passthrough();

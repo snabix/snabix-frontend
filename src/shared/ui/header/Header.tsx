@@ -46,7 +46,7 @@ export function Header() {
     <header
       ref={headerRef}
       className={[
-        "sticky top-0 z-40 mb-5 px-3 pt-3 sm:mb-6 sm:px-4",
+        "sticky top-0 z-40 mb-5 pt-3 sm:mb-6",
         "bg-transparent",
         "transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]",
         isHeaderHidden ? "-translate-y-[120%]" : "translate-y-0",
@@ -55,7 +55,7 @@ export function Header() {
       <Container>
         <div className="surface-card flex items-center justify-between gap-6 rounded-[30px] px-4 py-4 sm:px-6">
           <div className="flex items-center gap-5 ">
-            <Logo />
+            <Logo variant="wordmark" />
 
             <nav className="hidden items-center gap-1 lg:flex">
               <CatalogToggleButton

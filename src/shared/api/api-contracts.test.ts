@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getCategoryAttributes } from "@/src/entities/category/api/list-categories";
+import {
+  getCategoryAttributes,
+  listRootCategories,
+} from "@/src/entities/category/api/list-categories";
 import { getMe } from "@/src/entities/user";
 import { listActiveSessions } from "@/src/features/auth/api";
 import {
@@ -356,6 +359,36 @@ describe("api adapter contracts", () => {
     await expect(getCategoryAttributes(5)).resolves.toEqual(attributesContract);
     expect(apiGetMock).toHaveBeenCalledWith("/categories/5/attributes");
   });
+
+  it("returns root categories with media icon URL from categories contract", async () => {
+    const categoriesContract = [
+      {
+        catalogType: 1,
+        catalogTypeLabel: "Товары",
+        children: [],
+        depth: 0,
+        description: null,
+        icon: "https://cdn.snabix.test/categories/electronics.png",
+        id: 5,
+        isActive: true,
+        name: "Электроника",
+        parentId: null,
+        path: "elektronika",
+        slug: "elektronika",
+        sortOrder: 1,
+      },
+    ];
+
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: categoriesContract,
+      },
+    });
+
+    await expect(listRootCategories()).resolves.toEqual(categoriesContract);
+    expect(apiGetMock).toHaveBeenCalledWith("/categories/list");
+  });
+
 });
 
 function deletePartialListingField(

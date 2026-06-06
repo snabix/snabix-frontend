@@ -67,9 +67,9 @@ export function AboutPage() {
   return (
     <PublicLayout>
       <main className="pb-16 pt-6">
-        <Container className="max-w-[1240px]">
+        <Container>
           <section className="overflow-hidden rounded-[34px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-3 shadow-[var(--shadow-soft)] backdrop-blur-xl sm:p-4">
-            <div className="rounded-[28px] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_72%,white),color-mix(in_srgb,var(--surface)_92%,transparent))] p-4 text-[var(--brand-deep)] dark:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface)_94%,black),var(--surface))] sm:p-6 lg:p-8">
+            <div className="rounded-[28px] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_72%,var(--palette-light-gray)),color-mix(in_srgb,var(--surface)_92%,transparent))] p-4 text-[var(--brand-deep)] dark:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface)_94%,var(--palette-midnight)),var(--surface))] sm:p-6 lg:p-8">
               <HeroSection />
               <ManifestSection />
               <FeaturesSection />
@@ -139,15 +139,15 @@ function HeroSection() {
 
 function MarketplaceVisual() {
   return (
-    <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(135deg,#111827,#3f3a68_48%,#fff0e1)]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,rgba(255,255,255,0.46),transparent_24rem),radial-gradient(circle_at_82%_18%,rgba(200,195,255,0.38),transparent_20rem)]" />
+    <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(135deg,var(--palette-midnight),var(--palette-dark-gray)_50%,var(--palette-silver))]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,color-mix(in_srgb,var(--palette-silver)_46%,transparent),transparent_24rem),radial-gradient(circle_at_82%_18%,color-mix(in_srgb,var(--palette-orange)_28%,transparent),transparent_20rem)]" />
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
-      <div className="absolute inset-x-0 bottom-16 h-28 skew-y-[-4deg] bg-[rgba(255,255,255,0.72)] blur-[1px]" />
+      <div className="absolute inset-x-0 bottom-16 h-28 skew-y-[-4deg] bg-[color-mix(in_srgb,var(--palette-silver)_72%,transparent)] blur-[1px]" />
 
-      <div className="absolute left-[18%] top-[16%] h-44 w-[38%] rounded-[30px] border border-white/55 bg-[linear-gradient(135deg,rgba(255,255,255,0.84),rgba(200,195,255,0.22))] shadow-[0_34px_80px_rgba(0,0,0,0.36)] backdrop-blur-sm" />
-      <div className="absolute left-[43%] top-[8%] h-52 w-[34%] rounded-[30px] border border-white/50 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,240,225,0.18))] shadow-[0_34px_80px_rgba(0,0,0,0.34)] backdrop-blur-sm" />
-      <div className="absolute left-[25%] top-[42%] h-40 w-[30%] rounded-[28px] border border-white/45 bg-[linear-gradient(135deg,rgba(17,24,39,0.82),rgba(200,195,255,0.18))] shadow-[0_34px_70px_rgba(0,0,0,0.42)] backdrop-blur-sm" />
-      <div className="absolute left-[52%] top-[39%] h-36 w-[27%] rounded-[28px] border border-white/40 bg-[linear-gradient(135deg,rgba(17,24,39,0.74),rgba(255,240,225,0.16))] shadow-[0_34px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm" />
+      <div className="absolute left-[18%] top-[16%] h-44 w-[38%] rounded-[30px] border border-white/55 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_84%,transparent),color-mix(in_srgb,var(--palette-orange)_18%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.36)] backdrop-blur-sm" />
+      <div className="absolute left-[43%] top-[8%] h-52 w-[34%] rounded-[30px] border border-white/50 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_72%,transparent),color-mix(in_srgb,var(--palette-light-gray)_22%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.34)] backdrop-blur-sm" />
+      <div className="absolute left-[25%] top-[42%] h-40 w-[30%] rounded-[28px] border border-white/45 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_82%,transparent),color-mix(in_srgb,var(--palette-orange)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.42)] backdrop-blur-sm" />
+      <div className="absolute left-[52%] top-[39%] h-36 w-[27%] rounded-[28px] border border-white/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_74%,transparent),color-mix(in_srgb,var(--palette-silver)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm" />
 
       <div className="absolute right-8 top-8 rounded-full border border-white/40 bg-white/18 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-white backdrop-blur">
         Local commerce
@@ -221,8 +221,8 @@ function FeatureCard({
       className={[
         "group grid min-h-[126px] grid-cols-[1fr_auto] gap-4 rounded-[20px] border p-5 transition-colors",
         inverted
-          ? "border-[var(--brand-deep)] bg-[var(--brand-deep)] text-[var(--background)]"
-          : "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,white)] text-[var(--brand-deep)] dark:bg-[color-mix(in_srgb,var(--surface)_84%,black)]",
+          ? "inverted-surface border-[var(--inverted-surface-border)]"
+          : "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,var(--palette-light-gray))] text-[var(--brand-deep)] dark:bg-[color-mix(in_srgb,var(--surface)_84%,var(--palette-midnight))]",
       ].join(" ")}
     >
       <div className="self-end">
@@ -263,7 +263,7 @@ function WhySection() {
   return (
     <section className="mt-4 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
       <div className="relative min-h-[300px] overflow-hidden rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_22%,var(--surface))] p-6">
-        <div className="absolute -bottom-24 -left-12 h-80 w-[58%] rounded-[48px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--brand)_70%,white),color-mix(in_srgb,var(--surface)_88%,transparent))] shadow-[var(--shadow-soft)]" />
+        <div className="absolute -bottom-24 -left-12 h-80 w-[58%] rounded-[48px] border border-[var(--border-soft)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--brand)_70%,var(--palette-silver)),color-mix(in_srgb,var(--surface)_88%,transparent))] shadow-[var(--shadow-soft)]" />
         <div className="absolute bottom-10 left-[22%] h-32 w-[34%] rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand-deep)_78%,transparent)] shadow-[var(--shadow-card)]" />
         <div className="relative z-10 ml-auto max-w-lg text-right">
           <h2 className="font-heading text-[clamp(2.6rem,7vw,6rem)] font-black uppercase leading-[0.82] tracking-[-0.1em] text-[var(--brand-deep)]">
@@ -305,7 +305,7 @@ function WhySection() {
           );
         })}
 
-        <div className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--brand-deep)] p-5 text-[var(--background)]">
+        <div className="inverted-surface rounded-[22px] border p-5">
           <div className="flex items-center gap-3">
             <Sparkles size={20} />
             <p className="text-[10px] font-black uppercase tracking-[0.18em]">

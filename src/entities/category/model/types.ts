@@ -6,6 +6,7 @@ export type CategoryNode = {
   name: string;
   slug: string;
   description: string | null;
+  icon: string | null;
   sortOrder: number;
   isActive: boolean;
   path: string | null;

@@ -8,7 +8,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-type BlogContentBlock =
+export type BlogContentBlock =
   | {
       type: "lead";
       text: string;
@@ -42,6 +42,51 @@ type BlogContentBlock =
         label: string;
         value: string;
       }>;
+    }
+  | {
+      type: "image";
+      imageUrl?: string;
+      caption?: string;
+      media?: {
+        url: string;
+        fileName: string;
+      };
+    }
+  | {
+      type: "gallery";
+      items?: Array<{
+        caption?: string;
+        imageUrl?: string;
+        media?: {
+          url: string;
+          fileName: string;
+        };
+      }>;
+    }
+  | {
+      type: "table";
+      columns?: string[];
+      rows?: Array<Array<string | number | boolean | null>>;
+    }
+  | {
+      type: "imageGrid";
+      items?: Array<{
+        title?: string;
+        text?: string;
+        caption?: string;
+        imageUrl?: string;
+        media?: {
+          url: string;
+          fileName: string;
+        };
+      }>;
+    }
+  | {
+      type: "cta";
+      title?: string;
+      text?: string;
+      buttonLabel?: string;
+      href?: string;
     };
 
 export type BlogPost = {

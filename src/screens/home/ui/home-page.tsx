@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { LayoutGrid, List, PackageOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +18,8 @@ import {
   PublicListingFilters,
   type PublicListingFiltersState,
 } from "./public-listing-filters";
+import { BannerCarouselSection } from "./banner-carousel-section";
+import { CategoryShowcaseCarouselSection } from "./category-showcase-carousel-section";
 
 const publicListingsPerPage = 15;
 
@@ -107,44 +108,19 @@ export function HomePage() {
   return (
     <main className="pb-12 pt-6">
         <Container>
-          <section className="surface-card relative overflow-hidden rounded-[34px] p-7 sm:p-10">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--brand)_16%,transparent),transparent_72%)]" />
-
-            <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-3xl">
-                <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
-                  Витрина объявлений
-                </p>
-
-                <h1 className="font-heading mt-4 text-4xl font-extrabold tracking-[-0.03em] text-[var(--brand-deep)] sm:text-5xl">
-                  На главной теперь сразу видны актуальные товары и услуги.
-                </h1>
-
-                <p className="section-copy mt-5 max-w-2xl text-base leading-8">
-                  Пользователь сразу попадает в живую витрину, а не на
-                  абстрактный лендинг. Это ближе к реальному сценарию
-                  marketplace и лучше готовит продукт к поиску, фильтрам и
-                  карточкам объявлений.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Link href="/about">
-                  <Button className="rounded-[18px] px-5 py-6" variant="outline">
-                    О проекте
-                  </Button>
-                </Link>
-                <Link href="/account/listings">
-                  <Button className="active-button rounded-[18px] px-5 py-6">
-                    Разместить объявление
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </section>
+          <CategoryShowcaseCarouselSection />
+          <BannerCarouselSection />
 
           <section className="mt-8">
-            <div className="mb-5 flex justify-end">
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
+                  Живая витрина
+                </p>
+                <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
+                  Актуальные предложения рядом
+                </h2>
+              </div>
               <ViewModeSwitcher
                 onChange={setViewMode}
                 value={viewMode}

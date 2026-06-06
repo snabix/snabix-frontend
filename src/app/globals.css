@@ -1,67 +1,83 @@
 @import "tailwindcss";
 
 :root {
-    --background: #FFF0E1;
-    --foreground: #2E2A54;
-    --surface: color-mix(in srgb, #FFF0E1 92%, #C8C3FF);
-    --surface-muted: color-mix(in srgb, #C8C3FF 22%, #FFF0E1);
-    --brand: #C8C3FF;
-    --brand-deep: #2E2A54;
-    --accent: #665BD6;
-    --accent-strong: #4F45B8;
-    --accent-soft: color-mix(in srgb, #C8C3FF 34%, transparent);
-    --active-button-bg: #C8C3FF;
-    --active-button-text: #2E2A54;
+    --palette-orange: #F44A22;
+    --palette-midnight: #161616;
+    --palette-silver: #FEF8E8;
+    --palette-light-gray: #DEDEDE;
+    --palette-dark-gray: #4D4D4D;
+
+    --background: var(--palette-silver);
+    --foreground: var(--palette-midnight);
+    --surface: color-mix(in srgb, var(--palette-silver) 92%, var(--palette-light-gray));
+    --surface-muted: color-mix(in srgb, var(--palette-light-gray) 64%, var(--palette-silver));
+    --brand: var(--palette-orange);
+    --brand-deep: var(--palette-midnight);
+    --accent: var(--palette-orange);
+    --accent-strong: color-mix(in srgb, var(--palette-orange) 82%, var(--palette-midnight));
+    --accent-soft: color-mix(in srgb, var(--palette-orange) 16%, transparent);
+    --active-button-bg: var(--palette-orange);
+    --active-button-text: var(--palette-silver);
+    --accent-block-text: var(--palette-silver);
     --button-primary-bg: var(--active-button-bg);
     --button-primary-text: var(--active-button-text);
-    --button-secondary-bg: color-mix(in srgb, var(--surface) 82%, transparent);
+    --button-secondary-bg: color-mix(in srgb, var(--surface) 88%, transparent);
     --button-secondary-text: var(--brand-deep);
     --button-subtle-bg: transparent;
     --button-subtle-text: var(--brand-deep);
-    --danger: #8A1F35;
-    --danger-bg: #8A1F35;
-    --danger-text: #FFFFFF;
-    --danger-soft: color-mix(in srgb, #8A1F35 14%, #FFF0E1);
-    --metal: color-mix(in srgb, #2E2A54 42%, #FFF0E1);
-    --blush: color-mix(in srgb, #C8C3FF 42%, #FFF0E1);
-    --sand: color-mix(in srgb, #FFF0E1 88%, #C8C3FF);
-    --text-muted: color-mix(in srgb, #2E2A54 62%, #FFF0E1);
-    --border-soft: color-mix(in srgb, #2E2A54 12%, transparent);
-    --border-strong: color-mix(in srgb, #2E2A54 24%, transparent);
-    --shadow-soft: 0 24px 60px color-mix(in srgb, #2E2A54 14%, transparent);
-    --shadow-card: 0 18px 38px color-mix(in srgb, #2E2A54 10%, transparent);
+    --danger: color-mix(in srgb, var(--palette-orange) 68%, var(--palette-midnight));
+    --danger-bg: color-mix(in srgb, var(--palette-orange) 68%, var(--palette-midnight));
+    --danger-text: var(--palette-silver);
+    --danger-soft: color-mix(in srgb, var(--palette-orange) 14%, transparent);
+    --metal: color-mix(in srgb, var(--palette-dark-gray) 58%, var(--palette-light-gray));
+    --blush: color-mix(in srgb, var(--palette-orange) 12%, var(--palette-silver));
+    --sand: color-mix(in srgb, var(--palette-silver) 86%, var(--palette-light-gray));
+    --text-muted: var(--palette-dark-gray);
+    --border-soft: color-mix(in srgb, var(--palette-dark-gray) 18%, transparent);
+    --border-strong: color-mix(in srgb, var(--palette-dark-gray) 34%, transparent);
+    --inverted-surface-bg: var(--palette-midnight);
+    --inverted-surface-text: var(--palette-silver);
+    --inverted-surface-muted: var(--palette-light-gray);
+    --inverted-surface-border: color-mix(in srgb, var(--palette-silver) 18%, transparent);
+    --shadow-soft: 0 24px 60px color-mix(in srgb, var(--palette-midnight) 16%, transparent);
+    --shadow-card: 0 18px 38px color-mix(in srgb, var(--palette-midnight) 10%, transparent);
 }
 
 .dark {
-    --background: #17142A;
-    --foreground: #FFF0E1;
-    --surface: #211D3A;
-    --surface-muted: color-mix(in srgb, #C8C3FF 12%, #17142A);
-    --brand: #C8C3FF;
-    --brand-deep: #FFF0E1;
-    --accent: #C8C3FF;
-    --accent-strong: #E0DDFF;
-    --accent-soft: color-mix(in srgb, #C8C3FF 18%, transparent);
-    --active-button-bg: #C8C3FF;
-    --active-button-text: #17142A;
+    --background: var(--palette-midnight);
+    --foreground: var(--palette-silver);
+    --surface: color-mix(in srgb, var(--palette-midnight) 88%, var(--palette-dark-gray));
+    --surface-muted: color-mix(in srgb, var(--palette-midnight) 72%, var(--palette-dark-gray));
+    --brand: var(--palette-orange);
+    --brand-deep: var(--palette-silver);
+    --accent: var(--palette-orange);
+    --accent-strong: color-mix(in srgb, var(--palette-orange) 86%, var(--palette-silver));
+    --accent-soft: color-mix(in srgb, var(--palette-orange) 22%, transparent);
+    --active-button-bg: var(--palette-orange);
+    --active-button-text: var(--palette-silver);
+    --accent-block-text: var(--palette-silver);
     --button-primary-bg: var(--active-button-bg);
     --button-primary-text: var(--active-button-text);
     --button-secondary-bg: color-mix(in srgb, var(--surface) 86%, transparent);
     --button-secondary-text: var(--foreground);
     --button-subtle-bg: transparent;
     --button-subtle-text: var(--foreground);
-    --danger: #FF9BAE;
-    --danger-bg: #8A1F35;
-    --danger-text: #FFFFFF;
-    --danger-soft: color-mix(in srgb, #FF9BAE 18%, transparent);
-    --metal: color-mix(in srgb, #FFF0E1 66%, #17142A);
-    --blush: color-mix(in srgb, #C8C3FF 28%, #17142A);
-    --sand: color-mix(in srgb, #FFF0E1 12%, #17142A);
-    --text-muted: color-mix(in srgb, #FFF0E1 72%, #17142A);
-    --border-soft: color-mix(in srgb, #FFF0E1 14%, transparent);
-    --border-strong: color-mix(in srgb, #C8C3FF 32%, transparent);
-    --shadow-soft: 0 24px 60px color-mix(in srgb, #000000 38%, transparent);
-    --shadow-card: 0 18px 38px color-mix(in srgb, #000000 30%, transparent);
+    --danger: color-mix(in srgb, var(--palette-orange) 72%, var(--palette-light-gray));
+    --danger-bg: color-mix(in srgb, var(--palette-orange) 70%, var(--palette-midnight));
+    --danger-text: var(--palette-silver);
+    --danger-soft: color-mix(in srgb, var(--palette-orange) 20%, transparent);
+    --metal: color-mix(in srgb, var(--palette-light-gray) 58%, var(--palette-dark-gray));
+    --blush: color-mix(in srgb, var(--palette-orange) 18%, var(--palette-midnight));
+    --sand: color-mix(in srgb, var(--palette-silver) 10%, var(--palette-midnight));
+    --text-muted: var(--palette-light-gray);
+    --border-soft: color-mix(in srgb, var(--palette-light-gray) 14%, transparent);
+    --border-strong: color-mix(in srgb, var(--palette-light-gray) 26%, transparent);
+    --inverted-surface-bg: var(--palette-midnight);
+    --inverted-surface-text: var(--palette-silver);
+    --inverted-surface-muted: var(--palette-light-gray);
+    --inverted-surface-border: color-mix(in srgb, var(--palette-silver) 18%, transparent);
+    --shadow-soft: 0 24px 60px color-mix(in srgb, #000000 42%, transparent);
+    --shadow-card: 0 18px 38px color-mix(in srgb, #000000 32%, transparent);
 }
 
 @theme inline {
@@ -85,6 +101,14 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 112px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html,
+    body {
+        scroll-behavior: smooth;
+    }
 }
 
 @keyframes listing-actions-dropdown-in {
@@ -96,6 +120,32 @@ html {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes category-conveyor-scroll {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+.category-conveyor-track {
+    animation: category-conveyor-scroll 42s linear infinite;
+    will-change: transform;
+}
+
+.category-conveyor:hover .category-conveyor-track,
+.category-conveyor:focus-within .category-conveyor-track {
+    animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .category-conveyor-track {
+        animation-play-state: paused;
     }
 }
 
@@ -114,10 +164,10 @@ body {
     font-family: "Inter", "Segoe UI", sans-serif;
     min-height: 100vh;
     background-image:
-            radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent) 32%, transparent), transparent 28rem),
-            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 26rem),
-            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 30rem),
-            linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, var(--brand)), var(--background) 42%, color-mix(in srgb, var(--background) 94%, var(--brand)) 100%);
+            radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 28rem),
+            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--palette-light-gray) 46%, transparent), transparent 26rem),
+            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
+            linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, var(--palette-light-gray)), var(--background) 42%, color-mix(in srgb, var(--background) 88%, var(--palette-light-gray)) 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -126,9 +176,9 @@ body {
 .dark body {
     background-image:
             radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 28rem),
-            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--foreground) 8%, transparent), transparent 28rem),
-            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 30rem),
-            linear-gradient(180deg, var(--background), color-mix(in srgb, var(--background) 88%, var(--surface)) 48%, var(--background) 100%);
+            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--palette-dark-gray) 42%, transparent), transparent 28rem),
+            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
+            linear-gradient(180deg, var(--background), color-mix(in srgb, var(--background) 82%, var(--palette-dark-gray)) 48%, var(--background) 100%);
 }
 
 a,
@@ -162,7 +212,7 @@ button:not(:disabled):active {
 }
 
 .surface-card {
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
     border: 1px solid var(--border-soft);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(18px);
@@ -170,7 +220,7 @@ button:not(:disabled):active {
 
 .dark .surface-card {
     background:
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, var(--foreground)), var(--surface)),
+            linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, var(--palette-dark-gray)), var(--surface)),
             var(--surface);
     border-color: var(--border-strong);
     box-shadow:
@@ -180,16 +230,16 @@ button:not(:disabled):active {
 
 .hero-shell {
     background:
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--surface) 82%, transparent)),
-            linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--background) 72%, transparent));
+            linear-gradient(145deg, color-mix(in srgb, var(--surface) 96%, transparent), color-mix(in srgb, var(--surface-muted) 72%, transparent)),
+            linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--background) 78%, transparent));
     box-shadow: var(--shadow-soft);
 }
 
 .dark .hero-shell {
     background:
-            radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 20rem),
-            radial-gradient(circle at 84% 0%, color-mix(in srgb, var(--foreground) 8%, transparent), transparent 22rem),
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 88%, var(--foreground)), var(--surface));
+            radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 20rem),
+            radial-gradient(circle at 84% 0%, color-mix(in srgb, var(--palette-light-gray) 8%, transparent), transparent 22rem),
+            linear-gradient(145deg, color-mix(in srgb, var(--surface) 88%, var(--palette-dark-gray)), var(--surface));
     border: 1px solid var(--border-strong);
     box-shadow:
             inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent),
@@ -223,6 +273,19 @@ button:not(:disabled):active {
     box-shadow:
             inset 0 1px 0 color-mix(in srgb, var(--foreground) 24%, transparent),
             0 18px 38px color-mix(in srgb, var(--brand-deep) 8%, transparent);
+}
+
+.inverted-surface,
+.dark-surface {
+    --foreground: var(--inverted-surface-text);
+    --brand-deep: var(--inverted-surface-text);
+    --text-muted: var(--inverted-surface-muted);
+    --surface: color-mix(in srgb, var(--inverted-surface-bg) 92%, var(--inverted-surface-text));
+    --surface-muted: color-mix(in srgb, var(--inverted-surface-bg) 82%, var(--inverted-surface-text));
+    --border-soft: var(--inverted-surface-border);
+    --border-strong: color-mix(in srgb, var(--inverted-surface-text) 28%, transparent);
+    background: var(--inverted-surface-bg);
+    color: var(--inverted-surface-text);
 }
 
 .bubble-surface {
@@ -334,6 +397,14 @@ button:not(:disabled):active {
 
 .active-button svg * {
     stroke: var(--active-button-text) !important;
+}
+
+.dark button svg,
+.dark a[role="button"] svg,
+.dark .active-button svg,
+.dark .active-button svg * {
+    color: currentColor;
+    stroke: currentColor;
 }
 
 .active-button::before,

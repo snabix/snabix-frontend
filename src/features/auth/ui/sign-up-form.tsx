@@ -11,6 +11,7 @@ import { signUp } from "@/src/features/auth/api";
 import { signUpSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignUpFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
@@ -121,9 +122,8 @@ export function SignUpForm() {
 
         <div className="space-y-2">
           <Label htmlFor="sign-up-phone">Телефон</Label>
-          <Input
+          <PhoneInput
             id="sign-up-phone"
-            placeholder="+7 999 123-45-67"
             {...register("phoneNumber")}
           />
           {errors.phoneNumber ? (

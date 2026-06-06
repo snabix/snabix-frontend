@@ -1,8 +1,4 @@
-"use client";
-
-import { RotateCcw } from "lucide-react";
 import type { ReactNode } from "react";
-import type { CategoryNode } from "@/src/entities/category";
 import type { ListPublicListingsParams } from "@/src/features/listing/api";
 import {
   LISTING_TYPE_PRODUCT,
@@ -11,7 +7,6 @@ import {
 import { Input } from "@/src/shared/ui/shadcn/input";
 
 export type PublicListingFiltersState = {
-  categoryId: string;
   type: string;
   minPrice: string;
   maxPrice: string;
@@ -19,10 +14,8 @@ export type PublicListingFiltersState = {
 };
 
 type PublicListingFiltersProps = {
-  categories: CategoryNode[];
   filters: PublicListingFiltersState;
   isLoading: boolean;
-  isCategoriesLoading: boolean;
   onChange: (filters: PublicListingFiltersState) => void;
   onReset: () => void;
 };
@@ -56,7 +49,6 @@ const selectClassName = "h-12 w-full appearance-none rounded-xl border border-[v
 const optionClassName = "bg-[var(--surface)] text-[var(--brand-deep)]";
 
 export const defaultPublicListingFilters: PublicListingFiltersState = {
-  categoryId: "",
   type: "",
   minPrice: "",
   maxPrice: "",
@@ -64,10 +56,8 @@ export const defaultPublicListingFilters: PublicListingFiltersState = {
 };
 
 export function PublicListingFilters({
-  categories,
   filters,
   isLoading,
-  isCategoriesLoading,
   onChange,
   onReset,
 }: PublicListingFiltersProps) {
@@ -100,22 +90,6 @@ export function PublicListingFilters({
       </div>
 
       <div className="grid gap-6">
-        <FilterGroup title="Категория">
-          <select
-            className={selectClassName}
-            disabled={isLoading || isCategoriesLoading}
-            onChange={(event) => updateFilter("categoryId", event.target.value)}
-            value={filters.categoryId}
-          >
-            <option className={optionClassName} value="">Все категории</option>
-            {categories.map((category) => (
-              <option className={optionClassName} key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </FilterGroup>
-
         <FilterGroup title="Тип объявления">
           <select
             className={selectClassName}
@@ -159,19 +133,32 @@ export function PublicListingFilters({
                 && filters.maxPrice === option.maxPrice;
 
               return (
-                <label
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] px-4 py-3 text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)]"
+                <button
+                  aria-pressed={isChecked}
+                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] px-4 py-3 text-left text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isLoading}
                   key={option.label}
+                  onClick={() => updatePricePreset(option.minPrice, option.maxPrice)}
+                  type="button"
                 >
-                  <input
-                    checked={isChecked}
-                    className="size-4 accent-[var(--brand)]"
-                    disabled={isLoading}
-                    onChange={() => updatePricePreset(option.minPrice, option.maxPrice)}
-                    type="checkbox"
-                  />
-                  {option.label}
-                </label>
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      "grid size-4 shrink-0 place-items-center rounded-[5px] border transition-colors",
+                      isChecked
+                        ? "border-[var(--brand)] bg-[var(--brand)]"
+                        : "border-[var(--border-strong)] bg-[var(--surface)]",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "size-1.5 rounded-full bg-[var(--surface)] transition-opacity",
+                        isChecked ? "opacity-100" : "opacity-0",
+                      ].join(" ")}
+                    />
+                  </span>
+                  <span>{option.label}</span>
+                </button>
               );
             })}
           </div>
@@ -193,13 +180,12 @@ export function PublicListingFilters({
         </FilterGroup>
 
         <button
-          className="group inline-flex w-fit items-center gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:opacity-60"
+          className="mx-auto inline-flex w-fit items-center justify-center rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-2 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:opacity-60"
           disabled={isLoading}
           onClick={onReset}
           type="button"
         >
-          <RotateCcw className="transition duration-500 group-hover:-rotate-180" size={16} />
-          Сбросить фильтры
+          Сбросить
         </button>
       </div>
     </aside>

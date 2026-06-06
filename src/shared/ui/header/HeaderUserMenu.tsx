@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, MessageSquareText, Settings, Store, UserRound } from "lucide-react";
+import { Heart, LogOut, MessageSquareText, Settings, Store, UserRound } from "lucide-react";
 import { getUserFullName, type User } from "@/src/entities/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import {
@@ -21,6 +21,7 @@ type HeaderUserMenuProps = {
 const userMenuItems = [
   { href: "/account/profile", icon: UserRound, label: "Профиль" },
   { href: "/account/listings", icon: Store, label: "Мои объявления" },
+  { href: "/account/favorites", icon: Heart, label: "Избранное" },
   { href: "/account/reviews", icon: MessageSquareText, label: "Мои отзывы" },
   { href: "/account/settings", icon: Settings, label: "Настройки" },
 ];

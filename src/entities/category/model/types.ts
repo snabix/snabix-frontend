@@ -6,6 +6,7 @@ export type CategoryNode = {
   name: string;
   slug: string;
   description: string | null;
+  icon: string | null;
   sortOrder: number;
   isActive: boolean;
   path: string | null;
@@ -26,12 +27,21 @@ export type CategoryAttributeDefinition = {
   placeholder: string | null;
   helpText: string | null;
   defaultValue: Record<string, unknown> | string[] | null;
+  dependencyRules: CategoryAttributeDependencyRule[] | null;
   groupName: string | null;
   options: string[] | null;
   isRequired: boolean;
   isFilterable: boolean;
   showInCard: boolean;
+  schemaVersion?: number;
   isActive: boolean;
   appliesToChildren: boolean;
   sortOrder: number;
+};
+
+export type CategoryAttributeDependencyRule = {
+  attributeDefinitionId?: number;
+  attributeSlug?: string;
+  operator: "equals" | "not_equals" | "in" | "not_in" | "filled" | "empty";
+  value?: unknown;
 };

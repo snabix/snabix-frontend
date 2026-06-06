@@ -33,11 +33,15 @@ export function ListingForm({
     filteredRoots,
     form,
     groupedAttributes,
+    handleDeleteExistingMedia,
     handleAttributeChange,
     handleCategoryChange,
     handleMultiselectChange,
+    handleReorderExistingMedia,
     handleRootChange,
+    handleSetMainExistingMedia,
     handleTypeChange,
+    existingMedia,
     imageFiles,
     isFormBusy,
     isLoadingAttributes,
@@ -45,6 +49,9 @@ export function ListingForm({
     isLoadingRoots,
     isNegotiable,
     isSubmitting,
+    isUploadingMedia,
+    mediaRetryListingId,
+    retryMediaUpload,
     setCondition,
     setImageFiles,
     setIsNegotiable,
@@ -102,9 +109,13 @@ export function ListingForm({
           </ListingFormField>
 
           <ListingImageUploader
+            existingMedia={existingMedia}
             files={imageFiles}
             isDisabled={isFormBusy}
+            onDeleteExisting={handleDeleteExistingMedia}
             onChange={setImageFiles}
+            onReorderExisting={handleReorderExistingMedia}
+            onSetMainExisting={handleSetMainExistingMedia}
           />
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -168,7 +179,10 @@ export function ListingForm({
         <ListingSubmitActions
           isDisabled={isFormBusy}
           isSubmitting={isSubmitting}
+          isUploadingMedia={isUploadingMedia}
+          mediaRetryListingId={mediaRetryListingId}
           mode={mode}
+          onRetryMediaUpload={retryMediaUpload}
           onSubmit={submitForm}
         />
       </aside>

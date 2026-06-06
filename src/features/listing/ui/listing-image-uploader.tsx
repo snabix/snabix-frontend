@@ -1,21 +1,31 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { ImagePlus, Upload, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Star, Trash2, Upload } from "lucide-react";
+import type { ListingMediaItem } from "@/src/entities/listing";
+import { ListingMediaUploadGrid } from "@/src/entities/listing";
 import { cn } from "@/src/shared/lib/utils";
 
 const MAX_LISTING_IMAGES = 8;
 
 type ListingImageUploaderProps = {
+  existingMedia?: ListingMediaItem[];
   files: File[];
   isDisabled?: boolean;
   onChange: (files: File[]) => void;
+  onDeleteExisting?: (mediaId: number) => void;
+  onReorderExisting?: (mediaId: number, direction: "left" | "right") => void;
+  onSetMainExisting?: (mediaId: number) => void;
 };
 
 export function ListingImageUploader({
+  existingMedia = [],
   files,
   isDisabled = false,
   onChange,
+  onDeleteExisting,
+  onReorderExisting,
+  onSetMainExisting,
 }: ListingImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previews = useMemo(
@@ -26,7 +36,7 @@ export function ListingImageUploader({
     })),
     [files],
   );
-  const availableSlots = MAX_LISTING_IMAGES - files.length;
+  const availableSlots = MAX_LISTING_IMAGES - existingMedia.length - files.length;
 
   useEffect(() => () => {
     previews.forEach((preview) => URL.revokeObjectURL(preview.url));
@@ -89,50 +99,108 @@ export function ListingImageUploader({
         type="file"
       />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {previews.map((preview, index) => (
-          <div
-            className="group relative aspect-[4/3] overflow-hidden rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_12%,var(--surface))]"
-            key={preview.id}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={preview.name}
-              className="h-full w-full object-cover"
-              src={preview.url}
-            />
+      {existingMedia.length > 0 ? (
+        <ExistingListingMediaGrid
+          isDisabled={isDisabled}
+          media={existingMedia}
+          onDelete={onDeleteExisting}
+          onReorder={onReorderExisting}
+          onSetMain={onSetMainExisting}
+        />
+      ) : null}
+
+      <ListingMediaUploadGrid
+        availableSlots={availableSlots}
+        isDisabled={isDisabled}
+        onAdd={() => inputRef.current?.click()}
+        onRemove={removeFile}
+        previews={previews}
+      />
+    </section>
+  );
+}
+
+type ExistingListingMediaGridProps = {
+  isDisabled: boolean;
+  media: ListingMediaItem[];
+  onDelete?: (mediaId: number) => void;
+  onReorder?: (mediaId: number, direction: "left" | "right") => void;
+  onSetMain?: (mediaId: number) => void;
+};
+
+function ExistingListingMediaGrid({
+  isDisabled,
+  media,
+  onDelete,
+  onReorder,
+  onSetMain,
+}: ExistingListingMediaGridProps) {
+  return (
+    <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {media.map((item, index) => (
+        <article
+          className="group relative aspect-[4/3] overflow-hidden rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_12%,var(--surface))]"
+          key={item.id}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt={item.fileName}
+            className="h-full w-full object-cover"
+            src={item.url}
+          />
+
+          <div className="absolute inset-x-3 top-3 flex items-center justify-between gap-2">
             <button
-              aria-label={`Удалить фото ${preview.name}`}
-              className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_72%,transparent)] text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--brand-deep)]"
-              onClick={() => removeFile(index)}
+              aria-label="Сделать фото главным"
+              className={cn(
+                "grid size-9 place-items-center rounded-full border border-white/35 bg-[color-mix(in_srgb,var(--brand-deep)_68%,transparent)] text-white shadow-[var(--shadow-card)] transition-colors",
+                item.isMain && "bg-[var(--active-button-bg)] text-[var(--active-button-text)]",
+              )}
+              disabled={isDisabled || item.isMain || onSetMain === undefined}
+              onClick={() => onSetMain?.(item.id)}
               type="button"
             >
-              <X size={16} />
+              <Star size={16} fill={item.isMain ? "currentColor" : "none"} />
             </button>
-            {index === 0 ? (
-              <span className="absolute bottom-3 left-3 rounded-full bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] px-3 py-1 text-xs font-black text-[var(--brand-deep)]">
-                Главное фото
-              </span>
-            ) : null}
-          </div>
-        ))}
 
-        {Array.from({ length: Math.max(availableSlots, 0) }).map((_, index) => (
-          <button
-            aria-label="Добавить фото объявления"
-            className="grid aspect-[4/3] place-items-center rounded-[22px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--brand-deep)]"
-            disabled={isDisabled}
-            key={`empty-${index}`}
-            onClick={() => inputRef.current?.click()}
-            type="button"
-          >
-            <span className="grid justify-items-center gap-2 text-sm font-black">
-              <ImagePlus size={24} />
-              Фото
+            <button
+              aria-label="Удалить фото"
+              className="grid size-9 place-items-center rounded-full border border-white/35 bg-[color-mix(in_srgb,var(--danger)_72%,transparent)] text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--danger)]"
+              disabled={isDisabled || onDelete === undefined}
+              onClick={() => onDelete?.(item.id)}
+              type="button"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+
+          <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-2">
+            <button
+              aria-label="Сдвинуть фото левее"
+              className="grid size-9 place-items-center rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] disabled:opacity-45"
+              disabled={isDisabled || index === 0 || onReorder === undefined}
+              onClick={() => onReorder?.(item.id, "left")}
+              type="button"
+            >
+              <ArrowLeft size={16} />
+            </button>
+
+            <span className="rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] px-3 py-1 text-xs font-black text-[var(--brand-deep)] shadow-[var(--shadow-card)]">
+              {item.isMain ? "Главное" : `Фото ${index + 1}`}
             </span>
-          </button>
-        ))}
-      </div>
-    </section>
+
+            <button
+              aria-label="Сдвинуть фото правее"
+              className="grid size-9 place-items-center rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] disabled:opacity-45"
+              disabled={isDisabled || index === media.length - 1 || onReorder === undefined}
+              onClick={() => onReorder?.(item.id, "right")}
+              type="button"
+            >
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
   );
 }

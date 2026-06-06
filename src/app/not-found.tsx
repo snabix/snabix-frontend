@@ -5,7 +5,7 @@ import { Logo } from "@/src/shared/ui/logo";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen overflow-hidden px-3 py-4 sm:px-4">
+    <main className="min-h-screen overflow-hidden py-4">
       <Container className="flex min-h-[calc(100vh-32px)] flex-col">
         <header className="surface-card flex items-center justify-between rounded-[30px] px-4 py-4 sm:px-6">
           <Logo />

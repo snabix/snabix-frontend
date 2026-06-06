@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
+import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Input } from "@/src/shared/ui/shadcn/input";
 import { Label } from "@/src/shared/ui/shadcn/label";
 import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
@@ -122,10 +123,9 @@ export function ProfileEditDialog({
                 <Label className="sr-only" htmlFor="profile-phone-number">
                   Телефон
                 </Label>
-                <Input
+                <PhoneInput
                   className="profile-edit-input"
                   id="profile-phone-number"
-                  placeholder="+7 900 000-00-00"
                   {...register("phoneNumber")}
                 />
                 <FieldError message={errors.phoneNumber?.message} />

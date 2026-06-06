@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "@/src/features/profile";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import type { ProfileFormValues } from "@/src/screens/account/profile/ui/profile-types";
 
 type UseProfileEditorOptions = {
@@ -26,7 +27,7 @@ export function useProfileEditor({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     email: user?.email ?? "",
-    phoneNumber: user?.phoneNumber ?? "",
+    phoneNumber: formatPhoneNumber(user?.phoneNumber),
   }), [
     user?.email,
     user?.firstName,

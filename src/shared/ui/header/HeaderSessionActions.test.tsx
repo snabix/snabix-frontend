@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useUserStore, type User } from "@/src/entities/user";
-import { HeaderSessionActions } from "@/src/shared/ui/Header/HeaderSessionActions";
+import { HeaderSessionActions } from "@/src/shared/ui/header/HeaderSessionActions";
 
-vi.mock("@/src/shared/ui/ThemeSwitcher/ThemeSwitcher", () => ({
+vi.mock("@/src/shared/ui/theme-switcher/ThemeSwitcher", () => ({
   ThemeSwitcher: () => <button type="button">Тема</button>,
 }));
 

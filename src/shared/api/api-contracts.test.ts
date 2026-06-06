@@ -1,0 +1,399 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  getCategoryAttributes,
+  listRootCategories,
+} from "@/src/entities/category/api/list-categories";
+import { getMe } from "@/src/entities/user";
+import { listActiveSessions } from "@/src/features/auth/api";
+import {
+  createListing,
+  deleteListingMedia,
+  listListings,
+  listPublicListings,
+  reorderListingMedia,
+  setMainListingMedia,
+  updateListing,
+  uploadListingMedia,
+} from "@/src/features/listing/api";
+import { api } from "@/src/shared/api";
+
+const apiGetMock = vi.spyOn(api, "get");
+const apiPostMock = vi.spyOn(api, "post");
+const apiPatchMock = vi.spyOn(api, "patch");
+const apiDeleteMock = vi.spyOn(api, "delete");
+
+const paginationMeta = {
+  currentPage: 1,
+  from: 1,
+  lastPage: 2,
+  perPage: 12,
+  to: 12,
+  total: 18,
+};
+
+const listingContract = {
+  attributeValues: [
+    {
+      attributeDefinitionId: 10,
+      displayValue: "16 ГБ",
+      name: "Оперативная память",
+      slug: "ram",
+      type: 1,
+      typeLabel: "Текст",
+      value: "16 ГБ",
+    },
+  ],
+  category: {
+    catalogType: 1,
+    catalogTypeLabel: "Товары",
+    id: 5,
+    name: "Ноутбуки",
+    parentId: 2,
+    slug: "noutbuki",
+  },
+  condition: 2,
+  conditionLabel: "Б/у",
+  contactEmail: "seller@example.com",
+  contactName: "Seller",
+  contactPhone: "+79990000000",
+  currency: "RUB",
+  description: "Игровой ноутбук.",
+  expiresAt: null,
+  id: "listing-1",
+  imageUrl: "https://cdn.snabix.test/listing-1/main.png",
+  imageUrls: [
+    "https://cdn.snabix.test/listing-1/main.png",
+    "https://cdn.snabix.test/listing-1/second.png",
+  ],
+  media: [
+    {
+      fileName: "main.png",
+      id: 101,
+      isMain: true,
+      order: 1,
+      url: "https://cdn.snabix.test/listing-1/main.png",
+    },
+    {
+      fileName: "second.png",
+      id: 102,
+      isMain: false,
+      order: 2,
+      url: "https://cdn.snabix.test/listing-1/second.png",
+    },
+  ],
+  isFeatured: false,
+  isNegotiable: true,
+  price: 85000,
+  publishedAt: "2026-05-24T10:00:00+00:00",
+  rejectionReason: null,
+  slug: "igrovoj-noutbuk",
+  status: 3,
+  statusLabel: "Опубликовано",
+  title: "Игровой ноутбук",
+  type: 1,
+  typeLabel: "Товар",
+  userId: "user-1",
+  viewsCount: 42,
+};
+
+describe("api adapter contracts", () => {
+  beforeEach(() => {
+    apiGetMock.mockReset();
+    apiPostMock.mockReset();
+    apiPatchMock.mockReset();
+    apiDeleteMock.mockReset();
+  });
+
+  it("keeps auth me response shape for user session", async () => {
+    const userContract = {
+      addresses: [
+        {
+          addressLine: "ул. Ленина, 10",
+          city: { id: 20, label: "Грозный", name: "Грозный" },
+          id: "address-1",
+          isPrimary: true,
+          label: "Дом",
+          region: {
+            fullName: "Чеченская Республика",
+            id: 95,
+            label: "Чеченская Республика",
+            name: "Чечня",
+          },
+        },
+      ],
+      avatar: {
+        fileName: "avatar.png",
+        humanReadableSize: "12 KB",
+        id: 7,
+        mimeType: "image/png",
+        size: 12288,
+        url: "https://cdn.snabix.test/avatar.png",
+      },
+      email: "user@example.com",
+      emailVerifiedAt: "2026-05-24T10:00:00+00:00",
+      firstName: "Иван",
+      id: "user-1",
+      isActive: true,
+      lastName: "Петров",
+      phoneNumber: "+79990000000",
+    };
+
+    apiGetMock.mockResolvedValueOnce({ data: { data: userContract } });
+
+    await expect(getMe()).resolves.toEqual(userContract);
+    expect(apiGetMock).toHaveBeenCalledWith("/auth/me");
+  });
+
+  it("keeps active sessions response shape for account security", async () => {
+    const sessionsContract = {
+      items: [
+        {
+          browser: "Chrome",
+          deviceName: "macOS устройство",
+          id: "session-1",
+          ipAddress: "127.0.0.1",
+          isCurrent: true,
+          lastActivityAt: "2026-06-01T08:30:00.000000Z",
+          type: "desktop",
+        },
+      ],
+    };
+
+    apiGetMock.mockResolvedValueOnce({ data: { data: sessionsContract } });
+
+    await expect(listActiveSessions()).resolves.toEqual(sessionsContract.items);
+    expect(apiGetMock).toHaveBeenCalledWith("/auth/sessions");
+  });
+
+  it("unwraps private listings pagination contract", async () => {
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: {
+          items: [listingContract],
+          meta: paginationMeta,
+        },
+      },
+    });
+
+    const result = await listListings({
+      categoryId: 5,
+      page: 1,
+      perPage: 12,
+      status: 3,
+      type: 1,
+    });
+
+    expect(result.items).toEqual([listingContract]);
+    expect(result.meta).toEqual(paginationMeta);
+    expect(apiGetMock).toHaveBeenCalledWith("/listings", {
+      params: {
+        categoryId: 5,
+        page: 1,
+        perPage: 12,
+        status: 3,
+        type: 1,
+      },
+    });
+  });
+
+  it("sends create listing payload and validates created listing contract", async () => {
+    const payload = {
+      attributeValues: {},
+      categoryId: 5,
+      condition: 2,
+      currency: "RUB",
+      description: "Игровой ноутбук.",
+      isNegotiable: true,
+      price: 85000,
+      saveAsDraft: true,
+      title: "Игровой ноутбук",
+      type: 1,
+    };
+
+    apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
+
+    await expect(createListing(payload)).resolves.toEqual(listingContract);
+    expect(apiPostMock).toHaveBeenCalledWith("/listings", payload);
+  });
+
+  it("sends update listing payload without saveAsDraft and validates listing contract", async () => {
+    const payload = {
+      attributeValues: {},
+      categoryId: 5,
+      condition: 2,
+      currency: "RUB",
+      description: "Игровой ноутбук.",
+      isNegotiable: true,
+      price: 85000,
+      title: "Игровой ноутбук",
+      type: 1,
+    };
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+
+    await expect(updateListing("listing-1", payload)).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith("/listings/listing-1", payload);
+  });
+
+  it("unwraps public listings pagination contract with media fields", async () => {
+    const publicListingContract = { ...listingContract };
+
+    deletePartialListingField(publicListingContract, "contactEmail");
+    deletePartialListingField(publicListingContract, "contactName");
+    deletePartialListingField(publicListingContract, "contactPhone");
+    deletePartialListingField(publicListingContract, "rejectionReason");
+    deletePartialListingField(publicListingContract, "userId");
+
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: {
+          items: [publicListingContract],
+          meta: {
+            ...paginationMeta,
+            perPage: 24,
+          },
+        },
+      },
+    });
+
+    const result = await listPublicListings({
+      categoryId: 5,
+      maxPrice: 90000,
+      minPrice: 80000,
+      page: 1,
+      perPage: 24,
+      sort: "price_desc",
+      type: 1,
+    });
+
+    expect(result.items[0]?.imageUrl).toBe("https://cdn.snabix.test/listing-1/main.png");
+    expect(result.items[0]?.imageUrls).toHaveLength(2);
+    expect(result.meta.perPage).toBe(24);
+    expect(apiGetMock).toHaveBeenCalledWith("/public/listings", {
+      params: {
+        categoryId: 5,
+        maxPrice: 90000,
+        minPrice: 80000,
+        page: 1,
+        perPage: 24,
+        sort: "price_desc",
+        type: 1,
+      },
+    });
+  });
+
+  it("validates media upload and management adapter contracts", async () => {
+    const file = new File(["content"], "listing.png", { type: "image/png" });
+
+    apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(uploadListingMedia("listing-1", [file])).resolves.toEqual(listingContract);
+    expect(apiPostMock).toHaveBeenCalledWith(
+      "/listings/listing-1/media",
+      expect.any(FormData),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(reorderListingMedia("listing-1", [102, 101])).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith(
+      "/listings/listing-1/media/reorder",
+      { mediaIds: [102, 101] },
+    );
+
+    apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(setMainListingMedia("listing-1", 102)).resolves.toEqual(listingContract);
+    expect(apiPatchMock).toHaveBeenCalledWith("/listings/listing-1/media/102/main");
+
+    apiDeleteMock.mockResolvedValueOnce({ data: { data: listingContract } });
+    await expect(deleteListingMedia("listing-1", 101)).resolves.toEqual(listingContract);
+    expect(apiDeleteMock).toHaveBeenCalledWith("/listings/listing-1/media/101");
+  });
+
+  it("returns category attributes items from category attributes contract", async () => {
+    const attributesContract = [
+      {
+        appliesToChildren: true,
+        categoryId: 5,
+        defaultValue: null,
+        dependencyRules: null,
+        description: "Объем оперативной памяти.",
+        groupName: "Характеристики",
+        helpText: "Укажите значение как на устройстве.",
+        id: 10,
+        isActive: true,
+        isFilterable: true,
+        isInherited: false,
+        isRequired: true,
+        name: "Оперативная память",
+        options: ["8 ГБ", "16 ГБ", "32 ГБ"],
+        placeholder: "Например, 16 ГБ",
+        showInCard: true,
+        slug: "ram",
+        sortOrder: 10,
+        type: 4,
+        typeLabel: "Выбор",
+        unit: null,
+      },
+    ];
+
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: {
+          category: {
+            catalogType: 1,
+            catalogTypeLabel: "Товары",
+            id: 5,
+            name: "Ноутбуки",
+            parentId: 2,
+            slug: "noutbuki",
+          },
+          items: attributesContract,
+        },
+      },
+    });
+
+    await expect(getCategoryAttributes(5)).resolves.toEqual(attributesContract);
+    expect(apiGetMock).toHaveBeenCalledWith("/categories/5/attributes");
+  });
+
+  it("returns root categories with media icon URL from categories contract", async () => {
+    const categoriesContract = [
+      {
+        catalogType: 1,
+        catalogTypeLabel: "Товары",
+        children: [],
+        depth: 0,
+        description: null,
+        icon: "https://cdn.snabix.test/categories/electronics.png",
+        id: 5,
+        isActive: true,
+        name: "Электроника",
+        parentId: null,
+        path: "elektronika",
+        slug: "elektronika",
+        sortOrder: 1,
+      },
+    ];
+
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: categoriesContract,
+      },
+    });
+
+    await expect(listRootCategories()).resolves.toEqual(categoriesContract);
+    expect(apiGetMock).toHaveBeenCalledWith("/categories/list");
+  });
+
+});
+
+function deletePartialListingField(
+  listing: Partial<typeof listingContract>,
+  field: keyof typeof listingContract,
+) {
+  delete listing[field];
+}

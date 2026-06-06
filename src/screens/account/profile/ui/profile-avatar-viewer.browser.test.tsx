@@ -3,23 +3,21 @@ import { describe, expect, it, vi } from "vitest";
 import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
 import type { AvatarDraft } from "@/src/features/profile";
 
+const avatarDraft: AvatarDraft = {
+  file: new File(["avatar"], "avatar.png", { type: "image/png" }),
+  previewUrl: "blob:avatar-preview",
+};
+
 const defaultProps = {
-  avatarDraft: null,
+  avatarDraft,
   avatarOffset: { x: 0, y: 0 },
   avatarScale: 1,
-  avatarUrl: "https://cdn.snabix.test/avatar.png",
   isAvatarSubmitting: false,
   onAvatarDraftReset: vi.fn(),
   onAvatarMovePointerDown: vi.fn(),
   onAvatarSave: vi.fn(),
   onAvatarScaleChange: vi.fn(),
-  onAvatarSelect: vi.fn(),
   onAvatarViewerClose: vi.fn(),
-};
-
-const avatarDraft: AvatarDraft = {
-  file: new File(["avatar"], "avatar.png", { type: "image/png" }),
-  previewUrl: "blob:avatar-preview",
 };
 
 describe("ProfileAvatarViewer browser interactions", () => {
@@ -47,24 +45,9 @@ describe("ProfileAvatarViewer browser interactions", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("Просмотр аватара"));
+    fireEvent.click(screen.getByText("Редактор аватара"));
 
     expect(onAvatarViewerClose).not.toHaveBeenCalled();
-  });
-
-  it("starts avatar upload from viewer action", () => {
-    const onAvatarSelect = vi.fn();
-
-    render(
-      <ProfileAvatarViewer
-        {...defaultProps}
-        onAvatarSelect={onAvatarSelect}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Загрузить новое изображение" }));
-
-    expect(onAvatarSelect).toHaveBeenCalledTimes(1);
   });
 
   it("shows editor controls and saves selected avatar draft", () => {
@@ -74,7 +57,6 @@ describe("ProfileAvatarViewer browser interactions", () => {
       <ProfileAvatarViewer
         {...defaultProps}
         avatarDraft={avatarDraft}
-        avatarUrl={null}
         onAvatarSave={onAvatarSave}
       />,
     );

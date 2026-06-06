@@ -6,6 +6,7 @@ import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ListingCard, type ListingItem } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
+import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
@@ -14,6 +15,7 @@ import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-di
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { EmptyState } from "@/src/shared/ui/empty-state";
+import { Pagination } from "@/src/shared/ui/pagination";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
@@ -43,7 +45,7 @@ const defaultPaginationMeta: ApiPaginationMeta = {
 
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
-  const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(new Set());
+  const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
   const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedListingIds, setSelectedListingIds] = useState<Set<string>>(new Set());
@@ -114,20 +116,6 @@ export function ListingsPage() {
     } finally {
       setDeletingListingId(null);
     }
-  };
-
-  const handleFavoriteToggle = (listingId: string) => {
-    setFavoriteListingIds((currentIds) => {
-      const nextIds = new Set(currentIds);
-
-      if (nextIds.has(listingId)) {
-        nextIds.delete(listingId);
-      } else {
-        nextIds.add(listingId);
-      }
-
-      return nextIds;
-    });
   };
 
   const handleSelectToggle = (listingId: string) => {
@@ -247,7 +235,6 @@ export function ListingsPage() {
                   type="button"
                 >
                   <LayoutGrid size={16} />
-                  Сетка
                 </button>
                 <button
                   aria-label="Показать объявления списком"
@@ -261,7 +248,6 @@ export function ListingsPage() {
                   type="button"
                 >
                   <List size={16} />
-                  Список
                 </button>
               </div>
             </div>
@@ -289,7 +275,7 @@ export function ListingsPage() {
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
-                    onFavoriteToggle={handleFavoriteToggle}
+                    onFavoriteToggle={toggleFavorite}
                     onSelectToggle={handleSelectToggle}
                     viewMode={viewMode}
                   />
@@ -298,34 +284,14 @@ export function ListingsPage() {
             )}
           </div>
 
-          {paginationMeta.lastPage > 1 ? (
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
-              <p className="text-sm font-semibold text-[var(--text-muted)]">
-                {paginationMeta.from ?? 0}-{paginationMeta.to ?? 0} из {paginationMeta.total}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  disabled={page <= 1 || isLoading}
-                  onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
-                  type="button"
-                  variant="outline"
-                >
-                  Назад
-                </Button>
-                <span className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)]">
-                  {paginationMeta.currentPage} / {paginationMeta.lastPage}
-                </span>
-                <Button
-                  disabled={page >= paginationMeta.lastPage || isLoading}
-                  onClick={() => setPage((currentPage) => Math.min(currentPage + 1, paginationMeta.lastPage))}
-                  type="button"
-                  variant="outline"
-                >
-                  Вперед
-                </Button>
-              </div>
-            </div>
-          ) : null}
+          <Pagination
+            align="between"
+            isLoading={isLoading}
+            meta={paginationMeta}
+            onPageChange={setPage}
+            page={page}
+            showRange
+          />
         </section>
       </div>
 

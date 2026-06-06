@@ -1,12 +1,14 @@
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import type { CategoryNode } from "@/src/entities/category";
+import { renderCategoryIcon, type CategoryNode } from "@/src/entities/category";
 import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogRootsProps = {
   activeRootId: number | null;
   hasLoadedCategories: boolean;
   onRetry: () => void;
+  onCategorySelect: () => void;
   onRootClick: (categoryId: number) => void;
   onRootFocus: (categoryId: number) => void;
   onRootHover: (categoryId: number) => void;
@@ -18,6 +20,7 @@ type CategoryCatalogRootsProps = {
 export function CategoryCatalogRoots({
   activeRootId,
   hasLoadedCategories,
+  onCategorySelect,
   onRetry,
   onRootClick,
   onRootFocus,
@@ -26,7 +29,7 @@ export function CategoryCatalogRoots({
   rootsErrorMessage,
   rootsStatus,
 }: CategoryCatalogRootsProps) {
-  const activeRootButtonClass = "bg-[color-mix(in_srgb,var(--accent-soft)_82%,var(--background))] text-[var(--brand-deep)]";
+  const activeRootButtonClass = "text-[var(--brand)]";
 
   return (
     <aside className="surface-card flex h-full min-h-0 flex-col overflow-hidden rounded-[24px] p-4 sm:p-5">
@@ -61,23 +64,36 @@ export function CategoryCatalogRoots({
               const isActive = category.id === activeRootId;
 
               return (
-                <button
+                <Link
                   key={category.id}
                   className={[
                     "group relative flex min-h-[72px] w-full items-center overflow-hidden rounded-[5px] px-5 py-4 text-left",
                     "transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
                     isActive
                       ? activeRootButtonClass
-                      : "bg-transparent text-[var(--brand-deep)] hover:bg-[color-mix(in_srgb,var(--accent-soft)_82%,var(--background))]",
+                      : "bg-transparent text-[var(--brand-deep)] hover:text-[var(--brand)]",
                   ].join(" ")}
-                  onClick={() => onRootClick(category.id)}
+                  href={`/listings?categoryId=${category.id}`}
+                  onClick={() => {
+                    onRootClick(category.id);
+                    onCategorySelect();
+                  }}
                   onFocus={() => onRootFocus(category.id)}
                   onMouseEnter={() => onRootHover(category.id)}
-                  type="button"
                 >
                   <div className="flex w-full items-center justify-between gap-4">
+                    <span
+                      className={[
+                        "grid size-10 shrink-0 place-items-center rounded-2xl transition-colors",
+                        isActive
+                          ? "bg-[var(--accent-soft)] text-[var(--brand)]"
+                          : "bg-[var(--accent-soft)] text-[var(--brand-deep)] group-hover:text-[var(--brand)]",
+                      ].join(" ")}
+                    >
+                      {renderCategoryIcon(category, 18)}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[16px] font-bold leading-6 text-[var(--brand-deep)]">
+                      <p className="text-[16px] font-bold leading-6 transition-colors duration-200">
                         {category.name}
                       </p>
                     </div>
@@ -87,7 +103,7 @@ export function CategoryCatalogRoots({
                         "inline-flex h-10 w-10 shrink-0 items-center justify-center",
                         "transition-colors duration-200 ease-out",
                         isActive
-                          ? "text-[var(--brand-deep)]"
+                          ? "text-[var(--brand)]"
                           : "text-[var(--brand-deep)] group-hover:text-[var(--brand)]",
                       ].join(" ")}
                     >
@@ -98,7 +114,7 @@ export function CategoryCatalogRoots({
                       />
                     </span>
                   </div>
-                </button>
+                </Link>
               );
             })}
           </div>

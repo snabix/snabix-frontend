@@ -2,6 +2,14 @@ import type { CategoryAttributeDefinition } from "@/src/entities/category";
 
 export type ListingAttributeValue = string | number | boolean | string[] | null;
 
+export type ListingMediaItem = {
+  id: number;
+  url: string;
+  fileName: string;
+  order: number;
+  isMain: boolean;
+};
+
 export type ListingItem = {
   id: string;
   userId: string;
@@ -32,6 +40,7 @@ export type ListingItem = {
   contactEmail: string | null;
   imageUrl?: string | null;
   imageUrls?: string[];
+  media?: ListingMediaItem[];
   isFavorite?: boolean;
   sellerRating?: number | null;
   city?: string | null;

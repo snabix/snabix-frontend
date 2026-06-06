@@ -1,9 +1,9 @@
 "use client";
 
 import { useUserStore } from "@/src/entities/user";
-import { HeaderAuthActions } from "@/src/shared/ui/Header/HeaderAuthActions";
-import { HeaderUserMenu } from "@/src/shared/ui/Header/HeaderUserMenu";
-import { ThemeSwitcher } from "@/src/shared/ui/ThemeSwitcher/ThemeSwitcher";
+import { HeaderAuthActions } from "@/src/shared/ui/header/HeaderAuthActions";
+import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
+import { ThemeSwitcher } from "@/src/shared/ui/theme-switcher/ThemeSwitcher";
 
 type HeaderSessionActionsProps = {
   isPending: boolean;

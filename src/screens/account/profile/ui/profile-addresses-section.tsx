@@ -14,6 +14,10 @@ import { Label } from "@/src/shared/ui/shadcn/label";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
+type ProfileAddressesSectionProps = {
+  mode?: "edit" | "view";
+};
+
 type AddressDraft = {
   id?: string;
   regionId: string;
@@ -25,7 +29,9 @@ type AddressDraft = {
 
 type CitiesByRegion = Record<string, LocationCity[]>;
 
-export function ProfileAddressesSection() {
+export function ProfileAddressesSection({
+  mode = "edit",
+}: ProfileAddressesSectionProps) {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const addresses = user?.addresses ?? [];
@@ -40,6 +46,10 @@ export function ProfileAddressesSection() {
     ].join(":"))
     .join("|");
 
+  if (mode === "view") {
+    return <ProfileAddressesView addresses={addresses} />;
+  }
+
   return (
     <ProfileAddressesEditor
       initialAddresses={addresses}
@@ -47,6 +57,70 @@ export function ProfileAddressesSection() {
       onUserChange={setUser}
       user={user}
     />
+  );
+}
+
+function ProfileAddressesView({ addresses }: { addresses: UserAddress[] }) {
+  return (
+    <section className="surface-card rounded-[32px] p-6 sm:p-8">
+      <div className="mb-6 flex items-start gap-3">
+        <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+          <MapPin aria-hidden="true" size={20} />
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+            Адреса
+          </p>
+
+          <h2 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
+            Ваши локации
+          </h2>
+
+          <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
+            Управлять адресами можно в настройках аккаунта, а здесь они отображаются только для просмотра.
+          </p>
+        </div>
+      </div>
+
+      {addresses.length === 0 ? (
+        <EmptyState
+          description="Адреса пока не добавлены. Добавить их можно в настройках профиля."
+          icon={MapPin}
+          title="Адреса пока не указаны"
+        />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {addresses.map((address) => (
+            <article
+              className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-5"
+              key={address.id}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-heading text-lg font-black text-[var(--brand-deep)]">
+                    {address.label?.trim() || "Адрес"}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+                    {[
+                      address.region.fullName || address.region.name,
+                      address.city?.name,
+                      address.addressLine,
+                    ].filter(Boolean).join(", ")}
+                  </p>
+                </div>
+
+                {address.isPrimary ? (
+                  <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black text-[var(--brand-deep)]">
+                    основной
+                  </span>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

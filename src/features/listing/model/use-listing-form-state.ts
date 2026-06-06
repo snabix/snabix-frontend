@@ -4,11 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
-import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
-import { uploadListingMedia, type CreateListingPayload, type UpdateListingPayload } from "@/src/features/listing/api";
+import type { ListingAttributeValue, ListingItem, ListingMediaItem } from "@/src/entities/listing";
+import {
+  deleteListingMedia,
+  reorderListingMedia,
+  setMainListingMedia,
+  uploadListingMedia,
+  type CreateListingPayload,
+  type UpdateListingPayload,
+} from "@/src/features/listing/api";
 import {
   buildAttributePayload,
+  filterVisibleAttributes,
   groupAttributesByName,
+  pruneHiddenAttributeValues,
   valuesFromListing,
 } from "@/src/features/listing/model/attribute-values";
 import { flattenBranchOptions } from "@/src/features/listing/model/category-options";
@@ -56,9 +65,12 @@ export function useListingFormState({
     () => valuesFromListing(initialListing),
   );
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
+  const [existingMedia, setExistingMedia] = useState<ListingMediaItem[]>(() => initialListing?.media ?? []);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaRetryListingId, setMediaRetryListingId] = useState<string | null>(null);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const form = useForm<ListingFormValues>({
     defaultValues: {
@@ -152,6 +164,10 @@ export function useListingFormState({
       : []),
     [categoryAttributes, effectiveSelectedCategoryId],
   );
+  const visibleAttributes = useMemo(
+    () => filterVisibleAttributes(attributes, attributeValues),
+    [attributes, attributeValues],
+  );
 
   useEffect(() => {
     if (
@@ -175,13 +191,13 @@ export function useListingFormState({
       || categoryAttributeStatuses[effectiveSelectedCategoryId] === "loading"
     );
   const groupedAttributes = useMemo(
-    () => groupAttributesByName(attributes),
-    [attributes],
+    () => groupAttributesByName(visibleAttributes),
+    [visibleAttributes],
   );
   const effectiveCondition = activeType === LISTING_TYPE_SERVICE
     ? LISTING_CONDITION_NOT_APPLICABLE
     : (condition === LISTING_CONDITION_NOT_APPLICABLE ? LISTING_CONDITION_USED : condition);
-  const isFormBusy = isSubmitting || isLoadingRoots || isLoadingBranch || isLoadingAttributes;
+  const isFormBusy = isSubmitting || isUploadingMedia || isLoadingRoots || isLoadingBranch || isLoadingAttributes;
 
   const handleTypeChange = (type: number) => {
     setActiveType(type);
@@ -202,10 +218,14 @@ export function useListingFormState({
   };
 
   const handleAttributeChange = (attributeId: number, value: ListingAttributeValue) => {
-    setAttributeValues((currentValues) => ({
-      ...currentValues,
-      [String(attributeId)]: value,
-    }));
+    setAttributeValues((currentValues) => {
+      const nextValues = {
+        ...currentValues,
+        [String(attributeId)]: value,
+      };
+
+      return pruneHiddenAttributeValues(attributes, nextValues);
+    });
   };
 
   const handleMultiselectChange = (attributeId: number, optionValue: string, checked: boolean) => {
@@ -215,17 +235,106 @@ export function useListingFormState({
         ? currentValues[attributeKey] as string[]
         : [];
 
-      return {
+      const nextValues = {
         ...currentValues,
         [attributeKey]: checked
           ? Array.from(new Set([...current, optionValue]))
           : current.filter((item) => item !== optionValue),
       };
+
+      return pruneHiddenAttributeValues(attributes, nextValues);
     });
   };
 
   const submitForm = (saveAsDraft = false) => {
     void form.handleSubmit((values) => handleValidSubmit(values, saveAsDraft))();
+  };
+
+  const syncExistingMedia = (listing: ListingItem) => {
+    setExistingMedia(listing.media ?? []);
+  };
+
+  const handleDeleteExistingMedia = async (mediaId: number) => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const previousMedia = existingMedia;
+    setExistingMedia((items) => items.filter((item) => item.id !== mediaId));
+
+    try {
+      const listing = await deleteListingMedia(initialListing.id, mediaId);
+      syncExistingMedia(listing);
+      toast.success("Изображение удалено.");
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось удалить изображение."));
+    }
+  };
+
+  const handleSetMainExistingMedia = async (mediaId: number) => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const nextMedia = moveMediaToFront(existingMedia, mediaId);
+    const previousMedia = existingMedia;
+    setExistingMedia(markMainMedia(nextMedia));
+
+    try {
+      const listing = await setMainListingMedia(initialListing.id, mediaId);
+      syncExistingMedia(listing);
+      toast.success("Главное фото обновлено.");
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось выбрать главное фото."));
+    }
+  };
+
+  const handleReorderExistingMedia = async (mediaId: number, direction: "left" | "right") => {
+    if (initialListing === undefined) {
+      return;
+    }
+
+    const previousMedia = existingMedia;
+    const nextMedia = reorderMediaLocally(existingMedia, mediaId, direction);
+
+    if (nextMedia === existingMedia) {
+      return;
+    }
+
+    setExistingMedia(markMainMedia(nextMedia));
+
+    try {
+      const listing = await reorderListingMedia(initialListing.id, nextMedia.map((media) => media.id));
+      syncExistingMedia(listing);
+    } catch (error) {
+      setExistingMedia(previousMedia);
+      toast.error(extractApiError(error, "Не удалось изменить порядок изображений."));
+    }
+  };
+
+  const retryMediaUpload = async () => {
+    if (mediaRetryListingId === null || imageFiles.length === 0) {
+      return;
+    }
+
+    try {
+      setIsUploadingMedia(true);
+      await uploadListingMedia(mediaRetryListingId, imageFiles);
+      setImageFiles([]);
+      setMediaRetryListingId(null);
+      toast.success("Фотографии объявления загружены.");
+      router.push(`/account/listings/${mediaRetryListingId}`);
+      router.refresh();
+    } catch (error) {
+      toast.error(extractApiError(
+        error,
+        "Объявление сохранено, но фотографии пока не загрузились. Проверьте соединение и повторите попытку.",
+      ));
+    } finally {
+      setIsUploadingMedia(false);
+    }
   };
 
   const handleValidSubmit = async (
@@ -247,7 +356,7 @@ export function useListingFormState({
       currency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
       isNegotiable,
       ...(mode === "create" ? { saveAsDraft } : {}),
-      attributeValues: buildAttributePayload(attributes, attributeValues),
+      attributeValues: buildAttributePayload(visibleAttributes, attributeValues),
     };
 
     try {
@@ -255,7 +364,21 @@ export function useListingFormState({
       const savedListing = await onSubmit(payload);
 
       if (imageFiles.length > 0) {
-        await uploadListingMedia(savedListing.id, imageFiles);
+        try {
+          setIsUploadingMedia(true);
+          await uploadListingMedia(savedListing.id, imageFiles);
+          setImageFiles([]);
+          setMediaRetryListingId(null);
+        } catch (error) {
+          setMediaRetryListingId(savedListing.id);
+          toast.error(extractApiError(
+            error,
+            "Объявление сохранено, но фотографии пока не загрузились. Проверьте соединение и повторите попытку.",
+          ));
+          return;
+        } finally {
+          setIsUploadingMedia(false);
+        }
       }
 
       toast.success(mode === "create"
@@ -280,11 +403,15 @@ export function useListingFormState({
     filteredRoots,
     form,
     groupedAttributes,
+    handleDeleteExistingMedia,
     handleAttributeChange,
     handleCategoryChange,
     handleMultiselectChange,
+    handleReorderExistingMedia,
     handleRootChange,
+    handleSetMainExistingMedia,
     handleTypeChange,
+    existingMedia,
     imageFiles,
     isFormBusy,
     isLoadingAttributes,
@@ -292,9 +419,64 @@ export function useListingFormState({
     isLoadingRoots,
     isNegotiable,
     isSubmitting,
+    isUploadingMedia,
+    mediaRetryListingId,
+    retryMediaUpload,
     setCondition,
     setImageFiles,
     setIsNegotiable,
     submitForm,
   };
+}
+
+function moveMediaToFront(media: ListingMediaItem[], mediaId: number): ListingMediaItem[] {
+  const selectedMedia = media.find((item) => item.id === mediaId);
+
+  if (selectedMedia === undefined) {
+    return media;
+  }
+
+  return [
+    selectedMedia,
+    ...media.filter((item) => item.id !== mediaId),
+  ];
+}
+
+function reorderMediaLocally(
+  media: ListingMediaItem[],
+  mediaId: number,
+  direction: "left" | "right",
+): ListingMediaItem[] {
+  const currentIndex = media.findIndex((item) => item.id === mediaId);
+
+  if (currentIndex === -1) {
+    return media;
+  }
+
+  const nextIndex = direction === "left" ? currentIndex - 1 : currentIndex + 1;
+
+  if (nextIndex < 0 || nextIndex >= media.length) {
+    return media;
+  }
+
+  const nextMedia = [...media];
+  const currentMediaItem = nextMedia[currentIndex];
+  const nextMediaItem = nextMedia[nextIndex];
+
+  if (currentMediaItem === undefined || nextMediaItem === undefined) {
+    return media;
+  }
+
+  nextMedia[currentIndex] = nextMediaItem;
+  nextMedia[nextIndex] = currentMediaItem;
+
+  return nextMedia;
+}
+
+function markMainMedia(media: ListingMediaItem[]): ListingMediaItem[] {
+  return media.map((item, index) => ({
+    ...item,
+    isMain: index === 0,
+    order: index + 1,
+  }));
 }

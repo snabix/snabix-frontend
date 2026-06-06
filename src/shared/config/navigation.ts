@@ -1,6 +1,7 @@
 export const accountNavigation = [
     { label: "Профиль", href: "/account/profile", key: "profile" },
     { label: "Объявления", href: "/account/listings", key: "listings" },
+    { label: "Избранное", href: "/account/favorites", key: "favorites" },
     { label: "Отзывы", href: "/account/reviews", key: "reviews" },
     { label: "Настройки", href: "/account/settings", key: "settings" },
     { label: "Экспорт данных", href: "/account/export", key: "export" },

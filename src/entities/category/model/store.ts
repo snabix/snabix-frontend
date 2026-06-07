@@ -30,23 +30,23 @@ type CategoryStore = {
   rootsStatus: CategoryStatus;
   rootsErrorMessage: string | null;
   rootsFetchedAt: number | null;
-  branches: Record<number, CategoryNode>;
-  branchStatuses: Record<number, CategoryStatus>;
-  branchErrorMessages: Record<number, string | null>;
-  branchesFetchedAt: Record<number, number | null>;
-  categoryAttributes: Record<number, CategoryAttributeDefinition[]>;
-  categoryAttributeStatuses: Record<number, CategoryStatus>;
-  categoryAttributeErrorMessages: Record<number, string | null>;
-  categoryAttributesFetchedAt: Record<number, number | null>;
+  branches: Record<string, CategoryNode>;
+  branchStatuses: Record<string, CategoryStatus>;
+  branchErrorMessages: Record<string, string | null>;
+  branchesFetchedAt: Record<string, number | null>;
+  categoryAttributes: Record<string, CategoryAttributeDefinition[]>;
+  categoryAttributeStatuses: Record<string, CategoryStatus>;
+  categoryAttributeErrorMessages: Record<string, string | null>;
+  categoryAttributesFetchedAt: Record<string, number | null>;
   loadRoots: (options?: LoadCategoryOptions) => Promise<void>;
-  loadBranch: (categoryId: number, options?: LoadCategoryOptions) => Promise<void>;
-  loadCategoryAttributes: (categoryId: number, options?: LoadCategoryOptions) => Promise<void>;
+  loadBranch: (categoryId: string, options?: LoadCategoryOptions) => Promise<void>;
+  loadCategoryAttributes: (categoryId: string, options?: LoadCategoryOptions) => Promise<void>;
   resetRootError: () => void;
-  resetBranchError: (categoryId: number) => void;
-  resetCategoryAttributesError: (categoryId: number) => void;
+  resetBranchError: (categoryId: string) => void;
+  resetCategoryAttributesError: (categoryId: string) => void;
   invalidateRoots: () => void;
-  invalidateBranch: (categoryId: number) => void;
-  invalidateCategoryAttributes: (categoryId: number) => void;
+  invalidateBranch: (categoryId: string) => void;
+  invalidateCategoryAttributes: (categoryId: string) => void;
 };
 
 export const useCategoryStore = create<CategoryStore>((set, get) => ({
@@ -95,7 +95,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       });
     }
   },
-  loadBranch: async (categoryId: number, options) => {
+  loadBranch: async (categoryId: string, options) => {
     const { branches, branchesFetchedAt, branchStatuses } = get();
     const forceReload = options?.force === true;
     const hasFreshBranch = Boolean(branches[categoryId]) && hasFreshTimestamp(branchesFetchedAt[categoryId]);
@@ -152,7 +152,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       }));
     }
   },
-  loadCategoryAttributes: async (categoryId: number, options) => {
+  loadCategoryAttributes: async (categoryId: string, options) => {
     const {
       categoryAttributes,
       categoryAttributesFetchedAt,
@@ -215,7 +215,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
     }
   },
   resetRootError: () => set({ rootsStatus: "idle", rootsErrorMessage: null }),
-  resetBranchError: (categoryId: number) =>
+  resetBranchError: (categoryId: string) =>
     set((state) => ({
       branchStatuses: {
         ...state.branchStatuses,
@@ -226,7 +226,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
         [categoryId]: null,
       },
     })),
-  resetCategoryAttributesError: (categoryId: number) =>
+  resetCategoryAttributesError: (categoryId: string) =>
     set((state) => ({
       categoryAttributeStatuses: {
         ...state.categoryAttributeStatuses,
@@ -242,7 +242,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       rootsFetchedAt: null,
       rootsStatus: "idle",
     }),
-  invalidateBranch: (categoryId: number) =>
+  invalidateBranch: (categoryId: string) =>
     set((state) => ({
       branchesFetchedAt: {
         ...state.branchesFetchedAt,
@@ -253,7 +253,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
         [categoryId]: "idle",
       },
     })),
-  invalidateCategoryAttributes: (categoryId: number) =>
+  invalidateCategoryAttributes: (categoryId: string) =>
     set((state) => ({
       categoryAttributesFetchedAt: {
         ...state.categoryAttributesFetchedAt,

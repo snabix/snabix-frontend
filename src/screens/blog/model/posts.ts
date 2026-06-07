@@ -98,7 +98,6 @@ export type BlogPost = {
   eyebrow: string;
   icon: LucideIcon;
   imageUrl: string;
-  readingTime: string;
   slug: string;
   thesis: string;
   title: string;
@@ -173,7 +172,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "Product vision",
     icon: Sparkles,
     imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "4 мин",
     slug: "marketplace-doveriya",
     thesis: "Доверие должно считываться быстрее, чем пользователь успеет устать от выбора.",
     title: "Marketplace доверия: каким мы видим Snabix",
@@ -225,7 +223,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "User guide",
     icon: BookOpen,
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "5 мин",
     slug: "kak-sozdat-obyavlenie",
     thesis: "Форма создания должна помогать продавцу, а не проверять его терпение.",
     title: "Как подготовить объявление, которое хочется открыть",
@@ -282,7 +279,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "Trust mechanics",
     icon: ShieldCheck,
     imageUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "3 мин",
     slug: "doverie-k-prodavcu",
     thesis: "Покупатель должен понимать, кому он пишет, еще до первого сообщения.",
     title: "Доверие к продавцу: что важно показать в профиле",
@@ -322,7 +318,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "Catalog system",
     icon: Store,
     imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "4 мин",
     slug: "tovary-i-uslugi",
     thesis: "Разные категории должны иметь разные формы, иначе marketplace быстро становится шумным.",
     title: "Товары и услуги: как мы проектируем каталог",
@@ -362,7 +357,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "Account updates",
     icon: BadgeCheck,
     imageUrl: "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "2 мин",
     slug: "lichnyy-kabinet",
     thesis: "Личный кабинет должен быть панелью управления, а не набором случайных страниц.",
     title: "Личный кабинет как центр управления объявлениями",
@@ -411,7 +405,6 @@ export const blogPosts: BlogPost[] = [
     eyebrow: "Admin builder",
     icon: Layers3,
     imageUrl: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&h=700&q=80",
-    readingTime: "6 мин",
     slug: "konstruktor-novostey",
     thesis: "Редактор новостей должен быть достаточно гибким для контента и достаточно строгим для единого стиля.",
     title: "Конструктор новостей: как мы будем собирать материалы",

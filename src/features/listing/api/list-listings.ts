@@ -10,7 +10,7 @@ import {
 } from "@/src/shared/api";
 
 export type ListListingsParams = {
-  categoryId?: number | null;
+  categoryId?: string | number | null;
   page?: number;
   perPage?: number;
   status?: number | null;

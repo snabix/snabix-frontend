@@ -57,7 +57,7 @@ export function CategoryCatalog({
       <Container className="relative h-full py-3 sm:py-4">
         <div className="grid h-full min-h-0 gap-4 lg:grid-cols-[352px_minmax(0,1fr)] xl:gap-5">
           <CategoryCatalogRoots
-            activeRootId={activeRoot?.id ?? null}
+            activeRootId={activeRoot ? String(activeRoot.id) : null}
             hasLoadedCategories={hasLoadedCategories}
             onCategorySelect={onToggle}
             onRetry={resetRootError}

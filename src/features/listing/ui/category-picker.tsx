@@ -6,13 +6,13 @@ import { ListingFormField, ListingFormSelect } from "@/src/features/listing/ui/l
 type CategoryPickerProps = {
   activeType: number;
   branchOptions: BranchOption[];
-  effectiveSelectedCategoryId: number | null;
-  effectiveSelectedRootId: number | null;
+  effectiveSelectedCategoryId: string | null;
+  effectiveSelectedRootId: string | null;
   filteredRoots: CategoryNode[];
   isLoadingBranch: boolean;
   isLoadingRoots: boolean;
-  onCategoryChange: (categoryId: number) => void;
-  onRootChange: (rootId: number) => void;
+  onCategoryChange: (categoryId: string) => void;
+  onRootChange: (rootId: string) => void;
   onTypeChange: (type: number) => void;
 };
 
@@ -63,11 +63,11 @@ export function CategoryPicker({
         <ListingFormField label="Корневая категория">
           <ListingFormSelect
             disabled={isLoadingRoots || filteredRoots.length === 0}
-            onChange={(value) => onRootChange(Number(value))}
+            onChange={onRootChange}
             value={effectiveSelectedRootId ?? ""}
           >
             {filteredRoots.map((root) => (
-              <option key={root.id} value={root.id}>
+              <option key={String(root.id)} value={String(root.id)}>
                 {root.name}
               </option>
             ))}
@@ -77,11 +77,11 @@ export function CategoryPicker({
         <ListingFormField label="Конечная категория">
           <ListingFormSelect
             disabled={isLoadingBranch || branchOptions.length === 0}
-            onChange={(value) => onCategoryChange(Number(value))}
+            onChange={onCategoryChange}
             value={effectiveSelectedCategoryId ?? ""}
           >
             {branchOptions.map((option) => (
-              <option key={option.id} value={option.id}>
+              <option key={String(option.id)} value={String(option.id)}>
                 {option.label}
               </option>
             ))}

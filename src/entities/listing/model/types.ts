@@ -14,10 +14,10 @@ export type ListingItem = {
   id: string;
   userId: string;
   category: {
-    id: number;
+    id: string | number;
     catalogType: number;
     catalogTypeLabel: string;
-    parentId: number | null;
+    parentId: string | number | null;
     name: string;
     slug: string;
     fullName?: string | null;

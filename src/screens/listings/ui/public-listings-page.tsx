@@ -33,7 +33,7 @@ const defaultPaginationMeta: ApiPaginationMeta = {
 };
 
 type PublicListingsPageProps = {
-  initialCategoryId?: number;
+  initialCategoryId?: string;
 };
 
 export function PublicListingsPage({
@@ -235,7 +235,7 @@ function CategoryBranchPanel({
 }: {
   branch: CategoryNode | null;
   errorMessage: string | null;
-  selectedCategoryId?: number;
+  selectedCategoryId?: string;
   status: "idle" | "loading" | "success" | "error";
 }) {
   if (!selectedCategoryId) {
@@ -281,7 +281,7 @@ function CategoryBranchPanel({
           return (
             <div
               className="contents"
-              key={category.id}
+              key={String(category.id)}
             >
               <ChevronRight aria-hidden="true" size={15} />
               {isLast ? (
@@ -305,7 +305,7 @@ function CategoryBranchPanel({
             <Link
               className="inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:bg-[var(--accent-soft)]"
               href={`/listings?categoryId=${category.id}`}
-              key={category.id}
+              key={String(category.id)}
             >
               <Tags aria-hidden="true" size={15} />
               {category.name}
@@ -323,12 +323,12 @@ function CategoryBranchPanel({
 
 function findCategoryPath(
   category: CategoryNode,
-  targetCategoryId: number | undefined,
+  targetCategoryId: string | undefined,
   path: CategoryNode[] = [],
 ): CategoryNode[] | null {
   const nextPath = [...path, category];
 
-  if (category.id === targetCategoryId) {
+  if (String(category.id) === targetCategoryId) {
     return nextPath;
   }
 

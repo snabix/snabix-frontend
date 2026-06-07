@@ -60,7 +60,6 @@ function toTiltCardPost(post: BlogPost): BlogTiltCardPost {
     description: post.description,
     eyebrow: post.eyebrow,
     imageUrl: post.imageUrl,
-    readingTime: post.readingTime,
     slug: post.slug,
     thesis: post.thesis,
     title: post.title,

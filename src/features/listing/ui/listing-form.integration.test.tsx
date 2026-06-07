@@ -128,7 +128,7 @@ describe("ListingForm integration", () => {
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
-        categoryId: 5,
+        categoryId: "5",
         price: 85000,
         saveAsDraft: true,
         title: "Игровой ноутбук",
@@ -147,7 +147,7 @@ describe("ListingForm integration", () => {
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
-        categoryId: 5,
+        categoryId: "5",
         saveAsDraft: false,
         title: "Игровой ноутбук",
       }));

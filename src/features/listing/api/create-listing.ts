@@ -10,7 +10,7 @@ import {
 export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
 
 export type CreateListingPayload = {
-  categoryId: number;
+  categoryId: string | number;
   type: number;
   condition: number | null;
   title: string;

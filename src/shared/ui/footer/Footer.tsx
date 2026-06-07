@@ -46,7 +46,7 @@ export function AppFooter() {
             </h2>
 
             <p className="mt-5 max-w-md text-sm leading-7 text-[var(--text-muted)]">
-              Snabix — современная платформа объявлений и локальных
+              SNABIX — современная платформа объявлений и локальных
               предложений, которую мы строим как удобный, чистый и
               масштабируемый продукт.
             </p>
@@ -86,7 +86,7 @@ export function AppFooter() {
               className="mt-5 inline-flex text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
               href="/about"
             >
-              О Snabix
+              О SNABIX
             </Link>
           </section>
 

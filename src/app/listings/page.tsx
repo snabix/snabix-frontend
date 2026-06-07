@@ -18,16 +18,14 @@ export default async function ListingsRoute({
   );
 }
 
-function parseCategoryId(value: string | string[] | undefined): number | undefined {
+function parseCategoryId(value: string | string[] | undefined): string | undefined {
   const rawValue = Array.isArray(value) ? value[0] : value;
 
   if (!rawValue) {
     return undefined;
   }
 
-  const parsedValue = Number(rawValue);
-
-  return Number.isInteger(parsedValue) && parsedValue > 0
-    ? parsedValue
+  return rawValue.trim() !== ""
+    ? rawValue
     : undefined;
 }

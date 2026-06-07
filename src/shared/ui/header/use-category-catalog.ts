@@ -11,7 +11,7 @@ export function useCategoryCatalog({
   onToggle,
 }: UseCategoryCatalogOptions) {
   const rootHoverTimeoutRef = useRef<number | null>(null);
-  const [activeRootId, setActiveRootId] = useState<number | null>(null);
+  const [activeRootId, setActiveRootId] = useState<string | null>(null);
   const roots               = useCategoryStore((state) => state.roots);
   const rootsStatus         = useCategoryStore((state) => state.rootsStatus);
   const rootsErrorMessage   = useCategoryStore((state) => state.rootsErrorMessage);
@@ -22,7 +22,7 @@ export function useCategoryCatalog({
   const loadBranch          = useCategoryStore((state) => state.loadBranch);
   const resetRootError      = useCategoryStore((state) => state.resetRootError);
   const resetBranchError    = useCategoryStore((state) => state.resetBranchError);
-  const resolvedRootId      = activeRootId ?? roots[0]?.id ?? null;
+  const resolvedRootId      = activeRootId ?? (roots[0] ? String(roots[0].id) : null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -73,13 +73,13 @@ export function useCategoryCatalog({
     void loadBranch(resolvedRootId);
   }, [isOpen, loadBranch, resolvedRootId]);
 
-  const activeRoot = roots.find((item) => item.id === resolvedRootId) ?? roots[0] ?? null;
+  const activeRoot = roots.find((item) => String(item.id) === resolvedRootId) ?? roots[0] ?? null;
   const activeBranch = resolvedRootId !== null ? branches[resolvedRootId] ?? null : null;
   const activeBranchStatus = resolvedRootId !== null ? branchStatuses[resolvedRootId] ?? "idle" : "idle";
   const activeBranchError = resolvedRootId !== null ? branchErrorMessages[resolvedRootId] ?? null : null;
   const hasLoadedCategories = roots.length > 0;
 
-  const setActiveRootWithIntent = (categoryId: number) => {
+  const setActiveRootWithIntent = (categoryId: string) => {
     if (rootHoverTimeoutRef.current !== null) {
       window.clearTimeout(rootHoverTimeoutRef.current);
     }
@@ -90,7 +90,7 @@ export function useCategoryCatalog({
     }, 120);
   };
 
-  const setActiveRootImmediately = (categoryId: number) => {
+  const setActiveRootImmediately = (categoryId: string) => {
     if (rootHoverTimeoutRef.current !== null) {
       window.clearTimeout(rootHoverTimeoutRef.current);
       rootHoverTimeoutRef.current = null;

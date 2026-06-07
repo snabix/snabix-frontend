@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const nullableStringSchema = z.string().nullable();
+const stringOrNumberSchema = z.union([z.string(), z.number()]);
 const listingAttributeValueSchema = z.union([
   z.string(),
   z.number(),
@@ -63,10 +64,10 @@ export const activeUserSessionsResponseSchema = z.object({
 }).passthrough();
 
 export const categoryNodeSchema: z.ZodType = z.lazy(() => z.object({
-  id: z.number(),
+  id: stringOrNumberSchema,
   catalogType: z.number(),
   catalogTypeLabel: z.string(),
-  parentId: z.number().nullable(),
+  parentId: stringOrNumberSchema.nullable(),
   name: z.string(),
   slug: z.string(),
   description: nullableStringSchema,
@@ -87,7 +88,7 @@ const categoryAttributeDependencyRuleSchema = z.object({
 
 export const categoryAttributeDefinitionSchema = z.object({
   id: z.number(),
-  categoryId: z.number(),
+  categoryId: stringOrNumberSchema,
   isInherited: z.boolean(),
   name: z.string(),
   slug: z.string(),
@@ -115,10 +116,10 @@ export const categoryAttributeDefinitionSchema = z.object({
 }).passthrough();
 
 const listingCategorySchema = z.object({
-  id: z.number(),
+  id: stringOrNumberSchema,
   catalogType: z.number(),
   catalogTypeLabel: z.string(),
-  parentId: z.number().nullable(),
+  parentId: stringOrNumberSchema.nullable(),
   name: z.string(),
   slug: z.string(),
   fullName: nullableStringSchema.optional(),

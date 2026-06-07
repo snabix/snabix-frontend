@@ -10,6 +10,9 @@ export const metadata: Metadata = {
         template: "%s | SNABIX",
     },
     description: "Современный marketplace для объявлений, услуг и безопасных локальных сделок.",
+    icons: {
+        icon: "/favicon.ico",
+    },
 };
 
 export default function RootLayout({

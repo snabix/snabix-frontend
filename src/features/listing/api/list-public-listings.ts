@@ -12,7 +12,7 @@ import {
 export type ListPublicListingsParams = {
   page?: number;
   perPage?: number;
-  categoryId?: number;
+  categoryId?: string | number;
   type?: number;
   minPrice?: number;
   maxPrice?: number;

@@ -22,7 +22,7 @@ export async function listRootCategories(): Promise<CategoryNode[]> {
   ) as CategoryNode[];
 }
 
-export async function showCategoryBranch(categoryId: number): Promise<CategoryNode> {
+export async function showCategoryBranch(categoryId: string | number): Promise<CategoryNode> {
   const response = await api.get<ApiDataResponse<unknown>>(
     `/categories/${categoryId}/branch`,
   );
@@ -34,7 +34,7 @@ export async function showCategoryBranch(categoryId: number): Promise<CategoryNo
   ) as CategoryNode;
 }
 
-export async function getCategoryAttributes(categoryId: number): Promise<CategoryAttributeDefinition[]> {
+export async function getCategoryAttributes(categoryId: string | number): Promise<CategoryAttributeDefinition[]> {
   const response = await api.get<ApiDataResponse<unknown>>(
     `/categories/${categoryId}/attributes`,
   );
@@ -50,10 +50,10 @@ export async function getCategoryAttributes(categoryId: number): Promise<Categor
 
 const categoryAttributesPayloadSchema = z.object({
   category: z.object({
-    id: z.number(),
+    id: z.union([z.string(), z.number()]),
     catalogType: z.number(),
     catalogTypeLabel: z.string(),
-    parentId: z.number().nullable(),
+    parentId: z.union([z.string(), z.number()]).nullable(),
     name: z.string(),
     slug: z.string(),
   }).passthrough(),

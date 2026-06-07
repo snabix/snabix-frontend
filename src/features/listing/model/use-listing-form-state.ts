@@ -59,8 +59,12 @@ export function useListingFormState({
   const loadBranch = useCategoryStore((state) => state.loadBranch);
   const loadCategoryAttributes = useCategoryStore((state) => state.loadCategoryAttributes);
   const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
-  const [selectedRootId, setSelectedRootId] = useState<number | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(initialListing?.category?.id ?? null);
+  const [selectedRootId, setSelectedRootId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    initialListing?.category?.id !== undefined && initialListing.category.id !== null
+      ? String(initialListing.category.id)
+      : null,
+  );
   const [attributeValues, setAttributeValues] = useState<Record<string, ListingAttributeValue>>(
     () => valuesFromListing(initialListing),
   );
@@ -104,11 +108,11 @@ export function useListingFormState({
       return null;
     }
 
-    if (selectedRootId !== null && filteredRoots.some((root) => root.id === selectedRootId)) {
+    if (selectedRootId !== null && filteredRoots.some((root) => String(root.id) === selectedRootId)) {
       return selectedRootId;
     }
 
-    return filteredRoots[0]?.id ?? null;
+    return filteredRoots[0] ? String(filteredRoots[0].id) : null;
   }, [filteredRoots, selectedRootId]);
 
   useEffect(() => {
@@ -140,14 +144,14 @@ export function useListingFormState({
 
   const effectiveSelectedCategoryId = useMemo(() => {
     if (branchOptions.length === 0) {
-      return branch?.id ?? null;
+      return branch ? String(branch.id) : null;
     }
 
-    if (selectedCategoryId !== null && branchOptions.some((option) => option.id === selectedCategoryId)) {
+    if (selectedCategoryId !== null && branchOptions.some((option) => String(option.id) === selectedCategoryId)) {
       return selectedCategoryId;
     }
 
-    return branchOptions[0]?.id ?? branch?.id ?? null;
+    return branchOptions[0]?.id ?? (branch ? String(branch.id) : null);
   }, [branch, branchOptions, selectedCategoryId]);
 
   useEffect(() => {
@@ -206,13 +210,13 @@ export function useListingFormState({
     setAttributeValues({});
   };
 
-  const handleRootChange = (rootId: number) => {
+  const handleRootChange = (rootId: string) => {
     setSelectedRootId(rootId);
     setSelectedCategoryId(null);
     setAttributeValues({});
   };
 
-  const handleCategoryChange = (categoryId: number) => {
+  const handleCategoryChange = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     setAttributeValues({});
   };

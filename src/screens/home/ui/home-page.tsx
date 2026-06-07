@@ -18,7 +18,6 @@ import {
     PublicListingFilters,
     type PublicListingFiltersState,
 } from "./public-listing-filters";
-import { BannerCarouselSection } from "./banner-carousel-section";
 import { CategoryShowcaseCarouselSection } from "./category-showcase-carousel-section";
 
 const publicListingsPerPage = 15;

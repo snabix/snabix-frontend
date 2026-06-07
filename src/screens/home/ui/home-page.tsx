@@ -110,7 +110,6 @@ export function HomePage() {
         <main className="pb-12 pt-6">
             <Container>
                 <CategoryShowcaseCarouselSection />
-                <BannerCarouselSection />
 
                 <section className="mt-8">
                     <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

@@ -1,7 +1,7 @@
 import type { CategoryNode } from "@/src/entities/category";
 
 export type BranchOption = {
-  id: number;
+  id: string;
   label: string;
 };
 
@@ -10,7 +10,7 @@ export function flattenBranchOptions(root: CategoryNode): BranchOption[] {
 
   const walk = (node: CategoryNode, prefix: string[] = []) => {
     options.push({
-      id: node.id,
+      id: String(node.id),
       label: [...prefix, node.name].join(" / "),
     });
 

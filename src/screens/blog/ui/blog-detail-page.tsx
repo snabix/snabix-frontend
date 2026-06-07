@@ -62,7 +62,6 @@ export function BlogDetailPage({ post }: BlogDetailPageProps) {
                     </span>
                     <span className="inline-flex items-center gap-2">
                       <Clock3 size={15} />
-                      {post.readingTime}
                     </span>
                   </div>
 

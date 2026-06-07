@@ -89,7 +89,6 @@ export function BlogTiltCard({ index, post }: BlogTiltCardProps) {
               <Newspaper size={14} />
               {post.category}
             </span>
-            <span>{post.readingTime}</span>
           </div>
           <h2 className="font-heading text-3xl font-black uppercase leading-[0.9] tracking-[-0.07em]">
             {post.title}

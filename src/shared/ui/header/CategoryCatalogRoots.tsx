@@ -5,13 +5,13 @@ import { renderCategoryIcon, type CategoryNode } from "@/src/entities/category";
 import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogRootsProps = {
-  activeRootId: number | null;
+  activeRootId: string | null;
   hasLoadedCategories: boolean;
   onRetry: () => void;
   onCategorySelect: () => void;
-  onRootClick: (categoryId: number) => void;
-  onRootFocus: (categoryId: number) => void;
-  onRootHover: (categoryId: number) => void;
+  onRootClick: (categoryId: string) => void;
+  onRootFocus: (categoryId: string) => void;
+  onRootHover: (categoryId: string) => void;
   roots: CategoryNode[];
   rootsErrorMessage: string | null;
   rootsStatus: "idle" | "loading" | "success" | "error";
@@ -61,11 +61,12 @@ export function CategoryCatalogRoots({
         <div className="mt-1 min-h-0 flex-1 overflow-hidden">
           <div className="flex h-full min-h-0 flex-col gap-1.5 overflow-y-auto overscroll-contain pr-1">
             {roots.map((category) => {
-              const isActive = category.id === activeRootId;
+              const categoryId = String(category.id);
+              const isActive = categoryId === activeRootId;
 
               return (
                 <Link
-                  key={category.id}
+                  key={categoryId}
                   className={[
                     "group relative flex min-h-[72px] w-full items-center overflow-hidden rounded-[5px] px-5 py-4 text-left",
                     "transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
@@ -73,13 +74,13 @@ export function CategoryCatalogRoots({
                       ? activeRootButtonClass
                       : "bg-transparent text-[var(--brand-deep)] hover:text-[var(--brand)]",
                   ].join(" ")}
-                  href={`/listings?categoryId=${category.id}`}
+                  href={`/listings?categoryId=${categoryId}`}
                   onClick={() => {
-                    onRootClick(category.id);
+                    onRootClick(categoryId);
                     onCategorySelect();
                   }}
-                  onFocus={() => onRootFocus(category.id)}
-                  onMouseEnter={() => onRootHover(category.id)}
+                  onFocus={() => onRootFocus(categoryId)}
+                  onMouseEnter={() => onRootHover(categoryId)}
                 >
                   <div className="flex w-full items-center justify-between gap-4">
                     <span

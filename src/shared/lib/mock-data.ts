@@ -32,53 +32,6 @@ export const bannerSlides = [
   },
 ];
 
-export const homeCategoryShowcase = [
-  {
-    title: "Одежда",
-    imageUrl: "/clothing.png",
-  },
-  {
-    title: "Аксессуары",
-    imageUrl: "/accessories.png",
-  },
-  {
-    title: "Детские товары",
-    imageUrl: "/children.png",
-  },
-  {
-    title: "Электроника",
-    imageUrl: "/electronics.png",
-  },
-  {
-    title: "Дом и сад",
-    imageUrl: "/home-garden.png",
-  },
-  {
-    title: "Красота и здоровье",
-    imageUrl: "/beauty-health.png",
-  },
-  {
-    title: "Строительство",
-    imageUrl: "/construction.png",
-  },
-  {
-    title: "Канцтовары",
-    imageUrl: "/stationery.png",
-  },
-  {
-    title: "Спорт",
-    imageUrl: "/sports.png",
-  },
-  {
-    title: "Животные",
-    imageUrl: "/pets.png",
-  },
-  {
-    title: "Хобби и подарки",
-    imageUrl: "/hobbies-gifts.png",
-  },
-];
-
 export const featureCards = [
   {
     title: "Публикация объявлений",

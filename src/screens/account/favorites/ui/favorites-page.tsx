@@ -111,7 +111,7 @@ export function FavoritesPage() {
           <div className="grid gap-5 lg:grid-cols-3">
             {items.map((item) => (
               <ListingCard
-                detailsHref={`/account/listings/${item.id}`}
+                detailsHref={`/listings/${item.id}`}
                 isFavorite={favoriteListingIds.has(item.id)}
                 key={item.id}
                 listing={item}

@@ -1,9 +1,13 @@
 import Link from "next/link";
-import { Eye, Heart, MapPin, ShieldCheck, Star, UserRound } from "lucide-react";
+import type { MouseEvent } from "react";
+import { CalendarDays, ChevronRight, Eye, Heart, MapPin, Package2, ShieldCheck, Star } from "lucide-react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
 import { cn } from "@/src/shared/lib/utils";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
+import { Avatar, AvatarFallback } from "@/src/shared/ui/shadcn/avatar";
 import { ListingMediaGallery } from "./listing-media-gallery";
+
+const initialTransform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
 
 type ListingCardProps = {
   detailsHref?: string;
@@ -41,20 +45,37 @@ export function ListingCard({
     : listing.sellerRating.toFixed(1);
   const sellerName = resolveSellerName(listing);
   const publishedDate = formatListingDate(listing.publishedAt);
+  const sellerInitials = resolveSellerInitials(sellerName);
+  const sellerHref = resolveSellerHref(listing, sellerName);
   const highlightedAttributes = listing.attributeValues
     .filter((attribute) => attribute.name !== null && attribute.displayValue !== null)
     .slice(0, viewMode === "list" ? 3 : 2);
+
+  function handleMouseMove(event: MouseEvent<HTMLElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    const rotateY = (x - 0.5) * 10;
+    const rotateX = (0.5 - y) * 8;
+
+    event.currentTarget.style.transform =
+      `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px)`;
+  }
+
+  function handleMouseLeave(event: MouseEvent<HTMLElement>) {
+    event.currentTarget.style.transform = initialTransform;
+  }
 
   const favoriteButton = (
     <button
       aria-label={favorite ? "Удалить объявление из избранного" : "Добавить объявление в избранное"}
       className={cn(
-        "pointer-events-auto z-30 grid size-11 place-items-center rounded-full border shadow-[var(--shadow-card)] transition-colors",
+        "pointer-events-auto relative z-30 grid size-11 place-items-center rounded-full border shadow-[var(--shadow-card)] transition-colors",
         favorite
-          ? "border-[color-mix(in_srgb,var(--danger)_36%,transparent)] bg-[color-mix(in_srgb,var(--danger)_14%,var(--surface))] text-[var(--danger)]"
-          : "border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--brand-deep)_34%,transparent)] text-white hover:bg-[color-mix(in_srgb,var(--brand-deep)_48%,transparent)]",
+          ? "border-[color-mix(in_srgb,var(--danger)_24%,var(--border-soft))] bg-[color-mix(in_srgb,var(--danger)_10%,var(--surface))] text-[var(--danger)]"
+          : "border-[color-mix(in_srgb,var(--surface)_54%,transparent)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] text-[var(--danger)] hover:bg-[color-mix(in_srgb,var(--surface)_100%,transparent)]",
       )}
-      onClick={() => onFavoriteToggle?.(listing.id)}
+      onClick={(event) => handleFavoriteClick(event, listing.id, onFavoriteToggle)}
       type="button"
     >
       <Heart
@@ -69,7 +90,7 @@ export function ListingCard({
     <div
       className={cn(
         "pointer-events-none relative overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]",
-        viewMode === "list" ? "min-h-[220px] md:m-4 md:min-h-0 md:w-[238px] md:shrink-0 md:rounded-[22px] xl:w-[260px]" : "min-h-[340px]",
+        viewMode === "list" ? "min-h-[260px] rounded-[26px] md:min-h-0 md:w-[320px] md:shrink-0 xl:w-[360px]" : "min-h-[340px]",
       )}
     >
       <ListingMediaGallery
@@ -98,7 +119,12 @@ export function ListingCard({
       ) : null}
 
       {showStatus ? (
-        <div className="absolute bottom-4 left-4 rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
+        <div className={cn(
+          "absolute px-3 py-1 text-xs font-black uppercase tracking-[0.12em]",
+          viewMode === "list"
+            ? "right-4 top-4 rounded-2xl bg-[linear-gradient(135deg,#67d86f,#3ec95b)] text-white shadow-[var(--shadow-card)]"
+            : "bottom-4 left-4 rounded-full bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--brand-deep)]",
+        )}>
           {listing.statusLabel}
         </div>
       ) : null}
@@ -111,98 +137,73 @@ export function ListingCard({
         "group relative overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] shadow-[var(--shadow-card)] transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]",
         isSelected && "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]",
         viewMode === "list"
-          ? "grid min-h-[252px] md:grid-cols-[auto_minmax(0,1fr)]"
+          ? "p-5 md:p-6"
           : "grid h-[490px] grid-rows-[7fr_3fr]",
       )}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      style={{ transform: initialTransform }}
     >
       <Link
         aria-label={`Открыть объявление ${listing.title}`}
         className="absolute inset-0 z-10"
         href={href}
       />
-      {imageBlock}
+      {viewMode === "list" ? (
+        <div className="relative z-20 grid gap-6">
+          <div className="grid gap-5 md:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] md:items-stretch">
+            {imageBlock}
 
-      <div
-        className={cn(
-          "pointer-events-none relative px-3 pb-[5px] pt-3",
-          viewMode === "list"
-            ? "grid gap-4 p-5 md:grid-cols-[minmax(0,1fr)_190px] md:py-5 md:pl-1 md:pr-5 xl:grid-cols-[minmax(0,1fr)_210px]"
-            : "grid gap-2",
-        )}
-      >
-        <div className="grid min-w-0 content-between gap-4">
-          <div className="min-w-0">
-          {viewMode === "list" ? (
-            <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em]">
-              {listing.category ? (
-                <span className="text-[var(--accent)]">
-                  {listing.category.name}
-                </span>
-              ) : null}
-              <span className="inline-flex items-center gap-1.5 text-[var(--text-muted)]">
-                <ShieldCheck className="text-[var(--accent)]" size={13} />
-                {listing.conditionLabel}
-              </span>
-              {listing.isFeatured ? (
-                <span className="rounded-full bg-[var(--brand-deep)] px-2.5 py-0.5 text-[var(--background)]">
-                  выделено
-                </span>
-              ) : null}
-            </div>
-          ) : null}
+            <div className="grid min-w-0 gap-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--accent)_18%,var(--border-soft))] bg-[color-mix(in_srgb,var(--accent)_14%,var(--surface))] px-4 py-2 text-sm font-bold text-[var(--brand-deep)]">
+                    <Package2 size={16} />
+                    {listing.typeLabel}
+                  </span>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--brand)_20%,var(--border-soft))] bg-[color-mix(in_srgb,var(--brand)_14%,var(--surface))] px-4 py-2 text-sm font-bold text-[var(--brand-deep)]">
+                    <ShieldCheck size={16} />
+                    {listing.conditionLabel}
+                  </span>
+                  {listing.category ? (
+                    <span className="inline-flex items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] px-4 py-2 text-sm font-bold text-[var(--text-muted)]">
+                      {listing.category.name}
+                    </span>
+                  ) : null}
+                </div>
 
-            <h3 className={cn(
-              "line-clamp-2 font-black leading-tight text-[var(--brand-deep)]",
-              viewMode === "list" ? "font-heading text-xl tracking-[-0.02em] xl:text-2xl" : "text-base",
-            )}>
-              {listing.title}
-            </h3>
+                {!onFavoriteToggle ? favoriteButton : <div className="pointer-events-auto relative z-30 hidden md:block">{favoriteButton}</div>}
+              </div>
 
-          {viewMode === "list" ? (
-            <p className="mt-2 line-clamp-2 max-w-3xl text-sm font-semibold leading-6 text-[var(--text-muted)]">
-              {listing.description}
-            </p>
-          ) : null}
+              <div className="min-w-0">
+                <h3 className="line-clamp-2 font-heading text-3xl font-black leading-[1.05] tracking-[-0.045em] text-[var(--brand-deep)] xl:text-4xl">
+                  {listing.title}
+                </h3>
 
-          {viewMode === "grid" ? (
-            <p className="mt-1.5 text-base font-black text-[var(--brand-deep)]">
-              {formattedPrice}
-            </p>
-          ) : null}
+                <p className="mt-4 line-clamp-2 max-w-3xl text-lg font-medium leading-8 text-[var(--text-muted)]">
+                  {listing.description}
+                </p>
+              </div>
 
-          <div className={cn(
-            "mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-[var(--text-muted)]",
-            viewMode === "list" && "mt-3",
-          )}>
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin size={16} />
-              {viewMode === "list" ? fullLocation : city}
-            </span>
-            {viewMode === "grid" ? (
-              <span className="inline-flex items-center gap-1.5">
-                <Star className="text-[var(--accent)]" fill="currentColor" size={16} />
-                {sellerRating}
-              </span>
-            ) : null}
-            {viewMode === "list" ? (
-              <>
-                <span className="inline-flex items-center gap-1.5">
-                  <Eye size={15} />
-                  {new Intl.NumberFormat("ru-RU").format(listing.viewsCount)} просмотров
-                </span>
-                {publishedDate ? <span>{publishedDate}</span> : null}
-              </>
-            ) : null}
-          </div>
-          </div>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-heading text-3xl font-black leading-none tracking-[-0.05em] text-[var(--brand-deep)] xl:text-4xl">
+                    {formattedPrice}
+                  </p>
+                  {listing.isNegotiable ? (
+                    <p className="mt-2 text-sm font-bold text-[var(--text-muted)]">
+                      Возможен торг
+                    </p>
+                  ) : null}
+                </div>
 
-          {viewMode === "list" ? (
-            <div className="flex flex-wrap items-center gap-2">
-              {highlightedAttributes.length > 0 ? (
-                <>
+                {onFavoriteToggle ? <div className="pointer-events-auto relative z-30 md:hidden">{favoriteButton}</div> : null}
+              </div>
+
+              <div className="flex flex-wrap gap-2.5">
                 {highlightedAttributes.map((attribute) => (
                   <span
-                    className="rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--background)_40%,transparent)] px-3 py-1.5 text-xs font-bold text-[var(--brand-deep)]"
+                    className="rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--background)_40%,white)] px-3.5 py-2 text-xs font-bold text-[var(--brand-deep)]"
                     key={attribute.attributeDefinitionId}
                   >
                     <span className="text-[var(--text-muted)]">{attribute.name}</span>
@@ -210,48 +211,88 @@ export function ListingCard({
                     {attribute.displayValue}
                   </span>
                 ))}
-                </>
-              ) : null}
-              <span className="rounded-full border border-transparent px-1 text-xs font-bold text-[var(--text-muted)]">
-                {listing.typeLabel}
-              </span>
-            </div>
-          ) : null}
-        </div>
-
-        {viewMode === "list" ? (
-          <aside className="pointer-events-none grid content-between gap-4 border-t border-[var(--border-soft)] pt-4 md:border-l md:border-t-0 md:pl-5 md:pt-0">
-            <div className="grid justify-items-start gap-2 md:justify-items-end">
-              <div className="flex w-full items-start justify-between gap-3 md:justify-end">
-                <p className="font-heading text-2xl font-black leading-none tracking-[-0.05em] text-[var(--brand-deep)] md:text-right xl:text-3xl">
-                {formattedPrice}
-              </p>
-                {favoriteButton}
               </div>
-              {listing.isNegotiable ? (
-                <p className="text-xs font-bold text-[var(--text-muted)]">
-                  Возможен торг
-                </p>
-              ) : null}
-            </div>
 
-            <div className="flex items-center gap-3 md:justify-end">
-              <div className="grid size-10 place-items-center rounded-full bg-[var(--active-button-bg)] text-[var(--active-button-text)]">
-                  <UserRound size={18} />
-                </div>
-              <div className="min-w-0 md:text-right">
-                <p className="truncate text-sm font-black text-[var(--brand-deep)]">
-                    {sellerName}
-                  </p>
-                <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-[var(--text-muted)]">
-                    <Star className="text-[var(--accent)]" fill="currentColor" size={14} />
-                    {sellerRating} по отзывам
-                  </p>
-                </div>
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-medium text-[var(--text-muted)]">
+                <span className="inline-flex items-center gap-2">
+                  <MapPin size={18} />
+                  {fullLocation}
+                </span>
+                <span className="text-[var(--text-muted)]/60">•</span>
+                {publishedDate ? (
+                  <span className="inline-flex items-center gap-2">
+                    <CalendarDays size={18} />
+                    Опубликовано {publishedDate}
+                  </span>
+                ) : null}
+                <span className="text-[var(--text-muted)]/60">•</span>
+                <span className="inline-flex items-center gap-2">
+                  <Eye size={17} />
+                  {new Intl.NumberFormat("ru-RU").format(listing.viewsCount)} просмотров
+                </span>
+              </div>
             </div>
-          </aside>
-        ) : null}
-      </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 border-t border-[var(--border-soft)] pt-5">
+            <Link
+              className="pointer-events-auto relative z-20 flex min-w-0 flex-1 items-center gap-4 rounded-[24px] transition hover:bg-[color-mix(in_srgb,var(--background)_72%,white)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+              href={sellerHref}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Avatar className="size-16 border border-[var(--border-soft)] shadow-[var(--shadow-card)]">
+                <AvatarFallback className="text-base font-black">
+                  {sellerInitials}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="min-w-0">
+                <p className="truncate text-2xl font-black tracking-[-0.03em] text-[var(--brand-deep)]">
+                  {sellerName}
+                </p>
+                <p className="mt-1 inline-flex flex-wrap items-center gap-2 text-sm font-medium text-[var(--text-muted)]">
+                  <Star className="text-[#f6c343]" fill="currentColor" size={18} />
+                  <span className="font-bold text-[var(--brand-deep)]">{sellerRating}</span>
+                  <span>рейтинг продавца</span>
+                </p>
+              </div>
+            </Link>
+
+            <div className="pointer-events-none hidden shrink-0 text-[var(--text-muted)] transition-transform duration-300 group-hover:translate-x-1 md:block">
+              <ChevronRight size={34} strokeWidth={1.6} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {imageBlock}
+
+          <div className="pointer-events-none relative grid gap-2 px-3 pb-[5px] pt-3">
+            <div className="grid min-w-0 content-between gap-4">
+              <div className="min-w-0">
+                <h3 className="line-clamp-2 text-base font-black leading-tight text-[var(--brand-deep)]">
+                  {listing.title}
+                </h3>
+
+                <p className="mt-1.5 text-base font-black text-[var(--brand-deep)]">
+                  {formattedPrice}
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin size={16} />
+                    {city}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Star className="text-[var(--accent)]" fill="currentColor" size={16} />
+                    {sellerRating}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </article>
   );
 }
@@ -281,4 +322,44 @@ function formatListingDate(value: string | null): string | null {
     day: "numeric",
     month: "long",
   }).format(date);
+}
+
+function resolveSellerInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("") || "SN";
+}
+
+function resolveSellerHref(listing: ListingItem | PublicListingItem, sellerName: string): string {
+  const ownListing = listing as ListingItem;
+
+  if (typeof ownListing.userId === "string" && ownListing.userId.length > 0) {
+    return `/sellers/${ownListing.userId}`;
+  }
+
+  return `/sellers/${slugifySellerName(sellerName)}`;
+}
+
+function slugifySellerName(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9а-яё]+/gi, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || "seller";
+}
+
+function handleFavoriteClick(
+  event: MouseEvent<HTMLButtonElement>,
+  listingId: string,
+  onFavoriteToggle?: (listingId: string) => void,
+): void {
+  event.preventDefault();
+  event.stopPropagation();
+  onFavoriteToggle?.(listingId);
 }

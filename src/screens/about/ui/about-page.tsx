@@ -138,22 +138,23 @@ function HeroSection() {
 }
 
 function MarketplaceVisual() {
-  return (
-    <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(135deg,var(--palette-midnight),var(--palette-dark-gray)_50%,var(--palette-silver))]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,color-mix(in_srgb,var(--palette-silver)_46%,transparent),transparent_24rem),radial-gradient(circle_at_82%_18%,color-mix(in_srgb,var(--palette-orange)_28%,transparent),transparent_20rem)]" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
-      <div className="absolute inset-x-0 bottom-16 h-28 skew-y-[-4deg] bg-[color-mix(in_srgb,var(--palette-silver)_72%,transparent)] blur-[1px]" />
+    return (
+        <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(135deg,var(--palette-midnight),var(--palette-dark-gray)_50%,var(--palette-silver))]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,color-mix(in_srgb,var(--palette-silver)_46%,transparent),transparent_24rem),radial-gradient(circle_at_82%_18%,color-mix(in_srgb,var(--palette-orange)_28%,transparent),transparent_20rem)]" />
 
-      <div className="absolute left-[18%] top-[16%] h-44 w-[38%] rounded-[30px] border border-white/55 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_84%,transparent),color-mix(in_srgb,var(--palette-orange)_18%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.36)] backdrop-blur-sm" />
-      <div className="absolute left-[43%] top-[8%] h-52 w-[34%] rounded-[30px] border border-white/50 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_72%,transparent),color-mix(in_srgb,var(--palette-light-gray)_22%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.34)] backdrop-blur-sm" />
-      <div className="absolute left-[25%] top-[42%] h-40 w-[30%] rounded-[28px] border border-white/45 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_82%,transparent),color-mix(in_srgb,var(--palette-orange)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.42)] backdrop-blur-sm" />
-      <div className="absolute left-[52%] top-[39%] h-36 w-[27%] rounded-[28px] border border-white/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_74%,transparent),color-mix(in_srgb,var(--palette-silver)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm" />
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
 
-      <div className="absolute right-8 top-8 rounded-full border border-white/40 bg-white/18 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-white backdrop-blur">
-        Local commerce
-      </div>
-    </div>
-  );
+            <div className="absolute inset-x-0 bottom-16 h-28 skew-y-[-4deg] bg-[color-mix(in_srgb,var(--palette-silver)_72%,transparent)] blur-[1px]" />
+
+            <div className="absolute left-[18%] top-[16%] h-44 w-[38%] overflow-hidden rounded-[30px] border border-white/55 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_84%,transparent),color-mix(in_srgb,var(--palette-orange)_18%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.36)] backdrop-blur-sm" />
+            <div className="absolute left-[43%] top-[8%] h-52 w-[34%] overflow-hidden rounded-[30px] border border-white/50 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-silver)_72%,transparent),color-mix(in_srgb,var(--palette-light-gray)_22%,transparent))] shadow-[0_34px_80px_rgba(0,0,0,0.34)] backdrop-blur-sm" />
+            <div className="absolute left-[25%] top-[42%] h-40 w-[30%] overflow-hidden rounded-[28px] border border-white/45 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_82%,transparent),color-mix(in_srgb,var(--palette-orange)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.42)] backdrop-blur-sm" />
+            <div className="absolute left-[52%] top-[39%] h-36 w-[27%] overflow-hidden rounded-[28px] border border-white/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--palette-midnight)_74%,transparent),color-mix(in_srgb,var(--palette-silver)_16%,transparent))] shadow-[0_34px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm" />
+            <div className="absolute right-8 top-8 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/90 backdrop-blur-xl">
+                Все рядом
+            </div>
+        </div>
+    );
 }
 
 function ManifestSection() {

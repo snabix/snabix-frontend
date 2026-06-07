@@ -40,7 +40,6 @@ export type NewsPostItem = {
   eyebrow: string | null;
   description: string;
   thesis: string | null;
-  readingTime: string | null;
   isFeatured: boolean;
   viewsCount: number;
   imageUrl?: string | null;

@@ -242,7 +242,6 @@ export const newsPostItemSchema = z.object({
   eyebrow: nullableStringSchema,
   description: z.string(),
   thesis: nullableStringSchema,
-  readingTime: nullableStringSchema,
   isFeatured: z.boolean(),
   viewsCount: z.number(),
   imageUrl: nullableStringSchema.optional(),

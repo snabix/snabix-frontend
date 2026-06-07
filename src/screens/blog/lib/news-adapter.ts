@@ -36,7 +36,6 @@ export function newsPostToBlogPost(post: NewsPostItem | NewsPostDetail, index = 
     eyebrow: post.eyebrow ?? "Snabix journal",
     icon: iconsByCategory[post.category] ?? Newspaper,
     imageUrl: post.imageUrl ?? post.coverMedia?.url ?? fallbackImages[index % fallbackImages.length],
-    readingTime: post.readingTime ?? "3 мин",
     slug: post.slug,
     thesis: post.thesis ?? post.description,
     title: post.title,

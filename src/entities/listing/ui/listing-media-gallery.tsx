@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, ImageIcon, ImagePlus, X } from "lucide-react";
+import { ImageIcon, ImagePlus, X } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
 
 type ListingMediaGalleryProps = {
@@ -51,26 +51,33 @@ export function ListingMediaGallery({
 
           {hasMultipleImages ? (
             <>
-              <button
-                aria-label="Показать предыдущее изображение"
-                className="absolute left-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
-                onClick={() => setActiveIndex(activeIndex === 0 ? images.length - 1 : activeIndex - 1)}
-                type="button"
+              <div
+                aria-label="Переключение фотографий объявления"
+                className="absolute inset-x-0 bottom-0 top-0 z-20 grid"
+                style={{ gridTemplateColumns: `repeat(${images.length}, minmax(0, 1fr))` }}
               >
-                <ChevronLeft size={20} strokeWidth={2.5} />
-              </button>
+                {images.map((image, index) => (
+                  <button
+                    aria-label={`Показать фото ${index + 1}`}
+                    className="cursor-pointer"
+                    key={`${image}-details-zone-${index}`}
+                    onClick={() => setActiveIndex(index)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    type="button"
+                  />
+                ))}
+              </div>
 
-              <button
-                aria-label="Показать следующее изображение"
-                className="absolute right-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
-                onClick={() => setActiveIndex(activeIndex === images.length - 1 ? 0 : activeIndex + 1)}
-                type="button"
-              >
-                <ChevronRight size={20} strokeWidth={2.5} />
-              </button>
-
-              <div className="absolute bottom-4 left-1/2 rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_58%,transparent)] px-3 py-1 text-xs font-black text-white shadow-[var(--shadow-card)]">
-                {activeIndex + 1} / {images.length}
+              <div className="pointer-events-none absolute bottom-4 left-1/2 z-30 flex w-36 -translate-x-1/2 gap-1.5">
+                {images.map((image, index) => (
+                  <span
+                    className={cn(
+                      "h-1.5 flex-1 rounded-full bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] transition",
+                      index === activeIndex && "bg-white",
+                    )}
+                    key={`${image}-details-indicator-${index}`}
+                  />
+                ))}
               </div>
             </>
           ) : null}

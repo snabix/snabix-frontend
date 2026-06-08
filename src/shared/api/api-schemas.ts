@@ -124,6 +124,11 @@ const listingCategorySchema = z.object({
   slug: z.string(),
   fullName: nullableStringSchema.optional(),
   path: nullableStringSchema.optional(),
+  breadcrumbs: z.array(z.object({
+    id: stringOrNumberSchema,
+    name: z.string(),
+    slug: z.string(),
+  }).passthrough()).optional(),
 }).passthrough();
 
 const listingAttributeValueItemSchema = z.object({

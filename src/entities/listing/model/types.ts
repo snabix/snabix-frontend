@@ -49,6 +49,11 @@ export type ListingItem = {
     slug: string;
     fullName?: string | null;
     path?: string | null;
+    breadcrumbs?: Array<{
+      id: string | number;
+      name: string;
+      slug: string;
+    }>;
   } | null;
   type: number;
   typeLabel: string;

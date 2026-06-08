@@ -4,14 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Bell,
   ChevronRight,
+  Archive,
   CircleAlert,
-  CircleDot,
   MapPin,
   Menu,
   Pencil,
-  Plus,
   SearchX,
   Sparkles,
   Smartphone,
@@ -20,7 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ListingMediaGallery, type ListingItem } from "@/src/entities/listing";
-import { deleteListing, showListing, submitListingForReview } from "@/src/features/listing/api";
+import { archiveListing, deleteListing, showListing, submitListingForReview } from "@/src/features/listing/api";
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { EmptyState } from "@/src/shared/ui/empty-state";
@@ -45,15 +43,16 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSubmittingForReview, setIsSubmittingForReview] = useState(false);
-  const categoryPath = useMemo(() => (listing ? buildCategoryPath(listing) : []), [listing]);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const categoryBreadcrumbs = useMemo(() => (listing ? buildCategoryBreadcrumbs(listing) : []), [listing]);
   const fullLocation = useMemo(() => (listing ? buildFullLocation(listing) : "Локация не указана"), [listing]);
   const detailPairs = useMemo(() => {
     if (listing === null) {
       return [] as Array<[string, string]>;
     }
 
-    const primaryCategory = categoryPath[0] ?? "Категория не указана";
-    const secondaryCategory = categoryPath.at(-1) ?? primaryCategory;
+    const primaryCategory = categoryBreadcrumbs[0]?.name ?? "Категория не указана";
+    const secondaryCategory = categoryBreadcrumbs.at(-1)?.name ?? primaryCategory;
 
     const basePairs = [
       ["Тип объявления", listing.typeLabel],
@@ -69,7 +68,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
       .map((attribute) => [attribute.name ?? "Параметр", attribute.displayValue ?? "—"] as [string, string]);
 
     return [...basePairs, ...attributePairs];
-  }, [categoryPath, listing]);
+  }, [categoryBreadcrumbs, listing]);
 
   useEffect(() => {
     let isMounted = true;
@@ -136,6 +135,23 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     }
   };
 
+  const handleArchive = async () => {
+    if (listing === null) {
+      return;
+    }
+
+    try {
+      setIsArchiving(true);
+      const updatedListing = await archiveListing(listing.id);
+      setListing(updatedListing);
+      toast.success("Объявление перенесено в архив.");
+    } catch (error) {
+      toast.error(extractApiError(error, "Не удалось архивировать объявление."));
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
   if (isLoading) {
     return <SkeletonPanel className="min-h-80" />;
   }
@@ -157,8 +173,9 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   const priceLabel = listing.price === null
     ? "Цена не указана"
     : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "₽"}`;
-  const primaryCategory = categoryPath[0] ?? "Категория не указана";
-  const secondaryCategory = categoryPath.at(-1) ?? primaryCategory;
+  const primaryCategory = categoryBreadcrumbs[0]?.name ?? "Категория не указана";
+  const secondaryCategory = categoryBreadcrumbs.at(-1)?.name ?? primaryCategory;
+  const isArchived = listing.status === 5;
 
   return (
     <>
@@ -173,20 +190,39 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
               К моим объявлениям
             </Link>
 
-            <section className="rounded-[34px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-4 shadow-[var(--shadow-card)] sm:p-6">
-              <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
-                <div>
-                  <ListingMediaGallery
-                    imageUrl={listing.imageUrl}
-                    imageUrls={listing.imageUrls}
-                    mode="details"
-                    title={listing.title}
-                  />
-                </div>
+            <nav
+              aria-label="Категория объявления"
+              className="flex flex-wrap items-center gap-2 text-sm font-bold text-[var(--text-muted)]"
+            >
+              <Link className="transition hover:text-[var(--brand-deep)]" href="/">
+                Объявления
+              </Link>
+              {categoryBreadcrumbs.map((category) => (
+                <span className="inline-flex items-center gap-2" key={category.id}>
+                  <ChevronRight size={15} />
+                  <Link
+                    className="transition hover:text-[var(--brand-deep)]"
+                    href={`/?categoryId=${encodeURIComponent(String(category.id))}`}
+                  >
+                    {category.name}
+                  </Link>
+                </span>
+              ))}
+            </nav>
 
+            <section className="rounded-[34px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-4 shadow-[var(--shadow-card)] sm:p-6">
+              <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,0.92fr)_minmax(440px,1.08fr)]">
                 <div className="grid gap-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
+                          {listing.statusLabel}
+                        </span>
+                        <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                          {listing.typeLabel}
+                        </span>
+                      </div>
                       <h1 className="font-heading text-[clamp(2rem,3vw,3.3rem)] font-black tracking-[-0.06em] text-[var(--brand-deep)]">
                         {listing.title}
                       </h1>
@@ -203,7 +239,10 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                       editHref={`/account/listings/${listing.id}/edit`}
                       isDeleting={isDeleting}
                       isDraft={listing.status === 1}
+                      isArchived={isArchived}
+                      isArchiving={isArchiving}
                       isSubmittingForReview={isSubmittingForReview}
+                      onArchiveAction={handleArchive}
                       onDeleteAction={() => setIsDeleteDialogOpen(true)}
                       onSubmitForReviewAction={handleSubmitForReview}
                     />
@@ -219,6 +258,15 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                     <StatusMetric label="Обновлено" value={updatedAt} />
                     <StatusMetric label="Действует до" value={expiresAt} />
                   </div>
+                </div>
+
+                <div className="xl:pl-2">
+                  <ListingMediaGallery
+                    imageUrl={listing.imageUrl}
+                    imageUrls={listing.imageUrls}
+                    mode="details"
+                    title={listing.title}
+                  />
                 </div>
               </div>
             </section>
@@ -305,16 +353,22 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
 
 function ListingDetailsActions({
   editHref,
+  isArchived,
+  isArchiving,
   isDeleting,
   isDraft,
   isSubmittingForReview,
+  onArchiveAction,
   onDeleteAction,
   onSubmitForReviewAction,
 }: {
   editHref: string;
+  isArchived: boolean;
+  isArchiving: boolean;
   isDeleting: boolean;
   isDraft: boolean;
   isSubmittingForReview: boolean;
+  onArchiveAction: () => void;
   onDeleteAction: () => void;
   onSubmitForReviewAction: () => void;
 }) {
@@ -338,9 +392,13 @@ function ListingDetailsActions({
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="rounded-2xl" disabled>
-          <CircleDot size={17} />
-          <span>Архивировать</span>
+        <DropdownMenuItem
+          className="rounded-2xl"
+          disabled={isArchived || isArchiving}
+          onClick={onArchiveAction}
+        >
+          <Archive size={17} />
+          <span>{isArchived ? "Уже в архиве" : (isArchiving ? "Архивируем..." : "Архивировать")}</span>
         </DropdownMenuItem>
 
         {isDraft ? (
@@ -389,17 +447,32 @@ function StatusMetric({
   );
 }
 
-function buildCategoryPath(listing: ListingItem): string[] {
+type CategoryBreadcrumb = {
+  id: string | number;
+  name: string;
+  slug: string;
+};
+
+function buildCategoryBreadcrumbs(listing: ListingItem): CategoryBreadcrumb[] {
   if (listing.category === null) {
     return [];
   }
 
-  const rawPath = listing.category.fullName ?? listing.category.path ?? listing.category.name;
+  if (listing.category.breadcrumbs !== undefined && listing.category.breadcrumbs.length > 0) {
+    return listing.category.breadcrumbs;
+  }
 
-  return rawPath
+  const rawPath = listing.category.fullName ?? listing.category.path ?? listing.category.name;
+  const names = rawPath
     .split(/[/>]/)
     .map((segment) => segment.trim())
     .filter(Boolean);
+
+  return names.map((name, index) => ({
+    id: index === names.length - 1 ? listing.category?.id ?? name : name,
+    name,
+    slug: name,
+  }));
 }
 
 function buildFullLocation(listing: ListingItem): string {

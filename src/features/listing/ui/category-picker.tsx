@@ -11,9 +11,9 @@ type CategoryPickerProps = {
   filteredRoots: CategoryNode[];
   isLoadingBranch: boolean;
   isLoadingRoots: boolean;
-  onCategoryChange: (categoryId: string) => void;
-  onRootChange: (rootId: string) => void;
-  onTypeChange: (type: number) => void;
+  onCategoryChangeAction: (categoryId: string) => void;
+  onRootChangeAction: (rootId: string) => void;
+  onTypeChangeAction: (type: number) => void;
 };
 
 export function CategoryPicker({
@@ -24,9 +24,9 @@ export function CategoryPicker({
   filteredRoots,
   isLoadingBranch,
   isLoadingRoots,
-  onCategoryChange,
-  onRootChange,
-  onTypeChange,
+  onCategoryChangeAction,
+  onRootChangeAction,
+  onTypeChangeAction,
 }: CategoryPickerProps) {
   return (
     <>
@@ -44,7 +44,7 @@ export function CategoryPicker({
                   : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)]",
               ].join(" ")}
               key={card.value}
-              onClick={() => onTypeChange(card.value)}
+              onClick={() => onTypeChangeAction(card.value)}
               type="button"
             >
               <div className={`grid size-12 place-items-center rounded-2xl ${isActive ? "bg-[color-mix(in_srgb,var(--active-button-text)_14%,transparent)] text-[var(--active-button-text)]" : "bg-[var(--accent-soft)]"}`}>
@@ -63,9 +63,12 @@ export function CategoryPicker({
         <ListingFormField label="Корневая категория">
           <ListingFormSelect
             disabled={isLoadingRoots || filteredRoots.length === 0}
-            onChange={onRootChange}
+            onChangeAction={onRootChangeAction}
             value={effectiveSelectedRootId ?? ""}
           >
+            <option value="">
+              {isLoadingRoots ? "Загружаем категории..." : "Выберите категорию"}
+            </option>
             {filteredRoots.map((root) => (
               <option key={String(root.id)} value={String(root.id)}>
                 {root.name}
@@ -76,10 +79,15 @@ export function CategoryPicker({
 
         <ListingFormField label="Конечная категория">
           <ListingFormSelect
-            disabled={isLoadingBranch || branchOptions.length === 0}
-            onChange={onCategoryChange}
+            disabled={effectiveSelectedRootId === null || isLoadingBranch || branchOptions.length === 0}
+            onChangeAction={onCategoryChangeAction}
             value={effectiveSelectedCategoryId ?? ""}
           >
+            <option value="">
+              {effectiveSelectedRootId === null
+                ? "Сначала выберите корневую категорию"
+                : (isLoadingBranch ? "Загружаем подкатегории..." : "Выберите подкатегорию")}
+            </option>
             {branchOptions.map((option) => (
               <option key={String(option.id)} value={String(option.id)}>
                 {option.label}

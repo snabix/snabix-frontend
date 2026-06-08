@@ -41,7 +41,7 @@ export function PublicListingsPage({
 }: PublicListingsPageProps) {
   const [items, setItems] = useState<PublicListingItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
+  const { favoriteListingIds, setFavoriteListingIds, toggleFavorite } = useFavoriteListings();
   const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [draftFilters, setDraftFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
   const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(draftFilters);
@@ -93,6 +93,16 @@ export function PublicListingsPage({
         }
 
         setItems(listings.items);
+        setFavoriteListingIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+          listings.items.forEach((item) => {
+            if (item.isFavorite) {
+              nextIds.add(item.id);
+            }
+          });
+
+          return nextIds;
+        });
         setPaginationMeta(listings.meta);
       } catch (error) {
         if (!isMounted) {
@@ -117,7 +127,7 @@ export function PublicListingsPage({
     return () => {
       isMounted = false;
     };
-  }, [appliedFilters, initialCategoryId, page]);
+  }, [appliedFilters, initialCategoryId, page, setFavoriteListingIds]);
 
   const handleFiltersReset = () => {
     setDraftFilters(defaultPublicListingFilters);
@@ -158,7 +168,7 @@ export function PublicListingsPage({
         <section className="mt-8">
           <div className="mb-5 flex justify-end">
             <ViewModeSwitcher
-              onChange={setViewMode}
+              onChangeAction={setViewMode}
               value={viewMode}
             />
           </div>
@@ -167,8 +177,8 @@ export function PublicListingsPage({
             <PublicListingFilters
               filters={draftFilters}
               isLoading={isLoading}
-              onChange={setDraftFilters}
-              onReset={handleFiltersReset}
+              onChangeAction={setDraftFilters}
+              onResetAction={handleFiltersReset}
             />
 
             <div className="min-w-0 flex-1">
@@ -200,11 +210,11 @@ export function PublicListingsPage({
                   <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
                     {items.map((item) => (
                       <ListingCard
-                        detailsHref={`/account/listings/${item.id}`}
+                        detailsHref={`/listings/${item.id}`}
                         isFavorite={favoriteListingIds.has(item.id)}
                         key={item.id}
                         listing={item}
-                        onFavoriteToggle={toggleFavorite}
+                        onFavoriteToggleAction={toggleFavorite}
                         showStatus={false}
                         viewMode={viewMode}
                       />
@@ -214,7 +224,7 @@ export function PublicListingsPage({
                   <Pagination
                     isLoading={isLoading}
                     meta={paginationMeta}
-                    onPageChange={setPage}
+                    onPageChangeAction={setPage}
                     page={page}
                   />
                 </>
@@ -272,7 +282,7 @@ function CategoryBranchPanel({
   return (
     <section className="mt-6 rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-5 shadow-[var(--shadow-card)]">
       <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
-        <Link className="hover:text-[var(--brand-deep)]" href="/listings">
+        <Link className="hover:text-[var(--brand-deep)]" href="/">
           Все объявления
         </Link>
         {breadcrumbs.map((category, index) => {
@@ -289,7 +299,7 @@ function CategoryBranchPanel({
               ) : (
                 <Link
                   className="transition hover:text-[var(--brand-deep)]"
-                  href={`/listings?categoryId=${category.id}`}
+                  href={`/?categoryId=${category.id}`}
                 >
                   {category.name}
                 </Link>
@@ -304,7 +314,7 @@ function CategoryBranchPanel({
           {branch.children.map((category) => (
             <Link
               className="inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:bg-[var(--accent-soft)]"
-              href={`/listings?categoryId=${category.id}`}
+              href={`/?categoryId=${category.id}`}
               key={String(category.id)}
             >
               <Tags aria-hidden="true" size={15} />
@@ -344,11 +354,11 @@ function findCategoryPath(
 }
 
 function ViewModeSwitcher({
-  onChange,
-  value,
-}: {
-  onChange: (value: "grid" | "list") => void;
-  value: "grid" | "list";
+                              onChangeAction,
+                              value,
+                          }: {
+    onChangeAction: (value: "grid" | "list") => void;
+    value: "grid" | "list";
 }) {
   return (
     <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
@@ -360,7 +370,7 @@ function ViewModeSwitcher({
             ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
             : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
         ].join(" ")}
-        onClick={() => onChange("grid")}
+                onClick={() => onChangeAction("grid")}
         type="button"
       >
         <LayoutGrid size={16} />
@@ -373,7 +383,7 @@ function ViewModeSwitcher({
             ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
             : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
         ].join(" ")}
-        onClick={() => onChange("list")}
+                onClick={() => onChangeAction("list")}
         type="button"
       >
         <List size={16} />

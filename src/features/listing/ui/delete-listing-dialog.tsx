@@ -14,8 +14,8 @@ type DeleteListingDialogProps = {
   isOpen: boolean;
   itemsCount?: number;
   listingTitle?: string | null;
-  onConfirm: () => void;
-  onOpenChange: (isOpen: boolean) => void;
+  onConfirmAction: () => void;
+  onOpenChangeAction: (isOpen: boolean) => void;
 };
 
 export function DeleteListingDialog({
@@ -23,13 +23,13 @@ export function DeleteListingDialog({
   isOpen,
   itemsCount = 1,
   listingTitle,
-  onConfirm,
-  onOpenChange,
+  onConfirmAction,
+  onOpenChangeAction,
 }: DeleteListingDialogProps) {
   const isBulkDelete = itemsCount > 1;
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={isOpen}>
+    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
       <DialogContent className="max-w-[520px]">
         <DialogHeader>
           <div className="grid size-12 place-items-center rounded-2xl bg-[var(--danger-soft)] text-[var(--danger)]">
@@ -59,7 +59,7 @@ export function DeleteListingDialog({
         <DialogFooter className="mt-6">
           <Button
             disabled={isDeleting}
-            onClick={() => onOpenChange(false)}
+            onClick={() => onOpenChangeAction(false)}
             type="button"
             variant="outline"
           >
@@ -68,7 +68,7 @@ export function DeleteListingDialog({
 
           <Button
             disabled={isDeleting}
-            onClick={onConfirm}
+            onClick={onConfirmAction}
             type="button"
             variant="destructive"
           >

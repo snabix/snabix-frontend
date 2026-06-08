@@ -13,6 +13,16 @@ type AccountLayoutProps = {
 export function AccountLayout({ children }: AccountLayoutProps) {
   const pathname = usePathname();
   const isSettingsSection = pathname.startsWith("/account/settings");
+  const isCreateListingRoute = pathname === "/account/listings/create";
+  const isListingDetailsRoute = /^\/account\/listings\/[^/]+$/.test(pathname);
+
+  if (isCreateListingRoute || isListingDetailsRoute) {
+    return (
+      <main className="min-h-screen">
+        <AuthGuard>{children}</AuthGuard>
+      </main>
+    );
+  }
 
   return (
     <main className="py-6">

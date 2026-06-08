@@ -7,11 +7,11 @@ import { Skeleton } from "@/src/shared/ui/skeleton";
 type CategoryCatalogRootsProps = {
   activeRootId: string | null;
   hasLoadedCategories: boolean;
-  onRetry: () => void;
-  onCategorySelect: () => void;
-  onRootClick: (categoryId: string) => void;
-  onRootFocus: (categoryId: string) => void;
-  onRootHover: (categoryId: string) => void;
+  onRetryAction: () => void;
+  onCategorySelectAction: () => void;
+  onRootClickAction: (categoryId: string) => void;
+  onRootFocusAction: (categoryId: string) => void;
+  onRootHoverAction: (categoryId: string) => void;
   roots: CategoryNode[];
   rootsErrorMessage: string | null;
   rootsStatus: "idle" | "loading" | "success" | "error";
@@ -20,11 +20,11 @@ type CategoryCatalogRootsProps = {
 export function CategoryCatalogRoots({
   activeRootId,
   hasLoadedCategories,
-  onCategorySelect,
-  onRetry,
-  onRootClick,
-  onRootFocus,
-  onRootHover,
+  onCategorySelectAction,
+  onRetryAction,
+  onRootClickAction,
+  onRootFocusAction,
+  onRootHoverAction,
   roots,
   rootsErrorMessage,
   rootsStatus,
@@ -49,7 +49,7 @@ export function CategoryCatalogRoots({
           </p>
           <Button
             className="mt-4 rounded-[16px]"
-            onClick={onRetry}
+            onClick={onRetryAction}
             variant="outline"
           >
             Повторить
@@ -74,13 +74,13 @@ export function CategoryCatalogRoots({
                       ? activeRootButtonClass
                       : "bg-transparent text-[var(--brand-deep)] hover:text-[var(--brand)]",
                   ].join(" ")}
-                  href={`/listings?categoryId=${categoryId}`}
+                  href={`/?categoryId=${categoryId}`}
                   onClick={() => {
-                    onRootClick(categoryId);
-                    onCategorySelect();
+                    onRootClickAction(categoryId);
+                    onCategorySelectAction();
                   }}
-                  onFocus={() => onRootFocus(categoryId)}
-                  onMouseEnter={() => onRootHover(categoryId)}
+                  onFocus={() => onRootFocusAction(categoryId)}
+                  onMouseEnter={() => onRootHoverAction(categoryId)}
                 >
                   <div className="flex w-full items-center justify-between gap-4">
                     <span

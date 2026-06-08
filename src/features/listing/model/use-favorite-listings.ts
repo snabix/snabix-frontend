@@ -1,20 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import {
   addListingFavorite,
+  FAVORITE_LISTINGS_MAX_PER_PAGE,
+  listFavoriteListings,
   removeListingFavorite,
 } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
-export function useFavoriteListings(initialIds: string[] = []) {
+const defaultFavoriteListingIds: string[] = [];
+
+export function useFavoriteListings(initialIds: string[] = defaultFavoriteListingIds) {
   const user = useUserStore((state) => state.user);
+  const userId = user?.id ?? null;
   const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(
     () => new Set(initialIds),
   );
   const [pendingFavoriteIds, setPendingFavoriteIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (userId === null) {
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadFavoriteIds = async () => {
+      try {
+        const ids = new Set<string>();
+        let page = 1;
+        let lastPage = 1;
+
+        do {
+          const result = await listFavoriteListings({
+            page,
+            perPage: FAVORITE_LISTINGS_MAX_PER_PAGE,
+          });
+
+          result.items.forEach((item) => ids.add(item.id));
+          lastPage = result.meta.lastPage;
+          page += 1;
+        } while (page <= lastPage);
+
+        if (isMounted) {
+          setFavoriteListingIds(ids);
+        }
+      } catch {
+        if (isMounted) {
+          setFavoriteListingIds(new Set(initialIds));
+        }
+      }
+    };
+
+    void loadFavoriteIds();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [initialIds, userId]);
 
   const toggleFavorite = async (listingId: string) => {
     if (user === null) {
@@ -72,7 +118,7 @@ export function useFavoriteListings(initialIds: string[] = []) {
   };
 
   return {
-    favoriteListingIds,
+    favoriteListingIds: userId === null ? new Set(initialIds) : favoriteListingIds,
     setFavoriteListingIds,
     toggleFavorite,
   };

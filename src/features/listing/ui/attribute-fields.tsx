@@ -23,16 +23,16 @@ type AttributeFieldsProps = {
   attributeValues: Record<string, ListingAttributeValue>;
   groupedAttributes: AttributeGroup[];
   isLoading: boolean;
-  onAttributeChange: (attributeId: number, value: ListingAttributeValue) => void;
-  onMultiselectChange: (attributeId: number, optionValue: string, checked: boolean) => void;
+  onAttributeChangeAction: (attributeId: number, value: ListingAttributeValue) => void;
+  onMultiselectChangeAction: (attributeId: number, optionValue: string, checked: boolean) => void;
 };
 
 export function AttributeFields({
   attributeValues,
   groupedAttributes,
   isLoading,
-  onAttributeChange,
-  onMultiselectChange,
+  onAttributeChangeAction,
+  onMultiselectChangeAction,
 }: AttributeFieldsProps) {
   const attributesCount = groupedAttributes.reduce(
     (count, group) => count + group.items.length,
@@ -66,8 +66,8 @@ export function AttributeFields({
               <AttributeField
                 attribute={attribute}
                 key={attribute.id}
-                onAttributeChange={onAttributeChange}
-                onMultiselectChange={onMultiselectChange}
+                onAttributeChange={onAttributeChangeAction}
+                onMultiselectChange={onMultiselectChangeAction}
                 value={getAttributeValue(attribute, attributeValues)}
               />
             ))}
@@ -174,7 +174,7 @@ function renderAttributeInput(
     return (
       <ListingFormSelect
         aria-label={attribute.name}
-        onChange={(nextValue) => onChange(attribute.id, nextValue)}
+        onChangeAction={(nextValue) => onChange(attribute.id, nextValue)}
         value={typeof value === "string" ? value : ""}
       >
         <option value="">{attribute.placeholder ?? "Выберите значение"}</option>

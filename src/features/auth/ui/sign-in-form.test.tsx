@@ -54,6 +54,7 @@ const mockUser: User = {
   firstName: "Ivan",
   lastName: "Petrov",
   phoneNumber: "+79990000000",
+  addresses: [],
   isActive: true,
   emailVerifiedAt: "2026-05-11T00:00:00Z",
   avatar: null,

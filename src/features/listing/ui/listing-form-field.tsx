@@ -23,20 +23,20 @@ export function ListingFormField({
 export function ListingFormSelect({
   children,
   disabled,
-  onChange,
+  onChangeAction,
   value,
   ...props
 }: {
   children: ReactNode;
   disabled?: boolean;
-  onChange: (value: string) => void;
+  onChangeAction: (value: string) => void;
   value: number | string;
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "children" | "disabled" | "onChange" | "value">) {
   return (
     <select
-      className="h-12 rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] disabled:opacity-60"
+      className="h-12 w-full min-w-0 max-w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm text-[var(--brand-deep)] outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] disabled:opacity-60"
       disabled={disabled}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onChangeAction(event.target.value)}
       value={value}
       {...props}
     >

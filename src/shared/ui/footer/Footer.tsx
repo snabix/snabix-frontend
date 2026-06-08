@@ -36,8 +36,9 @@ export function AppFooter() {
                 className="h-auto w-[170px]"
                 height={191}
                 priority={false}
-                src="/logo2.png"
-                width={1177}
+                src="/snabix.png"
+                unoptimized
+                width={1536}
               />
             </Link>
 

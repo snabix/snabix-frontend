@@ -10,6 +10,33 @@ export type ListingMediaItem = {
   isMain: boolean;
 };
 
+export type ListingLocation = {
+  source: "profile" | "custom" | string;
+  profileAddressId?: string | null;
+  label?: string | null;
+  region: {
+    id: number;
+    name: string;
+    fullName?: string | null;
+    label: string;
+  };
+  city: {
+    id: number;
+    name: string;
+    label: string;
+    lat?: string | null;
+    lon?: string | null;
+  } | null;
+  addressLine: string | null;
+  display: string | null;
+  coordinates?: {
+    lat: number | string | null;
+    lng: number | string | null;
+  } | null;
+  mapProvider?: string | null;
+  mapPlaceId?: string | null;
+};
+
 export type ListingItem = {
   id: string;
   userId: string;
@@ -41,6 +68,7 @@ export type ListingItem = {
   imageUrl?: string | null;
   imageUrls?: string[];
   media?: ListingMediaItem[];
+  location?: ListingLocation | null;
   isFavorite?: boolean;
   sellerRating?: number | null;
   city?: string | null;

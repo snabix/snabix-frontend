@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
+import { listCities, listRegions, type LocationCity, type LocationRegion } from "@/src/entities/location";
 import type { ListingAttributeValue, ListingItem, ListingMediaItem } from "@/src/entities/listing";
+import { useUserStore } from "@/src/entities/user";
 import {
   deleteListingMedia,
   reorderListingMedia,
@@ -40,6 +42,8 @@ type UseListingFormStateOptions = {
   onSubmit: (payload: CreateListingPayload | UpdateListingPayload) => Promise<ListingItem>;
 };
 
+export type ListingAddressMode = "none" | "profile" | "custom";
+
 export function useListingFormState({
   initialListing,
   mode,
@@ -58,6 +62,7 @@ export function useListingFormState({
   const loadRoots = useCategoryStore((state) => state.loadRoots);
   const loadBranch = useCategoryStore((state) => state.loadBranch);
   const loadCategoryAttributes = useCategoryStore((state) => state.loadCategoryAttributes);
+  const user = useUserStore((state) => state.user);
   const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
   const [selectedRootId, setSelectedRootId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
@@ -75,6 +80,29 @@ export function useListingFormState({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mediaRetryListingId, setMediaRetryListingId] = useState<string | null>(null);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const primaryAddressId = user?.addresses.find((address) => address.isPrimary)?.id ?? null;
+  const initialLocation = initialListing?.location ?? null;
+  const [addressMode, setAddressMode] = useState<ListingAddressMode>(() => {
+    if (initialLocation?.source === "profile" && initialLocation.profileAddressId) {
+      return "profile";
+    }
+
+    if (initialLocation !== null) {
+      return "custom";
+    }
+
+    return primaryAddressId !== null ? "profile" : "none";
+  });
+  const [profileAddressId, setProfileAddressId] = useState<string | null>(
+    initialLocation?.profileAddressId ?? primaryAddressId,
+  );
+  const [regions, setRegions] = useState<LocationRegion[]>([]);
+  const [cities, setCities] = useState<LocationCity[]>([]);
+  const [regionId, setRegionId] = useState<number | null>(initialLocation?.region.id ?? null);
+  const [cityId, setCityId] = useState<number | null>(initialLocation?.city?.id ?? null);
+  const [addressLine, setAddressLine] = useState(initialLocation?.addressLine ?? "");
+  const [isLoadingRegions, setIsLoadingRegions] = useState(false);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
 
   const form = useForm<ListingFormValues>({
     defaultValues: {
@@ -91,6 +119,54 @@ export function useListingFormState({
   useEffect(() => {
     void loadRoots();
   }, [loadRoots]);
+
+  useEffect(() => {
+    if (mode !== "create" || profileAddressId !== null || primaryAddressId === null) {
+      return;
+    }
+
+    setAddressMode("profile");
+    setProfileAddressId(primaryAddressId);
+  }, [mode, primaryAddressId, profileAddressId]);
+
+  useEffect(() => {
+    if (addressMode !== "custom" || regions.length > 0 || isLoadingRegions) {
+      return;
+    }
+
+    const load = async () => {
+      try {
+        setIsLoadingRegions(true);
+        setRegions(await listRegions());
+      } catch (error) {
+        toast.error(extractApiError(error, "Не удалось загрузить регионы."));
+      } finally {
+        setIsLoadingRegions(false);
+      }
+    };
+
+    void load();
+  }, [addressMode, isLoadingRegions, regions.length]);
+
+  useEffect(() => {
+    if (addressMode !== "custom" || regionId === null) {
+      setCities([]);
+      return;
+    }
+
+    const load = async () => {
+      try {
+        setIsLoadingCities(true);
+        setCities(await listCities({ regionId }));
+      } catch (error) {
+        toast.error(extractApiError(error, "Не удалось загрузить города."));
+      } finally {
+        setIsLoadingCities(false);
+      }
+    };
+
+    void load();
+  }, [addressMode, regionId]);
 
   useEffect(() => {
     if (rootsStatus === "error" && rootsErrorMessage !== null) {
@@ -219,6 +295,15 @@ export function useListingFormState({
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     setAttributeValues({});
+  };
+
+  const handleAddressModeChange = (mode: ListingAddressMode) => {
+    setAddressMode(mode);
+  };
+
+  const handleRegionChange = (nextRegionId: number | null) => {
+    setRegionId(nextRegionId);
+    setCityId(null);
   };
 
   const handleAttributeChange = (attributeId: number, value: ListingAttributeValue) => {
@@ -359,9 +444,24 @@ export function useListingFormState({
       price: parseIntegerMoney(values.price),
       currency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
       isNegotiable,
+      addressMode,
+      profileAddressId: addressMode === "profile" ? profileAddressId : null,
+      regionId: addressMode === "custom" ? regionId : null,
+      cityId: addressMode === "custom" ? cityId : null,
+      addressLine: addressMode === "custom" ? addressLine.trim() || null : null,
       ...(mode === "create" ? { saveAsDraft } : {}),
       attributeValues: buildAttributePayload(visibleAttributes, attributeValues),
     };
+
+    if (addressMode === "profile" && profileAddressId === null) {
+      toast.error("Выберите адрес из профиля или укажите другой адрес.");
+      return;
+    }
+
+    if (addressMode === "custom" && regionId === null) {
+      toast.error("Укажите регион объявления.");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -413,6 +513,8 @@ export function useListingFormState({
     handleMultiselectChange,
     handleReorderExistingMedia,
     handleRootChange,
+    handleAddressModeChange,
+    handleRegionChange,
     handleSetMainExistingMedia,
     handleTypeChange,
     existingMedia,
@@ -424,12 +526,25 @@ export function useListingFormState({
     isNegotiable,
     isSubmitting,
     isUploadingMedia,
+    addressLine,
+    addressMode,
+    cities,
+    cityId,
+    isLoadingCities,
+    isLoadingRegions,
     mediaRetryListingId,
+    profileAddressId,
+    regionId,
+    regions,
     retryMediaUpload,
+    setAddressLine,
     setCondition,
+    setCityId,
     setImageFiles,
     setIsNegotiable,
+    setProfileAddressId,
     submitForm,
+    userAddresses: user?.addresses ?? [],
   };
 }
 

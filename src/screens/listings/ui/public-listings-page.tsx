@@ -200,7 +200,7 @@ export function PublicListingsPage({
                   <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
                     {items.map((item) => (
                       <ListingCard
-                        detailsHref={`/account/listings/${item.id}`}
+                        detailsHref={`/listings/${item.id}`}
                         isFavorite={favoriteListingIds.has(item.id)}
                         key={item.id}
                         listing={item}

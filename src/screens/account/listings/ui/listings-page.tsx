@@ -271,6 +271,7 @@ export function ListingsPage() {
               <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
                 {listings.map((listing) => (
                   <ListingCard
+                    detailsHref={`/listings/${listing.id}`}
                     isFavorite={favoriteListingIds.has(listing.id)}
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}

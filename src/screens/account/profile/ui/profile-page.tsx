@@ -178,11 +178,11 @@ export function ProfilePage() {
                     avatarOffset={avatarOffset}
                     avatarScale={avatarScale}
                     isAvatarSubmitting={isAvatarSubmitting}
-                    onAvatarDraftReset={resetAvatarDraft}
-                    onAvatarMovePointerDown={handleAvatarMovePointerDown}
-                    onAvatarSave={handleAvatarSave}
-                    onAvatarScaleChange={(value) => setAvatarScale(value[0] ?? 1)}
-                    onAvatarViewerClose={handleAvatarViewerClose}
+                    onAvatarDraftResetAction={resetAvatarDraft}
+                    onAvatarMovePointerDownAction={handleAvatarMovePointerDown}
+                    onAvatarSaveAction={handleAvatarSave}
+                    onAvatarScaleChangeAction={(value) => setAvatarScale(value[0] ?? 1)}
+                    onAvatarViewerCloseAction={handleAvatarViewerClose}
                 />
             ) : null}
 
@@ -194,10 +194,10 @@ export function ProfilePage() {
                     isConfirming={isConfirmingVerification}
                     isOpen={isVerificationDialogOpen}
                     isSending={isResendingVerification}
-                    onCodeChange={handleVerificationCodeChange}
-                    onConfirm={handleConfirmVerification}
-                    onOpenChange={setIsVerificationDialogOpen}
-                    onResend={handleResendVerification}
+                    onCodeChangeAction={handleVerificationCodeChange}
+                    onConfirmAction={handleConfirmVerification}
+                    onOpenChangeAction={setIsVerificationDialogOpen}
+                    onResendAction={handleResendVerification}
                 />
             ) : null}
         </>

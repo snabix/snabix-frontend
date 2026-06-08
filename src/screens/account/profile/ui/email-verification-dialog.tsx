@@ -17,10 +17,10 @@ type EmailVerificationDialogProps = {
   isConfirming: boolean;
   isOpen: boolean;
   isSending: boolean;
-  onCodeChange: (value: string) => void;
-  onConfirm: () => void;
-  onOpenChange: (isOpen: boolean) => void;
-  onResend: () => void;
+  onCodeChangeAction: (value: string) => void;
+  onConfirmAction: () => void;
+  onOpenChangeAction: (isOpen: boolean) => void;
+  onResendAction: () => void;
 };
 
 export function EmailVerificationDialog({
@@ -30,10 +30,10 @@ export function EmailVerificationDialog({
   isConfirming,
   isOpen,
   isSending,
-  onCodeChange,
-  onConfirm,
-  onOpenChange,
-  onResend,
+  onCodeChangeAction,
+  onConfirmAction,
+  onOpenChangeAction,
+  onResendAction,
 }: EmailVerificationDialogProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -63,14 +63,14 @@ export function EmailVerificationDialog({
         currentIndex === index ? "" : (code[currentIndex] ?? "")
       )).join("");
 
-      onCodeChange(nextCode);
+      onCodeChangeAction(nextCode);
       return;
     }
 
     if (normalizedValue.length > 1) {
       const pastedValue = normalizedValue.slice(0, 6);
 
-      onCodeChange(pastedValue);
+      onCodeChangeAction(pastedValue);
       inputRefs.current[Math.min(pastedValue.length, 5)]?.focus();
       return;
     }
@@ -79,7 +79,7 @@ export function EmailVerificationDialog({
       currentIndex === index ? normalizedValue : (code[currentIndex] ?? "")
     )).join("");
 
-    onCodeChange(nextCode);
+    onCodeChangeAction(nextCode);
 
     if (index < 5) {
       inputRefs.current[index + 1]?.focus();
@@ -111,12 +111,12 @@ export function EmailVerificationDialog({
       return;
     }
 
-    onCodeChange(pastedValue);
+    onCodeChangeAction(pastedValue);
     inputRefs.current[Math.min(pastedValue.length, 5)]?.focus();
   };
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={isOpen}>
+    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
       <DialogContent className="max-w-[460px] p-0">
         <div className="p-6 sm:p-7">
           <DialogHeader className="items-center text-center">
@@ -178,7 +178,7 @@ export function EmailVerificationDialog({
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isSending || cooldownSeconds > 0}
-              onClick={onResend}
+              onClick={onResendAction}
               type="button"
               variant="secondary"
             >
@@ -197,7 +197,7 @@ export function EmailVerificationDialog({
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isConfirming || code.length !== 6}
-              onClick={onConfirm}
+              onClick={onConfirmAction}
               type="button"
             >
               {isConfirming ? (

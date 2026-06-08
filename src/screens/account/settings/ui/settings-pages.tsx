@@ -132,10 +132,10 @@ export function ProfileSettingsPage() {
           isConfirming={isConfirmingVerification}
           isOpen={isVerificationDialogOpen}
           isSending={isResendingVerification}
-          onCodeChange={handleVerificationCodeChange}
-          onConfirm={handleConfirmVerification}
-          onOpenChange={setIsVerificationDialogOpen}
-          onResend={handleResendVerification}
+          onCodeChangeAction={handleVerificationCodeChange}
+          onConfirmAction={handleConfirmVerification}
+          onOpenChangeAction={setIsVerificationDialogOpen}
+          onResendAction={handleResendVerification}
         />
       ) : null}
     </>
@@ -214,8 +214,8 @@ export function AccountSettingsPage() {
         actionLabel="Удалить аккаунт"
         description="Для безопасности сейчас это только UI-подтверждение. После подключения backend мы отправим запрос удаления аккаунта здесь."
         isOpen={isDeleteDialogOpen}
-        onConfirm={() => setIsDeleteDialogOpen(false)}
-        onOpenChange={setIsDeleteDialogOpen}
+        onConfirmAction={() => setIsDeleteDialogOpen(false)}
+        onOpenChangeAction={setIsDeleteDialogOpen}
         title="Удалить аккаунт?"
       />
     </>
@@ -468,8 +468,8 @@ export function SessionsSettingsPage() {
         actionLabel={isMutating ? "Завершаем..." : "Завершить сеанс"}
         description={sessionToClose ? `Сеанс на устройстве ${sessionToClose.deviceName} будет завершен.` : ""}
         isOpen={sessionToClose !== null}
-        onConfirm={handleTerminateSession}
-        onOpenChange={(isOpen) => {
+        onConfirmAction={handleTerminateSession}
+        onOpenChangeAction={(isOpen) => {
           if (!isOpen) {
             setSessionToClose(null);
           }
@@ -481,8 +481,8 @@ export function SessionsSettingsPage() {
         actionLabel={isMutating ? "Завершаем..." : "Завершить остальные"}
         description="Все сеансы кроме текущего будут завершены."
         isOpen={isCloseAllOpen}
-        onConfirm={handleTerminateOtherSessions}
-        onOpenChange={setIsCloseAllOpen}
+        onConfirmAction={handleTerminateOtherSessions}
+        onOpenChangeAction={setIsCloseAllOpen}
         title="Завершить остальные сеансы?"
       />
     </>
@@ -565,19 +565,19 @@ function ConfirmActionDialog({
   actionLabel,
   description,
   isOpen,
-  onConfirm,
-  onOpenChange,
+  onConfirmAction,
+  onOpenChangeAction,
   title,
 }: {
   actionLabel: string;
   description: string;
   isOpen: boolean;
-  onConfirm: () => void;
-  onOpenChange: (isOpen: boolean) => void;
+  onConfirmAction: () => void;
+  onOpenChangeAction: (isOpen: boolean) => void;
   title: string;
 }) {
   return (
-    <Dialog onOpenChange={onOpenChange} open={isOpen}>
+    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -585,10 +585,10 @@ function ConfirmActionDialog({
         </DialogHeader>
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)} type="button" variant="outline">
+          <Button onClick={() => onOpenChangeAction(false)} type="button" variant="outline">
             Отменить
           </Button>
-          <Button onClick={onConfirm} type="button" variant="destructive">
+          <Button onClick={onConfirmAction} type="button" variant="destructive">
             {actionLabel}
           </Button>
         </DialogFooter>

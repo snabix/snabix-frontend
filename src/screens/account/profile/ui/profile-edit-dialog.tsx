@@ -25,8 +25,8 @@ type ProfileEditDialogProps = {
   handleSubmit: UseFormHandleSubmit<ProfileFormValues>;
   isOpen: boolean;
   isSubmitting: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-  onSubmit: (values: ProfileFormValues) => Promise<void>;
+  onOpenChangeAction: (isOpen: boolean) => void;
+  onSubmitAction: (values: ProfileFormValues) => Promise<void>;
   register: UseFormRegister<ProfileFormValues>;
 };
 
@@ -48,12 +48,12 @@ export function ProfileEditDialog({
   handleSubmit,
   isOpen,
   isSubmitting,
-  onOpenChange,
-  onSubmit,
+  onOpenChangeAction,
+  onSubmitAction,
   register,
 }: ProfileEditDialogProps) {
   return (
-    <Dialog onOpenChange={onOpenChange} open={isOpen}>
+    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
       <DialogContent className="max-w-[720px]">
         <div className="pt-2">
           <DialogHeader className="mb-6">
@@ -78,7 +78,7 @@ export function ProfileEditDialog({
             </div>
           </DialogHeader>
 
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmitAction)}>
             <div className="grid gap-4 md:grid-cols-2">
               <ProfileEditField label="Имя">
                 <Label className="sr-only" htmlFor="profile-first-name">

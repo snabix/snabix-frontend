@@ -104,6 +104,10 @@ html {
     scroll-padding-top: 112px;
 }
 
+body {
+    scroll-behavior: smooth;
+}
+
 @media (prefers-reduced-motion: no-preference) {
     html,
     body {

@@ -9,13 +9,13 @@ import { Container } from "@/src/shared/ui/container";
 
 type CategoryCatalogProps = {
   isOpen: boolean;
-  onToggle: () => void;
+  onToggleAction: () => void;
   topOffset: number;
 };
 
 export function CategoryCatalog({
   isOpen,
-  onToggle,
+  onToggleAction,
   topOffset,
 }: CategoryCatalogProps) {
   const isMounted = useSyncExternalStore(
@@ -38,7 +38,7 @@ export function CategoryCatalog({
     setActiveRootWithIntent,
   } = useCategoryCatalog({
     isOpen,
-    onToggle,
+    onToggleAction,
   });
 
   if (!isOpen) {
@@ -59,11 +59,11 @@ export function CategoryCatalog({
           <CategoryCatalogRoots
             activeRootId={activeRoot ? String(activeRoot.id) : null}
             hasLoadedCategories={hasLoadedCategories}
-            onCategorySelect={onToggle}
-            onRetry={resetRootError}
-            onRootClick={setActiveRootImmediately}
-            onRootFocus={setActiveRootImmediately}
-            onRootHover={setActiveRootWithIntent}
+            onCategorySelectAction={onToggleAction}
+            onRetryAction={resetRootError}
+            onRootClickAction={setActiveRootImmediately}
+            onRootFocusAction={setActiveRootImmediately}
+            onRootHoverAction={setActiveRootWithIntent}
             roots={roots}
             rootsErrorMessage={rootsErrorMessage}
             rootsStatus={rootsStatus}
@@ -75,9 +75,9 @@ export function CategoryCatalog({
             activeBranchStatus={activeBranchStatus}
             activeRoot={activeRoot}
             hasLoadedCategories={hasLoadedCategories}
-            onCategorySelect={onToggle}
-            onRetryBranch={retryActiveBranch}
-            onRetryRoots={resetRootError}
+            onCategorySelectAction={onToggleAction}
+            onRetryBranchAction={retryActiveBranch}
+            onRetryRootsAction={resetRootError}
             rootsErrorMessage={rootsErrorMessage}
             rootsStatus={rootsStatus}
           />

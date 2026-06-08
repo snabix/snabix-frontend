@@ -10,9 +10,9 @@ const {
   listRootCategoriesMock,
   showCategoryBranchMock,
 } = vi.hoisted(() => ({
-  getCategoryAttributesMock: vi.fn<(categoryId: number) => Promise<CategoryAttributeDefinition[]>>(),
+  getCategoryAttributesMock: vi.fn<(categoryId: string) => Promise<CategoryAttributeDefinition[]>>(),
   listRootCategoriesMock: vi.fn<() => Promise<CategoryNode[]>>(),
-  showCategoryBranchMock: vi.fn<(categoryId: number) => Promise<CategoryNode>>(),
+  showCategoryBranchMock: vi.fn<(categoryId: string) => Promise<CategoryNode>>(),
 }));
 
 vi.mock("@/src/entities/category/api/list-categories", () => ({
@@ -115,20 +115,20 @@ describe("useCategoryStore", () => {
   it("loads a branch once and keeps it in cache", async () => {
     showCategoryBranchMock.mockResolvedValue(branchCategory);
 
-    await useCategoryStore.getState().loadBranch(1);
-    await useCategoryStore.getState().loadBranch(1);
+    await useCategoryStore.getState().loadBranch("1");
+    await useCategoryStore.getState().loadBranch("1");
 
     expect(showCategoryBranchMock).toHaveBeenCalledTimes(1);
-    expect(useCategoryStore.getState().branches[1]).toEqual(branchCategory);
-    expect(useCategoryStore.getState().branchStatuses[1]).toBe("success");
+    expect(useCategoryStore.getState().branches["1"]).toEqual(branchCategory);
+    expect(useCategoryStore.getState().branchStatuses["1"]).toBe("success");
   });
 
   it("invalidates branch cache for explicit refresh", async () => {
     showCategoryBranchMock.mockResolvedValue(branchCategory);
 
-    await useCategoryStore.getState().loadBranch(1);
-    useCategoryStore.getState().invalidateBranch(1);
-    await useCategoryStore.getState().loadBranch(1);
+    await useCategoryStore.getState().loadBranch("1");
+    useCategoryStore.getState().invalidateBranch("1");
+    await useCategoryStore.getState().loadBranch("1");
 
     expect(showCategoryBranchMock).toHaveBeenCalledTimes(2);
   });
@@ -136,20 +136,20 @@ describe("useCategoryStore", () => {
   it("loads category attributes once and reuses fresh cache", async () => {
     getCategoryAttributesMock.mockResolvedValue(categoryAttributes);
 
-    await useCategoryStore.getState().loadCategoryAttributes(2);
-    await useCategoryStore.getState().loadCategoryAttributes(2);
+    await useCategoryStore.getState().loadCategoryAttributes("2");
+    await useCategoryStore.getState().loadCategoryAttributes("2");
 
     expect(getCategoryAttributesMock).toHaveBeenCalledTimes(1);
-    expect(useCategoryStore.getState().categoryAttributes[2]).toEqual(categoryAttributes);
-    expect(useCategoryStore.getState().categoryAttributeStatuses[2]).toBe("success");
+    expect(useCategoryStore.getState().categoryAttributes["2"]).toEqual(categoryAttributes);
+    expect(useCategoryStore.getState().categoryAttributeStatuses["2"]).toBe("success");
   });
 
   it("invalidates category attributes cache for explicit refresh", async () => {
     getCategoryAttributesMock.mockResolvedValue(categoryAttributes);
 
-    await useCategoryStore.getState().loadCategoryAttributes(2);
-    useCategoryStore.getState().invalidateCategoryAttributes(2);
-    await useCategoryStore.getState().loadCategoryAttributes(2);
+    await useCategoryStore.getState().loadCategoryAttributes("2");
+    useCategoryStore.getState().invalidateCategoryAttributes("2");
+    await useCategoryStore.getState().loadCategoryAttributes("2");
 
     expect(getCategoryAttributesMock).toHaveBeenCalledTimes(2);
   });

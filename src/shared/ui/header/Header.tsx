@@ -60,7 +60,7 @@ export function Header() {
             <nav className="hidden items-center gap-1 lg:flex">
               <CatalogToggleButton
                 isOpen={isCatalogOpen}
-                onToggle={toggleCatalog}
+                onToggleAction={toggleCatalog}
               />
               <HeaderLink href="/about">О проекте</HeaderLink>
               <HeaderLink href="/blog">Новости</HeaderLink>
@@ -78,7 +78,7 @@ export function Header() {
 
       <CategoryCatalog
         isOpen={isCatalogOpen}
-        onToggle={toggleCatalog}
+        onToggleAction={toggleCatalog}
         topOffset={catalogTopOffset}
       />
     </header>

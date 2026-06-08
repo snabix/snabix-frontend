@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ListingMediaGallery, type PublicListingItem } from "@/src/entities/listing";
 import { showPublicListing } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
@@ -49,16 +50,22 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
   }, [listingId]);
 
   if (isLoading) {
-    return <SkeletonPanel className="min-h-80" />;
+    return (
+      <Container className="py-8">
+        <SkeletonPanel className="min-h-80" />
+      </Container>
+    );
   }
 
   if (listing === null) {
     return (
-      <EmptyState
-        description="Возможно, объявление снято с публикации или больше недоступно."
-        icon={SearchX}
-        title="Объявление не найдено"
-      />
+      <Container className="py-8">
+        <EmptyState
+          description="Возможно, объявление снято с публикации или больше недоступно."
+          icon={SearchX}
+          title="Объявление не найдено"
+        />
+      </Container>
     );
   }
 
@@ -66,17 +73,19 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
   const publishedAt = formatListingDate(listing.publishedAt);
 
   return (
-    <article className="grid gap-6">
-      <section className="surface-card overflow-hidden rounded-[32px] p-6 sm:p-8">
-        <Button asChild variant="ghost">
-          <Link href="/listings">
-            <ArrowLeft size={17} />
-            К объявлениям
-          </Link>
-        </Button>
+    <main className="py-8">
+      <Container>
+        <article className="grid gap-6">
+          <section className="surface-card overflow-hidden rounded-[32px] p-6 sm:p-8">
+            <Button asChild variant="ghost">
+              <Link href="/">
+                <ArrowLeft size={17} />
+                К объявлениям
+              </Link>
+            </Button>
 
         <nav aria-label="Категория объявления" className="mt-6 flex flex-wrap items-center gap-2 text-sm font-black text-[var(--text-muted)]">
-          <Link className="transition-colors hover:text-[var(--brand-deep)]" href="/listings">
+          <Link className="transition-colors hover:text-[var(--brand-deep)]" href="/">
             Объявления
           </Link>
           {categoryPath.map((segment) => (
@@ -147,24 +156,26 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
         </aside>
       </section>
 
-      {listing.attributeValues.length > 0 ? (
-        <section className="surface-card rounded-[30px] p-6 sm:p-7">
-          <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Характеристики</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {listing.attributeValues.map((attribute) => (
-              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-4" key={attribute.attributeDefinitionId}>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                  {attribute.name ?? "Параметр"}
-                </p>
-                <p className="mt-2 font-black text-[var(--brand-deep)]">
-                  {attribute.displayValue ?? "—"}
-                </p>
+          {listing.attributeValues.length > 0 ? (
+            <section className="surface-card rounded-[30px] p-6 sm:p-7">
+              <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Характеристики</h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {listing.attributeValues.map((attribute) => (
+                  <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-4" key={attribute.attributeDefinitionId}>
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                      {attribute.name ?? "Параметр"}
+                    </p>
+                    <p className="mt-2 font-black text-[var(--brand-deep)]">
+                      {attribute.displayValue ?? "—"}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-    </article>
+            </section>
+          ) : null}
+        </article>
+      </Container>
+    </main>
   );
 }
 

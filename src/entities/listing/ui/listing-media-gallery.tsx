@@ -14,8 +14,8 @@ type ListingMediaGalleryProps = {
 type ListingMediaUploadGridProps = {
   availableSlots: number;
   isDisabled?: boolean;
-  onAdd: () => void;
-  onRemove: (index: number) => void;
+  onAddAction: () => void;
+  onRemoveAction: (index: number) => void;
   previews: Array<{
     id: string;
     name: string;
@@ -37,7 +37,7 @@ export function ListingMediaGallery({
   if (mode === "details") {
     return (
       <div className="grid gap-4">
-        <div className="relative mx-auto grid aspect-square w-full max-w-[800px] place-items-center overflow-hidden rounded-[30px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-4 shadow-[var(--shadow-card)]">
+        <div className="relative mx-auto grid aspect-[4/3] w-full max-w-[620px] place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
           {activeImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -76,12 +76,12 @@ export function ListingMediaGallery({
           ) : null}
         </div>
 
-        <div className="mx-auto flex max-w-[800px] gap-3 overflow-x-auto pb-1">
+        <div className="mx-auto flex max-w-[620px] gap-3 overflow-x-auto pb-1">
           {images.map((image, index) => (
             <button
               aria-label={`Показать изображение ${index + 1}`}
               className={cn(
-                "size-24 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition",
+                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition",
                 activeIndex === index
                   ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                   : "border-[var(--border-soft)] hover:border-[var(--accent)]",
@@ -185,8 +185,8 @@ export function normalizeListingImages(imageUrl?: string | null, imageUrls?: str
 export function ListingMediaUploadGrid({
   availableSlots,
   isDisabled = false,
-  onAdd,
-  onRemove,
+  onAddAction,
+  onRemoveAction,
   previews,
 }: ListingMediaUploadGridProps) {
   return (
@@ -205,7 +205,7 @@ export function ListingMediaUploadGrid({
           <button
             aria-label={`Удалить фото ${preview.name}`}
             className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_72%,transparent)] text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--brand-deep)]"
-            onClick={() => onRemove(index)}
+            onClick={() => onRemoveAction(index)}
             type="button"
           >
             <X size={16} />
@@ -224,7 +224,7 @@ export function ListingMediaUploadGrid({
           className="grid aspect-[4/3] place-items-center rounded-[22px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--brand-deep)]"
           disabled={isDisabled}
           key={`empty-${index}`}
-          onClick={onAdd}
+          onClick={onAddAction}
           type="button"
         >
           <span className="grid justify-items-center gap-2 text-sm font-black">

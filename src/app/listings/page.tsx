@@ -1,21 +1,14 @@
-import { PublicListingsPage } from "@/src/screens/listings/ui/public-listings-page";
+import { redirect } from "next/navigation";
 
 type ListingsRouteProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function ListingsRoute({
-  searchParams,
-}: ListingsRouteProps) {
+export default async function ListingsRoute({ searchParams }: ListingsRouteProps) {
   const params = await searchParams;
   const categoryId = parseCategoryId(params.categoryId);
 
-  return (
-    <PublicListingsPage
-      initialCategoryId={categoryId}
-      key={categoryId ?? "all"}
-    />
-  );
+  redirect(categoryId ? `/?categoryId=${encodeURIComponent(categoryId)}` : "/");
 }
 
 function parseCategoryId(value: string | string[] | undefined): string | undefined {
@@ -25,7 +18,5 @@ function parseCategoryId(value: string | string[] | undefined): string | undefin
     return undefined;
   }
 
-  return rawValue.trim() !== ""
-    ? rawValue
-    : undefined;
+  return rawValue.trim() !== "" ? rawValue : undefined;
 }

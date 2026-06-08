@@ -13,11 +13,11 @@ const defaultProps = {
   avatarOffset: { x: 0, y: 0 },
   avatarScale: 1,
   isAvatarSubmitting: false,
-  onAvatarDraftReset: vi.fn(),
-  onAvatarMovePointerDown: vi.fn(),
-  onAvatarSave: vi.fn(),
-  onAvatarScaleChange: vi.fn(),
-  onAvatarViewerClose: vi.fn(),
+  onAvatarDraftResetAction: vi.fn(),
+  onAvatarMovePointerDownAction: vi.fn(),
+  onAvatarSaveAction: vi.fn(),
+  onAvatarScaleChangeAction: vi.fn(),
+  onAvatarViewerCloseAction: vi.fn(),
 };
 
 describe("ProfileAvatarViewer browser interactions", () => {
@@ -26,7 +26,7 @@ describe("ProfileAvatarViewer browser interactions", () => {
     const { container } = render(
       <ProfileAvatarViewer
         {...defaultProps}
-        onAvatarViewerClose={onAvatarViewerClose}
+        onAvatarViewerCloseAction={onAvatarViewerClose}
       />,
     );
 
@@ -41,7 +41,7 @@ describe("ProfileAvatarViewer browser interactions", () => {
     render(
       <ProfileAvatarViewer
         {...defaultProps}
-        onAvatarViewerClose={onAvatarViewerClose}
+        onAvatarViewerCloseAction={onAvatarViewerClose}
       />,
     );
 
@@ -57,7 +57,7 @@ describe("ProfileAvatarViewer browser interactions", () => {
       <ProfileAvatarViewer
         {...defaultProps}
         avatarDraft={avatarDraft}
-        onAvatarSave={onAvatarSave}
+        onAvatarSaveAction={onAvatarSave}
       />,
     );
 

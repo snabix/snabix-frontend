@@ -15,6 +15,8 @@ export type ListFavoriteListingsParams = {
   perPage?: number;
 };
 
+export const FAVORITE_LISTINGS_MAX_PER_PAGE = 48;
+
 export async function listFavoriteListings(
   params: ListFavoriteListingsParams = {},
 ): Promise<ApiPaginatedData<ListingItem>> {

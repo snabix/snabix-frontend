@@ -12,11 +12,11 @@ type ProfileAvatarViewerProps = {
   avatarOffset: AvatarOffset;
   avatarScale: number;
   isAvatarSubmitting: boolean;
-  onAvatarDraftReset: () => void;
-  onAvatarMovePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
-  onAvatarSave: () => void;
-  onAvatarScaleChange: (value: number[]) => void;
-  onAvatarViewerClose: () => void;
+  onAvatarDraftResetAction: () => void;
+  onAvatarMovePointerDownAction: (event: ReactPointerEvent<HTMLDivElement>) => void;
+  onAvatarSaveAction: () => void;
+  onAvatarScaleChangeAction: (value: number[]) => void;
+  onAvatarViewerCloseAction: () => void;
 };
 
 export function ProfileAvatarViewer({
@@ -24,16 +24,16 @@ export function ProfileAvatarViewer({
   avatarOffset,
   avatarScale,
   isAvatarSubmitting,
-  onAvatarDraftReset,
-  onAvatarMovePointerDown,
-  onAvatarSave,
-  onAvatarScaleChange,
-  onAvatarViewerClose,
+  onAvatarDraftResetAction,
+  onAvatarMovePointerDownAction,
+  onAvatarSaveAction,
+  onAvatarScaleChangeAction,
+  onAvatarViewerCloseAction,
 }: ProfileAvatarViewerProps) {
   return (
     <div
       className="fixed inset-0 z-50 grid bg-[color-mix(in_srgb,var(--brand)_82%,transparent)] px-4 py-5 text-[var(--brand-deep)] backdrop-blur-md sm:px-6"
-      onClick={onAvatarViewerClose}
+      onClick={onAvatarViewerCloseAction}
     >
       <div
         className="mx-auto my-auto grid w-full max-w-6xl gap-5 rounded-[36px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-4 shadow-[var(--shadow-soft)] sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_380px]"
@@ -43,7 +43,7 @@ export function ProfileAvatarViewer({
           <button
             aria-label="Закрыть просмотр аватара"
             className="absolute right-4 top-4 grid size-10 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] text-[var(--brand-deep)] transition-colors hover:bg-[var(--accent-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-            onClick={onAvatarViewerClose}
+            onClick={onAvatarViewerCloseAction}
             type="button"
           >
             <X aria-hidden="true" size={20} />
@@ -55,7 +55,7 @@ export function ProfileAvatarViewer({
 
               <div
                 className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[var(--brand)] active:cursor-grabbing"
-                onPointerDown={onAvatarMovePointerDown}
+                onPointerDown={onAvatarMovePointerDownAction}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -145,7 +145,7 @@ export function ProfileAvatarViewer({
               className="mt-5"
               max={2.4}
               min={1}
-              onValueChange={onAvatarScaleChange}
+              onValueChange={onAvatarScaleChangeAction}
               step={0.01}
               value={[avatarScale]}
             />
@@ -155,7 +155,7 @@ export function ProfileAvatarViewer({
             <Button
               className="w-full"
               disabled={isAvatarSubmitting}
-              onClick={onAvatarSave}
+              onClick={onAvatarSaveAction}
               type="button"
             >
               {isAvatarSubmitting ? "Сохраняем..." : "Сохранить аватар"}
@@ -164,7 +164,7 @@ export function ProfileAvatarViewer({
             <Button
               className="w-full"
               disabled={isAvatarSubmitting}
-              onClick={onAvatarDraftReset}
+              onClick={onAvatarDraftResetAction}
               type="button"
               variant="secondary"
             >

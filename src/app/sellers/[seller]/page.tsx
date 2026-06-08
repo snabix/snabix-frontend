@@ -16,7 +16,7 @@ export default async function SellerRoutePage({ params }: SellerRoutePageProps) 
       <section className="surface-card rounded-[34px] p-6 sm:p-8">
         <Link
           className="inline-flex items-center gap-2 text-sm font-bold text-[var(--text-muted)] transition hover:text-[var(--brand-deep)]"
-          href="/listings"
+          href="/"
         >
           <ArrowLeft size={16} />
           Назад к объявлениям

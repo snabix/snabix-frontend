@@ -104,16 +104,20 @@ export function useListingFormState({
   );
 
   const effectiveSelectedRootId = useMemo(() => {
-    if (filteredRoots.length === 0) {
-      return null;
-    }
-
     if (selectedRootId !== null && filteredRoots.some((root) => String(root.id) === selectedRootId)) {
       return selectedRootId;
     }
 
-    return filteredRoots[0] ? String(filteredRoots[0].id) : null;
-  }, [filteredRoots, selectedRootId]);
+    const inferredRoot = selectedCategoryId === null
+      ? undefined
+      : filteredRoots.find((root) => containsCategoryId(root, selectedCategoryId));
+
+    if (inferredRoot !== undefined) {
+      return String(inferredRoot.id);
+    }
+
+    return filteredRoots.length === 1 ? String(filteredRoots[0]?.id ?? "") : null;
+  }, [filteredRoots, selectedCategoryId, selectedRootId]);
 
   useEffect(() => {
     if (effectiveSelectedRootId === null) {
@@ -143,16 +147,12 @@ export function useListingFormState({
   );
 
   const effectiveSelectedCategoryId = useMemo(() => {
-    if (branchOptions.length === 0) {
-      return branch ? String(branch.id) : null;
-    }
-
     if (selectedCategoryId !== null && branchOptions.some((option) => String(option.id) === selectedCategoryId)) {
       return selectedCategoryId;
     }
 
-    return branchOptions[0]?.id ?? (branch ? String(branch.id) : null);
-  }, [branch, branchOptions, selectedCategoryId]);
+    return branchOptions.length === 1 ? branchOptions[0]?.id ?? null : selectedCategoryId;
+  }, [branchOptions, selectedCategoryId]);
 
   useEffect(() => {
     if (effectiveSelectedCategoryId === null) {
@@ -483,4 +483,15 @@ function markMainMedia(media: ListingMediaItem[]): ListingMediaItem[] {
     isMain: index === 0,
     order: index + 1,
   }));
+}
+
+function containsCategoryId(root: { id: string | number; children: Array<{ id: string | number; children: unknown[] }> }, categoryId: string): boolean {
+  if (String(root.id) === categoryId) {
+    return true;
+  }
+
+  return root.children.some((child) => containsCategoryId(
+    child as { id: string | number; children: Array<{ id: string | number; children: unknown[] }> },
+    categoryId,
+  ));
 }

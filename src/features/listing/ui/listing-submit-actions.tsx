@@ -7,8 +7,8 @@ type ListingSubmitActionsProps = {
   isUploadingMedia: boolean;
   mediaRetryListingId: string | null;
   mode: "create" | "edit";
-  onRetryMediaUpload: () => void;
-  onSubmit: (saveAsDraft?: boolean) => void;
+  onRetryMediaUploadAction: () => void;
+  onSubmitAction: (saveAsDraft?: boolean) => void;
 };
 
 export function ListingSubmitActions({
@@ -17,8 +17,8 @@ export function ListingSubmitActions({
   isUploadingMedia,
   mediaRetryListingId,
   mode,
-  onRetryMediaUpload,
-  onSubmit,
+  onRetryMediaUploadAction,
+  onSubmitAction,
 }: ListingSubmitActionsProps) {
   const isBusy = isSubmitting || isUploadingMedia;
 
@@ -27,7 +27,7 @@ export function ListingSubmitActions({
       <Button
         className="w-full"
         disabled={isDisabled}
-        onClick={() => onSubmit(false)}
+        onClick={() => onSubmitAction(false)}
         size="lg"
         type="button"
       >
@@ -47,7 +47,7 @@ export function ListingSubmitActions({
         <Button
           className="w-full"
           disabled={isDisabled}
-          onClick={() => onSubmit(true)}
+          onClick={() => onSubmitAction(true)}
           size="lg"
           type="button"
           variant="outline"
@@ -60,7 +60,7 @@ export function ListingSubmitActions({
         <Button
           className="w-full"
           disabled={isDisabled}
-          onClick={onRetryMediaUpload}
+          onClick={onRetryMediaUploadAction}
           size="lg"
           type="button"
           variant="secondary"

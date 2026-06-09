@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
@@ -53,8 +54,8 @@ export function Header() {
       ].join(" ")}
     >
       <Container>
-        <div className="surface-card flex items-center justify-between gap-6 rounded-[30px] px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-5 ">
+        <div className="surface-card grid items-center gap-4 rounded-[30px] px-4 py-4 sm:px-6 xl:grid-cols-[auto_minmax(260px,1fr)_auto]">
+          <div className="flex items-center gap-5">
             <Logo variant="wordmark" />
 
             <nav className="hidden items-center gap-1 lg:flex">
@@ -67,7 +68,20 @@ export function Header() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <form
+            action="/"
+            className="hidden min-w-0 items-center rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] px-4 py-2.5 text-[var(--brand-deep)] transition focus-within:border-[var(--accent)] focus-within:ring-4 focus-within:ring-[var(--accent-soft)] md:flex"
+          >
+            <Search className="mr-3 shrink-0 text-[var(--text-muted)]" size={18} />
+            <input
+              className="min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-[var(--text-muted)]"
+              name="search"
+              placeholder="Найти товары, услуги или категории"
+              type="search"
+            />
+          </form>
+
+          <div className="flex items-center justify-end gap-3">
             <HeaderSessionActions
               isPending={isPending}
               onLogoutAction={handleLogout}

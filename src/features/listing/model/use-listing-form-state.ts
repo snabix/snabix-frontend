@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { startTransition, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -125,8 +125,10 @@ export function useListingFormState({
       return;
     }
 
-    setAddressMode("profile");
-    setProfileAddressId(primaryAddressId);
+    startTransition(() => {
+      setAddressMode("profile");
+      setProfileAddressId(primaryAddressId);
+    });
   }, [mode, primaryAddressId, profileAddressId]);
 
   useEffect(() => {
@@ -150,13 +152,13 @@ export function useListingFormState({
 
   useEffect(() => {
     if (addressMode !== "custom" || regionId === null) {
-      setCities([]);
       return;
     }
 
     const load = async () => {
       try {
         setIsLoadingCities(true);
+        setCities([]);
         setCities(await listCities({ regionId }));
       } catch (error) {
         toast.error(extractApiError(error, "Не удалось загрузить города."));
@@ -299,11 +301,16 @@ export function useListingFormState({
 
   const handleAddressModeChange = (mode: ListingAddressMode) => {
     setAddressMode(mode);
+    if (mode !== "custom") {
+      setCities([]);
+      setCityId(null);
+    }
   };
 
   const handleRegionChange = (nextRegionId: number | null) => {
     setRegionId(nextRegionId);
     setCityId(null);
+    setCities([]);
   };
 
   const handleAttributeChange = (attributeId: number, value: ListingAttributeValue) => {

@@ -36,8 +36,8 @@ export function ListingMediaGallery({
 
   if (mode === "details") {
     return (
-      <div className="grid gap-4">
-        <div className="relative mx-auto grid aspect-[4/3] w-full max-w-[620px] place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
+        <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
           {activeImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -83,12 +83,12 @@ export function ListingMediaGallery({
           ) : null}
         </div>
 
-        <div className="mx-auto flex max-w-[620px] gap-3 overflow-x-auto pb-1">
+        <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1">
           {images.map((image, index) => (
             <button
               aria-label={`Показать изображение ${index + 1}`}
               className={cn(
-                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition",
+                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
                 activeIndex === index
                   ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                   : "border-[var(--border-soft)] hover:border-[var(--accent)]",

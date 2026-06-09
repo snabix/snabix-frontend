@@ -11,7 +11,6 @@ import {
   Menu,
   Pencil,
   SearchX,
-  Sparkles,
   Smartphone,
   Trash2,
 } from "lucide-react";
@@ -182,13 +181,29 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--accent)_8%,transparent),transparent_28%),radial-gradient(circle_at_top_right,color-mix(in_srgb,var(--brand)_7%,transparent),transparent_24%),linear-gradient(180deg,color-mix(in_srgb,var(--surface)_62%,transparent),var(--background))]">
         <Container className="py-8">
           <div className="grid gap-6">
-            <Link
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--brand-deep)]"
-              href="/account/listings"
-            >
-              <ArrowLeft size={17} />
-              К моим объявлениям
-            </Link>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <Link
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--brand-deep)]"
+                href="/account/listings"
+              >
+                <ArrowLeft size={17} />
+                Назад
+              </Link>
+
+              <div className="rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-2 shadow-[var(--shadow-card)]">
+                <ListingDetailsActions
+                  editHref={`/account/listings/${listing.id}/edit`}
+                  isDeleting={isDeleting}
+                  isDraft={listing.status === 1}
+                  isArchived={isArchived}
+                  isArchiving={isArchiving}
+                  isSubmittingForReview={isSubmittingForReview}
+                  onArchiveAction={handleArchive}
+                  onDeleteAction={() => setIsDeleteDialogOpen(true)}
+                  onSubmitForReviewAction={handleSubmitForReview}
+                />
+              </div>
+            </div>
 
             <nav
               aria-label="Категория объявления"
@@ -211,9 +226,18 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
             </nav>
 
             <section className="rounded-[34px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-4 shadow-[var(--shadow-card)] sm:p-6">
-              <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,0.92fr)_minmax(440px,1.08fr)]">
+              <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
+                <div>
+                  <ListingMediaGallery
+                    imageUrl={listing.imageUrl}
+                    imageUrls={listing.imageUrls}
+                    mode="details"
+                    title={listing.title}
+                  />
+                </div>
+
                 <div className="grid gap-5">
-                  <div className="flex items-start justify-between gap-4">
+                  <div>
                     <div>
                       <div className="mb-4 flex flex-wrap gap-2">
                         <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
@@ -234,18 +258,6 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                         <span>Создано: {createdAt}</span>
                       </div>
                     </div>
-
-                    <ListingDetailsActions
-                      editHref={`/account/listings/${listing.id}/edit`}
-                      isDeleting={isDeleting}
-                      isDraft={listing.status === 1}
-                      isArchived={isArchived}
-                      isArchiving={isArchiving}
-                      isSubmittingForReview={isSubmittingForReview}
-                      onArchiveAction={handleArchive}
-                      onDeleteAction={() => setIsDeleteDialogOpen(true)}
-                      onSubmitForReviewAction={handleSubmitForReview}
-                    />
                   </div>
 
                   <div className="grid gap-4 rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-5 sm:grid-cols-4">
@@ -260,14 +272,6 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                   </div>
                 </div>
 
-                <div className="xl:pl-2">
-                  <ListingMediaGallery
-                    imageUrl={listing.imageUrl}
-                    imageUrls={listing.imageUrls}
-                    mode="details"
-                    title={listing.title}
-                  />
-                </div>
               </div>
             </section>
 
@@ -377,10 +381,11 @@ function ListingDetailsActions({
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Открыть меню действий объявления"
-          className="grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] transition hover:border-[var(--accent)]"
+          className="inline-flex h-12 items-center gap-2 rounded-2xl border border-[color-mix(in_srgb,var(--accent)_34%,var(--border-soft))] bg-[var(--brand-deep)] px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:bg-[var(--accent)]"
           type="button"
         >
           <Menu size={18} />
+          <span>Управление</span>
         </button>
       </DropdownMenuTrigger>
 

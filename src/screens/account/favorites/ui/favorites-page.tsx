@@ -108,7 +108,7 @@ export function FavoritesPage() {
             title="Избранных объявлений пока нет"
           />
         ) : (
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {items.map((item) => (
               <ListingCard
                 detailsHref={`/listings/${item.id}`}

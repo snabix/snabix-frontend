@@ -124,6 +124,11 @@ const listingCategorySchema = z.object({
   slug: z.string(),
   fullName: nullableStringSchema.optional(),
   path: nullableStringSchema.optional(),
+  breadcrumbs: z.array(z.object({
+    id: stringOrNumberSchema,
+    name: z.string(),
+    slug: z.string(),
+  }).passthrough()).optional(),
 }).passthrough();
 
 const listingAttributeValueItemSchema = z.object({
@@ -134,6 +139,33 @@ const listingAttributeValueItemSchema = z.object({
   typeLabel: nullableStringSchema,
   value: listingAttributeValueSchema,
   displayValue: nullableStringSchema,
+}).passthrough();
+
+const listingLocationSchema = z.object({
+  source: z.string(),
+  profileAddressId: nullableStringSchema.optional(),
+  label: nullableStringSchema.optional(),
+  region: z.object({
+    id: z.number(),
+    name: z.string(),
+    fullName: nullableStringSchema.optional(),
+    label: z.string(),
+  }).passthrough(),
+  city: z.object({
+    id: z.number(),
+    name: z.string(),
+    label: z.string(),
+    lat: nullableStringSchema.optional(),
+    lon: nullableStringSchema.optional(),
+  }).passthrough().nullable(),
+  addressLine: nullableStringSchema,
+  display: nullableStringSchema,
+  coordinates: z.object({
+    lat: z.union([z.number(), z.string()]).nullable(),
+    lng: z.union([z.number(), z.string()]).nullable(),
+  }).passthrough().optional(),
+  mapProvider: nullableStringSchema.optional(),
+  mapPlaceId: nullableStringSchema.optional(),
 }).passthrough();
 
 const listingBaseSchema = z.object({
@@ -160,6 +192,7 @@ const listingBaseSchema = z.object({
     order: z.number(),
     isMain: z.boolean(),
   }).passthrough()).optional(),
+  location: listingLocationSchema.nullable().optional(),
   isFavorite: z.boolean().optional(),
   sellerRating: z.number().nullable().optional(),
   city: nullableStringSchema.optional(),

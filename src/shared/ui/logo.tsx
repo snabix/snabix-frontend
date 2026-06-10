@@ -20,8 +20,9 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
                     height={190}
                     priority
                     sizes="(min-width: 640px) 204px, 182px"
-                    src="/snabix-logo.png"
-                    width={830}
+                    src="/snabix.png"
+                    unoptimized
+                    width={1536}
                 />
             </Link>
         );
@@ -37,8 +38,9 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
             height={190}
             priority
             sizes="64px"
-            src="/snabix-mark.png"
-            width={260}
+            src="/snabix.png"
+            unoptimized
+            width={1536}
         />
       </span>
         </Link>

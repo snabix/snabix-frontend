@@ -394,11 +394,19 @@ function ViewModeSwitcher({
 
 function toPublicListingParams(filters: PublicListingFiltersState): ListPublicListingsParams {
   return {
+    cityQuery: toOptionalString(filters.cityQuery),
     maxPrice: toOptionalNumber(filters.maxPrice),
     minPrice: toOptionalNumber(filters.minPrice),
+    regionQuery: toOptionalString(filters.regionQuery),
     sort: filters.sort,
     type: toOptionalNumber(filters.type),
   };
+}
+
+function toOptionalString(value: string): string | undefined {
+  const normalizedValue = value.trim();
+
+  return normalizedValue === "" ? undefined : normalizedValue;
 }
 
 function toOptionalNumber(value: string): number | undefined {

@@ -2,18 +2,20 @@ import {
     Check,
     ChevronRight,
     CircleHelp,
+    MapPin,
     Save,
     Settings2,
     Sparkles,
     Wrench,
 } from "lucide-react";
 import type {ListingItem} from "@/src/entities/listing";
+import type {UserAddress} from "@/src/entities/user";
 import type {CreateListingPayload, UpdateListingPayload} from "@/src/features/listing/api";
 import {
     LISTING_TYPE_PRODUCT,
 } from "@/src/features/listing/model/listing-form-constants";
 import {conditionOptions} from "@/src/features/listing/model/listing-form-options";
-import {useListingFormState} from "@/src/features/listing/model/use-listing-form-state";
+import {type ListingAddressMode, useListingFormState} from "@/src/features/listing/model/use-listing-form-state";
 import {AttributeFields} from "@/src/features/listing/ui/attribute-fields";
 import {CategoryPicker} from "@/src/features/listing/ui/category-picker";
 import {ListingFormField, ListingFormSelect} from "@/src/features/listing/ui/listing-form-field";
@@ -76,10 +78,25 @@ function CreateListingShowcaseForm({
         isUploadingMedia,
         mediaRetryListingId,
         retryMediaUpload,
+        addressLine,
+        addressMode,
+        cities,
+        cityId,
+        handleAddressModeChange,
+        handleRegionChange,
+        isLoadingCities,
+        isLoadingRegions,
+        profileAddressId,
+        regionId,
+        regions,
+        setAddressLine,
+        setCityId,
+        setProfileAddressId,
         setCondition,
         setImageFiles,
                             setIsNegotiable,
                             submitForm,
+                            userAddresses,
                         } = state;
     const {
         formState: {errors},
@@ -294,6 +311,24 @@ function CreateListingShowcaseForm({
                                         </div>
                                     </div>
                                 ) : null}
+
+                                <AddressSection
+                                    addressLine={addressLine}
+                                    addressMode={addressMode}
+                                    cities={cities}
+                                    cityId={cityId}
+                                    isLoadingCities={isLoadingCities}
+                                    isLoadingRegions={isLoadingRegions}
+                                    onAddressLineChangeAction={setAddressLine}
+                                    onAddressModeChangeAction={handleAddressModeChange}
+                                    onCityChangeAction={setCityId}
+                                    onProfileAddressChangeAction={setProfileAddressId}
+                                    onRegionChangeAction={handleRegionChange}
+                                    profileAddressId={profileAddressId}
+                                    regionId={regionId}
+                                    regions={regions}
+                                    userAddresses={userAddresses}
+                                />
                             </div>
                         </section>
 
@@ -450,10 +485,25 @@ function EditListingWorkbench({
         isUploadingMedia,
         mediaRetryListingId,
         retryMediaUpload,
+        addressLine,
+        addressMode,
+        cities,
+        cityId,
+        handleAddressModeChange,
+        handleRegionChange,
+        isLoadingCities,
+        isLoadingRegions,
+        profileAddressId,
+        regionId,
+        regions,
+        setAddressLine,
+        setCityId,
+        setProfileAddressId,
         setCondition,
         setImageFiles,
         setIsNegotiable,
         submitForm,
+        userAddresses,
     } = state;
     const {
         formState: {errors},
@@ -545,6 +595,24 @@ function EditListingWorkbench({
               Разрешить торг и обсуждение финальной цены
             </span>
                     </label>
+
+                    <AddressSection
+                        addressLine={addressLine}
+                        addressMode={addressMode}
+                        cities={cities}
+                        cityId={cityId}
+                        isLoadingCities={isLoadingCities}
+                        isLoadingRegions={isLoadingRegions}
+                        onAddressLineChangeAction={setAddressLine}
+                        onAddressModeChangeAction={handleAddressModeChange}
+                        onCityChangeAction={setCityId}
+                        onProfileAddressChangeAction={setProfileAddressId}
+                        onRegionChangeAction={handleRegionChange}
+                        profileAddressId={profileAddressId}
+                        regionId={regionId}
+                        regions={regions}
+                        userAddresses={userAddresses}
+                    />
                 </div>
             </section>
 
@@ -593,4 +661,180 @@ function InlineHint({text}: { text: string }) {
             </div>
         </div>
     );
+}
+
+type AddressSectionProps = {
+    addressLine: string;
+    addressMode: ListingAddressMode;
+    cities: Array<{ id: number; name: string; label: string }>;
+    cityId: number | null;
+    isLoadingCities: boolean;
+    isLoadingRegions: boolean;
+    onAddressLineChangeAction: (value: string) => void;
+    onAddressModeChangeAction: (mode: ListingAddressMode) => void;
+    onCityChangeAction: (cityId: number | null) => void;
+    onProfileAddressChangeAction: (addressId: string | null) => void;
+    onRegionChangeAction: (regionId: number | null) => void;
+    profileAddressId: string | null;
+    regionId: number | null;
+    regions: Array<{ id: number; name: string; fullName: string; label: string }>;
+    userAddresses: UserAddress[];
+};
+
+function AddressSection({
+                            addressLine,
+                            addressMode,
+                            cities,
+                            cityId,
+                            isLoadingCities,
+                            isLoadingRegions,
+                            onAddressLineChangeAction,
+                            onAddressModeChangeAction,
+                            onCityChangeAction,
+                            onProfileAddressChangeAction,
+                            onRegionChangeAction,
+                            profileAddressId,
+                            regionId,
+                            regions,
+                            userAddresses,
+                        }: AddressSectionProps) {
+    return (
+        <div className="border-t border-[var(--border-soft)] pt-6">
+            <div className="flex items-center gap-3">
+                <MapPin className="text-[var(--accent)]" size={20}/>
+                <p className="text-[1.35rem] font-black text-[var(--brand-deep)]">Адрес объявления</p>
+            </div>
+            <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
+                Адрес сохранится в объявлении как snapshot. Если потом изменить профиль, уже созданное объявление не переедет само.
+            </p>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <AddressModeButton
+                    description="Быстрее всего, если адрес уже добавлен в профиле."
+                    isActive={addressMode === "profile"}
+                    label="Из профиля"
+                    onClickAction={() => onAddressModeChangeAction("profile")}
+                />
+                <AddressModeButton
+                    description="Регион, город и строка адреса только для этого объявления."
+                    isActive={addressMode === "custom"}
+                    label="Другой адрес"
+                    onClickAction={() => onAddressModeChangeAction("custom")}
+                />
+                <AddressModeButton
+                    description="Можно оставить для черновика или если место не важно."
+                    isActive={addressMode === "none"}
+                    label="Не указывать"
+                    onClickAction={() => onAddressModeChangeAction("none")}
+                />
+            </div>
+
+            {addressMode === "profile" ? (
+                <div className="mt-5">
+                    {userAddresses.length > 0 ? (
+                        <ListingFormField label="Адрес из профиля">
+                            <ListingFormSelect
+                                onChangeAction={(value) => onProfileAddressChangeAction(value || null)}
+                                value={profileAddressId ?? ""}
+                            >
+                                <option value="">Выберите адрес</option>
+                                {userAddresses.map((address) => (
+                                    <option key={address.id} value={address.id}>
+                                        {formatUserAddress(address)}
+                                    </option>
+                                ))}
+                            </ListingFormSelect>
+                        </ListingFormField>
+                    ) : (
+                        <InlineHint text="В профиле пока нет сохранённых адресов. Выберите «Другой адрес» и укажите место вручную."/>
+                    )}
+                </div>
+            ) : null}
+
+            {addressMode === "custom" ? (
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                    <ListingFormField label="Регион">
+                        <ListingFormSelect
+                            disabled={isLoadingRegions}
+                            onChangeAction={(value) => onRegionChangeAction(value === "" ? null : Number(value))}
+                            value={regionId ?? ""}
+                        >
+                            <option value="">{isLoadingRegions ? "Загружаем регионы..." : "Выберите регион"}</option>
+                            {regions.map((region) => (
+                                <option key={region.id} value={region.id}>
+                                    {region.fullName || region.name}
+                                </option>
+                            ))}
+                        </ListingFormSelect>
+                    </ListingFormField>
+
+                    <ListingFormField label="Город">
+                        <ListingFormSelect
+                            disabled={regionId === null || isLoadingCities}
+                            onChangeAction={(value) => onCityChangeAction(value === "" ? null : Number(value))}
+                            value={cityId ?? ""}
+                        >
+                            <option value="">
+                                {regionId === null
+                                    ? "Сначала выберите регион"
+                                    : (isLoadingCities ? "Загружаем города..." : "Выберите город")}
+                            </option>
+                            {cities.map((city) => (
+                                <option key={city.id} value={city.id}>
+                                    {city.name}
+                                </option>
+                            ))}
+                        </ListingFormSelect>
+                    </ListingFormField>
+
+                    <div className="md:col-span-2">
+                        <ListingFormField label="Улица, дом или ориентир">
+                            <Input
+                                maxLength={255}
+                                onChange={(event) => onAddressLineChangeAction(event.target.value)}
+                                placeholder="Например, Проспект Октября, 10"
+                                value={addressLine}
+                            />
+                        </ListingFormField>
+                    </div>
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
+function AddressModeButton({
+                               description,
+                               isActive,
+                               label,
+                               onClickAction,
+                           }: {
+    description: string;
+    isActive: boolean;
+    label: string;
+    onClickAction: () => void;
+}) {
+    return (
+        <button
+            className={[
+                "rounded-2xl border px-4 py-4 text-left transition hover:-translate-y-0.5",
+                isActive
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--brand-deep)] shadow-[var(--shadow-card)]"
+                    : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)]",
+            ].join(" ")}
+            onClick={onClickAction}
+            type="button"
+        >
+            <span className="text-sm font-black text-[var(--brand-deep)]">{label}</span>
+            <span className="mt-2 block text-xs leading-5">{description}</span>
+        </button>
+    );
+}
+
+function formatUserAddress(address: UserAddress): string {
+    return [
+        address.label,
+        address.city?.name,
+        address.addressLine,
+    ].filter(Boolean).join(" · ") || address.region.name;
 }

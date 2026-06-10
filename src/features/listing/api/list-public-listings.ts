@@ -16,6 +16,10 @@ export type ListPublicListingsParams = {
   type?: number;
   minPrice?: number;
   maxPrice?: number;
+  regionId?: number;
+  cityId?: number;
+  regionQuery?: string;
+  cityQuery?: string;
   sort?: "newest" | "oldest" | "price_asc" | "price_desc" | "popular";
 };
 
@@ -28,6 +32,10 @@ export async function listPublicListings(params: ListPublicListingsParams = {}):
       type: params.type,
       minPrice: params.minPrice,
       maxPrice: params.maxPrice,
+      regionId: params.regionId,
+      cityId: params.cityId,
+      regionQuery: params.regionQuery?.trim() || undefined,
+      cityQuery: params.cityQuery?.trim() || undefined,
       sort: params.sort,
     },
   });

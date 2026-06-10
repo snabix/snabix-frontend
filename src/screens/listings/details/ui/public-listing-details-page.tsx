@@ -69,7 +69,7 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
     );
   }
 
-  const categoryPath = buildCategoryPath(listing);
+  const categoryPath = buildCategoryBreadcrumbs(listing);
   const publishedAt = formatListingDate(listing.publishedAt);
 
   return (
@@ -88,10 +88,15 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
           <Link className="transition-colors hover:text-[var(--brand-deep)]" href="/">
             Объявления
           </Link>
-          {categoryPath.map((segment) => (
-            <span className="inline-flex items-center gap-2" key={segment}>
+          {categoryPath.map((category) => (
+            <span className="inline-flex items-center gap-2" key={category.id}>
               <ChevronRight size={15} />
-              <span>{segment}</span>
+              <Link
+                className="transition-colors hover:text-[var(--brand-deep)]"
+                href={`/?categoryId=${encodeURIComponent(String(category.id))}`}
+              >
+                {category.name}
+              </Link>
             </span>
           ))}
         </nav>
@@ -148,7 +153,7 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
         <aside className="surface-card rounded-[30px] p-6 sm:p-7">
           <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Детали</h2>
           <dl className="mt-5 grid gap-3">
-            <Detail label="Категория" value={categoryPath.join(" / ") || "—"} />
+            <Detail label="Категория" value={categoryPath.map((category) => category.name).join(" / ") || "—"} />
             <Detail label="Состояние" value={listing.conditionLabel} />
             <Detail label="Торг" value={listing.isNegotiable ? "Разрешен" : "Не указан"} />
             <Detail label="Просмотры" value={String(listing.viewsCount)} />
@@ -179,15 +184,31 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
   );
 }
 
-function buildCategoryPath(listing: PublicListingItem): string[] {
+type CategoryBreadcrumb = {
+  id: string | number;
+  name: string;
+  slug: string;
+};
+
+function buildCategoryBreadcrumbs(listing: PublicListingItem): CategoryBreadcrumb[] {
   if (listing.category === null) {
     return [];
   }
 
-  return [listing.category.fullName ?? listing.category.name]
-    .flatMap((value) => value.split("/"))
+  if (listing.category.breadcrumbs !== undefined && listing.category.breadcrumbs.length > 0) {
+    return listing.category.breadcrumbs;
+  }
+
+  const names = [listing.category.fullName ?? listing.category.name]
+    .flatMap((value) => value.split(/[/>]/))
     .map((segment) => segment.trim())
     .filter(Boolean);
+
+  return names.map((name, index) => ({
+    id: index === names.length - 1 ? listing.category?.id ?? name : name,
+    name,
+    slug: name,
+  }));
 }
 
 function formatListingDate(value: string | null): string {

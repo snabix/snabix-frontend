@@ -331,6 +331,8 @@ function toPublicListingParams(
     return {
         maxPrice: toOptionalNumber(filters.maxPrice),
         minPrice: toOptionalNumber(filters.minPrice),
+        cityQuery: toOptionalString(filters.cityQuery),
+        regionQuery: toOptionalString(filters.regionQuery),
         sort: filters.sort,
         type: toOptionalNumber(filters.type),
         ...(filters.isNegotiable ? { isNegotiable: true } : {}),
@@ -349,4 +351,10 @@ function toOptionalNumber(value: string): number | undefined {
     return Number.isFinite(parsedValue) && parsedValue >= 0
         ? parsedValue
         : undefined;
+}
+
+function toOptionalString(value: string): string | undefined {
+    const normalizedValue = value.trim();
+
+    return normalizedValue === "" ? undefined : normalizedValue;
 }

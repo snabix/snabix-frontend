@@ -9,6 +9,8 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 
 export type PublicListingFiltersState = {
     type: string;
+    regionQuery: string;
+    cityQuery: string;
     minPrice: string;
     maxPrice: string;
     isNegotiable: boolean;
@@ -53,6 +55,8 @@ const optionClassName = "bg-[var(--surface)] text-[var(--brand-deep)]";
 
 export const defaultPublicListingFilters: PublicListingFiltersState = {
     type: "",
+    regionQuery: "",
+    cityQuery: "",
     minPrice: "",
     maxPrice: "",
     isNegotiable: false,
@@ -107,6 +111,29 @@ export function PublicListingFilters({
                             </option>
                         ))}
                     </select>
+                </FilterGroup>
+
+                <FilterGroup title="Локация">
+                    <div className="grid gap-2">
+                        <Input
+                            disabled={isLoading}
+                            onChange={(event) => updateFilter("regionQuery", event.target.value)}
+                            placeholder="Регион, например Краснодарский край"
+                            type="search"
+                            value={filters.regionQuery}
+                        />
+
+                        <Input
+                            disabled={isLoading}
+                            onChange={(event) => updateFilter("cityQuery", event.target.value)}
+                            placeholder="Город, например Краснодар"
+                            type="search"
+                            value={filters.cityQuery}
+                        />
+                    </div>
+                    <p className="mt-2 text-xs font-medium leading-5 text-[var(--text-muted)]">
+                        Можно ввести только регион, только город или оба значения сразу.
+                    </p>
                 </FilterGroup>
 
                 <FilterGroup title="Цена">

@@ -21,6 +21,11 @@ export type CreateListingPayload = {
   contactName?: string | null;
   contactPhone?: string | null;
   contactEmail?: string | null;
+  addressMode?: "profile" | "custom" | "none";
+  profileAddressId?: string | null;
+  regionId?: number | null;
+  cityId?: number | null;
+  addressLine?: string | null;
   saveAsDraft?: boolean;
   attributeValues: Record<string, ListingAttributeValue>;
 };

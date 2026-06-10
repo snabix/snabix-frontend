@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { GitBranch, Send } from "lucide-react";
 import { Container } from "@/src/shared/ui/container";
@@ -28,17 +27,10 @@ export function AppFooter() {
           <section aria-labelledby="footer-brand-title">
             <Link
               aria-label="На главную Snabix"
-              className="inline-flex items-center"
+              className="inline-flex items-center rounded-2xl text-2xl font-black tracking-[-0.06em] text-[var(--brand-deep)] transition hover:text-[var(--accent)]"
               href="/"
             >
-              <Image
-                alt="Snabix"
-                className="h-auto w-[170px]"
-                height={191}
-                priority={false}
-                src="/logo2.png"
-                width={1177}
-              />
+              SNABIX
             </Link>
 
             <h2 className="sr-only" id="footer-brand-title">

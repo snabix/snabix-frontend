@@ -168,7 +168,7 @@ export function ListingCard({
         >
             <Link
                 aria-label={`Открыть объявление ${listing.title}`}
-                className="absolute inset-0 z-10"
+                className="absolute inset-0 z-[25]"
                 href={href}
             />
 
@@ -279,7 +279,7 @@ export function ListingCard({
                     </div>
 
                     <Link
-                        className="group/seller pointer-events-auto relative z-20 flex min-w-0 items-center justify-between gap-4 rounded-[22px] border border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_74%,var(--brand)))] px-4 py-3 text-white shadow-[var(--shadow-card)] transition hover:border-[color-mix(in_srgb,var(--accent)_54%,white)] hover:bg-[linear-gradient(135deg,color-mix(in_srgb,var(--accent)_84%,var(--brand)),var(--brand))] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+                        className="group/seller pointer-events-auto relative z-30 flex min-w-0 items-center justify-between gap-4 rounded-[22px] border border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_74%,var(--brand)))] px-4 py-3 text-white shadow-[var(--shadow-card)] transition hover:border-[color-mix(in_srgb,var(--accent)_54%,white)] hover:bg-[linear-gradient(135deg,color-mix(in_srgb,var(--accent)_84%,var(--brand)),var(--brand))] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
                         href={sellerHref}
                         onClick={(event) => event.stopPropagation()}
                     >

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, ImageIcon, ImagePlus, X } from "lucide-react";
+import { ImageIcon, ImagePlus, X } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
 
 type ListingMediaGalleryProps = {
@@ -36,8 +36,8 @@ export function ListingMediaGallery({
 
   if (mode === "details") {
     return (
-      <div className="grid gap-4">
-        <div className="relative mx-auto grid aspect-[4/3] w-full max-w-[620px] place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
+        <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
           {activeImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -51,37 +51,44 @@ export function ListingMediaGallery({
 
           {hasMultipleImages ? (
             <>
-              <button
-                aria-label="Показать предыдущее изображение"
-                className="absolute left-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
-                onClick={() => setActiveIndex(activeIndex === 0 ? images.length - 1 : activeIndex - 1)}
-                type="button"
+              <div
+                aria-label="Переключение фотографий объявления"
+                className="absolute inset-x-0 bottom-0 top-0 z-20 grid"
+                style={{ gridTemplateColumns: `repeat(${images.length}, minmax(0, 1fr))` }}
               >
-                <ChevronLeft size={20} strokeWidth={2.5} />
-              </button>
+                {images.map((image, index) => (
+                  <button
+                    aria-label={`Показать фото ${index + 1}`}
+                    className="cursor-pointer"
+                    key={`${image}-details-zone-${index}`}
+                    onClick={() => setActiveIndex(index)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    type="button"
+                  />
+                ))}
+              </div>
 
-              <button
-                aria-label="Показать следующее изображение"
-                className="absolute right-4 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:bg-[var(--surface)]"
-                onClick={() => setActiveIndex(activeIndex === images.length - 1 ? 0 : activeIndex + 1)}
-                type="button"
-              >
-                <ChevronRight size={20} strokeWidth={2.5} />
-              </button>
-
-              <div className="absolute bottom-4 left-1/2 rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_58%,transparent)] px-3 py-1 text-xs font-black text-white shadow-[var(--shadow-card)]">
-                {activeIndex + 1} / {images.length}
+              <div className="pointer-events-none absolute bottom-4 left-1/2 z-30 flex w-36 -translate-x-1/2 gap-1.5">
+                {images.map((image, index) => (
+                  <span
+                    className={cn(
+                      "h-1.5 flex-1 rounded-full bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] transition",
+                      index === activeIndex && "bg-white",
+                    )}
+                    key={`${image}-details-indicator-${index}`}
+                  />
+                ))}
               </div>
             </>
           ) : null}
         </div>
 
-        <div className="mx-auto flex max-w-[620px] gap-3 overflow-x-auto pb-1">
+        <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1">
           {images.map((image, index) => (
             <button
               aria-label={`Показать изображение ${index + 1}`}
               className={cn(
-                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition",
+                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
                 activeIndex === index
                   ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                   : "border-[var(--border-soft)] hover:border-[var(--accent)]",

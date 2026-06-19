@@ -4,7 +4,6 @@ import {
   notifyUnauthorized,
 } from "@/src/features/auth/session/auth-events";
 import { publicEnv } from "@/src/shared/config/env";
-import { clearCookieSessionState } from "@/src/shared/lib/auth-session";
 
 const csrfApi = axios.create({
   baseURL: publicEnv.apiOrigin,
@@ -55,7 +54,6 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401 || status === 419) {
-      clearCookieSessionState();
       notifyUnauthorized({
         reason: status === 419 ? "csrf-token-mismatch" : "unauthenticated",
         message: AUTH_CONTINUE_MESSAGE,

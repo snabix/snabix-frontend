@@ -11,15 +11,11 @@ import type { User } from "@/src/entities/user";
 
 const {
   getMeMock,
-  clearCookieSessionStateMock,
-  shouldCheckCookieSessionMock,
   pathnameMock,
   replaceMock,
   toastInfoMock,
 } = vi.hoisted(() => ({
   getMeMock: vi.fn<() => Promise<User>>(),
-  clearCookieSessionStateMock: vi.fn<() => void>(),
-  shouldCheckCookieSessionMock: vi.fn<() => boolean>(),
   pathnameMock: vi.fn<() => string>(),
   replaceMock: vi.fn<(href: string) => void>(),
   toastInfoMock: vi.fn<(message: string) => void>(),
@@ -33,18 +29,6 @@ vi.mock("@/src/entities/user", async () => {
   return {
     ...actual,
     getMe: getMeMock,
-  };
-});
-
-vi.mock("@/src/shared/lib/auth-session", async () => {
-  const actual = await vi.importActual<
-    typeof import("@/src/shared/lib/auth-session")
-  >("@/src/shared/lib/auth-session");
-
-  return {
-    ...actual,
-    clearCookieSessionState: clearCookieSessionStateMock,
-    shouldCheckCookieSession: shouldCheckCookieSessionMock,
   };
 });
 
@@ -76,8 +60,6 @@ const mockUser: User = {
 describe("SessionProvider", () => {
   beforeEach(() => {
     getMeMock.mockReset();
-    clearCookieSessionStateMock.mockReset();
-    shouldCheckCookieSessionMock.mockReset();
     pathnameMock.mockReset();
     replaceMock.mockReset();
     toastInfoMock.mockReset();
@@ -85,24 +67,7 @@ describe("SessionProvider", () => {
     useUserStore.setState(useUserStore.getInitialState(), true);
   });
 
-  it("marks session as checked immediately when hydration is not needed", async () => {
-    shouldCheckCookieSessionMock.mockReturnValue(false);
-
-    render(<SessionProvider />);
-
-    await waitFor(() => {
-      const state = useUserStore.getState();
-
-      expect(state.user).toBeNull();
-      expect(state.isLoading).toBe(false);
-      expect(state.hasCheckedSession).toBe(true);
-    });
-
-    expect(getMeMock).not.toHaveBeenCalled();
-  });
-
-  it("hydrates user when session should be restored", async () => {
-    shouldCheckCookieSessionMock.mockReturnValue(true);
+  it("hydrates user from the server session on startup", async () => {
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);
@@ -115,11 +80,10 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearCookieSessionStateMock).not.toHaveBeenCalled();
+    expect(getMeMock).toHaveBeenCalledTimes(1);
   });
 
-  it("clears session and removes token when getMe fails", async () => {
-    shouldCheckCookieSessionMock.mockReturnValue(true);
+  it("clears local session when getMe fails", async () => {
     getMeMock.mockRejectedValue(new Error("Unauthorized"));
 
     render(<SessionProvider />);
@@ -132,11 +96,10 @@ describe("SessionProvider", () => {
       expect(state.hasCheckedSession).toBe(true);
     });
 
-    expect(clearCookieSessionStateMock).toHaveBeenCalledTimes(1);
+    expect(getMeMock).toHaveBeenCalledTimes(1);
   });
 
   it("clears local user state when unauthorized event is received", async () => {
-    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);
@@ -160,7 +123,6 @@ describe("SessionProvider", () => {
   });
 
   it("shows friendly sign-in prompt and redirects protected pages on unauthorized event", async () => {
-    shouldCheckCookieSessionMock.mockReturnValue(true);
     getMeMock.mockResolvedValue(mockUser);
 
     render(<SessionProvider />);

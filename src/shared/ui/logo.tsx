@@ -11,18 +11,18 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
         return (
             <Link
                 aria-label="SNABIX — главная"
-                className="inline-flex h-10 w-[182px] shrink-0 items-center sm:h-11 sm:w-[204px]"
+                className="inline-flex h-10 w-[136px] shrink-0 items-center sm:h-11 sm:w-[152px]"
                 href={href}
             >
                 <Image
                     alt="SNABIX"
                     className="h-auto w-full object-contain object-left"
-                    height={190}
+                    height={582}
                     priority
-                    sizes="(min-width: 640px) 204px, 182px"
+                    sizes="(min-width: 640px) 152px, 136px"
                     src="/snabix.png"
                     unoptimized
-                    width={1536}
+                    width={1143}
                 />
             </Link>
         );
@@ -31,16 +31,16 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
     return (
         <Link aria-label="SNABIX — главная" className="inline-flex items-center" href={href}>
       <span
-          className="relative flex h-12 w-16 shrink-0 items-center justify-center overflow-hidden">
+          className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
         <Image
             alt="SNABIX"
             className="h-full w-full object-contain"
-            height={190}
+            height={582}
             priority
-            sizes="64px"
+            sizes="48px"
             src="/snabix.png"
             unoptimized
-            width={1536}
+            width={1143}
         />
       </span>
         </Link>

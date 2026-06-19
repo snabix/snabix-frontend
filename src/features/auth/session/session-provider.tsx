@@ -9,10 +9,6 @@ import {
   AUTH_UNAUTHORIZED_EVENT,
   type AuthUnauthorizedEventDetail,
 } from "@/src/features/auth/session/auth-events";
-import {
-  clearCookieSessionState,
-  shouldCheckCookieSession,
-} from "@/src/shared/lib/auth-session";
 
 export function SessionProvider() {
   const hasHydratedSessionRef = useRef(false);
@@ -26,13 +22,6 @@ export function SessionProvider() {
   );
 
   const hydrateSession = useEffectEvent(async () => {
-    if (!shouldCheckCookieSession()) {
-      clearUser();
-      setLoading(false);
-      setHasCheckedSession(true);
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -40,7 +29,6 @@ export function SessionProvider() {
       setUser(user);
     } catch {
       clearUser();
-      clearCookieSessionState();
     } finally {
       setLoading(false);
       setHasCheckedSession(true);

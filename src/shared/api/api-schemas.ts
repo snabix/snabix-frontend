@@ -36,13 +36,13 @@ const userAddressSchema = z.object({
     name: z.string(),
     fullName: z.string().optional(),
     label: z.string(),
-  }).passthrough(),
+  }).strict(),
   city: z.object({
     id: z.number(),
     name: z.string(),
     label: z.string(),
-  }).passthrough().nullable(),
-}).passthrough();
+  }).strict().nullable(),
+}).strict();
 
 const userAvatarSchema = z.object({
   id: z.number(),
@@ -51,7 +51,7 @@ const userAvatarSchema = z.object({
   mimeType: nullableStringSchema,
   size: z.number(),
   humanReadableSize: z.string(),
-}).passthrough();
+}).strict();
 
 export const userSchema = z.object({
   id: z.string(),
@@ -63,7 +63,7 @@ export const userSchema = z.object({
   isActive: z.boolean(),
   emailVerifiedAt: nullableStringSchema,
   avatar: userAvatarSchema.nullable(),
-}).passthrough();
+}).strict();
 
 export const activeUserSessionSchema = z.object({
   id: z.string(),
@@ -73,11 +73,11 @@ export const activeUserSessionSchema = z.object({
   type: z.enum(["desktop", "mobile", "tablet"]),
   isCurrent: z.boolean(),
   lastActivityAt: nullableStringSchema,
-}).passthrough();
+}).strict();
 
 export const activeUserSessionsResponseSchema = z.object({
   items: z.array(activeUserSessionSchema),
-}).passthrough();
+}).strict();
 
 export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = z.lazy(() => z.object({
   id: stringOrNumberSchema,
@@ -93,14 +93,14 @@ export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = z.lazy(() => 
   path: nullableStringSchema,
   depth: z.number(),
   children: z.array(categoryNodeSchema),
-}).passthrough());
+}).strict());
 
 const categoryAttributeDependencyRuleSchema = z.object({
   attributeDefinitionId: z.number().optional(),
   attributeSlug: z.string().optional(),
   operator: z.enum(["equals", "not_equals", "in", "not_in", "filled", "empty"]),
   value: z.unknown().optional(),
-}).passthrough();
+}).strict();
 
 export const categoryAttributeDefinitionSchema = z.object({
   id: z.number(),
@@ -129,7 +129,7 @@ export const categoryAttributeDefinitionSchema = z.object({
   isActive: z.boolean(),
   appliesToChildren: z.boolean(),
   sortOrder: z.number(),
-}).passthrough();
+}).strict();
 
 const listingCategorySchema = z.object({
   id: stringOrNumberSchema,
@@ -144,8 +144,8 @@ const listingCategorySchema = z.object({
     id: stringOrNumberSchema,
     name: z.string(),
     slug: z.string(),
-  }).passthrough()).optional(),
-}).passthrough();
+  }).strict()).optional(),
+}).strict();
 
 const listingAttributeValueItemSchema = z.object({
   attributeDefinitionId: z.number(),
@@ -155,7 +155,7 @@ const listingAttributeValueItemSchema = z.object({
   typeLabel: nullableStringSchema,
   value: listingAttributeValueSchema,
   displayValue: nullableStringSchema,
-}).passthrough();
+}).strict();
 
 const listingLocationSchema = z.object({
   source: z.string(),
@@ -166,23 +166,23 @@ const listingLocationSchema = z.object({
     name: z.string(),
     fullName: nullableStringSchema.optional(),
     label: z.string(),
-  }).passthrough(),
+  }).strict(),
   city: z.object({
     id: z.number(),
     name: z.string(),
     label: z.string(),
     lat: nullableStringSchema.optional(),
     lon: nullableStringSchema.optional(),
-  }).passthrough().nullable(),
+  }).strict().nullable(),
   addressLine: nullableStringSchema,
   display: nullableStringSchema,
   coordinates: z.object({
     lat: z.union([z.number(), z.string()]).nullable(),
     lng: z.union([z.number(), z.string()]).nullable(),
-  }).passthrough().optional(),
+  }).strict().optional(),
   mapProvider: nullableStringSchema.optional(),
   mapPlaceId: nullableStringSchema.optional(),
-}).passthrough();
+}).strict();
 
 const listingBaseSchema = z.object({
   id: z.string(),
@@ -207,7 +207,7 @@ const listingBaseSchema = z.object({
     fileName: z.string(),
     order: z.number(),
     isMain: z.boolean(),
-  }).passthrough()).optional(),
+  }).strict()).optional(),
   location: listingLocationSchema.nullable().optional(),
   isFavorite: z.boolean().optional(),
   sellerRating: z.number().nullable().optional(),
@@ -222,7 +222,7 @@ const listingBaseSchema = z.object({
   publishedAt: nullableStringSchema,
   expiresAt: nullableStringSchema,
   attributeValues: z.array(listingAttributeValueItemSchema),
-}).passthrough();
+}).strict();
 
 export const publicListingItemSchema = listingBaseSchema;
 
@@ -232,20 +232,20 @@ export const listingItemSchema = listingBaseSchema.extend({
   contactPhone: nullableStringSchema,
   contactEmail: nullableStringSchema,
   rejectionReason: nullableStringSchema,
-}).passthrough();
+}).strict();
 
 const newsMediaSchema = z.object({
   id: z.number(),
   url: z.string(),
   fileName: z.string(),
   mimeType: nullableStringSchema,
-}).passthrough();
+}).strict();
 
 const newsAuthorSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string(),
-}).passthrough();
+}).strict();
 
 const newsContentBlockBaseSchema = z.object({
   id: z.string(),
@@ -265,7 +265,7 @@ const newsContentBlockBaseSchema = z.object({
   typeValue: z.number(),
   typeLabel: z.string(),
   sortOrder: z.number(),
-}).passthrough();
+}).strict();
 
 export const newsContentBlockSchema = newsContentBlockBaseSchema.extend({
   text: z.string().optional(),
@@ -299,8 +299,8 @@ export const newsPostItemSchema = z.object({
   publishedAt: nullableStringSchema,
   createdAt: nullableStringSchema,
   updatedAt: nullableStringSchema,
-}).passthrough();
+}).strict();
 
 export const newsPostDetailSchema = newsPostItemSchema.extend({
   contentBlocks: z.array(newsContentBlockSchema),
-}).passthrough();
+}).strict();

@@ -4,6 +4,7 @@ import type { BlogPost } from "@/src/screens/blog/model/posts";
 import { BlogHeroCarousel } from "@/src/screens/blog/ui/blog-hero-carousel";
 import { BlogTiltCard, type BlogTiltCardPost } from "@/src/screens/blog/ui/blog-tilt-card";
 import { Container } from "@/src/shared/ui/container";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 type BlogPageProps = {
   posts: BlogPost[];
@@ -120,10 +121,11 @@ function FeaturedArticle({ post }: { post?: BlogPost }) {
       className="inverted-surface group relative min-h-[460px] overflow-hidden rounded-[28px] border shadow-[var(--shadow-card)]"
       href={`/blog/${post.slug}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <MediaImage
         alt=""
-        className="absolute inset-0 h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-105"
+        className="object-cover grayscale transition-transform duration-700 group-hover:scale-105"
+        fill
+        sizes="(min-width: 1024px) 55vw, 100vw"
         src={post.imageUrl}
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--palette-midnight)_92%,transparent),color-mix(in_srgb,var(--palette-midnight)_62%,transparent),color-mix(in_srgb,var(--palette-midnight)_18%,transparent))]" />

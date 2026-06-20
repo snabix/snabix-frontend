@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ImageIcon, ImagePlus, X } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 type ListingMediaGalleryProps = {
   imageUrl?: string | null;
@@ -39,10 +40,11 @@ export function ListingMediaGallery({
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
         <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
           {activeImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <MediaImage
               alt={title}
-              className="max-h-full max-w-full object-contain"
+              className="object-contain p-3"
+              fill
+              sizes="(min-width: 1024px) 70vw, 100vw"
               src={activeImage}
             />
           ) : (
@@ -88,7 +90,7 @@ export function ListingMediaGallery({
             <button
               aria-label={`Показать изображение ${index + 1}`}
               className={cn(
-                "size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
+                "relative size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
                 activeIndex === index
                   ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                   : "border-[var(--border-soft)] hover:border-[var(--accent)]",
@@ -98,10 +100,11 @@ export function ListingMediaGallery({
               type="button"
             >
               {image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <MediaImage
                   alt={`${title} ${index + 1}`}
-                  className="h-full w-full rounded-xl object-contain"
+                  className="rounded-xl object-contain p-1"
+                  fill
+                  sizes="84px"
                   src={image}
                 />
               ) : (
@@ -119,10 +122,11 @@ export function ListingMediaGallery({
   return (
     <div className="absolute inset-0">
       {activeImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <MediaImage
           alt={`${title}. Фото ${activeIndex + 1} из ${images.length}`}
-          className="h-full w-full object-cover"
+          className="object-cover"
+          fill
+          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 100vw"
           src={activeImage}
         />
       ) : (
@@ -203,10 +207,11 @@ export function ListingMediaUploadGrid({
           className="group relative aspect-[4/3] overflow-hidden rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_12%,var(--surface))]"
           key={preview.id}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <MediaImage
             alt={preview.name}
-            className="h-full w-full object-cover"
+            className="object-cover"
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             src={preview.url}
           />
           <button

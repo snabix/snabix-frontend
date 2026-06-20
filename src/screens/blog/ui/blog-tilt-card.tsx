@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState, type MouseEvent } from "react";
 import type { BlogPost } from "@/src/screens/blog/model/posts";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 export type BlogTiltCardPost = Omit<BlogPost, "contentBlocks" | "icon">;
 
@@ -70,10 +71,11 @@ export function BlogTiltCard({ index, post }: BlogTiltCardProps) {
       </div>
 
       <div className="relative h-48 overflow-hidden border-b border-current/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <MediaImage
           alt=""
-          className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-105"
+          className="object-cover grayscale transition-transform duration-700 group-hover:scale-105"
+          fill
+          sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
           src={post.imageUrl}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.28))]" />

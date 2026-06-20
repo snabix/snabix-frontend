@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Pause, Play } from "lucide-react";
 import { blogHeroSlides } from "@/src/screens/blog/model/posts";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 export function BlogHeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -36,10 +37,11 @@ export function BlogHeroCarousel() {
           ].join(" ")}
           key={slide.title}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <MediaImage
             alt=""
-            className="h-full w-full object-cover grayscale"
+            className="object-cover grayscale"
+            fill
+            sizes="100vw"
             src={slide.imageUrl}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--palette-midnight)_92%,transparent)_0%,color-mix(in_srgb,var(--palette-midnight)_68%,transparent)_45%,color-mix(in_srgb,var(--palette-midnight)_22%,transparent)_100%)]" />

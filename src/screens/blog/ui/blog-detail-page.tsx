@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Clock3 } from "lucide-react";
 import type { BlogContentBlock, BlogPost } from "@/src/screens/blog/model/posts";
 import { Container } from "@/src/shared/ui/container";
+import { MediaImage } from "@/src/shared/ui/media-image";
 import { Button } from "@/src/shared/ui/shadcn/button";
 
 type BlogDetailPageProps = {
@@ -18,10 +19,11 @@ export function BlogDetailPage({ post }: BlogDetailPageProps) {
           <div className="relative z-10 rounded-[28px] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_76%,var(--palette-light-gray)),color-mix(in_srgb,var(--surface)_94%,transparent))] dark:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface)_94%,var(--palette-midnight)),var(--surface))]">
             <section className="grid min-h-[560px] overflow-hidden rounded-[28px] border-b border-[var(--border-soft)] lg:grid-cols-[0.92fr_1fr]">
               <div className="inverted-surface relative overflow-hidden p-6 sm:p-8">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <MediaImage
                   alt=""
-                  className="absolute inset-0 h-full w-full object-cover opacity-34 grayscale"
+                  className="object-cover opacity-34 grayscale"
+                  fill
+                  sizes="(min-width: 1024px) 46vw, 100vw"
                   src={post.imageUrl}
                 />
                 <div className="absolute inset-0 opacity-50">
@@ -306,12 +308,15 @@ function ImageBlock({
 
   return (
     <figure className={compact ? "" : "overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)]"}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        alt={caption ?? ""}
-        className={compact ? "h-64 w-full object-cover grayscale" : "h-[420px] w-full object-cover grayscale"}
-        src={imageUrl}
-      />
+      <div className={compact ? "relative h-64" : "relative h-[420px]"}>
+        <MediaImage
+          alt={caption ?? ""}
+          className="object-cover grayscale"
+          fill
+          sizes="(min-width: 1024px) 70vw, 100vw"
+          src={imageUrl}
+        />
+      </div>
       {caption ? (
         <figcaption className="p-4 text-sm font-semibold leading-6 text-[var(--text-muted)]">
           {caption}

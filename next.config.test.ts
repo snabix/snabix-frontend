@@ -1,5 +1,6 @@
 import {
   createContentSecurityPolicy,
+  createImageRemotePatterns,
   createSecurityHeaders,
 } from "./next.config";
 
@@ -49,5 +50,26 @@ describe("Next.js security headers", () => {
         expect.objectContaining({ key: "Strict-Transport-Security" }),
       ]),
     );
+  });
+});
+
+describe("Next.js image sources", () => {
+  it("allows only the configured API origin and the editorial image host", () => {
+    expect(
+      createImageRemotePatterns("http://localhost:8080/api/v1"),
+    ).toEqual([
+      {
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+        port: "",
+        protocol: "https",
+      },
+      {
+        hostname: "localhost",
+        pathname: "/**",
+        port: "8080",
+        protocol: "http",
+      },
+    ]);
   });
 });

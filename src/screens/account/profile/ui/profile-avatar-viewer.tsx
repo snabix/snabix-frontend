@@ -5,6 +5,7 @@ import type {
   AvatarOffset,
 } from "@/src/features/profile";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { MediaImage } from "@/src/shared/ui/media-image";
 import { Slider } from "@/src/shared/ui/shadcn/slider";
 
 type ProfileAvatarViewerProps = {
@@ -57,10 +58,11 @@ export function ProfileAvatarViewer({
                 className="relative grid size-[min(68vw,360px)] cursor-grab touch-none place-items-center overflow-hidden rounded-full bg-[var(--brand)] active:cursor-grabbing"
                 onPointerDown={onAvatarMovePointerDownAction}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <MediaImage
                   alt="Предпросмотр нового аватара"
-                  className="pointer-events-none h-full w-full select-none object-cover"
+                  className="pointer-events-none select-none object-cover"
+                  fill
+                  sizes="360px"
                   src={avatarDraft.previewUrl}
                   style={{
                     transform: `translate(${avatarOffset.x}px, ${avatarOffset.y}px) scale(${avatarScale})`,

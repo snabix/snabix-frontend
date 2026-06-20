@@ -4,48 +4,35 @@ import type {
 } from "@/src/entities/category";
 import { z } from "zod";
 import {
-  api,
   categoryAttributeDefinitionSchema,
   categoryNodeSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
+  getData,
 } from "@/src/shared/api";
 
 export async function listRootCategories(): Promise<CategoryNode[]> {
-  const response = await api.get<ApiDataResponse<unknown>>("/categories/list");
-
-  return parseApiContract(
+  return getData(
     categoryNodeSchema.array(),
-    unwrapApiData(response.data),
-    "Ответ списка категорий не соответствует ожидаемому формату.",
-  ) as CategoryNode[];
+    "/categories/list",
+    { errorMessage: "Ответ списка категорий не соответствует ожидаемому формату." },
+  );
 }
 
 export async function showCategoryBranch(categoryId: string | number): Promise<CategoryNode> {
-  const response = await api.get<ApiDataResponse<unknown>>(
-    `/categories/${categoryId}/branch`,
-  );
-
-  return parseApiContract(
+  return getData(
     categoryNodeSchema,
-    unwrapApiData(response.data),
-    "Ответ ветки категории не соответствует ожидаемому формату.",
-  ) as CategoryNode;
+    `/categories/${categoryId}/branch`,
+    { errorMessage: "Ответ ветки категории не соответствует ожидаемому формату." },
+  );
 }
 
 export async function getCategoryAttributes(categoryId: string | number): Promise<CategoryAttributeDefinition[]> {
-  const response = await api.get<ApiDataResponse<unknown>>(
-    `/categories/${categoryId}/attributes`,
-  );
-
-  const payload = parseApiContract(
+  const payload = await getData(
     categoryAttributesPayloadSchema,
-    unwrapApiData(response.data),
-    "Ответ характеристик категории не соответствует ожидаемому формату.",
+    `/categories/${categoryId}/attributes`,
+    { errorMessage: "Ответ характеристик категории не соответствует ожидаемому формату." },
   );
 
-  return payload.items as CategoryAttributeDefinition[];
+  return payload.items;
 }
 
 const categoryAttributesPayloadSchema = z.object({

@@ -1,10 +1,7 @@
 import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
 import {
-  api,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
+  postData,
 } from "@/src/shared/api";
 
 export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
@@ -31,11 +28,10 @@ export type CreateListingPayload = {
 };
 
 export async function createListing(payload: CreateListingPayload): Promise<ListingItem> {
-  const response = await api.post<ApiDataResponse<unknown>>("/listings", payload);
-
-  return parseApiContract(
+  return postData(
     listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ создания объявления не соответствует ожидаемому формату.",
+    "/listings",
+    payload,
+    { errorMessage: "Ответ создания объявления не соответствует ожидаемому формату." },
   );
 }

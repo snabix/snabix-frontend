@@ -1,10 +1,7 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
+  patchData,
 } from "@/src/shared/api";
 import type { CreateListingPayload } from "./create-listing";
 
@@ -14,11 +11,10 @@ export async function updateListing(
   listingId: string,
   payload: UpdateListingPayload,
 ): Promise<ListingItem> {
-  const response = await api.patch<ApiDataResponse<unknown>>(`/listings/${listingId}`, payload);
-
-  return parseApiContract(
+  return patchData(
     listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ обновления объявления не соответствует ожидаемому формату.",
+    `/listings/${listingId}`,
+    payload,
+    { errorMessage: "Ответ обновления объявления не соответствует ожидаемому формату." },
   );
 }

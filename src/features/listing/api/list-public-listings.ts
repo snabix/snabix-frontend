@@ -1,12 +1,8 @@
 import type { PublicListingItem } from "@/src/entities/listing";
 import {
-  api,
-  paginatedContractSchema,
-  parseApiContract,
+  getPaginated,
   publicListingItemSchema,
-  type ApiDataResponse,
   type ApiPaginatedData,
-  unwrapApiPagination,
 } from "@/src/shared/api";
 
 export type ListPublicListingsParams = {
@@ -24,25 +20,22 @@ export type ListPublicListingsParams = {
 };
 
 export async function listPublicListings(params: ListPublicListingsParams = {}): Promise<ApiPaginatedData<PublicListingItem>> {
-  const response = await api.get<ApiDataResponse<unknown>>("/public/listings", {
-    params: {
-      page: params.page ?? 1,
-      perPage: params.perPage ?? 15,
-      categoryId: params.categoryId,
-      type: params.type,
-      minPrice: params.minPrice,
-      maxPrice: params.maxPrice,
-      regionId: params.regionId,
-      cityId: params.cityId,
-      regionQuery: params.regionQuery?.trim() || undefined,
-      cityQuery: params.cityQuery?.trim() || undefined,
-      sort: params.sort,
+  return getPaginated(publicListingItemSchema, "/public/listings", {
+    config: {
+      params: {
+        page: params.page ?? 1,
+        perPage: params.perPage ?? 15,
+        categoryId: params.categoryId,
+        type: params.type,
+        minPrice: params.minPrice,
+        maxPrice: params.maxPrice,
+        regionId: params.regionId,
+        cityId: params.cityId,
+        regionQuery: params.regionQuery?.trim() || undefined,
+        cityQuery: params.cityQuery?.trim() || undefined,
+        sort: params.sort,
+      },
     },
+    errorMessage: "Ответ публичного списка объявлений не соответствует ожидаемому формату.",
   });
-
-  return parseApiContract(
-    paginatedContractSchema(publicListingItemSchema),
-    unwrapApiPagination(response.data as ApiDataResponse<ApiPaginatedData<unknown>>),
-    "Ответ публичного списка объявлений не соответствует ожидаемому формату.",
-  ) as ApiPaginatedData<PublicListingItem>;
 }

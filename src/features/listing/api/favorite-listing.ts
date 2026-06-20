@@ -1,13 +1,10 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
+  deleteData,
+  getPaginated,
   listingItemSchema,
-  paginatedContractSchema,
-  parseApiContract,
-  type ApiDataResponse,
+  postData,
   type ApiPaginatedData,
-  unwrapApiData,
-  unwrapApiPagination,
 } from "@/src/shared/api";
 
 export type ListFavoriteListingsParams = {
@@ -20,42 +17,25 @@ export const FAVORITE_LISTINGS_MAX_PER_PAGE = 48;
 export async function listFavoriteListings(
   params: ListFavoriteListingsParams = {},
 ): Promise<ApiPaginatedData<ListingItem>> {
-  const response = await api.get<ApiDataResponse<ApiPaginatedData<unknown>>>(
-    "/listings/favorites",
-    {
+  return getPaginated(listingItemSchema, "/listings/favorites", {
+    config: {
       params: {
         page: params.page ?? 1,
         perPage: params.perPage ?? 12,
       },
     },
-  );
-
-  return parseApiContract(
-    paginatedContractSchema(listingItemSchema),
-    unwrapApiPagination(response.data),
-    "Ответ списка избранных объявлений не соответствует ожидаемому формату.",
-  ) as ApiPaginatedData<ListingItem>;
+    errorMessage: "Ответ списка избранных объявлений не соответствует ожидаемому формату.",
+  });
 }
 
 export async function addListingFavorite(listingId: string): Promise<ListingItem> {
-  const response = await api.post<ApiDataResponse<unknown>>(`/listings/${listingId}/favorite`);
-
-  return parseFavoriteListingResponse(response.data, "Ответ добавления в избранное не соответствует ожидаемому формату.");
+  return postData(listingItemSchema, `/listings/${listingId}/favorite`, undefined, {
+    errorMessage: "Ответ добавления в избранное не соответствует ожидаемому формату.",
+  });
 }
 
 export async function removeListingFavorite(listingId: string): Promise<ListingItem> {
-  const response = await api.delete<ApiDataResponse<unknown>>(`/listings/${listingId}/favorite`);
-
-  return parseFavoriteListingResponse(response.data, "Ответ удаления из избранного не соответствует ожидаемому формату.");
-}
-
-function parseFavoriteListingResponse(
-  response: ApiDataResponse<unknown>,
-  fallbackMessage: string,
-): ListingItem {
-  return parseApiContract(
-    listingItemSchema,
-    unwrapApiData(response),
-    fallbackMessage,
-  );
+  return deleteData(listingItemSchema, `/listings/${listingId}/favorite`, {
+    errorMessage: "Ответ удаления из избранного не соответствует ожидаемому формату.",
+  });
 }

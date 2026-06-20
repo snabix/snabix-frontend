@@ -1,12 +1,8 @@
 import type { NewsPostItem } from "@/src/entities/news/model/types";
 import {
-  api,
+  getPaginated,
   newsPostItemSchema,
-  paginatedContractSchema,
-  parseApiContract,
-  type ApiDataResponse,
   type ApiPaginatedData,
-  unwrapApiPagination,
 } from "@/src/shared/api";
 
 export type ListNewsPostsParams = {
@@ -17,18 +13,15 @@ export type ListNewsPostsParams = {
 };
 
 export async function listNewsPosts(params: ListNewsPostsParams = {}): Promise<ApiPaginatedData<NewsPostItem>> {
-  const response = await api.get<ApiDataResponse<unknown>>("/news", {
-    params: {
-      page: params.page ?? 1,
-      perPage: params.perPage ?? 12,
-      category: params.category,
-      featuredOnly: params.featuredOnly,
+  return getPaginated(newsPostItemSchema, "/news", {
+    config: {
+      params: {
+        page: params.page ?? 1,
+        perPage: params.perPage ?? 12,
+        category: params.category,
+        featuredOnly: params.featuredOnly,
+      },
     },
+    errorMessage: "Ответ списка новостей не соответствует ожидаемому формату.",
   });
-
-  return parseApiContract(
-    paginatedContractSchema(newsPostItemSchema),
-    unwrapApiPagination(response.data as ApiDataResponse<ApiPaginatedData<unknown>>),
-    "Ответ списка новостей не соответствует ожидаемому формату.",
-  ) as ApiPaginatedData<NewsPostItem>;
 }

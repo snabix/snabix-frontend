@@ -1,18 +1,14 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
+  postData,
 } from "@/src/shared/api";
 
 export async function submitListingForReview(listingId: string): Promise<ListingItem> {
-  const response = await api.post<ApiDataResponse<unknown>>(`/listings/${listingId}/submit-for-review`);
-
-  return parseApiContract(
+  return postData(
     listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ отправки объявления на проверку не соответствует ожидаемому формату.",
+    `/listings/${listingId}/submit-for-review`,
+    undefined,
+    { errorMessage: "Ответ отправки объявления на проверку не соответствует ожидаемому формату." },
   );
 }

@@ -10,6 +10,22 @@ const listingAttributeValueSchema = z.union([
   z.null(),
 ]);
 
+type CategoryNodeContract = {
+  id: string | number;
+  catalogType: number;
+  catalogTypeLabel: string;
+  parentId: string | number | null;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  path: string | null;
+  depth: number;
+  children: CategoryNodeContract[];
+};
+
 const userAddressSchema = z.object({
   id: z.string(),
   label: nullableStringSchema,
@@ -63,7 +79,7 @@ export const activeUserSessionsResponseSchema = z.object({
   items: z.array(activeUserSessionSchema),
 }).passthrough();
 
-export const categoryNodeSchema: z.ZodType = z.lazy(() => z.object({
+export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = z.lazy(() => z.object({
   id: stringOrNumberSchema,
   catalogType: z.number(),
   catalogTypeLabel: z.string(),

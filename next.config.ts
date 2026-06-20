@@ -5,6 +5,13 @@ type SecurityHeadersOptions = {
   environment: "development" | "production" | "test";
 };
 
+type ImageRemotePattern = {
+  hostname: string;
+  pathname: string;
+  port: string;
+  protocol: "http" | "https";
+};
+
 function getApiOrigin(apiUrl: string | undefined): string | null {
   if (!apiUrl) {
     return null;
@@ -17,6 +24,38 @@ function getApiOrigin(apiUrl: string | undefined): string | null {
       "NEXT_PUBLIC_API_URL must contain an absolute URL to configure the Content Security Policy.",
     );
   }
+}
+
+export function createImageRemotePatterns(
+  apiUrl: string | undefined,
+): ImageRemotePattern[] {
+  const patterns: ImageRemotePattern[] = [
+    {
+      hostname: "images.unsplash.com",
+      pathname: "/**",
+      port: "",
+      protocol: "https",
+    },
+  ];
+
+  if (!apiUrl) {
+    return patterns;
+  }
+
+  const parsedApiUrl = new URL(apiUrl);
+
+  if (parsedApiUrl.protocol !== "http:" && parsedApiUrl.protocol !== "https:") {
+    throw new Error("NEXT_PUBLIC_API_URL must use the HTTP or HTTPS protocol.");
+  }
+
+  patterns.push({
+    hostname: parsedApiUrl.hostname,
+    pathname: "/**",
+    port: parsedApiUrl.port,
+    protocol: parsedApiUrl.protocol.slice(0, -1) as "http" | "https",
+  });
+
+  return patterns;
 }
 
 export function createContentSecurityPolicy({
@@ -100,6 +139,11 @@ const nextConfig: NextConfig = {
         source: "/:path*",
       },
     ];
+  },
+  images: {
+    dangerouslyAllowLocalIP: environment === "development",
+    maximumRedirects: 0,
+    remotePatterns: createImageRemotePatterns(process.env.NEXT_PUBLIC_API_URL),
   },
 };
 

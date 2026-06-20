@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { ArrowLeft, ArrowRight, Plus, Star, Trash2 } from "lucide-react";
 import type { ListingMediaItem } from "@/src/entities/listing";
 import { cn } from "@/src/shared/lib/utils";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 const MAX_LISTING_IMAGES = 8;
 
@@ -171,11 +172,12 @@ function MediaListRow({
 }: MediaListRowProps) {
   return (
     <article className="flex items-center gap-3 rounded-[18px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_96%,transparent)] p-2.5 pr-3">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <MediaImage
         alt={name}
         className="size-14 rounded-[12px] object-cover"
+        height={56}
         src={thumbnailUrl}
+        width={56}
       />
 
       <div className="min-w-0 flex-1">

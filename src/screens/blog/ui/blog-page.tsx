@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Rss } from "lucide-react";
-import type { BlogPost } from "@/src/screens/blog/model/posts";
+import type { BlogPost } from "@/src/screens/blog/model/types";
 import { BlogHeroCarousel } from "@/src/screens/blog/ui/blog-hero-carousel";
 import { BlogTiltCard, type BlogTiltCardPost } from "@/src/screens/blog/ui/blog-tilt-card";
 import { Container } from "@/src/shared/ui/container";

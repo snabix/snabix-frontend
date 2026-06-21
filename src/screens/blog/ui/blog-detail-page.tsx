@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Clock3 } from "lucide-react";
-import type { BlogContentBlock, BlogPost } from "@/src/screens/blog/model/posts";
+import type { BlogContentBlock, BlogPost } from "@/src/screens/blog/model/types";
 import { Container } from "@/src/shared/ui/container";
 import { MediaImage } from "@/src/shared/ui/media-image";
 import { Button } from "@/src/shared/ui/shadcn/button";

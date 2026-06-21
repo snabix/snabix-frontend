@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Pause, Play } from "lucide-react";
-import { blogHeroSlides } from "@/src/screens/blog/model/posts";
+import { blogHeroSlides } from "@/src/screens/blog/model/hero-slides";
 import { MediaImage } from "@/src/shared/ui/media-image";
 
 export function BlogHeroCarousel() {

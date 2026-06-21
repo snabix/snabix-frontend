@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useState, type MouseEvent } from "react";
-import type { BlogPost } from "@/src/screens/blog/model/posts";
+import type { BlogPost } from "@/src/screens/blog/model/types";
 import { MediaImage } from "@/src/shared/ui/media-image";
 
 export type BlogTiltCardPost = Omit<BlogPost, "contentBlocks" | "icon">;

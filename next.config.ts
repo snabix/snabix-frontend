@@ -28,6 +28,7 @@ function getApiOrigin(apiUrl: string | undefined): string | null {
 
 export function createImageRemotePatterns(
   apiUrl: string | undefined,
+  environment: SecurityHeadersOptions["environment"] = "production",
 ): ImageRemotePattern[] {
   const patterns: ImageRemotePattern[] = [
     {
@@ -48,12 +49,24 @@ export function createImageRemotePatterns(
     throw new Error("NEXT_PUBLIC_API_URL must use the HTTP or HTTPS protocol.");
   }
 
-  patterns.push({
-    hostname: parsedApiUrl.hostname,
-    pathname: "/**",
-    port: parsedApiUrl.port,
-    protocol: parsedApiUrl.protocol.slice(0, -1) as "http" | "https",
-  });
+  const hostnames = new Set([parsedApiUrl.hostname]);
+
+  if (environment === "development") {
+    if (parsedApiUrl.hostname === "localhost") {
+      hostnames.add("127.0.0.1");
+    } else if (parsedApiUrl.hostname === "127.0.0.1") {
+      hostnames.add("localhost");
+    }
+  }
+
+  for (const hostname of hostnames) {
+    patterns.push({
+      hostname,
+      pathname: "/**",
+      port: parsedApiUrl.port,
+      protocol: parsedApiUrl.protocol.slice(0, -1) as "http" | "https",
+    });
+  }
 
   return patterns;
 }
@@ -75,6 +88,16 @@ export function createContentSecurityPolicy({
 
   if (apiOrigin) {
     connectSources.push(apiOrigin);
+  }
+
+  if (isDevelopment && apiOrigin) {
+    const parsedApiOrigin = new URL(apiOrigin);
+
+    if (parsedApiOrigin.hostname === "localhost") {
+      remoteMediaSources.push(apiOrigin.replace("localhost", "127.0.0.1"));
+    } else if (parsedApiOrigin.hostname === "127.0.0.1") {
+      remoteMediaSources.push(apiOrigin.replace("127.0.0.1", "localhost"));
+    }
   }
 
   return [
@@ -143,7 +166,10 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowLocalIP: environment === "development",
     maximumRedirects: 0,
-    remotePatterns: createImageRemotePatterns(process.env.NEXT_PUBLIC_API_URL),
+    remotePatterns: createImageRemotePatterns(
+      process.env.NEXT_PUBLIC_API_URL,
+      environment,
+    ),
   },
 };
 

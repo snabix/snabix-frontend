@@ -16,13 +16,24 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
             >
                 <Image
                     alt="SNABIX"
-                    className="h-auto w-full object-contain object-left"
+                    className="h-full w-full object-contain object-left dark:hidden"
                     height={582}
                     priority
                     sizes="(min-width: 640px) 152px, 136px"
-                    src="/snabix.png"
+                    src="/snabix-black.png"
                     unoptimized
                     width={1143}
+                />
+                <Image
+                    alt=""
+                    aria-hidden="true"
+                    className="hidden h-full w-full object-contain object-left dark:block"
+                    height={916}
+                    priority
+                    sizes="(min-width: 640px) 152px, 136px"
+                    src="/snabix-white.png"
+                    unoptimized
+                    width={1718}
                 />
             </Link>
         );
@@ -34,13 +45,24 @@ export function Logo({ href = "/", variant = "mark" }: LogoProps) {
           className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
         <Image
             alt="SNABIX"
-            className="h-full w-full object-contain"
+            className="h-full w-full object-contain dark:hidden"
             height={582}
             priority
             sizes="48px"
-            src="/snabix.png"
+            src="/snabix-black.png"
             unoptimized
             width={1143}
+        />
+        <Image
+            alt=""
+            aria-hidden="true"
+            className="hidden h-full w-full object-contain dark:block"
+            height={916}
+            priority
+            sizes="48px"
+            src="/snabix-white.png"
+            unoptimized
+            width={1718}
         />
       </span>
         </Link>

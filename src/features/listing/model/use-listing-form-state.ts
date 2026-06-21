@@ -555,6 +555,8 @@ export function useListingFormState({
   };
 }
 
+export type ListingFormState = ReturnType<typeof useListingFormState>;
+
 function moveMediaToFront(media: ListingMediaItem[], mediaId: number): ListingMediaItem[] {
   const selectedMedia = media.find((item) => item.id === mediaId);
 

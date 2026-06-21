@@ -1,7 +1,7 @@
 import {
   activeUserSessionsResponseSchema,
+  getData,
   api,
-  parseApiContract,
   type ApiDataResponse,
   unwrapApiData,
 } from "@/src/shared/api";
@@ -11,11 +11,10 @@ import type {
 } from "@/src/features/auth/model/types";
 
 export async function listActiveSessions(): Promise<ActiveUserSession[]> {
-  const response = await api.get<ApiDataResponse<unknown>>("/auth/sessions");
-  const data = parseApiContract(
+  const data = await getData(
     activeUserSessionsResponseSchema,
-    unwrapApiData(response.data),
-    "Ответ активных сессий не соответствует ожидаемому формату.",
+    "/auth/sessions",
+    { errorMessage: "Ответ активных сессий не соответствует ожидаемому формату." },
   );
 
   return data.items;

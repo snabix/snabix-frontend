@@ -1,10 +1,7 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
+  postData,
 } from "@/src/shared/api";
 
 export async function uploadListingMedia(
@@ -17,19 +14,17 @@ export async function uploadListingMedia(
     formData.append("images[]", image);
   });
 
-  const response = await api.post<ApiDataResponse<unknown>>(
+  return postData(
+    listingItemSchema,
     `/listings/${listingId}/media`,
     formData,
     {
-      headers: {
-        "Content-Type": "multipart/form-data",
+      config: {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
+      errorMessage: "Ответ загрузки изображений объявления не соответствует ожидаемому формату.",
     },
-  );
-
-  return parseApiContract(
-    listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ загрузки изображений объявления не соответствует ожидаемому формату.",
   );
 }

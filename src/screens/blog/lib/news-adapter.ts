@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { NewsContentBlock, NewsPostDetail, NewsPostItem } from "@/src/entities/news";
-import type { BlogContentBlock, BlogPost } from "@/src/screens/blog/model/posts";
+import type { BlogContentBlock, BlogPost } from "@/src/screens/blog/model/types";
 
 const fallbackImages = [
   "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&h=700&q=80",

@@ -16,6 +16,23 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Testing
+
+Unit and integration tests:
+
+```bash
+npm run test
+```
+
+Browser e2e tests:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+Playwright starts Next.js on port `3000` or reuses an existing local server. Set `E2E_PORT` to use another port. Frontend e2e tests use deterministic stateful API interception; Laravel API behavior remains covered by backend feature tests.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

@@ -1,23 +1,16 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
+  deleteData,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
 } from "@/src/shared/api";
 
 export async function deleteListingMedia(
   listingId: string,
   mediaId: number,
 ): Promise<ListingItem> {
-  const response = await api.delete<ApiDataResponse<unknown>>(
-    `/listings/${listingId}/media/${mediaId}`,
-  );
-
-  return parseApiContract(
+  return deleteData(
     listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ удаления изображения объявления не соответствует ожидаемому формату.",
+    `/listings/${listingId}/media/${mediaId}`,
+    { errorMessage: "Ответ удаления изображения объявления не соответствует ожидаемому формату." },
   );
 }

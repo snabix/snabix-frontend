@@ -1,18 +1,13 @@
 import type { ListingItem } from "@/src/entities/listing";
 import {
-  api,
+  getData,
   listingItemSchema,
-  parseApiContract,
-  type ApiDataResponse,
-  unwrapApiData,
 } from "@/src/shared/api";
 
 export async function showListing(listingId: string): Promise<ListingItem> {
-  const response = await api.get<ApiDataResponse<unknown>>(`/listings/${listingId}`);
-
-  return parseApiContract(
+  return getData(
     listingItemSchema,
-    unwrapApiData(response.data),
-    "Ответ детальной страницы объявления не соответствует ожидаемому формату.",
+    `/listings/${listingId}`,
+    { errorMessage: "Ответ детальной страницы объявления не соответствует ожидаемому формату." },
   );
 }

@@ -2,6 +2,7 @@
 
 import { type MouseEvent } from "react";
 import Link from "next/link";
+import { MediaImage } from "@/src/shared/ui/media-image";
 
 type CategoryTiltCardProps = {
   href: string;
@@ -39,12 +40,13 @@ export function CategoryTiltCard({ href, imageUrl, title }: CategoryTiltCardProp
         style={{ transform: initialTransform }}
       >
 
-        <div className="aspect-square overflow-hidden rounded-[22px]">
+        <div className="relative aspect-square overflow-hidden rounded-[22px]">
           {imageUrl !== null && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <MediaImage
               alt={title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              fill
+              sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw"
               src={imageUrl}
             />
           )}

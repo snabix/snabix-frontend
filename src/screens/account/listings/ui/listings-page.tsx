@@ -175,14 +175,6 @@ export function ListingsPage() {
 
         <section className="surface-card rounded-[30px] p-6 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">
-                Карточки объявлений
-              </h2>
-              <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                Переключайте компактную сетку и широкий список под текущий сценарий просмотра.
-              </p>
-            </div>
             <div className="flex w-full flex-wrap items-center justify-between gap-3 lg:w-auto">
               <div className="flex flex-wrap items-center gap-3">
                 <select

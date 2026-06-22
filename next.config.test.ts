@@ -31,6 +31,9 @@ describe("Next.js security headers", () => {
     expect(policy).toContain(
       "connect-src 'self' ws: wss: http://localhost:8080",
     );
+    expect(policy).toContain(
+      "img-src 'self' data: blob: http://localhost:8080 https: http://127.0.0.1:8080",
+    );
   });
 
   it("adds HSTS only to production responses", () => {
@@ -54,7 +57,7 @@ describe("Next.js security headers", () => {
 });
 
 describe("Next.js image sources", () => {
-  it("allows only the configured API origin and the editorial image host", () => {
+  it("allows only the configured API origin and the editorial image host in production", () => {
     expect(
       createImageRemotePatterns("http://localhost:8080/api/v1"),
     ).toEqual([
@@ -66,6 +69,34 @@ describe("Next.js image sources", () => {
       },
       {
         hostname: "localhost",
+        pathname: "/**",
+        port: "8080",
+        protocol: "http",
+      },
+    ]);
+  });
+
+  it("allows both loopback hostnames for local backend media", () => {
+    expect(
+      createImageRemotePatterns(
+        "http://localhost:8080/api/v1",
+        "development",
+      ),
+    ).toEqual([
+      {
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+        port: "",
+        protocol: "https",
+      },
+      {
+        hostname: "localhost",
+        pathname: "/**",
+        port: "8080",
+        protocol: "http",
+      },
+      {
+        hostname: "127.0.0.1",
         pathname: "/**",
         port: "8080",
         protocol: "http",

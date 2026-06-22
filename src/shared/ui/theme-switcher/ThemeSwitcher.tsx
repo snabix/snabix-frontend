@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { markThemePreferenceAsManual } from "./time-based-theme";
 
 export function ThemeSwitcher() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -21,6 +22,7 @@ export function ThemeSwitcher() {
 
   const isDark = resolvedTheme === "dark";
   const handleToggle = () => {
+    markThemePreferenceAsManual();
     setTheme(isDark ? "light" : "dark");
   };
 

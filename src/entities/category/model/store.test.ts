@@ -112,6 +112,17 @@ describe("useCategoryStore", () => {
     expect(listRootCategoriesMock).toHaveBeenCalledTimes(2);
   });
 
+  it("reloads roots after cache invalidation", async () => {
+    listRootCategoriesMock.mockResolvedValue([rootCategory]);
+
+    await useCategoryStore.getState().loadRoots();
+    useCategoryStore.getState().invalidateRoots();
+    await useCategoryStore.getState().loadRoots();
+
+    expect(listRootCategoriesMock).toHaveBeenCalledTimes(2);
+    expect(useCategoryStore.getState().rootsStatus).toBe("success");
+  });
+
   it("loads a branch once and keeps it in cache", async () => {
     showCategoryBranchMock.mockResolvedValue(branchCategory);
 
@@ -131,6 +142,54 @@ describe("useCategoryStore", () => {
     await useCategoryStore.getState().loadBranch("1");
 
     expect(showCategoryBranchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("reloads a fresh branch when force flag is passed", async () => {
+    showCategoryBranchMock.mockResolvedValue(branchCategory);
+
+    await useCategoryStore.getState().loadBranch("1");
+    await useCategoryStore.getState().loadBranch("1", { force: true });
+
+    expect(showCategoryBranchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("reloads a branch after its cache timestamp expires", async () => {
+    showCategoryBranchMock.mockResolvedValue(branchCategory);
+    useCategoryStore.setState({
+      branches: { 1: branchCategory },
+      branchesFetchedAt: { 1: Date.now() - 6 * 60 * 1000 },
+      branchStatuses: { 1: "success" },
+    });
+
+    await useCategoryStore.getState().loadBranch("1");
+
+    expect(showCategoryBranchMock).toHaveBeenCalledTimes(1);
+    expect(useCategoryStore.getState().branchesFetchedAt["1"]).toBeGreaterThan(
+      Date.now() - 60 * 1000,
+    );
+  });
+
+  it("invalidates only the selected branch", async () => {
+    const secondBranch = {
+      ...branchCategory,
+      id: 3,
+      name: "Бытовая техника",
+      slug: "appliances",
+    };
+    showCategoryBranchMock.mockImplementation(async (categoryId) => (
+      categoryId === "1" ? branchCategory : secondBranch
+    ));
+
+    await useCategoryStore.getState().loadBranch("1");
+    await useCategoryStore.getState().loadBranch("3");
+    useCategoryStore.getState().invalidateBranch("1");
+    await useCategoryStore.getState().loadBranch("1");
+    await useCategoryStore.getState().loadBranch("3");
+
+    expect(showCategoryBranchMock).toHaveBeenCalledTimes(3);
+    expect(showCategoryBranchMock).toHaveBeenCalledWith("1");
+    expect(showCategoryBranchMock).toHaveBeenCalledWith("3");
+    expect(useCategoryStore.getState().branchStatuses["3"]).toBe("success");
   });
 
   it("loads category attributes once and reuses fresh cache", async () => {

@@ -60,6 +60,19 @@ export async function patchData<TData, TPayload = undefined>(
   return parseResponse(schema, response.data, options.errorMessage);
 }
 
+export async function putData<TData, TPayload = undefined>(
+  schema: z.ZodType<TData>,
+  url: string,
+  payload: TPayload | undefined,
+  options: ContractRequestOptions,
+): Promise<TData> {
+  const response = options.config
+    ? await api.put<ApiDataResponse<unknown>>(url, payload, options.config)
+    : await api.put<ApiDataResponse<unknown>>(url, payload);
+
+  return parseResponse(schema, response.data, options.errorMessage);
+}
+
 export async function deleteData<TData>(
   schema: z.ZodType<TData>,
   url: string,

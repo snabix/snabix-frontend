@@ -1,7 +1,8 @@
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { renderCategoryIcon, type CategoryNode } from "@/src/entities/category";
+import { type CategoryNode } from "@/src/entities/category";
 import { Skeleton } from "@/src/shared/ui/skeleton";
 
 type CategoryCatalogRootsProps = {
@@ -82,18 +83,34 @@ export function CategoryCatalogRoots({
                   onFocus={() => onRootFocusAction(categoryId)}
                   onMouseEnter={() => onRootHoverAction(categoryId)}
                 >
-                  <div className="flex w-full items-center justify-between gap-4">
+                  {category.icon ? (
                     <span
+                      aria-hidden="true"
                       className={[
-                        "grid size-10 shrink-0 place-items-center rounded-2xl transition-colors",
-                        isActive
-                          ? "bg-[var(--accent-soft)] text-[var(--brand)]"
-                          : "bg-[var(--accent-soft)] text-[var(--brand-deep)] group-hover:text-[var(--brand)]",
+                        "pointer-events-none absolute -left-4 top-1/2 size-24 -translate-y-1/2 overflow-hidden rounded-full",
+                        "[mask-image:radial-gradient(circle_at_center,black_0%,black_58%,transparent_84%)]",
+                        "[-webkit-mask-image:radial-gradient(circle_at_center,black_0%,black_58%,transparent_84%)]",
+                        "opacity-90 transition-opacity duration-200",
+                        "before:absolute before:inset-0 before:rounded-full before:bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--surface)_20%,transparent),transparent_70%)] before:content-['']",
                       ].join(" ")}
                     >
-                      {renderCategoryIcon(category, 18)}
+                      <Image
+                        alt=""
+                        className={[
+                          "size-full object-contain mix-blend-multiply",
+                          "opacity-[0.5] saturate-100 transition-all duration-200",
+                          "group-hover:opacity-[0.62] group-hover:saturate-[1.08]",
+                          isActive ? "opacity-[0.68] saturate-[1.08]" : "",
+                        ].join(" ")}
+                        height={96}
+                        src={category.icon}
+                        width={96}
+                      />
                     </span>
-                    <div className="min-w-0 flex-1">
+                  ) : null}
+
+                  <div className="relative z-10 flex w-full items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1 pl-12">
                       <p className="text-[16px] font-bold leading-6 transition-colors duration-200">
                         {category.name}
                       </p>

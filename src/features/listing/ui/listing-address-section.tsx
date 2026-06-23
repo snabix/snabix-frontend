@@ -148,10 +148,10 @@ function AddressModeButton({
   return (
     <button
       className={[
-        "rounded-2xl border px-4 py-4 text-left transition hover:-translate-y-0.5",
+        "rounded-2xl border px-4 py-4 text-left transition-colors duration-200",
         isActive
           ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--brand-deep)] shadow-[var(--shadow-card)]"
-          : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)]",
+          : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
       ].join(" ")}
       onClick={onClickAction}
       type="button"

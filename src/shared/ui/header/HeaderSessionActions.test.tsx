@@ -1,10 +1,16 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useUserStore, type User } from "@/src/entities/user";
 import { HeaderSessionActions } from "@/src/shared/ui/header/HeaderSessionActions";
 
 vi.mock("@/src/shared/ui/theme-switcher/ThemeSwitcher", () => ({
-  ThemeSwitcher: () => <button type="button">Тема</button>,
+  ThemeSwitcher: ({ compact }: { compact?: boolean }) => (
+    <button
+      aria-label="Переключить тему"
+      data-compact={compact ? "true" : "false"}
+      type="button"
+    />
+  ),
 }));
 
 const mockUser: User = {
@@ -59,7 +65,7 @@ describe("HeaderSessionActions", () => {
     expect(screen.queryByLabelText("Открыть меню пользователя")).not.toBeInTheDocument();
   });
 
-  it("shows user menu only after checked authenticated session", () => {
+  it("shows user menu only after checked authenticated session", async () => {
     useUserStore.setState({
       hasCheckedSession: true,
       user: mockUser,
@@ -74,5 +80,15 @@ describe("HeaderSessionActions", () => {
 
     expect(screen.getByLabelText("Открыть меню пользователя")).toBeInTheDocument();
     expect(screen.queryByText("Войти")).not.toBeInTheDocument();
+
+    fireEvent.pointerDown(screen.getByLabelText("Открыть меню пользователя"), {
+      button: 0,
+      ctrlKey: false,
+    });
+
+    expect(await screen.findByText("Настройки")).toBeInTheDocument();
+    expect(screen.getByText("Тема")).toBeInTheDocument();
+    expect(screen.getByLabelText("Переключить тему")).toHaveAttribute("data-compact", "true");
+    expect(screen.getAllByRole("separator")).toHaveLength(2);
   });
 });

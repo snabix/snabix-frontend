@@ -120,10 +120,10 @@ export function ListingCategorySection({
               return (
                 <button
                   className={[
-                    "flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]",
+                    "flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-colors duration-200",
                     isActive
                       ? `${activeSelectionClass} text-white`
-                      : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)]",
+                      : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
                   ].join(" ")}
                   key={option.value}
                   onClick={() => setCondition(option.value)}
@@ -178,10 +178,10 @@ function ListingTypeCards({
     return (
       <button
         className={[
-          "flex items-start justify-between rounded-[24px] border px-5 py-5 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]",
+          "flex items-start justify-between rounded-[24px] border px-5 py-5 text-left transition-colors duration-200",
           isActive
             ? activeSelectionClass
-            : "border-[var(--border-soft)] bg-[var(--surface)] hover:border-[var(--accent)]",
+            : "border-[var(--border-soft)] bg-[var(--surface)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
         ].join(" ")}
         key={option.value}
         onClick={() => onTypeChangeAction(option.value)}

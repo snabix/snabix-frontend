@@ -52,8 +52,8 @@ export function Header() {
       ].join(" ")}
     >
       <Container>
-        <div className="surface-card grid items-center gap-4 rounded-[30px] px-4 py-4 sm:px-6 xl:grid-cols-[auto_minmax(260px,1fr)_auto]">
-          <div className="flex items-center gap-5">
+        <div className="surface-card grid items-center gap-3 rounded-[30px] px-4 py-4 sm:px-5 xl:grid-cols-[auto_minmax(260px,1fr)_auto]">
+          <div className="flex items-center gap-2.5">
             <Logo variant="wordmark" />
 
             <nav className="hidden items-center gap-1 lg:flex">

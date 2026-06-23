@@ -38,7 +38,7 @@ export function ListingSubmitBar({
         <div className="grid w-full max-w-[560px] gap-3 sm:grid-cols-2">
           <button
             aria-label="Сохранить как черновик"
-            className="inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-semibold text-[var(--brand-deep)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
+            className="inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-semibold text-[var(--brand-deep)] transition-colors duration-200 hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--brand)]"
             disabled={isFormBusy}
             onClick={() => submitForm(true)}
             type="button"
@@ -51,7 +51,7 @@ export function ListingSubmitBar({
 
           <button
             aria-label="Отправить на проверку"
-            className="inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_78%,var(--brand)))] px-4 text-sm font-semibold text-[var(--active-button-text)] shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:brightness-105 disabled:opacity-60"
+            className="inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_78%,var(--brand)))] px-4 text-sm font-semibold text-[var(--active-button-text)] shadow-[var(--shadow-card)] transition duration-200 hover:brightness-110 disabled:opacity-60"
             disabled={isFormBusy}
             onClick={() => submitForm(false)}
             type="button"

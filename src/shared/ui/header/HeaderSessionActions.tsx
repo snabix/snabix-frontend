@@ -10,7 +10,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/src/shared/ui/shadcn/dropdown-menu";
-import { ThemeSwitcher } from "@/src/shared/ui/theme-switcher/ThemeSwitcher";
 
 type HeaderSessionActionsProps = {
   isPending: boolean;
@@ -26,7 +25,6 @@ export function HeaderSessionActions({
 
   return (
     <div className="flex items-center gap-3">
-      <ThemeSwitcher />
       <HeaderNotificationsMenu />
 
       {!hasCheckedSession ? (

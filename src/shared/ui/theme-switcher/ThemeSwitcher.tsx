@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { markThemePreferenceAsManual } from "./time-based-theme";
 
-export function ThemeSwitcher() {
+export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -21,6 +22,7 @@ export function ThemeSwitcher() {
 
   const isDark = resolvedTheme === "dark";
   const handleToggle = () => {
+    markThemePreferenceAsManual();
     setTheme(isDark ? "light" : "dark");
   };
 
@@ -28,7 +30,8 @@ export function ThemeSwitcher() {
     <button
       aria-label={isDark ? "Включить светлую тему" : "Включить темную тему"}
       className={[
-        "inline-flex h-11 items-center gap-3 rounded-full ",
+        "inline-flex items-center gap-3 rounded-full",
+        compact ? "h-6" : "h-11",
         "border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)]",
         "transition-colors duration-300 hover:border-[var(--accent)]",
         "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",

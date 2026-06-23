@@ -133,9 +133,9 @@ export class SnabixApiMock {
       this.mediaUploads += 1;
       this.listing = {
         ...this.listing,
-        imageUrl: "/snabix.png",
-        imageUrls: ["/snabix.png"],
-        media: [{ id: 1, url: "/snabix.png", fileName: "listing.png", order: 1, isMain: true }],
+        imageUrl: "/snabix-black.png",
+        imageUrls: ["/snabix-black.png"],
+        media: [{ id: 1, url: "/snabix-black.png", fileName: "listing.png", order: 1, isMain: true }],
       };
       await this.fulfill(route, 200, { data: this.listing });
       return;

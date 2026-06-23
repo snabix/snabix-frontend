@@ -187,6 +187,15 @@ describe("ListingForm integration", () => {
       expect(pushMock).not.toHaveBeenCalled();
       expect(screen.getByRole("button", { name: "Повторить загрузку фото" })).toBeInTheDocument();
     });
+
+    uploadListingMediaMock.mockResolvedValue(undefined);
+    fireEvent.click(screen.getByRole("button", { name: "Повторить загрузку фото" }));
+
+    await waitFor(() => {
+      expect(uploadListingMediaMock).toHaveBeenCalledTimes(2);
+      expect(toastSuccessMock).toHaveBeenCalledWith("Фотографии объявления загружены.");
+      expect(pushMock).toHaveBeenCalledWith("/account/listings/listing-1");
+    });
   });
 
   it("shows and prunes conditional attributes by dependency rules", async () => {

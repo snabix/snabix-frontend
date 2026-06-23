@@ -87,9 +87,6 @@ export function FavoritesPage() {
           <h1 className="font-heading mt-5 max-w-3xl text-4xl font-black leading-[1.04] text-[var(--brand-deep)] sm:text-5xl">
             Сохраняйте объявления, к которым хотите вернуться позже.
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-muted)] sm:text-base">
-            Избранное помогает не терять интересные товары и услуги, сравнивать предложения и быстрее возвращаться к продавцам.
-          </p>
         </div>
       </section>
 

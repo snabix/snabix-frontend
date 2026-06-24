@@ -50,7 +50,7 @@ describe("strict API schemas", () => {
     expect(result.success).toBe(false);
   });
 
-  it("allows provider-specific fields in extensible news blocks", () => {
+  it("rejects fields that do not belong to a typed news block", () => {
     const result = newsContentBlockSchema.safeParse({
       id: "block-1",
       type: "paragraph",
@@ -58,9 +58,9 @@ describe("strict API schemas", () => {
       typeLabel: "Абзац",
       sortOrder: 1,
       text: "Текст новости.",
-      futureProviderField: { enabled: true },
+      author: "Лишнее поле для paragraph.",
     });
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 });

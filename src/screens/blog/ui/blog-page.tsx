@@ -28,6 +28,20 @@ export function BlogPage({ posts: allPosts }: BlogPageProps) {
               <FeaturedArticle post={featuredPost} />
             </section>
 
+            {allPosts.length === 0 ? (
+              <section className="mt-5 rounded-[28px] border border-dashed border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_74%,transparent)] p-8 text-center">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                  Новости с сервера
+                </p>
+                <h2 className="font-heading mx-auto mt-4 max-w-2xl text-4xl font-black uppercase leading-[0.9] tracking-[-0.08em] text-[var(--brand-deep)] sm:text-5xl">
+                  Пока нет опубликованных материалов
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-[var(--text-muted)]">
+                  Здесь появятся новости, созданные и опубликованные в админке.
+                </p>
+              </section>
+            ) : null}
+
             {posts.length > 0 ? (
               <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {posts.map((post, index) => (

@@ -12,23 +12,71 @@ export type NewsAuthor = {
 };
 
 export type NewsContentBlock = {
-  id: string;
-  type: "lead" | "paragraph" | "quote" | "split" | "steps" | "metrics" | "image" | "gallery" | "table" | "imageGrid" | "cta";
   typeValue: number;
   typeLabel: string;
   sortOrder: number;
-  text?: string;
-  author?: string;
-  title?: string;
-  buttonLabel?: string;
-  href?: string;
-  imageUrl?: string;
-  caption?: string;
-  media?: NewsMedia;
-  items?: Array<Record<string, unknown>>;
-  columns?: string[];
-  rows?: Array<Array<string | number | boolean | null>>;
-};
+  id: string;
+} & (
+  | {
+      type: "lead" | "paragraph";
+      text: string;
+    }
+  | {
+      type: "quote";
+      author?: string;
+      text: string;
+    }
+  | {
+      type: "split" | "steps";
+      items: Array<{
+        title: string;
+        text: string;
+      }>;
+    }
+  | {
+      type: "metrics";
+      items: Array<{
+        label: string;
+        value: string;
+      }>;
+    }
+  | {
+      type: "image";
+      caption?: string;
+      imageUrl?: string;
+      media?: NewsMedia;
+    }
+  | {
+      type: "gallery";
+      items: Array<{
+        caption?: string;
+        imageUrl?: string;
+        media?: NewsMedia;
+      }>;
+    }
+  | {
+      type: "table";
+      columns: string[];
+      rows: Array<Array<string | number | boolean | null>>;
+    }
+  | {
+      type: "imageGrid";
+      items: Array<{
+        title?: string;
+        text?: string;
+        caption?: string;
+        imageUrl?: string;
+        media?: NewsMedia;
+      }>;
+    }
+  | {
+      type: "cta";
+      buttonLabel?: string;
+      href?: string;
+      text?: string;
+      title?: string;
+    }
+);
 
 export type NewsPostItem = {
   id: string;
@@ -40,6 +88,7 @@ export type NewsPostItem = {
   eyebrow: string | null;
   description: string;
   thesis: string | null;
+  readingTime: string | null;
   isFeatured: boolean;
   viewsCount: number;
   imageUrl?: string | null;

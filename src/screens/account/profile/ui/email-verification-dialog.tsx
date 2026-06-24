@@ -37,11 +37,7 @@ export function EmailVerificationDialog({
 }: EmailVerificationDialogProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const codeCells = Array.from({ length: 6 }, (_, index) => {
-    const symbol = code[index];
-
-    return symbol && symbol.trim() !== "" ? symbol : "*";
-  });
+  const codeCells = Array.from({ length: 6 });
 
   useEffect(() => {
     if (!isOpen) {
@@ -136,7 +132,7 @@ export function EmailVerificationDialog({
           <div className="mt-7">
             <div className="rounded-[24px] border border-[color-mix(in_srgb,var(--accent)_14%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_90%,var(--background))] p-4 shadow-[var(--shadow-card)]">
               <div className="grid grid-cols-6 gap-2.5">
-                {codeCells.map((cell, index) => (
+                {codeCells.map((_, index) => (
                   <label className="relative block" key={index}>
                     <span className="sr-only">Цифра {index + 1}</span>
                     <input
@@ -158,12 +154,6 @@ export function EmailVerificationDialog({
                       type="text"
                       value={code[index] ?? ""}
                     />
-
-                    {!code[index] ? (
-                      <div className="pointer-events-none absolute inset-0 grid place-items-center text-lg font-extrabold text-[var(--text-muted)]">
-                        {cell}
-                      </div>
-                    ) : null}
                   </label>
                 ))}
               </div>

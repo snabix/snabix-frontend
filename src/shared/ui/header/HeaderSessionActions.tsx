@@ -1,7 +1,15 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Bell, CheckCheck } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
+import {
+  listNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  type NotificationFeed,
+} from "@/src/entities/notification";
 import { HeaderAuthActions } from "@/src/shared/ui/header/HeaderAuthActions";
 import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
 import {
@@ -25,7 +33,7 @@ export function HeaderSessionActions({
 
   return (
     <div className="flex items-center gap-3">
-      <HeaderNotificationsMenu />
+      <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
 
       {!hasCheckedSession ? (
         <div
@@ -48,26 +56,171 @@ export function HeaderSessionActions({
   );
 }
 
-function HeaderNotificationsMenu() {
+function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
+  const [feed, setFeed] = useState<NotificationFeed>({ items: [], unreadCount: 0 });
+  const latestNotificationId = useRef<string | null>(null);
+  const canPlaySound = useRef(false);
+  const visibleFeed = isEnabled ? feed : { items: [], unreadCount: 0 };
+
+  useEffect(() => {
+    const unlockSound = () => {
+      canPlaySound.current = true;
+    };
+
+    window.addEventListener("pointerdown", unlockSound, { once: true });
+    return () => window.removeEventListener("pointerdown", unlockSound);
+  }, []);
+
+  useEffect(() => {
+    if (!isEnabled) {
+      latestNotificationId.current = null;
+      return;
+    }
+
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const nextFeed = await listNotifications();
+        const nextLatestId = nextFeed.items[0]?.id ?? null;
+
+        if (
+          latestNotificationId.current !== null
+          && nextLatestId !== null
+          && nextLatestId !== latestNotificationId.current
+          && canPlaySound.current
+        ) {
+          playNotificationSound();
+        }
+
+        latestNotificationId.current = nextLatestId;
+        if (isMounted) setFeed(nextFeed);
+      } catch {
+        // Session handling is centralized in the API interceptor.
+      }
+    };
+
+    void load();
+    const intervalId = window.setInterval(load, 30_000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, [isEnabled]);
+
+  const handleMarkAllRead = async () => {
+    await markAllNotificationsRead();
+    setFeed((current) => ({
+      items: current.items.map((item) => ({ ...item, isRead: true })),
+      unreadCount: 0,
+    }));
+  };
+
+  const handleNotificationOpen = async (notificationId: string, isRead: boolean) => {
+    if (!isRead) {
+      await markNotificationRead(notificationId);
+      setFeed((current) => ({
+        items: current.items.map((item) => (
+          item.id === notificationId ? { ...item, isRead: true } : item
+        )),
+        unreadCount: Math.max(current.unreadCount - 1, 0),
+      }));
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Уведомления"
-          className="grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
+          className="relative grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
           type="button"
         >
           <Bell size={18} />
+          {visibleFeed.unreadCount > 0 ? (
+            <span className="absolute right-1 top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-black text-white">
+              {visibleFeed.unreadCount > 99 ? "99+" : visibleFeed.unreadCount}
+            </span>
+          ) : null}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 rounded-[24px] p-3">
-        <DropdownMenuLabel className="px-2 text-sm font-black text-[var(--brand-deep)]">
-          Уведомления
-        </DropdownMenuLabel>
-        <div className="mt-2 rounded-2xl border border-dashed border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-4 text-sm leading-6 text-[var(--text-muted)]">
-          Пока уведомлений нет.
+      <DropdownMenuContent align="end" className="w-[min(92vw,380px)] rounded-[24px] p-3">
+        <div className="flex items-center justify-between gap-3 px-2 py-1">
+          <DropdownMenuLabel className="p-0 text-sm font-black text-[var(--brand-deep)]">
+            Уведомления
+          </DropdownMenuLabel>
+          {visibleFeed.unreadCount > 0 ? (
+            <button
+              className="inline-flex items-center gap-1 text-xs font-bold text-[var(--accent)]"
+              onClick={handleMarkAllRead}
+              type="button"
+            >
+              <CheckCheck size={14} />
+              Прочитать все
+            </button>
+          ) : null}
         </div>
+
+        {visibleFeed.items.length === 0 ? (
+          <div className="mt-2 rounded-2xl border border-dashed border-[var(--border-soft)] p-4 text-sm leading-6 text-[var(--text-muted)]">
+            Пока уведомлений нет.
+          </div>
+        ) : (
+          <div className="mt-2 max-h-96 overflow-y-auto">
+            {visibleFeed.items.map((notification) => {
+              const content = (
+                <div className="min-w-0">
+                  <div className="flex items-start gap-2">
+                    {!notification.isRead ? <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[var(--accent)]" /> : null}
+                    <div>
+                      <p className="text-sm font-black text-[var(--brand-deep)]">{notification.title}</p>
+                      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notification.body}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+
+              return notification.actionUrl ? (
+                <Link
+                  className="block rounded-xl px-2 py-3 hover:bg-[var(--accent-soft)]"
+                  href={notification.actionUrl}
+                  key={notification.id}
+                  onClick={() => void handleNotificationOpen(notification.id, notification.isRead)}
+                >
+                  {content}
+                </Link>
+              ) : (
+                <button
+                  className="block w-full rounded-xl px-2 py-3 text-left hover:bg-[var(--accent-soft)]"
+                  key={notification.id}
+                  onClick={() => void handleNotificationOpen(notification.id, notification.isRead)}
+                  type="button"
+                >
+                  {content}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+function playNotificationSound() {
+  const AudioContextClass = window.AudioContext;
+  const context = new AudioContextClass();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+
+  oscillator.frequency.setValueAtTime(740, context.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(980, context.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.0001, context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.18);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start();
+  oscillator.stop(context.currentTime + 0.2);
+  oscillator.addEventListener("ended", () => void context.close());
 }

@@ -90,6 +90,7 @@ export type BlogPost = {
   eyebrow: string;
   icon: LucideIcon;
   imageUrl: string;
+  readingTime?: string | null;
   slug: string;
   thesis: string;
   title: string;

@@ -1,7 +1,7 @@
 import { LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { renderCategoryIcon, type CategoryNode } from "@/src/entities/category";
+import { type CategoryNode } from "@/src/entities/category";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Skeleton } from "@/src/shared/ui/skeleton";
 
@@ -175,13 +175,10 @@ function CategoryTitleLink({
 }) {
   return (
     <Link
-      className="inline-flex items-center gap-2 text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
+      className="inline-flex text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
       href={`/?categoryId=${category.id}`}
       onClick={onCategorySelectAction}
     >
-      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--brand-deep)]">
-        {renderCategoryIcon(category, 16)}
-      </span>
       {category.name}
     </Link>
   );

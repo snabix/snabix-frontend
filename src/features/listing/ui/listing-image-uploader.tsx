@@ -78,8 +78,8 @@ export function ListingImageUploader({
 
       <button
         className={cn(
-          "group grid min-h-[220px] w-full place-items-center rounded-[24px] border border-dashed border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_96%,transparent)] px-6 text-center transition duration-200",
-          "hover:border-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_5%,var(--surface))] hover:-translate-y-0.5",
+          "group grid min-h-[220px] w-full place-items-center rounded-[24px] border border-dashed border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_96%,transparent)] px-6 text-center transition-colors duration-200",
+          "hover:border-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_7%,var(--surface))]",
           "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
           (isDisabled || availableSlots <= 0) && "pointer-events-none opacity-50",
         )}

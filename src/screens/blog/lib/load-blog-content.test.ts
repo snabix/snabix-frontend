@@ -43,14 +43,14 @@ describe("blog content loader", () => {
     await expect(loadBlogPosts()).resolves.toEqual([runtimePost]);
   });
 
-  it("uses static posts when runtime list is empty or unavailable", async () => {
+  it("does not replace empty or unavailable runtime list with static posts", async () => {
     listRuntimeBlogPostsMock.mockResolvedValueOnce([]);
 
-    await expect(loadBlogPosts()).resolves.toBe(fallbackBlogPosts);
+    await expect(loadBlogPosts()).resolves.toEqual([]);
 
     listRuntimeBlogPostsMock.mockRejectedValueOnce(new Error("API unavailable"));
 
-    await expect(loadBlogPosts()).resolves.toBe(fallbackBlogPosts);
+    await expect(loadBlogPosts()).resolves.toEqual([]);
   });
 
   it("returns runtime post detail when API is available", async () => {
@@ -59,10 +59,10 @@ describe("blog content loader", () => {
     await expect(loadBlogPost(runtimePost.slug)).resolves.toBe(runtimePost);
   });
 
-  it("falls back by slug and keeps unknown posts missing", async () => {
+  it("keeps post detail missing when runtime API is unavailable", async () => {
     showRuntimeBlogPostMock.mockRejectedValue(new Error("API unavailable"));
 
-    await expect(loadBlogPost(fallbackPost.slug)).resolves.toBe(fallbackPost);
+    await expect(loadBlogPost(fallbackPost.slug)).resolves.toBeNull();
     await expect(loadBlogPost("missing-post")).resolves.toBeNull();
   });
 });

@@ -249,37 +249,104 @@ const newsAuthorSchema = z.object({
 
 const newsContentBlockBaseSchema = z.object({
   id: z.string(),
-  type: z.enum([
-    "lead",
-    "paragraph",
-    "quote",
-    "split",
-    "steps",
-    "metrics",
-    "image",
-    "gallery",
-    "table",
-    "imageGrid",
-    "cta",
-  ]),
   typeValue: z.number(),
   typeLabel: z.string(),
   sortOrder: z.number(),
 }).strict();
 
-export const newsContentBlockSchema = newsContentBlockBaseSchema.extend({
-  text: z.string().optional(),
+const newsLeadBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("lead"),
+  text: z.string(),
+}).strict();
+
+const newsParagraphBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("paragraph"),
+  text: z.string(),
+}).strict();
+
+const newsQuoteBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("quote"),
   author: z.string().optional(),
-  title: z.string().optional(),
+  text: z.string(),
+}).strict();
+
+const newsSplitBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("split"),
+  items: z.array(z.object({
+    title: z.string(),
+    text: z.string(),
+  }).strict()),
+}).strict();
+
+const newsStepsBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("steps"),
+  items: z.array(z.object({
+    title: z.string(),
+    text: z.string(),
+  }).strict()),
+}).strict();
+
+const newsMetricsBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("metrics"),
+  items: z.array(z.object({
+    label: z.string(),
+    value: z.string(),
+  }).strict()),
+}).strict();
+
+const newsImageItemSchema = z.object({
+  caption: z.string().optional(),
+  imageUrl: z.string().optional(),
+  media: newsMediaSchema.optional(),
+}).strict();
+
+const newsImageBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("image"),
+  caption: z.string().optional(),
+  imageUrl: z.string().optional(),
+  media: newsMediaSchema.optional(),
+}).strict();
+
+const newsGalleryBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("gallery"),
+  items: z.array(newsImageItemSchema),
+}).strict();
+
+const newsTableBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("table"),
+  columns: z.array(z.string()),
+  rows: z.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))),
+}).strict();
+
+const newsImageGridBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("imageGrid"),
+  items: z.array(newsImageItemSchema.extend({
+    title: z.string().optional(),
+    text: z.string().optional(),
+  }).strict()),
+}).strict();
+
+const newsCtaBlockSchema = newsContentBlockBaseSchema.extend({
+  type: z.literal("cta"),
   buttonLabel: z.string().optional(),
   href: z.string().optional(),
-  imageUrl: z.string().optional(),
-  caption: z.string().optional(),
-  media: newsMediaSchema.optional(),
-  items: z.array(z.record(z.string(), z.unknown())).optional(),
-  columns: z.array(z.string()).optional(),
-  rows: z.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))).optional(),
-}).passthrough();
+  text: z.string().optional(),
+  title: z.string().optional(),
+}).strict();
+
+export const newsContentBlockSchema = z.discriminatedUnion("type", [
+  newsLeadBlockSchema,
+  newsParagraphBlockSchema,
+  newsQuoteBlockSchema,
+  newsSplitBlockSchema,
+  newsStepsBlockSchema,
+  newsMetricsBlockSchema,
+  newsImageBlockSchema,
+  newsGalleryBlockSchema,
+  newsTableBlockSchema,
+  newsImageGridBlockSchema,
+  newsCtaBlockSchema,
+]);
 
 export const newsPostItemSchema = z.object({
   id: z.string(),
@@ -291,6 +358,7 @@ export const newsPostItemSchema = z.object({
   eyebrow: nullableStringSchema,
   description: z.string(),
   thesis: nullableStringSchema,
+  readingTime: nullableStringSchema,
   isFeatured: z.boolean(),
   viewsCount: z.number(),
   imageUrl: nullableStringSchema.optional(),

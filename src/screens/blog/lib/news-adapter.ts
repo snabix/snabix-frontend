@@ -36,6 +36,7 @@ export function newsPostToBlogPost(post: NewsPostItem | NewsPostDetail, index = 
     eyebrow: post.eyebrow ?? "Snabix journal",
     icon: iconsByCategory[post.category] ?? Newspaper,
     imageUrl: post.imageUrl ?? post.coverMedia?.url ?? fallbackImages[index % fallbackImages.length],
+    readingTime: post.readingTime,
     slug: post.slug,
     thesis: post.thesis ?? post.description,
     title: post.title,
@@ -46,7 +47,7 @@ function newsBlockToBlogBlock(block: NewsContentBlock): BlogContentBlock {
   if (block.type === "lead" || block.type === "paragraph") {
     return {
       type: block.type,
-      text: stringValue(block.text),
+      text: block.text,
     };
   }
 
@@ -54,14 +55,21 @@ function newsBlockToBlogBlock(block: NewsContentBlock): BlogContentBlock {
     return {
       type: "quote",
       author: block.author,
-      text: stringValue(block.text),
+      text: block.text,
     };
   }
 
-  if (block.type === "split" || block.type === "steps" || block.type === "metrics") {
+  if (block.type === "split" || block.type === "steps") {
     return {
       type: block.type,
-      items: itemsValue(block.items),
+      items: block.items,
+    };
+  }
+
+  if (block.type === "metrics") {
+    return {
+      type: "metrics",
+      items: block.items,
     };
   }
 
@@ -77,7 +85,7 @@ function newsBlockToBlogBlock(block: NewsContentBlock): BlogContentBlock {
   if (block.type === "gallery" || block.type === "imageGrid") {
     return {
       type: block.type,
-      items: imageItemsValue(block.items),
+      items: block.items,
     };
   }
 
@@ -89,53 +97,19 @@ function newsBlockToBlogBlock(block: NewsContentBlock): BlogContentBlock {
     };
   }
 
+  if (block.type === "cta") {
+    return {
+      type: "cta",
+      buttonLabel: block.buttonLabel,
+      href: block.href,
+      text: block.text,
+      title: block.title,
+    };
+  }
+
   return {
     type: "cta",
-    buttonLabel: block.buttonLabel,
-    href: block.href,
-    text: block.text,
-    title: block.title,
   };
-}
-
-function stringValue(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
-function itemsValue(items: NewsContentBlock["items"]): Array<{ label: string; text: string; title: string; value: string }> {
-  if (!Array.isArray(items)) {
-    return [];
-  }
-
-  return items.map((item) => ({
-    label: stringValue(item.label),
-    text: stringValue(item.text),
-    title: stringValue(item.title),
-    value: stringValue(item.value),
-  }));
-}
-
-function imageItemsValue(items: NewsContentBlock["items"]) {
-  if (!Array.isArray(items)) {
-    return [];
-  }
-
-  return items.map((item) => ({
-    caption: stringValue(item.caption),
-    imageUrl: stringValue(item.imageUrl),
-    media: isMediaValue(item.media) ? item.media : undefined,
-    text: stringValue(item.text),
-    title: stringValue(item.title),
-  }));
-}
-
-function isMediaValue(value: unknown): value is { url: string; fileName: string } {
-  return typeof value === "object"
-    && value !== null
-    && "url" in value
-    && typeof value.url === "string"
-    && "fileName" in value
-    && typeof value.fileName === "string";
 }
 
 function formatPostDate(value: string | null): string {

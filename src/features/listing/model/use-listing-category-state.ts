@@ -11,6 +11,11 @@ import {
 } from "@/src/features/listing/model/listing-form-constants";
 
 export function useListingCategoryState(initialListing?: ListingItem) {
+  const initialCategoryId =
+    initialListing?.category?.id !== undefined && initialListing.category.id !== null
+      ? String(initialListing.category.id)
+      : null;
+  const initialRootId = resolveInitialRootId(initialListing);
   const roots = useCategoryStore((state) => state.roots);
   const rootsStatus = useCategoryStore((state) => state.rootsStatus);
   const rootsErrorMessage = useCategoryStore((state) => state.rootsErrorMessage);
@@ -20,12 +25,8 @@ export function useListingCategoryState(initialListing?: ListingItem) {
   const loadRoots = useCategoryStore((state) => state.loadRoots);
   const loadBranch = useCategoryStore((state) => state.loadBranch);
   const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
-  const [selectedRootId, setSelectedRootId] = useState<string | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    initialListing?.category?.id !== undefined && initialListing.category.id !== null
-      ? String(initialListing.category.id)
-      : null,
-  );
+  const [selectedRootId, setSelectedRootId] = useState<string | null>(initialRootId);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialCategoryId);
   const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
 
   useEffect(() => {
@@ -124,6 +125,26 @@ export function useListingCategoryState(initialListing?: ListingItem) {
     isLoadingRoots,
     setCondition,
   };
+}
+
+function resolveInitialRootId(initialListing?: ListingItem): string | null {
+  const category = initialListing?.category;
+
+  if (category === undefined || category === null) {
+    return null;
+  }
+
+  const firstBreadcrumb = category.breadcrumbs?.[0];
+
+  if (firstBreadcrumb?.id !== undefined && firstBreadcrumb.id !== null) {
+    return String(firstBreadcrumb.id);
+  }
+
+  if (category.parentId === null) {
+    return String(category.id);
+  }
+
+  return String(category.parentId);
 }
 
 function containsCategoryId(

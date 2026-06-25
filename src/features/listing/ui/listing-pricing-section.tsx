@@ -27,34 +27,15 @@ export function ListingPricingSection({
     setIsNegotiable,
   } = state;
 
-  if (variant === "create") {
-    return (
-      <div className="grid gap-5">
-        <ListingFormField error={errors.price?.message} label="Цена">
-          <Input inputMode="numeric" placeholder="0" {...register("price")} />
-        </ListingFormField>
-
-        <label className="flex items-start gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-4">
-          <Checkbox
-            checked={isNegotiable}
-            onCheckedChange={(checked) => setIsNegotiable(Boolean(checked))}
-          />
-          <div>
-            <p className="text-sm font-semibold text-[var(--brand-deep)]">Имеется ли торг</p>
-            <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-              Покупатели смогут предложить свою цену
-            </p>
-          </div>
-        </label>
-      </div>
-    );
-  }
-
   return (
-    <>
+    <div className="grid gap-4">
       <div className="grid gap-4 md:grid-cols-2">
         <ListingFormField error={errors.price?.message} label="Цена">
-          <Input inputMode="numeric" placeholder="12500" {...register("price")} />
+          <Input
+            inputMode="numeric"
+            placeholder={variant === "create" ? "0" : "12500"}
+            {...register("price")}
+          />
         </ListingFormField>
 
         <ListingFormField error={errors.currency?.message} label="Валюта">
@@ -62,30 +43,32 @@ export function ListingPricingSection({
         </ListingFormField>
       </div>
 
-      {activeType === LISTING_TYPE_PRODUCT ? (
-        <ListingFormField label="Состояние товара">
-          <ListingFormSelect
-            onChangeAction={(value) => setCondition(Number(value))}
-            value={condition}
-          >
-            {conditionOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </ListingFormSelect>
-        </ListingFormField>
-      ) : null}
+      <div className="grid gap-4 md:grid-cols-2">
+        {activeType === LISTING_TYPE_PRODUCT ? (
+          <ListingFormField label="Состояние товара">
+            <ListingFormSelect
+              onChangeAction={(value) => setCondition(Number(value))}
+              value={condition}
+            >
+              {conditionOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </ListingFormSelect>
+          </ListingFormField>
+        ) : (
+          <div />
+        )}
 
-      <label className="flex items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3">
-        <Checkbox
-          checked={isNegotiable}
-          onCheckedChange={(checked) => setIsNegotiable(Boolean(checked))}
-        />
-        <span className="text-sm font-semibold text-[var(--brand-deep)]">
-          Разрешить торг и обсуждение финальной цены
-        </span>
-      </label>
-    </>
+        <label className="flex h-12 items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4">
+          <Checkbox
+            checked={isNegotiable}
+            onCheckedChange={(checked) => setIsNegotiable(Boolean(checked))}
+          />
+          <span className="text-sm font-semibold text-[var(--brand-deep)]">Торг уместен</span>
+        </label>
+      </div>
+    </div>
   );
 }

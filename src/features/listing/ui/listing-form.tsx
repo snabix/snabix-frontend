@@ -4,8 +4,7 @@ import type {
   UpdateListingPayload,
 } from "@/src/features/listing/api";
 import { useListingFormState } from "@/src/features/listing/model/use-listing-form-state";
-import { CreateListingForm } from "@/src/features/listing/ui/create-listing-form";
-import { EditListingForm } from "@/src/features/listing/ui/edit-listing-form";
+import { ListingEditorForm } from "@/src/features/listing/ui/listing-editor-form";
 
 type ListingFormProps = {
   initialListing?: ListingItem;
@@ -26,7 +25,5 @@ export function ListingForm({
     onSubmit: onSubmitAction,
   });
 
-  return mode === "create"
-    ? <CreateListingForm state={state} />
-    : <EditListingForm state={state} />;
+  return <ListingEditorForm mode={mode} state={state} />;
 }

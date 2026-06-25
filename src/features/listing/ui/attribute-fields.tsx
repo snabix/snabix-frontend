@@ -40,7 +40,7 @@ export function AttributeFields({
   );
 
   return (
-    <div className="mt-6 grid gap-4">
+    <div className="grid gap-4">
       {isLoading ? (
         <div className="grid min-h-40 gap-3 rounded-[26px] border border-dashed border-[var(--border-soft)] bg-[var(--surface)] p-5">
           <Skeleton className="h-5 w-1/3" />
@@ -53,26 +53,17 @@ export function AttributeFields({
           title="У этой категории пока нет характеристик"
         />
       ) : (
-        groupedAttributes.map((group) => (
-          <section className="grid gap-3" key={group.name}>
-            <div>
-              <h3 className="font-heading text-base font-black text-[var(--brand-deep)]">
-                {group.name}
-              </h3>
-              <div className="mt-2 h-px bg-[linear-gradient(90deg,var(--border-soft),transparent)]" />
-            </div>
-
-            {group.items.map((attribute) => (
-              <AttributeField
-                attribute={attribute}
-                key={attribute.id}
-                onAttributeChange={onAttributeChangeAction}
-                onMultiselectChange={onMultiselectChangeAction}
-                value={getAttributeValue(attribute, attributeValues)}
-              />
-            ))}
-          </section>
-        ))
+        <div className="grid gap-4">
+          {groupedAttributes.flatMap((group) => group.items).map((attribute) => (
+            <AttributeField
+              attribute={attribute}
+              key={attribute.id}
+              onAttributeChange={onAttributeChangeAction}
+              onMultiselectChange={onMultiselectChangeAction}
+              value={getAttributeValue(attribute, attributeValues)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -90,40 +81,13 @@ function AttributeField({
   value: ListingAttributeValue;
 }) {
   return (
-    <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--surface)] p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-black text-[var(--brand-deep)]">
-            {attribute.name}
-            {attribute.unit ? `, ${attribute.unit}` : ""}
-          </p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-            {attribute.typeLabel}
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-end gap-2">
-          {attribute.showInCard ? (
-            <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)]">
-              в карточке
-            </span>
-          ) : null}
-          {attribute.isRequired ? (
-            <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--brand-deep)]">
-              обязательно
-            </span>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="mt-4">
-        {renderAttributeInput(attribute, value, onAttributeChange, onMultiselectChange)}
-      </div>
-
-      {attribute.helpText ?? attribute.description ? (
-        <p className="mt-3 text-xs font-semibold leading-5 text-[var(--text-muted)]">
-          {attribute.helpText ?? attribute.description}
-        </p>
-      ) : null}
+    <div className="grid gap-2">
+      <p className="text-sm font-black text-[var(--brand-deep)]">
+        {attribute.name}
+        {attribute.unit ? `, ${attribute.unit}` : ""}
+        {attribute.isRequired ? <span className="text-[var(--accent)]"> *</span> : null}
+      </p>
+      {renderAttributeInput(attribute, value, onAttributeChange, onMultiselectChange)}
     </div>
   );
 }

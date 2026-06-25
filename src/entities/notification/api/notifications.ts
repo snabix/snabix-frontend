@@ -37,8 +37,10 @@ const feedSchema = z.object({
   unreadCount: z.number(),
   meta: z.object({
     currentPage: z.number(),
+    from: z.number().nullable().optional(),
     lastPage: z.number(),
     perPage: z.number(),
+    to: z.number().nullable().optional(),
     total: z.number(),
   }).strict(),
 }).strict();

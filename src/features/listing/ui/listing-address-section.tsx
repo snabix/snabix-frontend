@@ -163,7 +163,11 @@ function AddressModeButton({
 }
 
 function formatUserAddress(address: UserAddress): string {
-  return [address.label, address.city?.name, address.addressLine]
+  return [
+    address.region.fullName || address.region.name,
+    address.city?.name,
+    address.addressLine,
+  ]
     .filter(Boolean)
-    .join(" · ") || address.region.name;
+    .join(" -> ");
 }

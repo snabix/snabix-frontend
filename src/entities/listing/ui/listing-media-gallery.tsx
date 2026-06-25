@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { ImageIcon, ImagePlus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight, ImageIcon, ImagePlus, Maximize2, X } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/src/shared/ui/shadcn/dialog";
 import { MediaImage } from "@/src/shared/ui/media-image";
 
 type ListingMediaGalleryProps = {
+  detailsHref?: string;
   imageUrl?: string | null;
   imageUrls?: string[];
   mode?: "card" | "details";
@@ -25,51 +32,73 @@ type ListingMediaUploadGridProps = {
 };
 
 export function ListingMediaGallery({
+  detailsHref,
   imageUrl,
   imageUrls,
   mode = "card",
   title,
 }: ListingMediaGalleryProps) {
+  const router = useRouter();
   const images = normalizeListingImages(imageUrl, imageUrls);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const activeImage = images[activeIndex] ?? images[0] ?? "";
   const hasMultipleImages = images.length > 1;
+  const hasRealImages = images.some(Boolean);
+  const previewImages = images.length > 4 ? images.slice(0, 5) : images;
+  const hiddenImagesCount = Math.max(images.length - 4, 0);
+
+  const openPreview = (index: number) => {
+    if (!hasRealImages) {
+      return;
+    }
+
+    setActiveIndex(index);
+    setIsPreviewOpen(true);
+  };
+
+  const showPreviousImage = () => {
+    setActiveIndex((currentIndex) => (
+      currentIndex === 0 ? images.length - 1 : currentIndex - 1
+    ));
+  };
+
+  const showNextImage = () => {
+    setActiveIndex((currentIndex) => (
+      currentIndex === images.length - 1 ? 0 : currentIndex + 1
+    ));
+  };
 
   if (mode === "details") {
     return (
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
-        <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 shadow-[var(--shadow-card)]">
-          {activeImage ? (
-            <MediaImage
-              alt={title}
-              className="object-contain p-3"
-              fill
-              sizes="(min-width: 1024px) 70vw, 100vw"
-              src={activeImage}
-            />
-          ) : (
-            <ListingMediaPlaceholder />
-          )}
+      <>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
+          <button
+            aria-label="Открыть просмотр фотографий"
+            className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 text-left shadow-[var(--shadow-card)]"
+            disabled={!hasRealImages}
+            onClick={() => openPreview(activeIndex)}
+            type="button"
+          >
+            {activeImage ? (
+              <MediaImage
+                alt={title}
+                className="object-contain p-3"
+                fill
+                sizes="(min-width: 1024px) 70vw, 100vw"
+                src={activeImage}
+              />
+            ) : (
+              <ListingMediaPlaceholder />
+            )}
 
-          {hasMultipleImages ? (
-            <>
-              <div
-                aria-label="Переключение фотографий объявления"
-                className="absolute inset-x-0 bottom-0 top-0 z-20 grid"
-                style={{ gridTemplateColumns: `repeat(${images.length}, minmax(0, 1fr))` }}
-              >
-                {images.map((image, index) => (
-                  <button
-                    aria-label={`Показать фото ${index + 1}`}
-                    className="cursor-pointer"
-                    key={`${image}-details-zone-${index}`}
-                    onClick={() => setActiveIndex(index)}
-                    onMouseEnter={() => setActiveIndex(index)}
-                    type="button"
-                  />
-                ))}
-              </div>
+            {hasRealImages ? (
+              <span className="absolute right-4 top-4 z-30 grid size-11 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_62%,transparent)] text-white shadow-[var(--shadow-card)]">
+                <Maximize2 size={18} />
+              </span>
+            ) : null}
 
+            {hasMultipleImages ? (
               <div className="pointer-events-none absolute bottom-4 left-1/2 z-30 flex w-36 -translate-x-1/2 gap-1.5">
                 {images.map((image, index) => (
                   <span
@@ -81,41 +110,100 @@ export function ListingMediaGallery({
                   />
                 ))}
               </div>
-            </>
-          ) : null}
+            ) : null}
+          </button>
+
+          <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1">
+            {previewImages.map((image, index) => {
+              const isRemainderPreview = images.length > 4 && index === 4;
+              const targetIndex = isRemainderPreview ? 4 : index;
+
+              return (
+                <button
+                  aria-label={isRemainderPreview
+                    ? `Показать ещё ${hiddenImagesCount} изображений`
+                    : `Показать изображение ${index + 1}`}
+                  className={cn(
+                    "relative size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
+                    activeIndex === targetIndex
+                      ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
+                      : "border-[var(--border-soft)] hover:border-[var(--accent)]",
+                  )}
+                  key={`${image}-${index}`}
+                  onClick={() => {
+                    setActiveIndex(targetIndex);
+                    if (isRemainderPreview) {
+                      openPreview(targetIndex);
+                    }
+                  }}
+                  type="button"
+                >
+                  {image ? (
+                    <MediaImage
+                      alt={`${title} ${index + 1}`}
+                      className="rounded-xl object-contain p-1"
+                      fill
+                      sizes="84px"
+                      src={image}
+                    />
+                  ) : (
+                    <span className="grid h-full place-items-center text-[var(--text-muted)]">
+                      <ImageIcon size={20} />
+                    </span>
+                  )}
+
+                  {isRemainderPreview ? (
+                    <span className="absolute inset-1 grid place-items-center rounded-xl bg-[color-mix(in_srgb,var(--brand-deep)_68%,transparent)] text-lg font-black text-white">
+                      +{hiddenImagesCount}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1">
-          {images.map((image, index) => (
-            <button
-              aria-label={`Показать изображение ${index + 1}`}
-              className={cn(
-                "relative size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
-                activeIndex === index
-                  ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
-                  : "border-[var(--border-soft)] hover:border-[var(--accent)]",
-              )}
-              key={`${image}-${index}`}
-              onClick={() => setActiveIndex(index)}
-              type="button"
-            >
-              {image ? (
+        <Dialog onOpenChange={setIsPreviewOpen} open={isPreviewOpen}>
+          <DialogContent className="w-[calc(100vw-1.5rem)] max-w-[1200px] border-none bg-transparent p-0 shadow-none">
+            <DialogTitle className="sr-only">{title}</DialogTitle>
+
+            <div className="relative h-[min(82vh,760px)] w-full">
+              {activeImage ? (
                 <MediaImage
-                  alt={`${title} ${index + 1}`}
-                  className="rounded-xl object-contain p-1"
+                  alt={`${title}. Фото ${activeIndex + 1}`}
+                  className="object-contain"
                   fill
-                  sizes="84px"
-                  src={image}
+                  sizes="min(1200px, 100vw)"
+                  src={activeImage}
                 />
               ) : (
-                <span className="grid h-full place-items-center text-[var(--text-muted)]">
-                  <ImageIcon size={20} />
-                </span>
+                <ListingMediaPlaceholder />
               )}
-            </button>
-          ))}
-        </div>
-      </div>
+
+              {hasMultipleImages ? (
+                <>
+                  <button
+                    aria-label="Предыдущее изображение"
+                    className="absolute left-2 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_62%,transparent)] text-white shadow-[var(--shadow-card)] transition hover:bg-[var(--brand-deep)] sm:left-4"
+                    onClick={showPreviousImage}
+                    type="button"
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+                  <button
+                    aria-label="Следующее изображение"
+                    className="absolute right-2 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_62%,transparent)] text-white shadow-[var(--shadow-card)] transition hover:bg-[var(--brand-deep)] sm:right-4"
+                    onClick={showNextImage}
+                    type="button"
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+                </>
+              ) : null}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
@@ -140,7 +228,7 @@ export function ListingMediaGallery({
         <>
           <div
             aria-label="Переключение фотографий объявления при наведении"
-            className="pointer-events-auto absolute inset-x-0 bottom-0 top-14 z-20 hidden sm:grid"
+            className="pointer-events-auto absolute inset-x-0 bottom-0 top-14 z-30 grid"
             style={{ gridTemplateColumns: `repeat(${images.length}, minmax(0, 1fr))` }}
           >
             {images.map((image, index) => (
@@ -149,8 +237,13 @@ export function ListingMediaGallery({
                 className="cursor-pointer"
                 key={`${image}-${index}`}
                 onClick={(event) => {
+                  if (detailsHref === undefined) {
+                    setActiveIndex(index);
+                    return;
+                  }
+
                   event.preventDefault();
-                  event.stopPropagation();
+                  router.push(detailsHref);
                 }}
                 onMouseEnter={() => setActiveIndex(index)}
                 type="button"

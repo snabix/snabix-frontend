@@ -5,7 +5,6 @@ import { ListingFormInlineHint } from "@/src/features/listing/ui/listing-form-in
 
 export function ListingAttributesSection({
   state,
-  variant,
 }: {
   state: ListingFormState;
   variant: "create" | "edit";
@@ -31,27 +30,12 @@ export function ListingAttributesSection({
     <ListingFormInlineHint text="Сначала выберите категорию и подкатегорию, чтобы загрузить характеристики." />
   );
 
-  if (variant === "edit") {
-    return (
-      <>
-        <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Характеристики</h2>
-        <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-          Дополнительные поля подтягиваются из выбранной категории.
-        </p>
-        {fields}
-      </>
-    );
-  }
-
   return (
     <section className="rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] p-6 shadow-[var(--shadow-card)] sm:p-7">
       <div className="flex items-center gap-3">
         <Sparkles className="text-[var(--accent)]" size={20} />
         <p className="text-[1.35rem] font-black text-[var(--brand-deep)]">Характеристики</p>
       </div>
-      <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-        Заполните характеристики — это поможет покупателям лучше найти ваше объявление.
-      </p>
       <div className="mt-5">{fields}</div>
     </section>
   );

@@ -99,15 +99,13 @@ function ProfileAddressesView({ addresses }: { addresses: UserAddress[] }) {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-heading text-lg font-black text-[var(--brand-deep)]">
-                    {address.label?.trim() || "Адрес"}
+                    {formatUserAddress(address)}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                    {[
-                      address.region.fullName || address.region.name,
-                      address.city?.name,
-                      address.addressLine,
-                    ].filter(Boolean).join(", ")}
-                  </p>
+                  {address.label?.trim() ? (
+                    <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+                      {address.label}
+                    </p>
+                  ) : null}
                 </div>
 
                 {address.isPrimary ? (
@@ -122,6 +120,16 @@ function ProfileAddressesView({ addresses }: { addresses: UserAddress[] }) {
       )}
     </section>
   );
+}
+
+function formatUserAddress(address: UserAddress): string {
+  return [
+    address.region.fullName || address.region.name,
+    address.city?.name,
+    address.addressLine,
+  ]
+    .filter(Boolean)
+    .join(" -> ");
 }
 
 type ProfileAddressesEditorProps = {

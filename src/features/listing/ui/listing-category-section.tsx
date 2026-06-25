@@ -4,8 +4,6 @@ import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
 } from "@/src/features/listing/model/listing-form-constants";
-import { conditionOptions } from "@/src/features/listing/model/listing-form-options";
-import { CategoryPicker } from "@/src/features/listing/ui/category-picker";
 import {
   ListingFormField,
   ListingFormSelect,
@@ -22,12 +20,10 @@ const activeSelectionClass = "border-[var(--accent)] bg-[linear-gradient(135deg,
 export function ListingCategorySection({
   segment = "selection",
   state,
-  variant,
 }: ListingCategorySectionProps) {
   const {
     activeType,
     branchOptions,
-    condition,
     effectiveSelectedCategoryId,
     effectiveSelectedRootId,
     filteredRoots,
@@ -36,25 +32,7 @@ export function ListingCategorySection({
     handleTypeChange,
     isLoadingBranch,
     isLoadingRoots,
-    setCondition,
   } = state;
-
-  if (variant === "edit") {
-    return (
-      <CategoryPicker
-        activeType={activeType}
-        branchOptions={branchOptions}
-        effectiveSelectedCategoryId={effectiveSelectedCategoryId}
-        effectiveSelectedRootId={effectiveSelectedRootId}
-        filteredRoots={filteredRoots}
-        isLoadingBranch={isLoadingBranch}
-        isLoadingRoots={isLoadingRoots}
-        onCategoryChangeAction={handleCategoryChange}
-        onRootChangeAction={handleRootChange}
-        onTypeChangeAction={handleTypeChange}
-      />
-    );
-  }
 
   if (segment === "type") {
     return (
@@ -109,44 +87,6 @@ export function ListingCategorySection({
           </ListingFormField>
         </div>
       </div>
-
-      {activeType === LISTING_TYPE_PRODUCT ? (
-        <div>
-          <p className="text-[1.35rem] font-black text-[var(--brand-deep)]">Состояние товара</p>
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {conditionOptions.map((option) => {
-              const isActive = condition === option.value;
-
-              return (
-                <button
-                  className={[
-                    "flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-colors duration-200",
-                    isActive
-                      ? `${activeSelectionClass} text-white`
-                      : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
-                  ].join(" ")}
-                  key={option.value}
-                  onClick={() => setCondition(option.value)}
-                  type="button"
-                >
-                  <span className="inline-flex items-center gap-3 text-base font-black">
-                    <Sparkles size={18} />
-                    {option.label}
-                  </span>
-                  <span
-                    className={[
-                      "grid size-6 place-items-center rounded-full border",
-                      isActive ? "border-white/35 bg-white/12" : "border-[var(--border-soft)]",
-                    ].join(" ")}
-                  >
-                    {isActive ? <Check size={14} /> : null}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
     </>
   );
 }

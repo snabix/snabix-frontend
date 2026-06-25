@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, Trash2, X } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
 import {
+  deleteAllNotifications,
+  deleteNotification,
   listNotifications,
   markAllNotificationsRead,
   markNotificationRead,
@@ -58,6 +60,8 @@ export function HeaderSessionActions({
 
 function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
   const [feed, setFeed] = useState<NotificationFeed>({ items: [], unreadCount: 0 });
+  const [isClearing, setIsClearing] = useState(false);
+  const [deletingNotificationIds, setDeletingNotificationIds] = useState<Set<string>>(new Set());
   const latestNotificationId = useRef<string | null>(null);
   const canPlaySound = useRef(false);
   const visibleFeed = isEnabled ? feed : { items: [], unreadCount: 0 };
@@ -116,6 +120,43 @@ function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
     }));
   };
 
+  const handleDeleteAll = async () => {
+    setIsClearing(true);
+
+    try {
+      await deleteAllNotifications();
+      latestNotificationId.current = null;
+      setFeed({ items: [], unreadCount: 0 });
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId: string) => {
+    setDeletingNotificationIds((current) => new Set(current).add(notificationId));
+
+    try {
+      await deleteNotification(notificationId);
+      setFeed((current) => {
+        const deletedNotification = current.items.find((item) => item.id === notificationId);
+
+        return {
+          items: current.items.filter((item) => item.id !== notificationId),
+          unreadCount: deletedNotification !== undefined && !deletedNotification.isRead
+            ? Math.max(current.unreadCount - 1, 0)
+            : current.unreadCount,
+        };
+      });
+    } finally {
+      setDeletingNotificationIds((current) => {
+        const next = new Set(current);
+        next.delete(notificationId);
+
+        return next;
+      });
+    }
+  };
+
   const handleNotificationOpen = async (notificationId: string, isRead: boolean) => {
     if (!isRead) {
       await markNotificationRead(notificationId);
@@ -149,16 +190,29 @@ function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
           <DropdownMenuLabel className="p-0 text-sm font-black text-[var(--brand-deep)]">
             Уведомления
           </DropdownMenuLabel>
-          {visibleFeed.unreadCount > 0 ? (
-            <button
-              className="inline-flex items-center gap-1 text-xs font-bold text-[var(--accent)]"
-              onClick={handleMarkAllRead}
-              type="button"
-            >
-              <CheckCheck size={14} />
-              Прочитать все
-            </button>
-          ) : null}
+          <div className="flex items-center gap-3">
+            {visibleFeed.items.length > 0 ? (
+              <button
+                className="inline-flex items-center gap-1 text-xs font-bold text-[var(--danger)] disabled:opacity-50"
+                disabled={isClearing}
+                onClick={() => void handleDeleteAll()}
+                type="button"
+              >
+                <Trash2 size={14} />
+                {isClearing ? "Очищаем..." : "Очистить все"}
+              </button>
+            ) : null}
+            {visibleFeed.unreadCount > 0 ? (
+              <button
+                className="inline-flex items-center gap-1 text-xs font-bold text-[var(--accent)]"
+                onClick={() => void handleMarkAllRead()}
+                type="button"
+              >
+                <CheckCheck size={14} />
+                Прочитать все
+              </button>
+            ) : null}
+          </div>
         </div>
 
         {visibleFeed.items.length === 0 ? (
@@ -168,15 +222,29 @@ function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
         ) : (
           <div className="mt-2 max-h-96 overflow-y-auto">
             {visibleFeed.items.map((notification) => {
+              const deleteButton = (
+                <button
+                  aria-label="Удалить уведомление"
+                  className="grid size-7 shrink-0 place-items-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-soft)] hover:text-[var(--danger)] disabled:opacity-50"
+                  disabled={deletingNotificationIds.has(notification.id)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    void handleDeleteNotification(notification.id);
+                  }}
+                  type="button"
+                >
+                  <X size={14} />
+                </button>
+              );
               const content = (
-                <div className="min-w-0">
-                  <div className="flex items-start gap-2">
-                    {!notification.isRead ? <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[var(--accent)]" /> : null}
-                    <div>
-                      <p className="text-sm font-black text-[var(--brand-deep)]">{notification.title}</p>
-                      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notification.body}</p>
-                    </div>
+                <div className="flex min-w-0 items-start gap-2">
+                  {!notification.isRead ? <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[var(--accent)]" /> : null}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-black text-[var(--brand-deep)]">{notification.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notification.body}</p>
                   </div>
+                  {deleteButton}
                 </div>
               );
 

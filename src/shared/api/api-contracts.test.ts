@@ -37,6 +37,7 @@ const listingContract = {
       attributeDefinitionId: 10,
       displayValue: "16 ГБ",
       name: "Оперативная память",
+      schemaVersion: 1,
       slug: "ram",
       type: 1,
       typeLabel: "Текст",

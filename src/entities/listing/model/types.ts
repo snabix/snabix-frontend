@@ -93,6 +93,7 @@ export type ListingItem = {
     slug: string | null;
     type: CategoryAttributeDefinition["type"] | null;
     typeLabel: string | null;
+    schemaVersion?: number;
     value: ListingAttributeValue;
     displayValue: string | null;
   }>;

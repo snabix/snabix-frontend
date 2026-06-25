@@ -36,12 +36,7 @@ export function ListingCard({
         ? "Цена не указана"
         : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "RUB"}`;
 
-    const city = listing.city ?? "Город не указан";
-
-    const fullLocation = (
-        listing.fullLocation
-        ?? [listing.region, listing.city].filter(Boolean).join(", ")
-    ) || city;
+    const fullLocation = resolveListingLocation(listing);
 
     const sellerRating = listing.sellerRating === null || listing.sellerRating === undefined
         ? "Нет рейтинга"
@@ -55,7 +50,7 @@ export function ListingCard({
 
     const reviewCount = (listing as ListingItem & {
         sellerReviewCount?: number | null;
-    }).sellerReviewCount ?? 111;
+    }).sellerReviewCount ?? 0;
 
     const highlightedAttributes = listing.attributeValues
         .filter((attribute) => attribute.name !== null && attribute.displayValue !== null)
@@ -115,6 +110,7 @@ export function ListingCard({
             )}
         >
             <ListingMediaGallery
+                detailsHref={href}
                 imageUrl={listing.imageUrl}
                 imageUrls={listing.imageUrls}
                 title={listing.title}
@@ -140,15 +136,6 @@ export function ListingCard({
                 </label>
             ) : null}
 
-            {viewMode === "grid" ? (
-                <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-[14px] bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_82%,var(--brand)))] px-2.5 py-1.5 text-white shadow-[var(--shadow-card)]">
-                    <Package2 size={13} />
-
-                    <span className="text-[0.72rem] font-semibold leading-none text-white">
-            {listing.typeLabel}
-          </span>
-                </div>
-            ) : null}
         </div>
     );
 
@@ -295,15 +282,20 @@ export function ListingCard({
                                     {sellerName}
                                 </p>
 
-                                <p className="mt-0.5 inline-flex flex-wrap items-center gap-1.5 text-xs font-medium text-white/80">
-                                    <Star className="text-white" fill="currentColor" size={15} />
+                                <div className="mt-1 grid gap-1">
+                                    <p className="inline-flex flex-wrap items-center gap-1.5 text-xs font-medium text-white/80">
+                                        <Star className="text-white" fill="currentColor" size={15} />
 
-                                    <span className="font-bold text-white">
-                    {sellerRating}
-                  </span>
+                                        <span className="font-bold text-white">
+                      {sellerRating}
+                    </span>
 
-                                    <span>рейтинг продавца</span>
-                                </p>
+                                        <span>рейтинг продавца</span>
+                                    </p>
+                                    <p className="text-xs font-semibold text-white/72">
+                                        {formatReviewCount(reviewCount)}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -334,19 +326,21 @@ export function ListingCard({
                                 <div className="mt-3 grid gap-2 overflow-hidden">
                   <span className="inline-flex min-w-0 items-center gap-2 text-[0.8rem] font-medium text-[var(--text-muted)]">
                     <MapPin size={15} className="shrink-0" />
-                    <span className="truncate">{city}</span>
+                    <span className="truncate">{fullLocation}</span>
                   </span>
 
-                                    <span className="inline-flex min-w-0 flex-wrap items-center gap-2 text-[0.8rem] font-medium text-[var(--text-muted)]">
-                    <StarRow rating={ratingValue} />
+                                    <span className="grid min-w-0 gap-1 text-[0.8rem] font-medium text-[var(--text-muted)]">
+                    <span className="inline-flex min-w-0 items-center gap-2">
+                      <StarRow rating={ratingValue} />
 
-                    <span className="font-semibold text-[var(--brand-deep)]">
-                      {sellerRating === "Нет рейтинга" ? "3.0" : sellerRating}
+                      <span className="font-semibold text-[var(--brand-deep)]">
+                        {sellerRating === "Нет рейтинга" ? "3.0" : sellerRating}
+                      </span>
                     </span>
 
-                    <span>•</span>
-
-                    <span className="truncate">{reviewCount} отзывов</span>
+                    <span className="truncate pl-0.5 text-[0.72rem] font-semibold text-[var(--text-muted)]">
+                      {formatReviewCount(reviewCount)}
+                    </span>
                   </span>
                                 </div>
                             </div>
@@ -400,6 +394,44 @@ function formatListingDate(value: string | null): string | null {
         day: "numeric",
         month: "long",
     }).format(date);
+}
+
+function formatReviewCount(count: number): string {
+    const normalizedCount = Math.max(0, count);
+    const remainder10 = normalizedCount % 10;
+    const remainder100 = normalizedCount % 100;
+
+    if (remainder10 === 1 && remainder100 !== 11) {
+        return `${normalizedCount} отзыв`;
+    }
+
+    if ([2, 3, 4].includes(remainder10) && ![12, 13, 14].includes(remainder100)) {
+        return `${normalizedCount} отзыва`;
+    }
+
+    return `${normalizedCount} отзывов`;
+}
+
+function resolveListingLocation(listing: ListingItem | PublicListingItem): string {
+    if (listing.location !== null && listing.location !== undefined) {
+        const location = [
+            listing.location.region.fullName || listing.location.region.name,
+            listing.location.city?.name,
+            listing.location.addressLine,
+        ].filter(Boolean).join(" -> ");
+
+        if (location) {
+            return location;
+        }
+    }
+
+    const location = [
+        listing.region,
+        listing.city,
+        listing.addressLine ?? [listing.street, listing.house].filter(Boolean).join(", "),
+    ].filter(Boolean).join(" -> ");
+
+    return location || listing.fullLocation || listing.location?.display || "Город не указан";
 }
 
 function resolveSellerInitials(name: string): string {

@@ -6,12 +6,10 @@ import {
   ArrowLeft,
   ChevronRight,
   Archive,
-  CircleAlert,
   MapPin,
   Menu,
   Pencil,
   SearchX,
-  Smartphone,
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -50,13 +48,8 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
       return [] as Array<[string, string]>;
     }
 
-    const primaryCategory = categoryBreadcrumbs[0]?.name ?? "Категория не указана";
-    const secondaryCategory = categoryBreadcrumbs.at(-1)?.name ?? primaryCategory;
-
     const basePairs = [
       ["Тип объявления", listing.typeLabel],
-      ["Категория", primaryCategory],
-      ["Подкатегория", secondaryCategory],
       ["Состояние", listing.conditionLabel],
       ["Торг уместен", listing.isNegotiable ? "Да" : "Нет"],
     ] as Array<[string, string]>;
@@ -67,7 +60,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
       .map((attribute) => [attribute.name ?? "Параметр", attribute.displayValue ?? "—"] as [string, string]);
 
     return [...basePairs, ...attributePairs];
-  }, [categoryBreadcrumbs, listing]);
+  }, [listing]);
 
   useEffect(() => {
     let isMounted = true;
@@ -167,13 +160,9 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
 
   const publishedAt = formatDateTime(listing.publishedAt);
   const expiresAt = formatDateTime(listing.expiresAt);
-  const createdAt = formatDateTime(listing.publishedAt);
-  const updatedAt = formatDateTime(listing.publishedAt);
   const priceLabel = listing.price === null
     ? "Цена не указана"
     : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "₽"}`;
-  const primaryCategory = categoryBreadcrumbs[0]?.name ?? "Категория не указана";
-  const secondaryCategory = categoryBreadcrumbs.at(-1)?.name ?? primaryCategory;
   const isArchived = listing.status === 5;
 
   return (
@@ -189,20 +178,6 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                 <ArrowLeft size={17} />
                 Назад
               </Link>
-
-              <div className="rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] p-2 shadow-[var(--shadow-card)]">
-                <ListingDetailsActions
-                  editHref={`/account/listings/${listing.id}/edit`}
-                  isDeleting={isDeleting}
-                  isDraft={listing.status === 1}
-                  isArchived={isArchived}
-                  isArchiving={isArchiving}
-                  isSubmittingForReview={isSubmittingForReview}
-                  onArchiveAction={handleArchive}
-                  onDeleteAction={() => setIsDeleteDialogOpen(true)}
-                  onSubmitForReviewAction={handleSubmitForReview}
-                />
-              </div>
             </div>
 
             <nav
@@ -237,9 +212,23 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                 </div>
 
                 <div className="grid gap-5">
-                  <div>
+                  <div className="relative">
+                    <div className="absolute right-0 top-0 z-30">
+                      <ListingDetailsActions
+                        editHref={`/account/listings/${listing.id}/edit`}
+                        isDeleting={isDeleting}
+                        isDraft={listing.status === 1}
+                        isArchived={isArchived}
+                        isArchiving={isArchiving}
+                        isSubmittingForReview={isSubmittingForReview}
+                        onArchiveAction={handleArchive}
+                        onDeleteAction={() => setIsDeleteDialogOpen(true)}
+                        onSubmitForReviewAction={handleSubmitForReview}
+                      />
+                    </div>
+
                     <div>
-                      <div className="mb-4 flex flex-wrap gap-2">
+                      <div className="mb-4 flex max-w-[calc(100%-64px)] flex-wrap gap-2">
                         <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
                           {listing.statusLabel}
                         </span>
@@ -253,22 +242,26 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                       <p className="mt-4 text-[2.25rem] font-black tracking-[-0.05em] text-[var(--brand-deep)]">
                         {priceLabel}
                       </p>
-                      <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--text-muted)]">
-                        <span>ID объявления: {listing.id}</span>
-                        <span>Создано: {createdAt}</span>
-                      </div>
                     </div>
                   </div>
 
-                  <div className="grid gap-4 rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-5 sm:grid-cols-4">
-                    <StatusMetric
-                      accent
-                      label="Статус"
-                      value={listing.statusLabel}
-                    />
-                    <StatusMetric label="Размещено" value={publishedAt} />
-                    <StatusMetric label="Обновлено" value={updatedAt} />
-                    <StatusMetric label="Действует до" value={expiresAt} />
+                  <div className="rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-5">
+                    <div className="flex items-start gap-3">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+                        <MapPin size={20} />
+                      </span>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                          Местоположение
+                        </p>
+                        <p className="mt-2 text-base font-semibold leading-6 text-[var(--brand-deep)]">
+                          {fullLocation}
+                        </p>
+                        <button className="mt-2 text-sm font-semibold text-[var(--accent)] transition hover:opacity-80" type="button">
+                          Показать на карте
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -297,47 +290,19 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
 
               <div className="grid gap-6">
                 <aside className="rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-6 shadow-[var(--shadow-card)] sm:p-7">
-                  <h2 className="text-[1.6rem] font-black text-[var(--brand-deep)]">Категория</h2>
-                  <div className="mt-6 flex items-center gap-4">
-                    <span className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                      <Smartphone size={22} />
-                    </span>
-                    <div className="flex items-center gap-3 text-sm font-semibold text-[var(--brand-deep)]">
-                      <span>{primaryCategory}</span>
-                      <ChevronRight size={16} className="text-[var(--text-muted)]" />
-                      <span>{secondaryCategory}</span>
-                    </div>
+                  <h2 className="text-[1.6rem] font-black text-[var(--brand-deep)]">Статус и сроки</h2>
+                  <div className="mt-6 grid gap-4">
+                    <StatusMetric
+                      accent
+                      label="Статус"
+                      value={listing.statusLabel}
+                    />
+                    <div className="h-px bg-[var(--border-soft)]" />
+                    <StatusMetric label="Размещено" value={publishedAt} />
+                    <div className="h-px bg-[var(--border-soft)]" />
+                    <StatusMetric label="Действует до" value={expiresAt} />
                   </div>
                 </aside>
-
-                <aside className="rounded-[32px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-6 shadow-[var(--shadow-card)] sm:p-7">
-                  <h2 className="text-[1.6rem] font-black text-[var(--brand-deep)]">Местоположение</h2>
-                  <div className="mt-6 flex items-start gap-3">
-                    <span className="grid size-11 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                      <MapPin size={20} />
-                    </span>
-                    <div>
-                      <p className="text-base font-semibold text-[var(--brand-deep)]">{fullLocation}</p>
-                      <button className="mt-2 text-sm font-semibold text-[var(--accent)] transition hover:opacity-80" type="button">
-                        Показать на карте
-                      </button>
-                    </div>
-                  </div>
-                </aside>
-              </div>
-            </section>
-
-            <section className="rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_95%,transparent)] p-5 shadow-[var(--shadow-card)] sm:px-6">
-              <div className="flex items-start gap-4">
-                <span className="grid size-12 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
-                  <CircleAlert size={22} />
-                </span>
-                <div>
-                  <p className="text-lg font-black text-[var(--brand-deep)]">Совет</p>
-                  <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                    Регулярно обновляйте объявление и отвечайте на сообщения, чтобы быстрее продать товар.
-                  </p>
-                </div>
               </div>
             </section>
           </div>
@@ -381,11 +346,10 @@ function ListingDetailsActions({
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Открыть меню действий объявления"
-          className="inline-flex h-12 items-center gap-2 rounded-2xl border border-[color-mix(in_srgb,var(--accent)_34%,var(--border-soft))] bg-[var(--brand-deep)] px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:bg-[var(--accent)]"
+          className="grid size-12 place-items-center rounded-2xl border border-[color-mix(in_srgb,var(--accent)_34%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
           type="button"
         >
-          <Menu size={18} />
-          <span>Управление</span>
+          <Menu size={21} />
         </button>
       </DropdownMenuTrigger>
 
@@ -481,15 +445,29 @@ function buildCategoryBreadcrumbs(listing: ListingItem): CategoryBreadcrumb[] {
 }
 
 function buildFullLocation(listing: ListingItem): string {
+  if (listing.location !== null && listing.location !== undefined) {
+    return [
+      listing.location.region.fullName || listing.location.region.name,
+      listing.location.city?.name,
+      listing.location.addressLine,
+    ].filter(Boolean).join(" -> ") || "Локация не указана";
+  }
+
+  const location = [
+    listing.region,
+    listing.city,
+    listing.addressLine ?? [listing.street, listing.house].filter(Boolean).join(", "),
+  ].filter(Boolean).join(" -> ");
+
+  if (location) {
+    return location;
+  }
+
   if (listing.fullLocation) {
     return listing.fullLocation;
   }
 
-  return [
-    listing.region,
-    listing.city,
-    listing.addressLine ?? [listing.street, listing.house].filter(Boolean).join(", "),
-  ].filter(Boolean).join(", ") || "Локация не указана";
+  return "Локация не указана";
 }
 
 function formatDateTime(value: string | null): string {

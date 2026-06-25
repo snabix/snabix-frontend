@@ -17,6 +17,7 @@ import {
     accountNavigation,
     type AccountNavigationKey,
 } from "@/src/shared/config/navigation";
+import { useAccountSidebarState } from "@/src/widgets/account/ui/account-sidebar-state";
 
 const iconByKey: Record<AccountNavigationKey, typeof UserRound> = {
     profile: UserRound,
@@ -35,7 +36,7 @@ const AUTO_COLLAPSE_WIDTH = 150;
 
 export function AccountSidebar() {
     const pathname = usePathname();
-    const [isCollapsed, setIsCollapsed] = useState(true);
+    const { isCollapsed, setIsCollapsed } = useAccountSidebarState();
     const [width, setWidth] = useState(DEFAULT_WIDTH);
 
     const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
@@ -109,7 +110,7 @@ export function AccountSidebar() {
                         "hover:border-[var(--accent)] hover:text-[var(--accent)]",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2",
                     ].join(" ")}
-                    onClick={() => setIsCollapsed((value) => !value)}
+                    onClick={() => setIsCollapsed(!isCollapsed)}
                     type="button"
                 >
                     {isCollapsed ? (

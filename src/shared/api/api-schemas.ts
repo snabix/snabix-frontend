@@ -153,6 +153,7 @@ const listingAttributeValueItemSchema = z.object({
   slug: nullableStringSchema,
   type: z.number().nullable(),
   typeLabel: nullableStringSchema,
+  schemaVersion: z.number().optional(),
   value: listingAttributeValueSchema,
   displayValue: nullableStringSchema,
 }).strict();

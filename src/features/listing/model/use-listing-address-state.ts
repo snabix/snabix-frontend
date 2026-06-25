@@ -40,7 +40,7 @@ export function useListingAddressState({
   const [cities, setCities] = useState<LocationCity[]>([]);
   const [regionId, setRegionId] = useState<number | null>(initialLocation?.region.id ?? null);
   const [cityId, setCityId] = useState<number | null>(initialLocation?.city?.id ?? null);
-  const [addressLine, setAddressLine] = useState(initialLocation?.addressLine ?? "");
+  const [addressLine, setAddressLine] = useState(() => resolveInitialAddressLine(initialListing));
   const [isLoadingRegions, setIsLoadingRegions] = useState(false);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
 
@@ -125,4 +125,23 @@ export function useListingAddressState({
     setProfileAddressId,
     userAddresses: user?.addresses ?? [],
   };
+}
+
+function resolveInitialAddressLine(initialListing?: ListingItem): string {
+  const locationAddressLine = initialListing?.location?.addressLine?.trim();
+
+  if (locationAddressLine) {
+    return locationAddressLine;
+  }
+
+  const listingAddressLine = initialListing?.addressLine?.trim();
+
+  if (listingAddressLine) {
+    return listingAddressLine;
+  }
+
+  return [initialListing?.street, initialListing?.house]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(", ");
 }

@@ -18,6 +18,7 @@ import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Pagination } from "@/src/shared/ui/pagination";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
+import { useAccountSidebarState } from "@/src/widgets/account/ui/account-sidebar-state";
 
 const listingStatusOptions = [
   { label: "Все статусы", value: "" },
@@ -46,6 +47,7 @@ const defaultPaginationMeta: ApiPaginationMeta = {
 export function ListingsPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
+  const { isCollapsed: isAccountSidebarCollapsed } = useAccountSidebarState();
   const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPaginationMeta);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedListingIds, setSelectedListingIds] = useState<Set<string>>(new Set());
@@ -256,7 +258,16 @@ export function ListingsPage() {
                 title="Объявлений пока нет"
               />
             ) : (
-              <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "grid gap-4"}>
+              <div
+                className={
+                  viewMode === "grid"
+                    ? [
+                      "grid gap-5 lg:grid-cols-2",
+                      isAccountSidebarCollapsed ? "xl:grid-cols-4" : "xl:grid-cols-3",
+                    ].join(" ")
+                    : "grid gap-4"
+                }
+              >
                 {listings.map((listing) => (
                   <ListingCard
                     detailsHref={`/account/listings/${listing.id}`}

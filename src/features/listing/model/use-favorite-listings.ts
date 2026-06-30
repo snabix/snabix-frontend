@@ -10,12 +10,14 @@ import {
   removeListingFavorite,
 } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 
 const defaultFavoriteListingIds: string[] = [];
 
 export function useFavoriteListings(initialIds: string[] = defaultFavoriteListingIds) {
   const user = useUserStore((state) => state.user);
   const userId = user?.id ?? null;
+  const runMutation = useMutationThrottle();
   const [favoriteListingIds, setFavoriteListingIds] = useState<Set<string>>(
     () => new Set(initialIds),
   );
@@ -68,52 +70,58 @@ export function useFavoriteListings(initialIds: string[] = defaultFavoriteListin
       return;
     }
 
-    if (pendingFavoriteIds.has(listingId)) {
-      return;
-    }
-
-    const shouldRemove = favoriteListingIds.has(listingId);
-
-    setPendingFavoriteIds((currentIds) => new Set(currentIds).add(listingId));
-    setFavoriteListingIds((currentIds) => {
-      const nextIds = new Set(currentIds);
-
-      if (shouldRemove) {
-        nextIds.delete(listingId);
-      } else {
-        nextIds.add(listingId);
+    const result = await runMutation(`listing:${listingId}:favorite`, async () => {
+      if (pendingFavoriteIds.has(listingId)) {
+        return;
       }
 
-      return nextIds;
-    });
+      const shouldRemove = favoriteListingIds.has(listingId);
 
-    try {
-      if (shouldRemove) {
-        await removeListingFavorite(listingId);
-      } else {
-        await addListingFavorite(listingId);
-      }
-    } catch (error) {
+      setPendingFavoriteIds((currentIds) => new Set(currentIds).add(listingId));
       setFavoriteListingIds((currentIds) => {
         const nextIds = new Set(currentIds);
 
         if (shouldRemove) {
-          nextIds.add(listingId);
-        } else {
           nextIds.delete(listingId);
+        } else {
+          nextIds.add(listingId);
         }
 
         return nextIds;
       });
-      toast.error(extractApiError(error, "Не удалось обновить избранное."));
-    } finally {
-      setPendingFavoriteIds((currentIds) => {
-        const nextIds = new Set(currentIds);
 
-        nextIds.delete(listingId);
+      try {
+        if (shouldRemove) {
+          await removeListingFavorite(listingId);
+        } else {
+          await addListingFavorite(listingId);
+        }
+      } catch (error) {
+        setFavoriteListingIds((currentIds) => {
+          const nextIds = new Set(currentIds);
 
-        return nextIds;
-      });
+          if (shouldRemove) {
+            nextIds.add(listingId);
+          } else {
+            nextIds.delete(listingId);
+          }
+
+          return nextIds;
+        });
+        toast.error(extractApiError(error, "Не удалось обновить избранное."));
+      } finally {
+        setPendingFavoriteIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+
+          nextIds.delete(listingId);
+
+          return nextIds;
+        });
+      }
+    });
+
+    if (!result.started) {
+      return;
     }
   };
 

@@ -14,6 +14,7 @@ import {
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Pagination } from "@/src/shared/ui/pagination";
 import { Button } from "@/src/shared/ui/shadcn/button";
@@ -45,6 +46,7 @@ const defaultPaginationMeta: ApiPaginationMeta = {
 };
 
 export function ListingsPage() {
+  const runMutation = useMutationThrottle();
   const [listings, setListings] = useState<ListingItem[]>([]);
   const { favoriteListingIds, toggleFavorite } = useFavoriteListings();
   const { isCollapsed: isAccountSidebarCollapsed } = useAccountSidebarState();
@@ -102,8 +104,15 @@ export function ListingsPage() {
     try {
       const idsToDelete = Array.from(selectedListingIds);
 
-      setDeletingListingId("bulk");
-      await Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
+      const result = await runMutation("listing:bulk-delete", async () => {
+        setDeletingListingId("bulk");
+        return Promise.all(idsToDelete.map((listingId) => deleteListing(listingId)));
+      });
+
+      if (!result.started) {
+        return;
+      }
+
       setListings((currentListings) => currentListings.filter((listing) => !selectedListingIds.has(listing.id)));
       setPaginationMeta((currentMeta) => ({
         ...currentMeta,

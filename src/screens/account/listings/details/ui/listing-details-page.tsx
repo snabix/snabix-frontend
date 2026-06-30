@@ -5,28 +5,19 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ChevronRight,
-  Archive,
   MapPin,
-  Menu,
-  Pencil,
   SearchX,
-  Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ListingMediaGallery, type ListingItem } from "@/src/entities/listing";
 import { archiveListing, deleteListing, showListing, submitListingForReview } from "@/src/features/listing/api";
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
+import { ListingManagementMenu } from "@/src/features/listing/ui/listing-management-menu";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Container } from "@/src/shared/ui/container";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/src/shared/ui/shadcn/dropdown-menu";
 import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 type ListingDetailsPageProps = {
@@ -35,6 +26,7 @@ type ListingDetailsPageProps = {
 
 export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   const router = useRouter();
+  const runMutation = useMutationThrottle();
   const [listing, setListing] = useState<ListingItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -97,8 +89,15 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     }
 
     try {
-      setIsDeleting(true);
-      await deleteListing(listing.id);
+      const result = await runMutation(`listing:${listing.id}:delete`, async () => {
+        setIsDeleting(true);
+        return deleteListing(listing.id);
+      });
+
+      if (!result.started) {
+        return;
+      }
+
       setIsDeleteDialogOpen(false);
       toast.success("Объявление удалено.");
       router.push("/account/listings");
@@ -116,8 +115,16 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     }
 
     try {
-      setIsSubmittingForReview(true);
-      const updatedListing = await submitListingForReview(listing.id);
+      const result = await runMutation(`listing:${listing.id}:submit-review`, async () => {
+        setIsSubmittingForReview(true);
+        return submitListingForReview(listing.id);
+      });
+
+      if (!result.started) {
+        return;
+      }
+
+      const updatedListing = result.value;
       setListing(updatedListing);
       toast.success("Объявление отправлено на проверку.");
     } catch (error) {
@@ -133,8 +140,16 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
     }
 
     try {
-      setIsArchiving(true);
-      const updatedListing = await archiveListing(listing.id);
+      const result = await runMutation(`listing:${listing.id}:archive`, async () => {
+        setIsArchiving(true);
+        return archiveListing(listing.id);
+      });
+
+      if (!result.started) {
+        return;
+      }
+
+      const updatedListing = result.value;
       setListing(updatedListing);
       toast.success("Объявление перенесено в архив.");
     } catch (error) {
@@ -163,7 +178,6 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   const priceLabel = listing.price === null
     ? "Цена не указана"
     : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "₽"}`;
-  const isArchived = listing.status === 5;
 
   return (
     <>
@@ -214,13 +228,12 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                 <div className="grid gap-5">
                   <div className="relative">
                     <div className="absolute right-0 top-0 z-30">
-                      <ListingDetailsActions
+                      <ListingManagementMenu
                         editHref={`/account/listings/${listing.id}/edit`}
                         isDeleting={isDeleting}
-                        isDraft={listing.status === 1}
-                        isArchived={isArchived}
                         isArchiving={isArchiving}
                         isSubmittingForReview={isSubmittingForReview}
+                        listing={listing}
                         onArchiveAction={handleArchive}
                         onDeleteAction={() => setIsDeleteDialogOpen(true)}
                         onSubmitForReviewAction={handleSubmitForReview}
@@ -320,82 +333,6 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
   );
 }
 
-function ListingDetailsActions({
-  editHref,
-  isArchived,
-  isArchiving,
-  isDeleting,
-  isDraft,
-  isSubmittingForReview,
-  onArchiveAction,
-  onDeleteAction,
-  onSubmitForReviewAction,
-}: {
-  editHref: string;
-  isArchived: boolean;
-  isArchiving: boolean;
-  isDeleting: boolean;
-  isDraft: boolean;
-  isSubmittingForReview: boolean;
-  onArchiveAction: () => void;
-  onDeleteAction: () => void;
-  onSubmitForReviewAction: () => void;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          aria-label="Открыть меню действий объявления"
-          className="grid size-12 place-items-center rounded-2xl border border-[color-mix(in_srgb,var(--accent)_34%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-          type="button"
-        >
-          <Menu size={21} />
-        </button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="end" className="min-w-64 rounded-[24px] border-[var(--border-soft)] p-2 shadow-[var(--shadow-card)]">
-        <DropdownMenuItem asChild className="rounded-2xl">
-          <Link className="flex items-center gap-3" href={editHref}>
-            <Pencil size={17} />
-            <span>Редактировать</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          className="rounded-2xl"
-          disabled={isArchived || isArchiving}
-          onClick={onArchiveAction}
-        >
-          <Archive size={17} />
-          <span>{isArchived ? "Уже в архиве" : (isArchiving ? "Архивируем..." : "Архивировать")}</span>
-        </DropdownMenuItem>
-
-        {isDraft ? (
-          <DropdownMenuItem
-            className="rounded-2xl"
-            disabled={isSubmittingForReview}
-            onClick={onSubmitForReviewAction}
-          >
-            <ChevronRight size={17} />
-            <span>{isSubmittingForReview ? "Отправляем..." : "Отправить на проверку"}</span>
-          </DropdownMenuItem>
-        ) : null}
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          className="rounded-2xl text-[var(--danger)] focus:text-[var(--danger)]"
-          disabled={isDeleting}
-          onClick={onDeleteAction}
-        >
-          <Trash2 size={17} />
-          <span>Удалить объявление</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 function StatusMetric({
   accent = false,
   label,
@@ -450,14 +387,14 @@ function buildFullLocation(listing: ListingItem): string {
       listing.location.region.fullName || listing.location.region.name,
       listing.location.city?.name,
       listing.location.addressLine,
-    ].filter(Boolean).join(" -> ") || "Локация не указана";
+    ].filter(Boolean).join(", ") || "Локация не указана";
   }
 
   const location = [
     listing.region,
     listing.city,
     listing.addressLine ?? [listing.street, listing.house].filter(Boolean).join(", "),
-  ].filter(Boolean).join(" -> ");
+  ].filter(Boolean).join(", ");
 
   if (location) {
     return location;

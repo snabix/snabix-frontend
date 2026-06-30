@@ -9,6 +9,7 @@ import {
 } from "@/src/features/listing/model/use-listing-address-state";
 import { useListingAttributeState } from "@/src/features/listing/model/use-listing-attribute-state";
 import { useListingCategoryState } from "@/src/features/listing/model/use-listing-category-state";
+import { useListingFormCoordinator } from "@/src/features/listing/model/use-listing-form-coordinator";
 import { useListingMediaState } from "@/src/features/listing/model/use-listing-media-state";
 import { useListingSubmit } from "@/src/features/listing/model/use-listing-submit";
 
@@ -44,26 +45,12 @@ export function useListingFormState({
     onSubmit,
   });
 
-  const handleTypeChange = (type: number) => {
-    categoryState.handleTypeChange(type);
-    attributeState.resetAttributeValues();
-  };
-
-  const handleRootChange = (rootId: string) => {
-    categoryState.handleRootChange(rootId);
-    attributeState.resetAttributeValues();
-  };
-
-  const handleCategoryChange = (categoryId: string) => {
-    categoryState.handleCategoryChange(categoryId);
-    attributeState.resetAttributeValues();
-  };
-
-  const isFormBusy = submitState.isSubmitting
-    || mediaState.isUploadingMedia
-    || categoryState.isLoadingRoots
-    || categoryState.isLoadingBranch
-    || attributeState.isLoadingAttributes;
+  const coordinatorState = useListingFormCoordinator({
+    attributeState,
+    categoryState,
+    mediaState,
+    submitState,
+  });
 
   return {
     ...categoryState,
@@ -71,10 +58,7 @@ export function useListingFormState({
     ...addressState,
     ...mediaState,
     ...submitState,
-    handleCategoryChange,
-    handleRootChange,
-    handleTypeChange,
-    isFormBusy,
+    ...coordinatorState,
   };
 }
 

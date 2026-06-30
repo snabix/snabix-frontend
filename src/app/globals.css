@@ -149,9 +149,13 @@ body {
     will-change: transform;
 }
 
-.category-conveyor:hover .category-conveyor-track,
-.category-conveyor:focus-within .category-conveyor-track {
-    animation-play-state: paused;
+.category-conveyor-viewport {
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+}
+
+.category-conveyor-viewport::-webkit-scrollbar {
+    display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

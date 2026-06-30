@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { WheelEvent } from "react";
 import { RefreshCw } from "lucide-react";
 import { useCategoryStore } from "@/src/entities/category";
 import { CategoryTiltCard } from "./category-tilt-card";
@@ -46,8 +47,21 @@ export function CategoryShowcaseCarouselSection() {
 
     const hasCategories = roots.length > 0;
 
+    const handleCarouselWheel = (event: WheelEvent<HTMLDivElement>) => {
+        const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+
+        if (horizontalDelta === 0) {
+            return;
+        }
+
+        event.currentTarget.scrollBy({
+            left: horizontalDelta,
+            behavior: "smooth",
+        });
+    };
+
     return (
-        <section className="category-conveyor mt-8">
+        <section className="category-conveyor mt-8 bg-transparent">
             <div className="mb-5">
                 <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
                     Популярные направления
@@ -76,7 +90,12 @@ export function CategoryShowcaseCarouselSection() {
                     </p>
                 </div>
             ) : (
-                <div className="category-conveyor-viewport -mx-2 overflow-hidden px-2 py-8">
+                <div
+                    aria-label="Популярные категории"
+                    className="category-conveyor-viewport -mx-2 bg-transparent overflow-x-auto overflow-y-hidden px-2 py-8"
+                    onWheel={handleCarouselWheel}
+                    role="region"
+                >
                     <div className="category-conveyor-track flex w-max">
                         {[0, 1].map((groupIndex) => (
                             <div

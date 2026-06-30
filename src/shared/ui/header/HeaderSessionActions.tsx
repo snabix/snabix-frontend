@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Bell, CheckCheck, Trash2, X } from "lucide-react";
+import { Bell, CheckCheck, Plus, Trash2, X } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
 import {
   deleteAllNotifications,
@@ -35,6 +35,17 @@ export function HeaderSessionActions({
 
   return (
     <div className="flex items-center gap-3">
+      {hasCheckedSession && user !== null ? (
+        <Link
+          aria-label="Создать объявление"
+          className="inline-flex size-11 items-center justify-center gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--brand-deep)] text-sm font-black text-[var(--active-button-text)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)] sm:w-auto sm:px-4"
+          href="/account/listings/create"
+        >
+          <Plus size={17} strokeWidth={2.4} />
+          <span className="hidden sm:inline">Создать</span>
+        </Link>
+      ) : null}
+
       <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
 
       {!hasCheckedSession ? (

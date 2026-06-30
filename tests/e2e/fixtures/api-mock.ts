@@ -27,6 +27,7 @@ export class SnabixApiMock {
   lastSignUpPayload: JsonObject | null = null;
   listing: ListingItem = makeListing();
   mediaUploads = 0;
+  unauthorizedStatus: 401 | 419 = 401;
   user: ReturnType<typeof makeUser>;
 
   constructor(options: ApiMockOptions = {}) {
@@ -60,17 +61,22 @@ export class SnabixApiMock {
       return;
     }
 
-    if (url.pathname === "/api/v1/auth/me/addresses" && method === "PUT") {
-      await this.replaceAddresses(route);
-      return;
-    }
-
     if (url.pathname === "/api/v1/auth/me" && method === "GET") {
       if (this.authenticated) {
         await this.fulfill(route, 200, { data: this.user });
       } else {
-        await this.fulfill(route, 401, { message: "Unauthenticated" });
+        await this.fulfillUnauthorized(route);
       }
+      return;
+    }
+
+    if (isPrivateApiRequest(url.pathname) && !this.authenticated) {
+      await this.fulfillUnauthorized(route);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/me/addresses" && method === "PUT") {
+      await this.replaceAddresses(route);
       return;
     }
 
@@ -220,6 +226,24 @@ export class SnabixApiMock {
       status,
     });
   }
+
+  private async fulfillUnauthorized(route: Route) {
+    await this.fulfill(route, this.unauthorizedStatus, {
+      message: this.unauthorizedStatus === 419
+        ? "CSRF token mismatch"
+        : "Unauthenticated",
+    });
+  }
+}
+
+function isPrivateApiRequest(pathname: string): boolean {
+  return [
+    "/api/v1/auth/me/addresses",
+    "/api/v1/auth/sessions",
+    "/api/v1/listings",
+    "/api/v1/listings/favorites",
+    "/api/v1/notifications",
+  ].some((privatePath) => pathname === privatePath || pathname.startsWith(`${privatePath}/`));
 }
 
 function getJsonBody(request: Request): JsonObject {

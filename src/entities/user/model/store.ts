@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { User } from "./types";
 
+export type SessionStatus = "unknown" | "checking" | "authenticated" | "guest" | "expired";
+export type SessionEndReason = "unauthenticated" | "csrf-token-mismatch" | "signed-out";
+
 interface UserState {
   user: User | null;
   isLoading: boolean;
   hasCheckedSession: boolean;
+  sessionStatus: SessionStatus;
+  sessionEndReason: SessionEndReason | null;
   setUser: (user: User | null) => void;
-  clearUser: () => void;
+  clearUser: (reason?: SessionEndReason) => void;
   setLoading: (isLoading: boolean) => void;
   setHasCheckedSession: (hasCheckedSession: boolean) => void;
 }
@@ -15,8 +20,32 @@ export const useUserStore = create<UserState>((set) => ({
   user: null,
   isLoading: false,
   hasCheckedSession: false,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-  setLoading: (isLoading) => set({ isLoading }),
-  setHasCheckedSession: (hasCheckedSession) => set({ hasCheckedSession }),
+  sessionStatus: "unknown",
+  sessionEndReason: null,
+  setUser: (user) => set({
+    user,
+    isLoading: false,
+    hasCheckedSession: true,
+    sessionStatus: user ? "authenticated" : "guest",
+    sessionEndReason: null,
+  }),
+  clearUser: (reason = "unauthenticated") => set({
+    user: null,
+    isLoading: false,
+    hasCheckedSession: true,
+    sessionStatus: reason === "signed-out" ? "guest" : "expired",
+    sessionEndReason: reason,
+  }),
+  setLoading: (isLoading) => set((state) => ({
+    isLoading,
+    sessionStatus: isLoading ? "checking" : state.sessionStatus,
+  })),
+  setHasCheckedSession: (hasCheckedSession) => set((state) => ({
+    hasCheckedSession,
+    sessionStatus: !hasCheckedSession
+      ? "unknown"
+      : state.sessionStatus === "unknown"
+        ? state.user ? "authenticated" : "guest"
+        : state.sessionStatus,
+  })),
 }));

@@ -58,6 +58,30 @@ describe("validated API requests", () => {
     expect(apiGetMock).toHaveBeenCalledWith("/items", { params: { page: 1 } });
   });
 
+  it("rejects pagination responses with unknown wrapper or meta fields", async () => {
+    apiGetMock.mockResolvedValueOnce({
+      data: {
+        data: {
+          items: [{ id: "item-1" }],
+          links: {},
+          meta: {
+            currentPage: 1,
+            from: 1,
+            lastPage: 1,
+            perPage: 12,
+            to: 1,
+            total: 1,
+            unknownMeta: true,
+          },
+        },
+      },
+    });
+
+    await expect(getPaginated(itemSchema, "/items", {
+      errorMessage: "Некорректный pagination contract.",
+    })).rejects.toThrow("Некорректный pagination contract.");
+  });
+
   it("posts and patches without adding unused axios arguments", async () => {
     apiPostMock.mockResolvedValueOnce({ data: { data: { id: "item-1" } } });
     apiPatchMock.mockResolvedValueOnce({ data: { data: { id: "item-1" } } });

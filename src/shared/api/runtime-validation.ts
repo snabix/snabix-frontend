@@ -26,6 +26,6 @@ export function paginatedContractSchema<TItem extends z.ZodType>(
       perPage: z.number(),
       to: z.number().nullable(),
       total: z.number(),
-    }).passthrough(),
-  }).passthrough();
+    }).strict(),
+  }).strict();
 }

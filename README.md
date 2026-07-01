@@ -31,6 +31,18 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
+Critical local e2e guard:
+
+```bash
+npm run test:e2e:critical
+```
+
+Full CI e2e suite:
+
+```bash
+npm run test:e2e:full
+```
+
 Playwright starts Next.js on port `3000` or reuses an existing local server. Set `E2E_PORT` to use another port. Frontend e2e tests use deterministic stateful API interception; Laravel API behavior remains covered by backend feature tests.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.

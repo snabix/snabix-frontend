@@ -45,11 +45,23 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
+Critical E2E для локального pre-push:
+
+```bash
+npm run test:e2e:critical
+```
+
+Полный E2E для CI и релизной проверки:
+
+```bash
+npm run test:e2e:full
+```
+
 Полная frontend-проверка:
 
 ```bash
 npm run typecheck
 npm run lint
 npm run test
-npm run test:e2e
+npm run test:e2e:full
 ```

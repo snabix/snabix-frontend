@@ -9,7 +9,7 @@ cd /Users/imranpskhu/projects/snabix/snabix-frontend
 npm run typecheck
 npm run lint
 npm run test
-npm run test:e2e
+npm run test:e2e:full
 ```
 
 ## Unit и integration
@@ -44,10 +44,26 @@ Playwright используется для full user flow:
 
 ```bash
 npx playwright install chromium
-npm run test:e2e
+npm run test:e2e:full
 ```
 
 Часть e2e использует deterministic API mocks. Поведение Laravel API покрывается backend feature-тестами.
+
+## Local hooks и CI
+
+Локальный `pre-commit` запускает быстрые проверки: lint, typecheck и unit/integration tests.
+
+Локальный `pre-push` запускает strict-набор без полного параллельного e2e:
+
+```bash
+npm run lint
+npm run typecheck
+npm run typecheck:full
+npm run test
+npm run test:e2e:critical
+```
+
+Полный e2e-набор запускается в GitHub Actions через `npm run test:e2e:full`. Это снижает локальные flaky-timeout при push, но сохраняет полный browser coverage как обязательный CI-gate.
 
 ## Что обязательно тестировать
 

@@ -6,7 +6,7 @@
 npm run typecheck
 npm run lint
 npm run test
-npm run test:e2e
+npm run test:e2e:full
 npm run build
 ```
 
@@ -39,6 +39,7 @@ npm run build
 ```bash
 git status --short
 git diff --check
+npm run test:e2e:critical
 ```
 
 Рекомендуемое сообщение:

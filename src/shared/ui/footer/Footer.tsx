@@ -8,10 +8,10 @@ const socialLinks = [
 ];
 
 const legalLinks = [
-  { label: "Конфиденциальность", href: "#" },
-  { label: "Доступность", href: "#" },
-  { label: "Файлы cookie", href: "#" },
-  { label: "Политика и положения", href: "#" },
+  { label: "Конфиденциальность", href: "/privacy" },
+  { label: "Доступность", href: "/accessibility" },
+  { label: "Файлы cookie", href: "/cookies" },
+  { label: "Политика и положения", href: "/policies" },
 ];
 
 const additionalLinks = [

@@ -30,7 +30,7 @@ export function Header() {
   const handleLogout = async () => {
     try {
       await logout();
-      clearUser();
+      clearUser("signed-out");
       toast.success("Вы вышли из аккаунта.");
       startTransition(() => {
         router.push("/");

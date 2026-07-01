@@ -19,6 +19,7 @@ import type { useListingAttributeState } from "@/src/features/listing/model/use-
 import type { useListingCategoryState } from "@/src/features/listing/model/use-listing-category-state";
 import type { useListingMediaState } from "@/src/features/listing/model/use-listing-media-state";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 
 type UseListingSubmitOptions = {
   addressState: Pick<
@@ -58,6 +59,7 @@ export function useListingSubmit({
   onSubmit,
 }: UseListingSubmitOptions) {
   const router = useRouter();
+  const runMutation = useMutationThrottle();
   const [isNegotiable, setIsNegotiable] = useState(initialListing?.isNegotiable ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<ListingFormValues>({
@@ -118,19 +120,27 @@ export function useListingSubmit({
       ),
     };
 
-    try {
-      setIsSubmitting(true);
-      const savedListing = await onSubmit(payload);
-      const mediaUploaded = await mediaState.uploadPendingMedia(savedListing.id);
+    const mutationKey = mode === "create"
+      ? `listing:create:${saveAsDraft ? "draft" : "review"}`
+      : `listing:${initialListing?.id ?? "edit"}:update`;
 
-      if (!mediaUploaded) {
+    try {
+      const result = await runMutation(mutationKey, async () => {
+        setIsSubmitting(true);
+        const savedListing = await onSubmit(payload);
+        const mediaUploaded = await mediaState.uploadPendingMedia(savedListing.id);
+
+        return { mediaUploaded, savedListing };
+      });
+
+      if (!result.started || !result.value.mediaUploaded) {
         return;
       }
 
       toast.success(mode === "create"
         ? (saveAsDraft ? "Черновик объявления сохранён." : "Объявление отправлено на проверку.")
         : "Объявление обновлено.");
-      router.push(`/account/listings/${savedListing.id}`);
+      router.push(`/account/listings/${result.value.savedListing.id}`);
       router.refresh();
     } catch (error) {
       toast.error(extractApiError(error, "Не удалось сохранить объявление."));

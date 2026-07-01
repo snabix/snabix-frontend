@@ -9,11 +9,13 @@ import {
   uploadListingMedia,
 } from "@/src/features/listing/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 
 const MEDIA_UPLOAD_ERROR = "Объявление сохранено, но фотографии пока не загрузились. Проверьте соединение и повторите попытку.";
 
 export function useListingMediaState(initialListing?: ListingItem) {
   const router = useRouter();
+  const runMutation = useMutationThrottle();
   const [existingMedia, setExistingMedia] = useState<ListingMediaItem[]>(
     () => initialListing?.media ?? [],
   );
@@ -30,16 +32,18 @@ export function useListingMediaState(initialListing?: ListingItem) {
       return;
     }
 
-    const previousMedia = existingMedia;
-    setExistingMedia((items) => items.filter((item) => item.id !== mediaId));
+    await runMutation(`listing:${initialListing.id}:media:${mediaId}:delete`, async () => {
+      const previousMedia = existingMedia;
+      setExistingMedia((items) => items.filter((item) => item.id !== mediaId));
 
-    try {
-      syncExistingMedia(await deleteListingMedia(initialListing.id, mediaId));
-      toast.success("Изображение удалено.");
-    } catch (error) {
-      setExistingMedia(previousMedia);
-      toast.error(extractApiError(error, "Не удалось удалить изображение."));
-    }
+      try {
+        syncExistingMedia(await deleteListingMedia(initialListing.id, mediaId));
+        toast.success("Изображение удалено.");
+      } catch (error) {
+        setExistingMedia(previousMedia);
+        toast.error(extractApiError(error, "Не удалось удалить изображение."));
+      }
+    });
   };
 
   const handleSetMainExistingMedia = async (mediaId: number) => {
@@ -47,17 +51,19 @@ export function useListingMediaState(initialListing?: ListingItem) {
       return;
     }
 
-    const nextMedia = moveMediaToFront(existingMedia, mediaId);
-    const previousMedia = existingMedia;
-    setExistingMedia(markMainMedia(nextMedia));
+    await runMutation(`listing:${initialListing.id}:media:${mediaId}:main`, async () => {
+      const nextMedia = moveMediaToFront(existingMedia, mediaId);
+      const previousMedia = existingMedia;
+      setExistingMedia(markMainMedia(nextMedia));
 
-    try {
-      syncExistingMedia(await setMainListingMedia(initialListing.id, mediaId));
-      toast.success("Главное фото обновлено.");
-    } catch (error) {
-      setExistingMedia(previousMedia);
-      toast.error(extractApiError(error, "Не удалось выбрать главное фото."));
-    }
+      try {
+        syncExistingMedia(await setMainListingMedia(initialListing.id, mediaId));
+        toast.success("Главное фото обновлено.");
+      } catch (error) {
+        setExistingMedia(previousMedia);
+        toast.error(extractApiError(error, "Не удалось выбрать главное фото."));
+      }
+    });
   };
 
   const handleReorderExistingMedia = async (
@@ -68,24 +74,26 @@ export function useListingMediaState(initialListing?: ListingItem) {
       return;
     }
 
-    const previousMedia = existingMedia;
-    const nextMedia = reorderMediaLocally(existingMedia, mediaId, direction);
+    await runMutation(`listing:${initialListing.id}:media:reorder`, async () => {
+      const previousMedia = existingMedia;
+      const nextMedia = reorderMediaLocally(existingMedia, mediaId, direction);
 
-    if (nextMedia === existingMedia) {
-      return;
-    }
+      if (nextMedia === existingMedia) {
+        return;
+      }
 
-    setExistingMedia(markMainMedia(nextMedia));
+      setExistingMedia(markMainMedia(nextMedia));
 
-    try {
-      syncExistingMedia(await reorderListingMedia(
-        initialListing.id,
-        nextMedia.map((media) => media.id),
-      ));
-    } catch (error) {
-      setExistingMedia(previousMedia);
-      toast.error(extractApiError(error, "Не удалось изменить порядок изображений."));
-    }
+      try {
+        syncExistingMedia(await reorderListingMedia(
+          initialListing.id,
+          nextMedia.map((media) => media.id),
+        ));
+      } catch (error) {
+        setExistingMedia(previousMedia);
+        toast.error(extractApiError(error, "Не удалось изменить порядок изображений."));
+      }
+    });
   };
 
   const uploadPendingMedia = async (listingId: string): Promise<boolean> => {
@@ -93,19 +101,23 @@ export function useListingMediaState(initialListing?: ListingItem) {
       return true;
     }
 
-    try {
-      setIsUploadingMedia(true);
-      await uploadListingMedia(listingId, imageFiles);
-      setImageFiles([]);
-      setMediaRetryListingId(null);
-      return true;
-    } catch (error) {
-      setMediaRetryListingId(listingId);
-      toast.error(extractApiError(error, MEDIA_UPLOAD_ERROR));
-      return false;
-    } finally {
-      setIsUploadingMedia(false);
-    }
+    const result = await runMutation(`listing:${listingId}:media:upload`, async () => {
+      try {
+        setIsUploadingMedia(true);
+        await uploadListingMedia(listingId, imageFiles);
+        setImageFiles([]);
+        setMediaRetryListingId(null);
+        return true;
+      } catch (error) {
+        setMediaRetryListingId(listingId);
+        toast.error(extractApiError(error, MEDIA_UPLOAD_ERROR));
+        return false;
+      } finally {
+        setIsUploadingMedia(false);
+      }
+    });
+
+    return result.started ? result.value : false;
   };
 
   const retryMediaUpload = async () => {

@@ -43,6 +43,6 @@ const categoryAttributesPayloadSchema = z.object({
     parentId: z.union([z.string(), z.number()]).nullable(),
     name: z.string(),
     slug: z.string(),
-  }).passthrough(),
+  }).strict(),
   items: z.array(categoryAttributeDefinitionSchema),
-}).passthrough();
+}).strict();

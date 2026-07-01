@@ -1,0 +1,12 @@
+export const LISTING_STATUS_DRAFT = 1;
+export const LISTING_STATUS_PENDING_REVIEW = 2;
+export const LISTING_STATUS_PUBLISHED = 3;
+export const LISTING_STATUS_REJECTED = 4;
+export const LISTING_STATUS_ARCHIVED = 5;
+
+export const LISTING_TYPE_PRODUCT = 1;
+export const LISTING_TYPE_SERVICE = 2;
+
+export const LISTING_CONDITION_NEW = 1;
+export const LISTING_CONDITION_USED = 2;
+export const LISTING_CONDITION_NOT_APPLICABLE = 3;

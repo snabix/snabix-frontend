@@ -16,6 +16,7 @@ export type ListPublicListingsParams = {
   cityId?: number;
   regionQuery?: string;
   cityQuery?: string;
+  isNegotiable?: boolean;
   sort?: "newest" | "oldest" | "price_asc" | "price_desc" | "popular";
 };
 
@@ -33,6 +34,7 @@ export async function listPublicListings(params: ListPublicListingsParams = {}):
         cityId: params.cityId,
         regionQuery: params.regionQuery?.trim() || undefined,
         cityQuery: params.cityQuery?.trim() || undefined,
+        isNegotiable: params.isNegotiable,
         sort: params.sort,
       },
     },

@@ -1,9 +1,9 @@
 import { Check, Sparkles, Wrench } from "lucide-react";
-import type { ListingFormState } from "@/src/features/listing/model/use-listing-form-state";
 import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
-} from "@/src/features/listing/model/listing-form-constants";
+} from "@/src/entities/listing";
+import type { ListingFormState } from "@/src/features/listing/model/use-listing-form-state";
 import {
   ListingFormField,
   ListingFormSelect,

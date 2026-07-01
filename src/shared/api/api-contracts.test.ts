@@ -3,6 +3,11 @@ import {
   getCategoryAttributes,
   listRootCategories,
 } from "@/src/entities/category/api/list-categories";
+import {
+  LISTING_CONDITION_USED,
+  LISTING_STATUS_PUBLISHED,
+  LISTING_TYPE_PRODUCT,
+} from "@/src/entities/listing";
 import { getMe } from "@/src/entities/user";
 import { listActiveSessions } from "@/src/features/auth/api";
 import {
@@ -52,7 +57,7 @@ const listingContract = {
     parentId: 2,
     slug: "noutbuki",
   },
-  condition: 2,
+  condition: LISTING_CONDITION_USED,
   conditionLabel: "Б/у",
   contactEmail: "seller@example.com",
   contactName: "Seller",
@@ -88,10 +93,10 @@ const listingContract = {
   publishedAt: "2026-05-24T10:00:00+00:00",
   rejectionReason: null,
   slug: "igrovoj-noutbuk",
-  status: 3,
+  status: LISTING_STATUS_PUBLISHED,
   statusLabel: "Опубликовано",
   title: "Игровой ноутбук",
-  type: 1,
+  type: LISTING_TYPE_PRODUCT,
   typeLabel: "Товар",
   userId: "user-1",
   viewsCount: 42,
@@ -180,8 +185,8 @@ describe("api adapter contracts", () => {
       categoryId: 5,
       page: 1,
       perPage: 12,
-      status: 3,
-      type: 1,
+      status: LISTING_STATUS_PUBLISHED,
+      type: LISTING_TYPE_PRODUCT,
     });
 
     expect(result.items).toEqual([listingContract]);
@@ -191,8 +196,8 @@ describe("api adapter contracts", () => {
         categoryId: 5,
         page: 1,
         perPage: 12,
-        status: 3,
-        type: 1,
+        status: LISTING_STATUS_PUBLISHED,
+        type: LISTING_TYPE_PRODUCT,
       },
     });
   });
@@ -201,14 +206,14 @@ describe("api adapter contracts", () => {
     const payload = {
       attributeValues: {},
       categoryId: 5,
-      condition: 2,
+      condition: LISTING_CONDITION_USED,
       currency: "RUB",
       description: "Игровой ноутбук.",
       isNegotiable: true,
       price: 85000,
       saveAsDraft: true,
       title: "Игровой ноутбук",
-      type: 1,
+      type: LISTING_TYPE_PRODUCT,
     };
 
     apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
@@ -221,13 +226,13 @@ describe("api adapter contracts", () => {
     const payload = {
       attributeValues: {},
       categoryId: 5,
-      condition: 2,
+      condition: LISTING_CONDITION_USED,
       currency: "RUB",
       description: "Игровой ноутбук.",
       isNegotiable: true,
       price: 85000,
       title: "Игровой ноутбук",
-      type: 1,
+      type: LISTING_TYPE_PRODUCT,
     };
 
     apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
@@ -264,7 +269,7 @@ describe("api adapter contracts", () => {
       page: 1,
       perPage: 24,
       sort: "price_desc",
-      type: 1,
+      type: LISTING_TYPE_PRODUCT,
     });
 
     expect(result.items[0]?.imageUrl).toBe("https://cdn.snabix.test/listing-1/main.png");
@@ -278,7 +283,7 @@ describe("api adapter contracts", () => {
         page: 1,
         perPage: 24,
         sort: "price_desc",
-        type: 1,
+        type: LISTING_TYPE_PRODUCT,
       },
     });
   });

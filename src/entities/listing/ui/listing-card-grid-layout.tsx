@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { MapPin } from "lucide-react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
 import { formatReviewCount } from "@/src/entities/listing/lib/listing-card-formatters";
+import { ListingCardLocation } from "./listing-card-location";
 import { ListingCardStarRow } from "./listing-card-rating";
 import type { ListingCardPresentation } from "./listing-card-types";
 
@@ -36,10 +36,11 @@ export function ListingCardGridLayout({
             <div className="mt-3 h-px bg-[var(--border-soft)]" />
 
             <div className="mt-3 grid gap-2 overflow-hidden">
-              <span className="inline-flex min-w-0 items-center gap-2 text-[0.8rem] font-medium text-[var(--text-muted)]">
-                <MapPin className="shrink-0" size={15} />
-                <span className="truncate">{presentation.fullLocation}</span>
-              </span>
+              <ListingCardLocation
+                className="inline-flex min-w-0 items-center gap-2 text-[0.8rem] font-medium text-[var(--text-muted)]"
+                iconSize={15}
+                location={presentation.fullLocation}
+              />
 
               <span className="grid min-w-0 gap-1 text-[0.8rem] font-medium text-[var(--text-muted)]">
                 <span className="inline-flex min-w-0 items-center gap-2">

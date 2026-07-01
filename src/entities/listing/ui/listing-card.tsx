@@ -1,21 +1,11 @@
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
-import {
-  formatListingDate,
-  formatListingPrice,
-  resolveListingLocation,
-  resolveSellerHref,
-  resolveSellerInitials,
-  resolveSellerName,
-  resolveSellerReviewCount,
-} from "@/src/entities/listing/lib/listing-card-formatters";
 import { cn } from "@/src/shared/lib/utils";
-import { ListingFavoriteButton } from "./listing-card-actions";
 import { ListingCardGridLayout } from "./listing-card-grid-layout";
 import { ListingCardListLayout } from "./listing-card-list-layout";
 import { ListingCardMedia } from "./listing-card-media";
-import type { ListingCardPresentation } from "./listing-card-types";
+import { buildListingCardPresentation } from "./listing-card-presentation";
 
 const initialTransform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
 
@@ -122,43 +112,4 @@ export function ListingCard({
       )}
     </article>
   );
-}
-
-function buildListingCardPresentation({
-  favorite,
-  listing,
-  onFavoriteToggleAction,
-  viewMode,
-}: {
-  favorite: boolean;
-  listing: ListingItem | PublicListingItem;
-  onFavoriteToggleAction?: (listingId: string) => void;
-  viewMode: "grid" | "list";
-}): ListingCardPresentation {
-  const sellerName = resolveSellerName(listing);
-  const sellerRating = listing.sellerRating === null || listing.sellerRating === undefined
-    ? "Нет рейтинга"
-    : listing.sellerRating.toFixed(1);
-
-  return {
-    favoriteButton: (
-      <ListingFavoriteButton
-        isFavorite={favorite}
-        listingId={listing.id}
-        onFavoriteToggleAction={onFavoriteToggleAction}
-      />
-    ),
-    formattedPrice: formatListingPrice(listing),
-    fullLocation: resolveListingLocation(listing),
-    highlightedAttributes: listing.attributeValues
-      .filter((attribute) => attribute.name !== null && attribute.displayValue !== null)
-      .slice(0, viewMode === "list" ? 3 : 2),
-    publishedDate: formatListingDate(listing.publishedAt),
-    ratingValue: listing.sellerRating ?? 3,
-    reviewCount: resolveSellerReviewCount(listing),
-    sellerHref: resolveSellerHref(listing, sellerName),
-    sellerInitials: resolveSellerInitials(sellerName),
-    sellerName,
-    sellerRating,
-  };
 }

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { CalendarDays, Eye, MapPin } from "lucide-react";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing/model/types";
+import { ListingCardAttributes } from "./listing-card-attributes";
 import { ListingCardBadges } from "./listing-card-badges";
+import { ListingCardMeta } from "./listing-card-meta";
 import { ListingCardSeller } from "./listing-card-seller";
 import type { ListingCardPresentation } from "./listing-card-types";
 
@@ -74,65 +75,6 @@ export function ListingCardListLayout({
         ratingLabel={presentation.sellerRating}
         reviewCount={presentation.reviewCount}
       />
-    </div>
-  );
-}
-
-function ListingCardAttributes({
-  attributes,
-}: {
-  attributes: ListingCardPresentation["highlightedAttributes"];
-}) {
-  if (attributes.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-wrap gap-2.5">
-      {attributes.map((attribute) => (
-        <span
-          className="rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--background)_40%,white)] px-3.5 py-2 text-xs font-bold text-[var(--brand-deep)]"
-          key={attribute.attributeDefinitionId}
-        >
-          <span className="text-[var(--text-muted)]">
-            {attribute.name}
-          </span>{" "}
-          {attribute.displayValue}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function ListingCardMeta({
-  listing,
-  presentation,
-}: {
-  listing: ListingItem | PublicListingItem;
-  presentation: ListingCardPresentation;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-medium text-[var(--text-muted)]">
-      <span className="inline-flex items-center gap-2">
-        <MapPin size={18} />
-        {presentation.fullLocation}
-      </span>
-
-      <span className="text-[var(--text-muted)]/60">•</span>
-
-      {presentation.publishedDate ? (
-        <span className="inline-flex items-center gap-2">
-          <CalendarDays size={18} />
-          Опубликовано {presentation.publishedDate}
-        </span>
-      ) : null}
-
-      <span className="text-[var(--text-muted)]/60">•</span>
-
-      <span className="inline-flex items-center gap-2">
-        <Eye size={17} />
-        {new Intl.NumberFormat("ru-RU").format(listing.viewsCount)} просмотров
-      </span>
     </div>
   );
 }

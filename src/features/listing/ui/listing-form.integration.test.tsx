@@ -5,7 +5,12 @@ import {
   type CategoryAttributeDefinition,
   type CategoryNode,
 } from "@/src/entities/category";
-import type { ListingItem } from "@/src/entities/listing";
+import {
+  LISTING_CONDITION_USED,
+  LISTING_STATUS_DRAFT,
+  LISTING_TYPE_PRODUCT,
+  type ListingItem,
+} from "@/src/entities/listing";
 import {
   ATTRIBUTE_TYPE_SELECT,
   ATTRIBUTE_TYPE_TEXT,
@@ -71,7 +76,7 @@ const listingContract: ListingItem = {
     parentId: null,
     slug: "elektronika",
   },
-  condition: 2,
+  condition: LISTING_CONDITION_USED,
   conditionLabel: "Б/у",
   contactEmail: null,
   contactName: null,
@@ -89,10 +94,10 @@ const listingContract: ListingItem = {
   publishedAt: null,
   rejectionReason: null,
   slug: "igrovoj-noutbuk",
-  status: 1,
+  status: LISTING_STATUS_DRAFT,
   statusLabel: "Черновик",
   title: "Игровой ноутбук",
-  type: 1,
+  type: LISTING_TYPE_PRODUCT,
   typeLabel: "Товар",
   userId: "user-1",
   viewsCount: 0,
@@ -157,7 +162,7 @@ describe("ListingForm integration", () => {
 
   it("keeps user in edit flow with retry action when media upload fails after save", async () => {
     const onSubmit = vi.fn().mockResolvedValue(listingContract);
-    uploadListingMediaMock.mockRejectedValue(new Error("Upload failed"));
+    uploadListingMediaMock.mockRejectedValueOnce(new Error("Upload failed"));
     const { container } = render(
       <ListingForm
         initialListing={listingContract}

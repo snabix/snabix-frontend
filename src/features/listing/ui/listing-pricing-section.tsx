@@ -1,5 +1,5 @@
 import type { ListingFormState } from "@/src/features/listing/model/use-listing-form-state";
-import { LISTING_TYPE_PRODUCT } from "@/src/features/listing/model/listing-form-constants";
+import { LISTING_TYPE_PRODUCT } from "@/src/entities/listing";
 import { conditionOptions } from "@/src/features/listing/model/listing-form-options";
 import {
   ListingFormField,

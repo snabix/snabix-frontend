@@ -1,7 +1,8 @@
-import type { ListingItem } from "@/src/entities/listing";
-
-export const LISTING_STATUS_DRAFT = 1;
-export const LISTING_STATUS_ARCHIVED = 5;
+import {
+  LISTING_STATUS_ARCHIVED,
+  LISTING_STATUS_DRAFT,
+  type ListingItem,
+} from "@/src/entities/listing";
 
 export type ListingOwnerActionKey = "archive" | "delete" | "edit" | "submitForReview";
 

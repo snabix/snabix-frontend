@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  LISTING_CONDITION_USED,
+  LISTING_STATUS_PUBLISHED,
+  LISTING_TYPE_PRODUCT,
+} from "@/src/entities/listing";
+import {
   newsContentBlockSchema,
   publicListingItemSchema,
   userSchema,
@@ -27,11 +32,11 @@ describe("strict API schemas", () => {
     const result = publicListingItemSchema.safeParse({
       id: "listing-1",
       category: null,
-      type: 1,
+      type: LISTING_TYPE_PRODUCT,
       typeLabel: "Товар",
-      status: 3,
+      status: LISTING_STATUS_PUBLISHED,
       statusLabel: "Опубликовано",
-      condition: 2,
+      condition: LISTING_CONDITION_USED,
       conditionLabel: "Б/у",
       title: "Ноутбук",
       slug: "noutbuk",

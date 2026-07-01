@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/src/entities/category";
-import type { ListingItem } from "@/src/entities/listing";
-import { flattenBranchOptions } from "@/src/features/listing/model/category-options";
 import {
   LISTING_CONDITION_NOT_APPLICABLE,
   LISTING_CONDITION_USED,
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
-} from "@/src/features/listing/model/listing-form-constants";
+  type ListingItem,
+} from "@/src/entities/listing";
+import { flattenBranchOptions } from "@/src/features/listing/model/category-options";
 
 export function useListingCategoryState(initialListing?: ListingItem) {
   const initialCategoryId =

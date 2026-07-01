@@ -96,12 +96,15 @@ export function useListingMediaState(initialListing?: ListingItem) {
     });
   };
 
-  const uploadPendingMedia = async (listingId: string): Promise<boolean> => {
+  const uploadPendingMedia = async (
+    listingId: string,
+    mutationScope: "initial" | "retry" = "initial",
+  ): Promise<boolean> => {
     if (imageFiles.length === 0) {
       return true;
     }
 
-    const result = await runMutation(`listing:${listingId}:media:upload`, async () => {
+    const result = await runMutation(`listing:${listingId}:media:upload:${mutationScope}`, async () => {
       try {
         setIsUploadingMedia(true);
         await uploadListingMedia(listingId, imageFiles);
@@ -126,7 +129,7 @@ export function useListingMediaState(initialListing?: ListingItem) {
     }
 
     const listingId = mediaRetryListingId;
-    const uploaded = await uploadPendingMedia(listingId);
+    const uploaded = await uploadPendingMedia(listingId, "retry");
 
     if (uploaded) {
       toast.success("Фотографии объявления загружены.");

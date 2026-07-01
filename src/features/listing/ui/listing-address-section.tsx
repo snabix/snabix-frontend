@@ -169,5 +169,5 @@ function formatUserAddress(address: UserAddress): string {
     address.addressLine,
   ]
     .filter(Boolean)
-    .join(" -> ");
+    .join(", ");
 }

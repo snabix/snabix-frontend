@@ -28,7 +28,7 @@ export function SessionProvider() {
       const user = await getMe();
       setUser(user);
     } catch {
-      clearUser();
+      clearUser("unauthenticated");
     } finally {
       setLoading(false);
       setHasCheckedSession(true);
@@ -50,7 +50,7 @@ export function SessionProvider() {
       const detail = (event as CustomEvent<AuthUnauthorizedEventDetail>).detail;
       const shouldRedirectToSignIn = pathname.startsWith("/account");
 
-      clearUser();
+      clearUser(detail?.reason ?? "unauthenticated");
       setLoading(false);
       setHasCheckedSession(true);
 

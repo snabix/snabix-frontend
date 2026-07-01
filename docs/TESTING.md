@@ -1,28 +1,55 @@
-# Frontend Testing Standard
+# Стандарт тестирования frontend
 
-## Unit And Integration Tests
+## Unit и integration тесты
 
-Unit and integration tests stay colocated with the code they protect:
+Unit и integration тесты хранятся рядом с кодом, который они защищают:
 
 - `src/features/**/model/*.test.ts`
 - `src/features/**/ui/*.test.tsx`
 - `src/entities/**/model/*.test.ts`
 - `src/shared/**/**/*.test.ts`
 
-This matches the current Feature-Sliced Design structure: a slice owns its model, UI, API adapter and tests together. When a feature moves, its tests move with it.
+Это соответствует текущей Feature-Sliced структуре: slice владеет model, UI, API adapter и тестами вместе. Если фича переносится, тесты переносятся вместе с ней.
 
-## Browser And E2E Tests
+## Browser и E2E тесты
 
-Browser-level smoke and E2E tests should be stored separately under:
+Browser-level smoke и E2E тесты хранятся отдельно:
 
-- `tests/e2e/**`
+```text
+tests/e2e/**
+```
 
-Use this only for real browser flows such as auth, profile navigation, listing cards, mobile header/footer and account sidebar QA. Component-like tests should not be moved there.
+Этот уровень нужен только для реальных браузерных сценариев:
 
-## Current Command
+- авторизация;
+- навигация профиля;
+- карточки объявлений;
+- mobile header/footer;
+- account sidebar;
+- session expiration.
 
-Run all frontend tests with:
+Component-like тесты не нужно переносить в `tests/e2e`.
+
+## Команды
+
+Unit и integration:
 
 ```bash
 npm run test
+```
+
+E2E:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+Полная frontend-проверка:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+npm run test:e2e
 ```

@@ -78,6 +78,8 @@ describe("SessionProvider", () => {
       expect(state.user).toEqual(mockUser);
       expect(state.isLoading).toBe(false);
       expect(state.hasCheckedSession).toBe(true);
+      expect(state.sessionStatus).toBe("authenticated");
+      expect(state.sessionEndReason).toBeNull();
     });
 
     expect(getMeMock).toHaveBeenCalledTimes(1);
@@ -94,6 +96,8 @@ describe("SessionProvider", () => {
       expect(state.user).toBeNull();
       expect(state.isLoading).toBe(false);
       expect(state.hasCheckedSession).toBe(true);
+      expect(state.sessionStatus).toBe("expired");
+      expect(state.sessionEndReason).toBe("unauthenticated");
     });
 
     expect(getMeMock).toHaveBeenCalledTimes(1);
@@ -116,6 +120,8 @@ describe("SessionProvider", () => {
       expect(state.user).toBeNull();
       expect(state.isLoading).toBe(false);
       expect(state.hasCheckedSession).toBe(true);
+      expect(state.sessionStatus).toBe("expired");
+      expect(state.sessionEndReason).toBe("unauthenticated");
     });
 
     expect(toastInfoMock).not.toHaveBeenCalled();
@@ -137,7 +143,11 @@ describe("SessionProvider", () => {
     });
 
     await waitFor(() => {
-      expect(useUserStore.getState().user).toBeNull();
+      const state = useUserStore.getState();
+
+      expect(state.user).toBeNull();
+      expect(state.sessionStatus).toBe("expired");
+      expect(state.sessionEndReason).toBe("csrf-token-mismatch");
     });
 
     expect(toastInfoMock).toHaveBeenCalledWith(AUTH_CONTINUE_MESSAGE);

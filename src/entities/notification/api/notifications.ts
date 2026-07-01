@@ -104,3 +104,19 @@ export function markAllNotificationsRead(): Promise<{ markedRead: boolean }> {
     { errorMessage: "Не удалось отметить уведомления прочитанными." },
   );
 }
+
+export function deleteNotification(notificationId: string): Promise<{ deleted: boolean }> {
+  return deleteData(
+    z.object({ deleted: z.boolean() }).strict(),
+    `/notifications/${notificationId}`,
+    { errorMessage: "Не удалось удалить уведомление." },
+  );
+}
+
+export function deleteAllNotifications(): Promise<{ deleted: boolean }> {
+  return deleteData(
+    z.object({ deleted: z.boolean() }).strict(),
+    "/notifications",
+    { errorMessage: "Не удалось очистить уведомления." },
+  );
+}

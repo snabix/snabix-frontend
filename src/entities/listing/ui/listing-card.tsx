@@ -418,7 +418,7 @@ function resolveListingLocation(listing: ListingItem | PublicListingItem): strin
             listing.location.region.fullName || listing.location.region.name,
             listing.location.city?.name,
             listing.location.addressLine,
-        ].filter(Boolean).join(" -> ");
+        ].filter(Boolean).join(", ");
 
         if (location) {
             return location;
@@ -429,7 +429,7 @@ function resolveListingLocation(listing: ListingItem | PublicListingItem): strin
         listing.region,
         listing.city,
         listing.addressLine ?? [listing.street, listing.house].filter(Boolean).join(", "),
-    ].filter(Boolean).join(" -> ");
+    ].filter(Boolean).join(", ");
 
     return location || listing.fullLocation || listing.location?.display || "Город не указан";
 }

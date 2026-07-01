@@ -116,6 +116,7 @@ Frontend отображает и отправляет медиа, но не ре
 
 ## Связанные документы
 
+- `FILE_SIZE_GUIDELINES.md`
 - `LOCAL_DEVELOPMENT.md`
 - `TESTING_STRATEGY.md`
 - `SECRETS.md`

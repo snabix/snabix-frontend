@@ -8,10 +8,9 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-import type { ListingItem } from "@/src/entities/listing";
+import { LISTING_STATUS_ARCHIVED, type ListingItem } from "@/src/entities/listing";
 import {
   buildListingOwnerActionsPolicy,
-  LISTING_STATUS_ARCHIVED,
 } from "@/src/features/listing/model/listing-owner-actions-policy";
 import {
   DropdownMenu,

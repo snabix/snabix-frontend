@@ -4,7 +4,7 @@ import {
   LISTING_CONDITION_USED,
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
-} from "@/src/features/listing/model/listing-form-constants";
+} from "@/src/entities/listing";
 
 export const listingTypeCards = [
   {
@@ -25,4 +25,3 @@ export const conditionOptions = [
   { label: "Новый", value: LISTING_CONDITION_NEW },
   { label: "Б/у", value: LISTING_CONDITION_USED },
 ] as const;
-

@@ -4,13 +4,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { ListingCard, type ListingItem } from "@/src/entities/listing";
-import { deleteListing, listListings } from "@/src/features/listing/api";
-import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 import {
+  LISTING_STATUS_ARCHIVED,
+  LISTING_STATUS_DRAFT,
+  LISTING_STATUS_PENDING_REVIEW,
+  LISTING_STATUS_PUBLISHED,
+  LISTING_STATUS_REJECTED,
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
-} from "@/src/features/listing/model/listing-form-constants";
+  ListingCard,
+  type ListingItem,
+} from "@/src/entities/listing";
+import { deleteListing, listListings } from "@/src/features/listing/api";
+import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 import { DeleteListingDialog } from "@/src/features/listing/ui/delete-listing-dialog";
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
@@ -23,11 +29,11 @@ import { useAccountSidebarState } from "@/src/widgets/account/ui/account-sidebar
 
 const listingStatusOptions = [
   { label: "Все статусы", value: "" },
-  { label: "Черновик", value: "1" },
-  { label: "На проверке", value: "2" },
-  { label: "Опубликовано", value: "3" },
-  { label: "Отклонено", value: "4" },
-  { label: "В архиве", value: "5" },
+  { label: "Черновик", value: String(LISTING_STATUS_DRAFT) },
+  { label: "На проверке", value: String(LISTING_STATUS_PENDING_REVIEW) },
+  { label: "Опубликовано", value: String(LISTING_STATUS_PUBLISHED) },
+  { label: "Отклонено", value: String(LISTING_STATUS_REJECTED) },
+  { label: "В архиве", value: String(LISTING_STATUS_ARCHIVED) },
 ];
 
 const listingTypeOptions = [

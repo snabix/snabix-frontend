@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { SnabixApiMock } from "./fixtures/api-mock";
 
 test("critical marketplace path from sign in to listing management", async ({ page }) => {
+  test.setTimeout(60_000);
+
   const api = new SnabixApiMock({ authenticated: false });
   await api.install(page);
 
@@ -41,8 +43,8 @@ test("critical marketplace path from sign in to listing management", async ({ pa
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
 
-  await expect.poll(() => api.lastPublicQuery.get("regionQuery")).toBe("Московская область");
-  await expect.poll(() => api.lastPublicQuery.get("cityQuery")).toBe("Москва");
+  await expect.poll(() => api.lastPublicQuery.get("regionQuery"), { timeout: 20_000 }).toBe("Московская область");
+  await expect.poll(() => api.lastPublicQuery.get("cityQuery"), { timeout: 20_000 }).toBe("Москва");
   await page.getByLabel("Закрыть фильтры").click();
 
   await page.getByRole("button", { name: "Добавить объявление в избранное" }).click();

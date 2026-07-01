@@ -43,3 +43,20 @@ test("redirects when a private request fails with csrf expiration", async ({ pag
   await expect(page).toHaveURL(/\/sign-in\?redirectTo=%2Faccount%2Flistings/);
   await expect(page.getByRole("heading", { name: "Вход" })).toBeVisible();
 });
+
+test("redirects from favorite mutation when session expires", async ({ page }) => {
+  const api = new SnabixApiMock();
+  api.favorite = true;
+  await api.install(page);
+
+  await page.goto("/account/favorites");
+  await expect(page.getByText("Тестовый ноутбук")).toBeVisible();
+
+  api.authenticated = false;
+  api.unauthorizedStatus = 419;
+
+  await page.getByRole("button", { name: "Удалить объявление из избранного" }).click();
+
+  await expect(page).toHaveURL(/\/sign-in\?redirectTo=%2Faccount%2Ffavorites/);
+  await expect(page.getByRole("heading", { name: "Вход" })).toBeVisible();
+});

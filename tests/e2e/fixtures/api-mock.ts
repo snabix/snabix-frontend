@@ -1,5 +1,7 @@
 import type { Page, Request, Route } from "@playwright/test";
+import type { UserNotification, NotificationPreference } from "@/src/entities/notification";
 import type { ListingItem } from "@/src/entities/listing";
+import type { ActiveUserSession } from "@/src/features/auth/model/types";
 import {
   city,
   leafCategory,
@@ -20,15 +22,25 @@ type JsonObject = Record<string, unknown>;
 
 export class SnabixApiMock {
   authenticated: boolean;
+  deletedNotificationIds: string[] = [];
   favorite = false;
   lastAddressPayload: JsonObject | null = null;
   lastListingPayload: JsonObject | null = null;
+  lastNotificationPreferencesPayload: JsonObject | null = null;
   lastPublicQuery = new URLSearchParams();
   lastSignUpPayload: JsonObject | null = null;
   listing: ListingItem = makeListing();
+  markAllNotificationsReadCalls = 0;
   mediaUploads = 0;
+  notificationPreferences: NotificationPreference[] = makeNotificationPreferences();
+  notifications: UserNotification[] = makeNotifications();
+  reorderedMediaIds: number[] = [];
+  sessions: ActiveUserSession[] = makeSessions();
+  terminatedSessionIds: string[] = [];
+  terminatedOtherSessions = false;
   unauthorizedStatus: 401 | 419 = 401;
   user: ReturnType<typeof makeUser>;
+  verificationCode: string | null = null;
 
   constructor(options: ApiMockOptions = {}) {
     this.authenticated = options.authenticated ?? true;
@@ -61,6 +73,41 @@ export class SnabixApiMock {
       return;
     }
 
+    if (url.pathname === "/api/v1/auth/email-verification-notification" && method === "POST") {
+      this.verificationCode = "123456";
+      await this.fulfill(route, 200, {
+        data: {
+          cooldownSeconds: 0,
+          message: "Код подтверждения отправлен.",
+          sent: true,
+        },
+      });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/verify-email" && method === "POST") {
+      const payload = getJsonBody(request);
+      const verified = payload.code === (this.verificationCode ?? "123456");
+
+      if (verified) {
+        this.user = {
+          ...this.user,
+          emailVerifiedAt: "2026-07-01T12:00:00+00:00",
+        };
+      }
+
+      await this.fulfill(route, verified ? 200 : 422, verified
+        ? {
+            data: {
+              alreadyVerified: false,
+              message: "Email подтвержден.",
+              verified: true,
+            },
+          }
+        : { message: "Код подтверждения недействителен." });
+      return;
+    }
+
     if (url.pathname === "/api/v1/auth/me" && method === "GET") {
       if (this.authenticated) {
         await this.fulfill(route, 200, { data: this.user });
@@ -77,6 +124,108 @@ export class SnabixApiMock {
 
     if (url.pathname === "/api/v1/auth/me/addresses" && method === "PUT") {
       await this.replaceAddresses(route);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/sessions" && method === "GET") {
+      await this.fulfill(route, 200, { data: { items: this.sessions } });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/sessions" && method === "DELETE") {
+      this.terminatedOtherSessions = true;
+      this.sessions = this.sessions.filter((session) => session.isCurrent);
+      await this.fulfill(route, 200, { data: { terminated: true, terminatedCount: 1 } });
+      return;
+    }
+
+    const sessionDeleteMatch = url.pathname.match(/^\/api\/v1\/auth\/sessions\/([^/]+)$/);
+
+    if (sessionDeleteMatch && method === "DELETE") {
+      const sessionId = sessionDeleteMatch[1];
+      const session = this.sessions.find((item) => item.id === sessionId);
+
+      this.terminatedSessionIds.push(sessionId);
+      this.sessions = this.sessions.filter((item) => item.id !== sessionId);
+
+      if (session?.isCurrent) {
+        this.authenticated = false;
+      }
+
+      await this.fulfill(route, 200, { data: { terminated: true } });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications/preferences" && method === "GET") {
+      await this.fulfill(route, 200, { data: { items: this.notificationPreferences } });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications/preferences" && method === "PUT") {
+      await this.updateNotificationPreferences(route);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications/preferences" && method === "DELETE") {
+      this.notificationPreferences = makeNotificationPreferences();
+      await this.fulfill(route, 200, { data: { items: this.notificationPreferences } });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications" && method === "GET") {
+      await this.fulfill(route, 200, {
+        data: {
+          items: this.notifications,
+          meta: paginated(this.notifications).meta,
+          unreadCount: this.notifications.filter((notification) => !notification.isRead).length,
+        },
+      });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications/read-all" && method === "PATCH") {
+      this.markAllNotificationsReadCalls += 1;
+      this.notifications = this.notifications.map((notification) => ({
+        ...notification,
+        isRead: true,
+        readAt: notification.readAt ?? "2026-07-01T12:00:00+00:00",
+      }));
+      await this.fulfill(route, 200, { data: { markedRead: true } });
+      return;
+    }
+
+    const notificationReadMatch = url.pathname.match(/^\/api\/v1\/notifications\/([^/]+)\/read$/);
+
+    if (notificationReadMatch && method === "PATCH") {
+      const notificationId = notificationReadMatch[1];
+
+      this.notifications = this.notifications.map((notification) => (
+        notification.id === notificationId
+          ? { ...notification, isRead: true, readAt: "2026-07-01T12:00:00+00:00" }
+          : notification
+      ));
+
+      await this.fulfill(route, 200, {
+        data: this.notifications.find((notification) => notification.id === notificationId),
+      });
+      return;
+    }
+
+    if (url.pathname === "/api/v1/notifications" && method === "DELETE") {
+      this.deletedNotificationIds.push(...this.notifications.map((notification) => notification.id));
+      this.notifications = [];
+      await this.fulfill(route, 200, { data: { deleted: true } });
+      return;
+    }
+
+    const notificationDeleteMatch = url.pathname.match(/^\/api\/v1\/notifications\/([^/]+)$/);
+
+    if (notificationDeleteMatch && method === "DELETE") {
+      const notificationId = notificationDeleteMatch[1];
+
+      this.deletedNotificationIds.push(notificationId);
+      this.notifications = this.notifications.filter((notification) => notification.id !== notificationId);
+      await this.fulfill(route, 200, { data: { deleted: true } });
       return;
     }
 
@@ -147,6 +296,78 @@ export class SnabixApiMock {
       return;
     }
 
+    if (/\/api\/v1\/listings\/[^/]+\/media\/reorder$/.test(url.pathname) && method === "PATCH") {
+      const payload = getJsonBody(request);
+      const mediaIds = Array.isArray(payload.mediaIds) ? payload.mediaIds.map(Number) : [];
+
+      this.reorderedMediaIds = mediaIds;
+      this.listing = {
+        ...this.listing,
+        media: mediaIds
+          .map((mediaId, index) => this.listing.media?.find((item) => item.id === mediaId) !== undefined
+            ? {
+                ...this.listing.media.find((item) => item.id === mediaId)!,
+                isMain: index === 0,
+                order: index + 1,
+              }
+            : null)
+          .filter((item): item is NonNullable<typeof item> => item !== null),
+      };
+      await this.fulfill(route, 200, { data: this.listing });
+      return;
+    }
+
+    const setMainMediaMatch = url.pathname.match(/^\/api\/v1\/listings\/[^/]+\/media\/(\d+)\/main$/);
+
+    if (setMainMediaMatch && method === "PATCH") {
+      const mediaId = Number(setMainMediaMatch[1]);
+      const media = this.listing.media ?? [];
+      const selectedMedia = media.find((item) => item.id === mediaId);
+
+      if (selectedMedia !== undefined) {
+        const nextMedia = [
+          selectedMedia,
+          ...media.filter((item) => item.id !== mediaId),
+        ].map((item, index) => ({
+          ...item,
+          isMain: index === 0,
+          order: index + 1,
+        }));
+
+        this.listing = {
+          ...this.listing,
+          imageUrl: selectedMedia.url,
+          imageUrls: nextMedia.map((item) => item.url),
+          media: nextMedia,
+        };
+      }
+
+      await this.fulfill(route, 200, { data: this.listing });
+      return;
+    }
+
+    const deleteMediaMatch = url.pathname.match(/^\/api\/v1\/listings\/[^/]+\/media\/(\d+)$/);
+
+    if (deleteMediaMatch && method === "DELETE") {
+      const mediaId = Number(deleteMediaMatch[1]);
+      const nextMedia = (this.listing.media ?? [])
+        .filter((item) => item.id !== mediaId)
+        .map((item, index) => ({
+          ...item,
+          isMain: index === 0,
+          order: index + 1,
+        }));
+
+      this.listing = {
+        ...this.listing,
+        imageUrl: nextMedia[0]?.url ?? null,
+        imageUrls: nextMedia.map((item) => item.url),
+        media: nextMedia,
+      };
+      await this.fulfill(route, 200, { data: this.listing });
+      return;
+    }
+
     if (/\/api\/v1\/listings\/[^/]+\/archive$/.test(url.pathname) && method === "POST") {
       this.listing = { ...this.listing, status: 5, statusLabel: "В архиве" };
       await this.fulfill(route, 200, { data: this.listing });
@@ -211,6 +432,31 @@ export class SnabixApiMock {
     await this.fulfill(route, 200, { data: { addresses: this.user.addresses } });
   }
 
+  private async updateNotificationPreferences(route: Route) {
+    const payload = getJsonBody(route.request());
+    const items = Array.isArray(payload.items) ? payload.items : [];
+
+    this.lastNotificationPreferencesPayload = payload;
+    this.notificationPreferences = this.notificationPreferences.map((preference) => {
+      const update = items.find((item) => (
+        typeof item === "object"
+          && item !== null
+          && "key" in item
+          && item.key === preference.key
+      )) as JsonObject | undefined;
+
+      return update === undefined
+        ? preference
+        : {
+            ...preference,
+            emailEnabled: typeof update.emailEnabled === "boolean" ? update.emailEnabled : preference.emailEnabled,
+            siteEnabled: typeof update.siteEnabled === "boolean" ? update.siteEnabled : preference.siteEnabled,
+          };
+    });
+
+    await this.fulfill(route, 200, { data: { items: this.notificationPreferences } });
+  }
+
   private async fulfill(route: Route, status: number, body?: JsonObject) {
     const origin = route.request().headers().origin ?? "http://localhost:3001";
 
@@ -234,6 +480,81 @@ export class SnabixApiMock {
         : "Unauthenticated",
     });
   }
+}
+
+function makeNotificationPreferences(): NotificationPreference[] {
+  return [
+    {
+      key: "listing.favorite.created",
+      category: "activity",
+      title: "Добавление в избранное",
+      description: "Когда ваше объявление добавляют в избранное.",
+      siteEnabled: true,
+      emailEnabled: false,
+      isRequired: false,
+    },
+    {
+      key: "auth.login",
+      category: "system",
+      title: "Вход в аккаунт",
+      description: "Уведомлять о новых входах в аккаунт.",
+      siteEnabled: true,
+      emailEnabled: true,
+      isRequired: true,
+    },
+  ];
+}
+
+function makeNotifications(): UserNotification[] {
+  return [
+    {
+      id: "notification-1",
+      eventKey: "listing.favorite.created",
+      category: "activity",
+      title: "Объявление добавили в избранное",
+      body: "Тестовый ноутбук теперь в избранном у покупателя.",
+      actionUrl: null,
+      context: {},
+      isRead: false,
+      createdAt: "2026-07-01T12:00:00+00:00",
+      readAt: null,
+    },
+    {
+      id: "notification-2",
+      eventKey: "auth.login",
+      category: "system",
+      title: "Новый вход в аккаунт",
+      body: "Выполнен вход с устройства Chrome.",
+      actionUrl: null,
+      context: {},
+      isRead: true,
+      createdAt: "2026-07-01T11:00:00+00:00",
+      readAt: "2026-07-01T11:01:00+00:00",
+    },
+  ];
+}
+
+function makeSessions(): ActiveUserSession[] {
+  return [
+    {
+      id: "session-current",
+      deviceName: "MacBook Pro",
+      browser: "Firefox",
+      ipAddress: "127.0.0.1",
+      type: "desktop",
+      isCurrent: true,
+      lastActivityAt: "2026-07-01T12:00:00+00:00",
+    },
+    {
+      id: "session-mobile",
+      deviceName: "iPhone",
+      browser: "Safari",
+      ipAddress: "10.0.0.2",
+      type: "mobile",
+      isCurrent: false,
+      lastActivityAt: "2026-07-01T10:00:00+00:00",
+    },
+  ];
 }
 
 function isPrivateApiRequest(pathname: string): boolean {

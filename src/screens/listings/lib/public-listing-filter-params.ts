@@ -7,6 +7,7 @@ export function toPublicListingParams(filters: PublicListingFiltersState): ListP
     maxPrice: toOptionalNumber(filters.maxPrice),
     minPrice: toOptionalNumber(filters.minPrice),
     regionQuery: toOptionalString(filters.regionQuery),
+    isNegotiable: filters.isNegotiable ? true : undefined,
     sort: filters.sort,
     type: toOptionalNumber(filters.type),
   };

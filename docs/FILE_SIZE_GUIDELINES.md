@@ -68,9 +68,9 @@
 | `src/screens/listings/ui/public-listings-page.tsx` | 83 | Page UI + data loading | Выполнено: вынесены hook загрузки, branch panel, content, view switcher и filter params |
 | `src/shared/api/api-contracts.test.ts` | 400 | Test | Допустимо, но лучше разделить при следующем росте |
 | `src/shared/api/api-schemas.ts` | 4 | API schemas | Выполнено: стал barrel-файлом, схемы разнесены по API-доменам |
-| `src/screens/blog/ui/blog-detail-page.tsx` | 371 | Page UI + block renderer | Разделить желательно |
-| `src/screens/home/ui/home-page.tsx` | 360 | Page UI + data loading | Разделить желательно |
-| `src/entities/listing/ui/listing-media-gallery.tsx` | 352 | Entity UI + modal + upload grid | Разделить желательно |
+| `src/screens/blog/ui/blog-detail-page.tsx` | 33 | Page UI + block renderer | Выполнено: вынесены hero, aside, CTA, renderer, blocks и decor |
+| `src/screens/home/ui/home-page.tsx` | 73 | Page UI + data loading | Выполнено: вынесены hook загрузки, drawer, content и view switcher |
+| `src/entities/listing/ui/listing-media-gallery.tsx` | 87 | Entity UI + modal + upload grid | Выполнено: facade + card/details galleries, preview dialog, upload grid и normalize helper |
 | `src/screens/about/ui/about-page.tsx` | 323 | Static page UI | Можно оставить временно |
 | `src/screens/account/listings/ui/listings-page.tsx` | 321 | Page UI + data loading | Разделить при следующем изменении |
 | `src/shared/ui/header/HeaderSessionActions.tsx` | 305 | Header state/actions | Разделить при следующем изменении |
@@ -203,6 +203,8 @@ src/shared/api/api-schemas.ts
 
 ### `blog-detail-page.tsx`
 
+Статус: выполнено 01.07.2026.
+
 Проблема: страница содержит hero, sticky aside, renderer всех content block types, decorative components и CTA.
 
 Рекомендуемая структура:
@@ -224,6 +226,8 @@ src/screens/blog/ui/blog-detail-decor.tsx
 
 ### `home-page.tsx`
 
+Статус: выполнено 01.07.2026.
+
 Проблема: главная страница содержит загрузку публичных объявлений, filters drawer, view mode, carousel и listing grid.
 
 Рекомендуемая структура:
@@ -236,9 +240,11 @@ src/screens/home/ui/home-filters-drawer.tsx
 src/screens/home/ui/view-mode-switcher.tsx
 ```
 
-Важно: `home-page` и `public-listings-page` похожи. Перед рефакторингом стоит решить, нужен ли общий hook `usePublicListingFeed`.
+Решение: общий hook `usePublicListingFeed` пока не вводился, потому что у главной и страницы витрины разные UX-сценарии: drawer-фильтры, разный `perPage`, разные empty/error тексты и сетка. Общий helper оставлен на уровне преобразования фильтров в API-параметры.
 
 ### `listing-media-gallery.tsx`
+
+Статус: выполнено 01.07.2026.
 
 Проблема: файл смешивает card gallery, details gallery, preview modal, thumbnails, placeholder и upload grid.
 
@@ -310,10 +316,10 @@ src/shared/ui/header/HeaderGuestActions.tsx
 
 ### Вторая очередь
 
-1. `public-listings-page.tsx`
-2. `home-page.tsx`
-3. `listing-media-gallery.tsx`
-4. `blog-detail-page.tsx`
+1. `public-listings-page.tsx` - выполнено 01.07.2026.
+2. `home-page.tsx` - выполнено 01.07.2026.
+3. `listing-media-gallery.tsx` - выполнено 01.07.2026.
+4. `blog-detail-page.tsx` - выполнено 01.07.2026.
 
 Причина: важно, но лучше делать после стабилизации общих listing helpers.
 

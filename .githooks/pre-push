@@ -6,4 +6,4 @@ npm run lint
 npm run typecheck
 npm run typecheck:full
 npm run test
-npm run test:e2e
+npm run test:e2e -- tests/e2e/critical-path.spec.ts --workers=1

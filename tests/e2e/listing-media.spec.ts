@@ -18,14 +18,18 @@ test("user reorders listing media, selects main image and deletes media", async 
   await expect(page.getByText("black.png")).toBeVisible();
   await expect(page.getByText("white.png")).toBeVisible();
 
-  await page.getByRole("button", { name: "Сдвинуть фото левее" }).nth(1).click();
+  const blackMedia = page.getByText("black.png").locator("xpath=ancestor::article[1]");
+  const whiteMedia = page.getByText("white.png").locator("xpath=ancestor::article[1]");
+
+  await whiteMedia.getByRole("button", { name: "Сдвинуть фото левее" }).click();
   await expect.poll(() => api.reorderedMediaIds.join(",")).toBe("2,1");
+  await expect(whiteMedia.getByText("Главное фото", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "Сделать фото главным" }).nth(1).click();
+  await blackMedia.getByRole("button", { name: "Сделать фото главным" }).click();
   await expect(page.getByText("Главное фото", { exact: true })).toBeVisible();
-  expect(api.listing.media?.[0]?.id).toBe(1);
+  await expect.poll(() => api.listing.media?.[0]?.id).toBe(1);
 
-  await page.getByRole("button", { name: "Удалить фото" }).first().click();
+  await blackMedia.getByRole("button", { name: "Удалить фото" }).click();
   await expect(page.getByText("black.png")).toBeHidden();
-  expect(api.listing.media?.map((media) => media.id)).toEqual([2]);
+  await expect.poll(() => api.listing.media?.map((media) => media.id)).toEqual([2]);
 });

@@ -6,4 +6,4 @@ npm run lint
 npm run typecheck
 npm run typecheck:full
 npm run test
-npm run test:e2e:critical
+E2E_PORT="${E2E_PORT:-3100}" npm run test:e2e:critical

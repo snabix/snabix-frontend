@@ -36,8 +36,15 @@ export function EmailVerificationDialog({
   onResendAction,
 }: EmailVerificationDialogProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const codeRef = useRef(code);
 
   const codeCells = Array.from({ length: 6 });
+  const codeDigits = Array.from({ length: 6 }, (_, index) => code[index] ?? "");
+  const isCodeComplete = codeDigits.every((digit) => digit !== "");
+
+  useEffect(() => {
+    codeRef.current = code;
+  }, [code]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -45,37 +52,47 @@ export function EmailVerificationDialog({
     }
 
     window.setTimeout(() => {
-      const focusIndex = Math.min(code.length, 5);
+      const currentDigits = getCodeDigits(codeRef.current);
+      const nextEmptyIndex = currentDigits.findIndex((digit) => digit === "");
+      const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
 
       inputRefs.current[focusIndex]?.focus();
     }, 0);
-  }, [code.length, isOpen]);
+  }, [code, isOpen]);
+
+  const applyCodeChange = (value: string) => {
+    const nextCode = value.replace(/\D/g, "").slice(0, 6);
+
+    codeRef.current = nextCode;
+    onCodeChangeAction(nextCode);
+  };
 
   const handleChange = (index: number, value: string) => {
     const normalizedValue = value.replace(/\D/g, "");
+    const currentDigits = getCodeDigits(codeRef.current);
 
     if (normalizedValue === "") {
-      const nextCode = Array.from({ length: 6 }, (_, currentIndex) => (
-        currentIndex === index ? "" : (code[currentIndex] ?? "")
+      const nextCode = currentDigits.map((digit, currentIndex) => (
+        currentIndex === index ? "" : digit
       )).join("");
 
-      onCodeChangeAction(nextCode);
+      applyCodeChange(nextCode);
       return;
     }
 
     if (normalizedValue.length > 1) {
       const pastedValue = normalizedValue.slice(0, 6);
 
-      onCodeChangeAction(pastedValue);
+      applyCodeChange(pastedValue);
       inputRefs.current[Math.min(pastedValue.length, 5)]?.focus();
       return;
     }
 
-    const nextCode = Array.from({ length: 6 }, (_, currentIndex) => (
-      currentIndex === index ? normalizedValue : (code[currentIndex] ?? "")
+    const nextCode = currentDigits.map((digit, currentIndex) => (
+      currentIndex === index ? normalizedValue : digit
     )).join("");
 
-    onCodeChangeAction(nextCode);
+    applyCodeChange(nextCode);
 
     if (index < 5) {
       inputRefs.current[index + 1]?.focus();
@@ -83,7 +100,7 @@ export function EmailVerificationDialog({
   };
 
   const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Backspace" && !code[index] && index > 0) {
+    if (event.key === "Backspace" && !codeDigits[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
 
@@ -107,7 +124,7 @@ export function EmailVerificationDialog({
       return;
     }
 
-    onCodeChangeAction(pastedValue);
+    applyCodeChange(pastedValue);
     inputRefs.current[Math.min(pastedValue.length, 5)]?.focus();
   };
 
@@ -139,7 +156,7 @@ export function EmailVerificationDialog({
                       autoComplete={index === 0 ? "one-time-code" : "off"}
                       className={[
                         "h-14 w-full rounded-2xl border bg-[var(--surface)] text-center text-lg font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
-                        code[index]
+                        codeDigits[index]
                           ? "border-[color-mix(in_srgb,var(--accent)_26%,var(--border-soft))] text-[var(--brand-deep)]"
                           : "border-[var(--border-soft)] text-transparent caret-[var(--brand-deep)]",
                       ].join(" ")}
@@ -152,7 +169,7 @@ export function EmailVerificationDialog({
                         inputRefs.current[index] = element;
                       }}
                       type="text"
-                      value={code[index] ?? ""}
+                      value={codeDigits[index]}
                     />
                   </label>
                 ))}
@@ -186,7 +203,7 @@ export function EmailVerificationDialog({
 
             <Button
               className="h-11 rounded-2xl px-4"
-              disabled={isConfirming || code.length !== 6}
+              disabled={isConfirming || !isCodeComplete}
               onClick={onConfirmAction}
               type="button"
             >
@@ -204,4 +221,8 @@ export function EmailVerificationDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function getCodeDigits(value: string) {
+  return Array.from({ length: 6 }, (_, index) => value[index] ?? "");
 }

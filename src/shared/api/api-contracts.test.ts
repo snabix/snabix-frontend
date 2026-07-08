@@ -268,6 +268,7 @@ describe("api adapter contracts", () => {
       minPrice: 80000,
       page: 1,
       perPage: 24,
+      isNegotiable: true,
       sort: "price_desc",
       type: LISTING_TYPE_PRODUCT,
     });
@@ -282,6 +283,7 @@ describe("api adapter contracts", () => {
         minPrice: 80000,
         page: 1,
         perPage: 24,
+        isNegotiable: true,
         sort: "price_desc",
         type: LISTING_TYPE_PRODUCT,
       },

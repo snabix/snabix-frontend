@@ -48,7 +48,7 @@ export class SnabixApiMock {
   }
 
   async install(page: Page) {
-    await page.route("http://localhost:8080/**", (route) => this.handle(route));
+    await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):8080\/.*$/, (route) => this.handle(route));
   }
 
   private async handle(route: Route) {
@@ -261,8 +261,14 @@ export class SnabixApiMock {
 
     if (url.pathname === "/api/v1/public/listings" && method === "GET") {
       this.lastPublicQuery = new URLSearchParams(url.searchParams);
+      const requestedNegotiable = url.searchParams.get("isNegotiable");
+      const publicListing = toPublicListing({ ...this.listing, isFavorite: this.favorite });
+      const items = requestedNegotiable === null || String(publicListing.isNegotiable) === requestedNegotiable
+        ? [publicListing]
+        : [];
+
       await this.fulfill(route, 200, {
-        data: paginated([toPublicListing({ ...this.listing, isFavorite: this.favorite })]),
+        data: paginated(items),
       });
       return;
     }

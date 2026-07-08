@@ -15,9 +15,16 @@ test("user favorites a listing and filters by region and city", async ({ page })
   await page.getByRole("button", { name: "Фильтры", exact: true }).click();
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
+  await page.getByLabel("Торг уместен").click();
 
   await expect.poll(() => api.lastPublicQuery.get("regionQuery")).toBe("Московская область");
   await expect.poll(() => api.lastPublicQuery.get("cityQuery")).toBe("Москва");
+  await expect.poll(() => api.lastPublicQuery.get("isNegotiable")).toBe("true");
+
+  api.listing = { ...api.listing, isNegotiable: false };
+  await page.getByPlaceholder("Город, например Краснодар").fill("Сочи");
+  await expect.poll(() => api.lastPublicQuery.get("cityQuery")).toBe("Сочи");
+  await expect(page.getByText("Тестовый ноутбук")).not.toBeVisible();
 });
 
 test("favorite listing is available in the account section", async ({ page }) => {

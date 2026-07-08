@@ -5,7 +5,7 @@
 ## Первый запуск
 
 ```bash
-cd /Users/imranpskhu/projects/snabix/snabix-frontend
+cd $PROJECT_ROOT/snabix-frontend
 npm install
 npm run dev
 ```

@@ -5,7 +5,7 @@ Frontend-тесты проверяют UI-состояния, формы, contra
 ## Проверки
 
 ```bash
-cd /Users/imranpskhu/projects/snabix/snabix-frontend
+cd $PROJECT_ROOT/snabix-frontend
 npm run typecheck
 npm run lint
 npm run test

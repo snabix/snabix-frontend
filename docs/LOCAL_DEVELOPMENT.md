@@ -24,16 +24,26 @@ http://localhost:8080/api/v1
 
 ## Node и npm
 
-В проекте закреплены версии:
+Единый policy проекта:
 
 ```text
 node >=22 <23
-npm >=11 <12
+npm >=10 <12
 ```
 
-Проверка:
+Рекомендуемая локальная версия Node берется из `.nvmrc`, CI использует тот же файл.
+Рекомендуемая версия npm закреплена в `packageManager` и CI:
+
+```text
+npm 10.9.0
+```
+
+Подготовка и проверка:
 
 ```bash
+nvm install
+nvm use
+npm install -g npm@10.9.0
 node -v
 npm -v
 ```

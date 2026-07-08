@@ -72,8 +72,16 @@
 | `src/screens/home/ui/home-page.tsx` | 73 | Page UI + data loading | Выполнено: вынесены hook загрузки, drawer, content и view switcher |
 | `src/entities/listing/ui/listing-media-gallery.tsx` | 87 | Entity UI + modal + upload grid | Выполнено: facade + card/details galleries, preview dialog, upload grid и normalize helper |
 | `src/screens/about/ui/about-page.tsx` | 323 | Static page UI | Можно оставить временно |
-| `src/screens/account/listings/ui/listings-page.tsx` | 321 | Page UI + data loading | Разделить при следующем изменении |
-| `src/shared/ui/header/HeaderSessionActions.tsx` | 305 | Header state/actions | Разделить при следующем изменении |
+| `src/screens/account/listings/ui/listings-page.tsx` | 327 | Page UI + data loading | Разделить при следующем изменении |
+| `src/shared/ui/header/HeaderSessionActions.tsx` | 310 | Header state/actions | Разделить при следующем изменении |
+
+Baseline крупных файлов проверяется командой:
+
+```bash
+npm run filesize
+```
+
+Если tracked-файл растет, нужно либо декомпозировать его, либо обновить baseline в `scripts/check-file-sizes.mjs` вместе с явным обоснованием в этом документе.
 
 ## План декомпозиции по файлам
 

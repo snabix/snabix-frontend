@@ -11,6 +11,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "filesize": "node scripts/check-file-sizes.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "typecheck:full": "node scripts/typecheck-full.mjs",

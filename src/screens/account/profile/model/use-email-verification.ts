@@ -38,6 +38,7 @@ export function useEmailVerification() {
 
   const handleResendVerification = async () => {
     setIsResendingVerification(true);
+    setVerificationCode("");
 
     try {
       const result = await resendEmailVerification();
@@ -45,7 +46,6 @@ export function useEmailVerification() {
       setResendCooldownSeconds(result.cooldownSeconds);
 
       if (result.sent) {
-        setVerificationCode("");
         toast.success(result.message);
       } else {
         toast.message(result.message);

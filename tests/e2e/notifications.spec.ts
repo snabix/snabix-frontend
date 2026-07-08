@@ -41,9 +41,9 @@ test("user reads and deletes notifications from the header feed", async ({ page 
   await page.getByRole("button", { name: /Объявление добавили в избранное/ }).click();
   await expect.poll(() => api.notifications[0]?.isRead).toBe(true);
 
-  const firstNotification = page
-    .getByText("Объявление добавили в избранное")
-    .locator("xpath=ancestor::button[1]");
+  const firstNotification = page.getByRole("article", {
+    name: "Объявление добавили в избранное",
+  });
 
   await firstNotification.getByRole("button", { name: "Удалить уведомление" }).click();
   await expect.poll(() => api.deletedNotificationIds).toContain("notification-1");

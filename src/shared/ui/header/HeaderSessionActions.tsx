@@ -255,28 +255,33 @@ function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
                     <p className="text-sm font-black text-[var(--brand-deep)]">{notification.title}</p>
                     <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notification.body}</p>
                   </div>
-                  {deleteButton}
                 </div>
               );
+              const rowClassName = "flex items-start gap-2 rounded-xl px-2 py-3 hover:bg-[var(--accent-soft)]";
+              const openNotification = () => void handleNotificationOpen(notification.id, notification.isRead);
 
               return notification.actionUrl ? (
-                <Link
-                  className="block rounded-xl px-2 py-3 hover:bg-[var(--accent-soft)]"
-                  href={notification.actionUrl}
-                  key={notification.id}
-                  onClick={() => void handleNotificationOpen(notification.id, notification.isRead)}
-                >
-                  {content}
-                </Link>
+                <article aria-label={notification.title} className={rowClassName} key={notification.id}>
+                  <Link
+                    className="min-w-0 flex-1"
+                    href={notification.actionUrl}
+                    onClick={openNotification}
+                  >
+                    {content}
+                  </Link>
+                  {deleteButton}
+                </article>
               ) : (
-                <button
-                  className="block w-full rounded-xl px-2 py-3 text-left hover:bg-[var(--accent-soft)]"
-                  key={notification.id}
-                  onClick={() => void handleNotificationOpen(notification.id, notification.isRead)}
-                  type="button"
-                >
-                  {content}
-                </button>
+                <article aria-label={notification.title} className={rowClassName} key={notification.id}>
+                  <button
+                    className="min-w-0 flex-1 text-left"
+                    onClick={openNotification}
+                    type="button"
+                  >
+                    {content}
+                  </button>
+                  {deleteButton}
+                </article>
               );
             })}
           </div>

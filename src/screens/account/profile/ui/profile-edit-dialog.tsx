@@ -71,7 +71,7 @@ export function ProfileEditDialog({
                 </DialogTitle>
 
                 <DialogDescription className="mt-2">
-                  Измените имя и фамилию. Email, телефон и пароль находятся в настройках конфиденциальности.
+                  Измените имя, фамилию и краткую информацию о себе. Email, телефон и пароль находятся в настройках конфиденциальности.
                 </DialogDescription>
               </div>
             </div>
@@ -104,8 +104,20 @@ export function ProfileEditDialog({
                 />
                 <FieldError message={errors.lastName?.message} />
               </ProfileEditField>
-
             </div>
+
+            <ProfileEditField label="О себе">
+              <Label className="sr-only" htmlFor="profile-about-me">
+                О себе
+              </Label>
+              <textarea
+                className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
+                id="profile-about-me"
+                placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
+                {...register("aboutMe")}
+              />
+              <FieldError message={errors.aboutMe?.message} />
+            </ProfileEditField>
 
             <DialogFooter>
               <Button

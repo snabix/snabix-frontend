@@ -33,6 +33,7 @@ export const userSchema = z.object({
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
+  aboutMe: nullableStringSchema,
   phoneNumber: nullableStringSchema,
   addresses: z.array(userAddressSchema),
   isActive: z.boolean(),

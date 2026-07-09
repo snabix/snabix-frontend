@@ -26,6 +26,7 @@ export function makeUser(addresses: UserAddress[] = [profileAddress]): User {
     email: "user@snabix.test",
     firstName: "Иван",
     lastName: "Тестов",
+    aboutMe: "Поставщик оборудования и материалов для строительных объектов.",
     phoneNumber: "+79991112233",
     addresses,
     isActive: true,

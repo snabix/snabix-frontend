@@ -17,6 +17,7 @@ describe("strict API schemas", () => {
       email: "user@example.com",
       firstName: "Иван",
       lastName: "Петров",
+      aboutMe: "Поставляю материалы для промышленных объектов.",
       phoneNumber: null,
       addresses: [],
       isActive: true,

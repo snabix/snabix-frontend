@@ -99,6 +99,7 @@ export function PrivacySettingsPage() {
       const updatedUser = await updateProfile({
         firstName: user.firstName,
         lastName: user.lastName,
+        aboutMe: user.aboutMe,
         email: values.email,
         phoneNumber: normalizePhoneInputValue(values.phoneNumber),
       });

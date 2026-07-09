@@ -23,9 +23,11 @@ export function useProfileEditor({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEmailVerified = Boolean(user?.emailVerifiedAt);
   const profileInitialValues = useMemo<ProfileFormValues>(() => ({
+    aboutMe: user?.aboutMe ?? "",
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
   }), [
+    user?.aboutMe,
     user?.firstName,
     user?.lastName,
   ]);
@@ -63,6 +65,7 @@ export function useProfileEditor({
       const optimisticUser: User | null = previousUser
         ? {
             ...previousUser,
+            aboutMe: values.aboutMe.trim() || null,
             firstName: values.firstName,
             lastName: values.lastName,
           }
@@ -75,6 +78,7 @@ export function useProfileEditor({
       const updatedUser = await updateProfile({
         firstName: values.firstName,
         lastName: values.lastName,
+        aboutMe: values.aboutMe.trim() || null,
         email: previousUser?.email ?? "",
         phoneNumber: previousUser?.phoneNumber ?? null,
       });

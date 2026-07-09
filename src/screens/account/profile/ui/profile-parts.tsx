@@ -57,19 +57,26 @@ export function ProfileStatusPill({
 
 export function ProfileDataField({
   children,
+  className,
   label,
   icon: Icon,
   value,
   empty = "Не указано",
 }: {
   children?: ReactNode;
+  className?: string;
   label: string;
   icon: LucideIcon;
   value?: string | null;
   empty?: string;
 }) {
   return (
-    <div className="profile-data-field rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-5 shadow-[var(--shadow-card)]">
+    <div
+      className={[
+        "profile-data-field rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-5 shadow-[var(--shadow-card)]",
+        className,
+      ].filter(Boolean).join(" ")}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="grid gap-1.5">
           <p className="font-heading text-[0.78rem] font-extrabold uppercase tracking-[0.18em] text-[var(--text-muted)]">

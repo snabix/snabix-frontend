@@ -11,6 +11,11 @@ export const profileFormSchema = z.object({
     .trim()
     .min(2, "Минимум 2 символа.")
     .max(100, "Максимум 100 символов."),
+  aboutMe: z
+    .string()
+    .trim()
+    .max(1000, "Максимум 1000 символов.")
+    .or(z.literal("")),
 });
 
 export const profileContactFormSchema = z.object({

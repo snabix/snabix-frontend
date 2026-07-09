@@ -141,6 +141,7 @@ describe("api adapter contracts", () => {
       id: "user-1",
       isActive: true,
       lastName: "Петров",
+      aboutMe: "Поставляю материалы для промышленных объектов.",
       phoneNumber: "+79990000000",
     };
 

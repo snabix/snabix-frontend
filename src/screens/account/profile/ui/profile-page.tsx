@@ -3,6 +3,7 @@
 import {
     Camera,
     ChevronRight,
+    FileText,
     Mail,
     Phone,
     ShieldCheck,
@@ -165,6 +166,12 @@ export function ProfilePage() {
                             icon={Phone}
                             label="Телефон"
                             value={formatPhoneNumber(user?.phoneNumber)}
+                        />
+                        <ProfileDataField
+                            className="sm:col-span-2"
+                            icon={FileText}
+                            label="О себе"
+                            value={user?.aboutMe}
                         />
                     </div>
                 </section>

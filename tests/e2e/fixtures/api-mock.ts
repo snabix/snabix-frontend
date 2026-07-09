@@ -468,6 +468,9 @@ export class SnabixApiMock {
         : this.user.emailVerifiedAt,
       firstName: typeof payload.firstName === "string" ? payload.firstName : this.user.firstName,
       lastName: typeof payload.lastName === "string" ? payload.lastName : this.user.lastName,
+      aboutMe: typeof payload.aboutMe === "string" || payload.aboutMe === null
+        ? payload.aboutMe
+        : this.user.aboutMe,
       phoneNumber: typeof payload.phoneNumber === "string" || payload.phoneNumber === null
         ? payload.phoneNumber
         : this.user.phoneNumber,

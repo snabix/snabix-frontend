@@ -3,6 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  aboutMe: string | null;
   phoneNumber: string | null;
   addresses: UserAddress[];
   isActive: boolean;

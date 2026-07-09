@@ -159,6 +159,7 @@ describe("api adapter contracts", () => {
           id: "session-1",
           ipAddress: "127.0.0.1",
           isCurrent: true,
+          locationLabel: "Локальная сеть",
           lastActivityAt: "2026-06-01T08:30:00.000000Z",
           type: "desktop",
         },

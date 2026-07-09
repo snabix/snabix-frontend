@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import {
+  Clock3,
+  Globe2,
+  MapPin,
   Monitor,
   MonitorSmartphone,
   Smartphone,
@@ -156,17 +159,14 @@ export function SessionsSettingsPage() {
                 const Icon = deviceIconByType[session.type];
 
                 return (
-                  <article
-                    className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-4"
-                    key={session.id}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex min-w-0 items-center gap-4">
+                  <article className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-4" key={session.id}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 flex-1 gap-4">
                         <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
                           <Icon aria-hidden="true" size={22} />
                         </div>
 
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-heading truncate text-base font-black text-[var(--brand-deep)]">
                               {session.deviceName}
@@ -177,10 +177,28 @@ export function SessionsSettingsPage() {
                               </span>
                             ) : null}
                           </div>
-                          <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                            {session.browser} · активность: {formatSessionActivity(session.lastActivityAt)}
-                            {session.ipAddress ? ` · ${session.ipAddress}` : ""}
-                          </p>
+                          <dl className="mt-3 grid gap-2 text-sm text-[var(--text-muted)] sm:grid-cols-2">
+                            <SessionMetaItem
+                              icon={Globe2}
+                              label="Браузер"
+                              value={session.browser}
+                            />
+                            <SessionMetaItem
+                              icon={MapPin}
+                              label="Местоположение"
+                              value={session.locationLabel}
+                            />
+                            <SessionMetaItem
+                              icon={MonitorSmartphone}
+                              label="IP-адрес"
+                              value={session.ipAddress ?? "неизвестно"}
+                            />
+                            <SessionMetaItem
+                              icon={Clock3}
+                              label="Последняя активность"
+                              value={formatSessionActivity(session.lastActivityAt)}
+                            />
+                          </dl>
                         </div>
                       </div>
 
@@ -238,4 +256,24 @@ function formatSessionActivity(value: string | null): string {
     minute: "2-digit",
     month: "long",
   }).format(new Date(value));
+}
+
+function SessionMetaItem({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex min-w-0 items-start gap-2">
+      <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--accent)]" size={15} />
+      <div className="min-w-0">
+        <dt className="text-xs font-bold uppercase text-[var(--text-muted)]">{label}</dt>
+        <dd className="truncate font-semibold text-[var(--brand-deep)]">{value}</dd>
+      </div>
+    </div>
+  );
 }

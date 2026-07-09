@@ -106,6 +106,12 @@ export function NotificationsSettingsPage() {
                   <p className="mt-1 text-sm text-[var(--text-muted)]">{section.description}</p>
                 </div>
 
+                <div className="grid grid-cols-[minmax(0,1fr)_92px_92px] items-center gap-3 border-b border-[var(--border-soft)] pb-3 text-xs font-black uppercase text-[var(--text-muted)] max-sm:hidden">
+                  <span>Событие</span>
+                  <span className="text-center">На сайте</span>
+                  <span className="text-center">Email</span>
+                </div>
+
                 <div className="divide-y divide-[var(--border-soft)]">
                   {items.map((item) => (
                     <NotificationPreferenceRow
@@ -152,7 +158,7 @@ function NotificationPreferenceRow({
   ) => void;
 }) {
   return (
-    <article className="grid gap-5 py-5 lg:grid-cols-[minmax(0,1fr)_150px_150px] lg:items-center">
+    <article className="grid gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_92px_92px] sm:items-center">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-heading font-black text-[var(--brand-deep)]">{item.title}</h3>
@@ -171,6 +177,7 @@ function NotificationPreferenceRow({
       />
       <DeliverySwitch
         checked={item.emailEnabled}
+        disabled={item.isRequired}
         label="Email"
         onCheckedChange={(checked) => onToggleAction(item.key, "emailEnabled", checked)}
       />
@@ -190,10 +197,9 @@ function DeliverySwitch({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 text-sm font-bold text-[var(--brand-deep)] lg:justify-center">
-      <span className="lg:sr-only">{label}</span>
+    <label className="flex items-center justify-between gap-3 text-sm font-bold text-[var(--brand-deep)] sm:justify-center">
+      <span className="sm:sr-only">{label}</span>
       <Switch checked={checked} disabled={disabled} onCheckedChange={onCheckedChange} />
-      <span className="hidden text-xs text-[var(--text-muted)] lg:inline">{label}</span>
     </label>
   );
 }

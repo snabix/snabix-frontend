@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { ListingMediaGallery } from "@/src/entities/listing/ui/listing-media-gallery";
-import { cn } from "@/src/shared/lib/utils";
 import { ListingSelectToggle } from "./listing-card-actions";
 
 type ListingCardMediaProps = {
@@ -12,7 +11,6 @@ type ListingCardMediaProps = {
   listingId: string;
   onSelectToggleAction?: (listingId: string) => void;
   title: string;
-  viewMode: "grid" | "list";
 };
 
 export function ListingCardMedia({
@@ -24,17 +22,9 @@ export function ListingCardMedia({
   listingId,
   onSelectToggleAction,
   title,
-  viewMode,
 }: ListingCardMediaProps) {
   return (
-    <div
-      className={cn(
-        "pointer-events-none relative overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]",
-        viewMode === "list"
-          ? "min-h-[320px] rounded-[26px] md:min-h-[320px] md:w-[340px] md:shrink-0 xl:min-h-[340px] xl:w-[390px]"
-          : "min-h-[270px]",
-      )}
-    >
+    <div className="pointer-events-none relative min-h-[270px] overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_18%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_10%,var(--surface)))]">
       <ListingMediaGallery
         detailsHref={detailsHref}
         imageUrl={imageUrl}
@@ -42,11 +32,9 @@ export function ListingCardMedia({
         title={title}
       />
 
-      {viewMode === "grid" ? (
-        <div className="absolute right-4 top-4 z-30">
-          {favoriteButton}
-        </div>
-      ) : null}
+      <div className="absolute right-4 top-4 z-30">
+        {favoriteButton}
+      </div>
 
       {onSelectToggleAction ? (
         <ListingSelectToggle

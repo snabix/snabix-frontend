@@ -39,7 +39,7 @@ test("critical marketplace path from sign in to listing management", async ({ pa
 
   await page.goto("/");
   await expect(page.getByText("Критический ноутбук SNABIX")).toBeVisible();
-  await page.getByRole("button", { name: "Фильтры", exact: true }).click();
+  await page.getByRole("button", { name: "Открыть фильтры" }).click();
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
 

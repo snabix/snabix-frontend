@@ -1,14 +1,8 @@
 import { startTransition, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  listCities,
-  listRegions,
-  type LocationCity,
-  type LocationRegion,
-} from "@/src/entities/location";
+import { useLocationStore } from "@/src/entities/location";
 import type { ListingItem } from "@/src/entities/listing";
 import { useUserStore } from "@/src/entities/user";
-import { extractApiError } from "@/src/shared/lib/extract-api-error";
 
 export type ListingAddressMode = "none" | "profile" | "custom";
 
@@ -36,13 +30,20 @@ export function useListingAddressState({
   const [profileAddressId, setProfileAddressId] = useState<string | null>(
     initialLocation?.profileAddressId ?? primaryAddressId,
   );
-  const [regions, setRegions] = useState<LocationRegion[]>([]);
-  const [cities, setCities] = useState<LocationCity[]>([]);
+  const regions = useLocationStore((state) => state.regions);
+  const regionsStatus = useLocationStore((state) => state.regionsStatus);
+  const regionsErrorMessage = useLocationStore((state) => state.regionsErrorMessage);
+  const citiesByRegion = useLocationStore((state) => state.citiesByRegion);
+  const cityStatuses = useLocationStore((state) => state.cityStatuses);
+  const cityErrorMessages = useLocationStore((state) => state.cityErrorMessages);
+  const loadRegions = useLocationStore((state) => state.loadRegions);
+  const loadCities = useLocationStore((state) => state.loadCities);
   const [regionId, setRegionId] = useState<number | null>(initialLocation?.region.id ?? null);
   const [cityId, setCityId] = useState<number | null>(initialLocation?.city?.id ?? null);
   const [addressLine, setAddressLine] = useState(() => resolveInitialAddressLine(initialListing));
-  const [isLoadingRegions, setIsLoadingRegions] = useState(false);
-  const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const cities = regionId !== null ? (citiesByRegion[regionId] ?? []) : [];
+  const isLoadingRegions = regionsStatus === "idle" || regionsStatus === "loading";
+  const isLoadingCities = regionId !== null && cityStatuses[regionId] === "loading";
 
   useEffect(() => {
     if (mode !== "create" || profileAddressId !== null || primaryAddressId === null) {
@@ -56,48 +57,41 @@ export function useListingAddressState({
   }, [mode, primaryAddressId, profileAddressId]);
 
   useEffect(() => {
-    if (addressMode !== "custom" || regions.length > 0 || isLoadingRegions) {
+    if (addressMode !== "custom") {
       return;
     }
 
-    const load = async () => {
-      try {
-        setIsLoadingRegions(true);
-        setRegions(await listRegions());
-      } catch (error) {
-        toast.error(extractApiError(error, "Не удалось загрузить регионы."));
-      } finally {
-        setIsLoadingRegions(false);
-      }
-    };
-
-    void load();
-  }, [addressMode, isLoadingRegions, regions.length]);
+    void loadRegions();
+  }, [addressMode, loadRegions]);
 
   useEffect(() => {
     if (addressMode !== "custom" || regionId === null) {
       return;
     }
 
-    const load = async () => {
-      try {
-        setIsLoadingCities(true);
-        setCities([]);
-        setCities(await listCities({ regionId }));
-      } catch (error) {
-        toast.error(extractApiError(error, "Не удалось загрузить города."));
-      } finally {
-        setIsLoadingCities(false);
-      }
-    };
+    void loadCities(regionId);
+  }, [addressMode, loadCities, regionId]);
 
-    void load();
-  }, [addressMode, regionId]);
+  useEffect(() => {
+    if (addressMode === "custom" && regionsStatus === "error" && regionsErrorMessage !== null) {
+      toast.error(regionsErrorMessage);
+    }
+  }, [addressMode, regionsErrorMessage, regionsStatus]);
+
+  useEffect(() => {
+    if (
+      addressMode === "custom"
+      && regionId !== null
+      && cityStatuses[regionId] === "error"
+      && cityErrorMessages[regionId] !== null
+    ) {
+      toast.error(cityErrorMessages[regionId]);
+    }
+  }, [addressMode, cityErrorMessages, cityStatuses, regionId]);
 
   const handleAddressModeChange = (nextMode: ListingAddressMode) => {
     setAddressMode(nextMode);
     if (nextMode !== "custom") {
-      setCities([]);
       setCityId(null);
     }
   };
@@ -105,7 +99,6 @@ export function useListingAddressState({
   const handleRegionChange = (nextRegionId: number | null) => {
     setRegionId(nextRegionId);
     setCityId(null);
-    setCities([]);
   };
 
   return {

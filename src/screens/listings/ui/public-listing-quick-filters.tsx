@@ -83,7 +83,7 @@ export function PublicListingQuickFilters({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            aria-label="Открыть фильтры"
+            aria-label="Фильтры"
             className={quickFilterButtonClassName(filters.isNegotiable)}
             disabled={isLoading}
             type="button"

@@ -32,7 +32,7 @@ export function HomePage({ initialCategoryId }: HomePageProps) {
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
-              aria-label="Открыть фильтры"
+              aria-label="Фильтры"
               className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
               onClick={() => listings.setIsFiltersOpen(true)}
               title="Фильтры"

@@ -12,7 +12,7 @@ test("user favorites a listing and filters by region and city", async ({ page })
   await expect(page.getByRole("button", { name: "Удалить объявление из избранного" })).toBeVisible();
   expect(api.favorite).toBe(true);
 
-  await page.getByRole("button", { name: "Открыть фильтры" }).click();
+  await page.getByRole("button", { name: "Фильтры", exact: true }).click();
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
   await page.getByLabel("Торг уместен").click();

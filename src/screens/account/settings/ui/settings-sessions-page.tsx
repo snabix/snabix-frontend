@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  CheckCircle2,
   Monitor,
   MonitorSmartphone,
   Smartphone,
@@ -25,6 +26,12 @@ const deviceIconByType: Record<ActiveUserSession["type"], LucideIcon> = {
   desktop: Monitor,
   mobile: Smartphone,
   tablet: Tablet,
+};
+
+const deviceIconToneByType: Record<ActiveUserSession["type"], string> = {
+  desktop: "bg-[#3478f6] text-white",
+  mobile: "bg-[#3478f6] text-white",
+  tablet: "bg-[#6f7df7] text-white",
 };
 
 export function SessionsSettingsPage() {
@@ -151,54 +158,18 @@ export function SessionsSettingsPage() {
             </div>
           ) : null}
 
-          {!isLoading && !errorMessage
-            ? sessions.map((session) => {
-                const Icon = deviceIconByType[session.type];
-
-                return (
-                  <article
-                    className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-4"
-                    key={session.id}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex min-w-0 items-center gap-4">
-                        <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                          <Icon aria-hidden="true" size={22} />
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-heading truncate text-base font-black text-[var(--brand-deep)]">
-                              {session.deviceName}
-                            </h3>
-                            {session.isCurrent ? (
-                              <span className="rounded-full bg-[var(--active-button-bg)] px-3 py-1 text-xs font-black text-[var(--active-button-text)]">
-                                текущий сеанс
-                              </span>
-                            ) : null}
-                          </div>
-                          <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                            {session.browser} · активность: {formatSessionActivity(session.lastActivityAt)}
-                            {session.ipAddress ? ` · ${session.ipAddress}` : ""}
-                          </p>
-                        </div>
-                      </div>
-
-                      <Button
-                        aria-label={`Завершить сеанс ${session.deviceName}`}
-                        className="size-10 shrink-0 rounded-2xl"
-                        disabled={isMutating}
-                        onClick={() => setSessionToClose(session)}
-                        type="button"
-                        variant="ghost"
-                      >
-                        <X size={17} />
-                      </Button>
-                    </div>
-                  </article>
-                );
-              })
-            : null}
+          {!isLoading && !errorMessage && sessions.length > 0 ? (
+            <div className="overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] shadow-sm shadow-black/5">
+              {sessions.map((session) => (
+                <SessionListItem
+                  isMutating={isMutating}
+                  key={session.id}
+                  onTerminateAction={() => setSessionToClose(session)}
+                  session={session}
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
       </SettingsSection>
 
@@ -227,15 +198,82 @@ export function SessionsSettingsPage() {
   );
 }
 
-function formatSessionActivity(value: string | null): string {
+function SessionListItem({
+  isMutating,
+  onTerminateAction,
+  session,
+}: {
+  isMutating: boolean;
+  onTerminateAction: () => void;
+  session: ActiveUserSession;
+}) {
+  const Icon = deviceIconByType[session.type];
+
+  return (
+    <article className="group relative flex gap-4 px-4 py-4 after:absolute after:bottom-0 after:left-[88px] after:right-4 after:h-px after:bg-[var(--border-soft)] last:after:hidden sm:px-5">
+      <div className={`relative mt-0.5 grid size-12 shrink-0 place-items-center rounded-[12px] ${deviceIconToneByType[session.type]}`}>
+        <Icon aria-hidden="true" size={25} />
+        {session.isCurrent ? (
+          <span className="absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full bg-[var(--active-button-bg)] text-[var(--active-button-text)] ring-2 ring-[var(--surface)]">
+            <CheckCircle2 aria-hidden="true" size={13} />
+          </span>
+        ) : null}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h3 className="truncate text-[18px] font-semibold leading-6 text-[var(--brand-deep)]">
+              {session.deviceName}
+            </h3>
+            <p className="mt-0.5 truncate text-[16px] leading-6 text-[var(--brand-deep)]">
+              {session.browser}
+              {session.ipAddress ? `, ${session.ipAddress}` : ""}
+            </p>
+            <p className="truncate text-[16px] leading-6 text-[var(--text-muted)]">
+              {session.locationLabel}
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-start gap-2">
+            <div className="pt-0.5 text-right text-[16px] font-semibold leading-6 text-[var(--text-muted)]">
+              {session.isCurrent ? "сейчас" : formatSessionActivityShort(session.lastActivityAt)}
+            </div>
+            <Button
+              aria-label={`Завершить сеанс ${session.deviceName}`}
+              className="size-8 rounded-full opacity-80 transition-opacity group-hover:opacity-100"
+              disabled={isMutating}
+              onClick={onTerminateAction}
+              type="button"
+              variant="ghost"
+            >
+              <X size={16} />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function formatSessionActivityShort(value: string | null): string {
   if (!value) {
-    return "неизвестно";
+    return "—";
+  }
+
+  const date = new Date(value);
+  const now = new Date();
+
+  if (date.toDateString() === now.toDateString()) {
+    return new Intl.DateTimeFormat("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
   }
 
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "long",
-  }).format(new Date(value));
+    month: "2-digit",
+    year: "2-digit",
+  }).format(date);
 }

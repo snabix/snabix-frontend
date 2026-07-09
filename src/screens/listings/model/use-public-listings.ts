@@ -32,7 +32,6 @@ export function usePublicListings(initialCategoryId?: string) {
   const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(draftFilters);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [, startFiltersTransition] = useTransition();
   const branches = useCategoryStore((state) => state.branches);
   const branchStatuses = useCategoryStore((state) => state.branchStatuses);
@@ -135,8 +134,6 @@ export function usePublicListings(initialCategoryId?: string) {
     selectedCategoryStatus,
     setDraftFilters,
     setPage,
-    setViewMode,
     toggleFavorite,
-    viewMode,
   };
 }

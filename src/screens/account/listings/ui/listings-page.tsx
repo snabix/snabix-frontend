@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, PackagePlus, Sparkles, Trash2 } from "lucide-react";
+import { PackagePlus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   LISTING_STATUS_ARCHIVED,
@@ -62,7 +62,6 @@ export function ListingsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [deletingListingId, setDeletingListingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<"bulk" | null>(null);
 
@@ -227,34 +226,6 @@ export function ListingsPage() {
                 ) : null}
               </div>
 
-              <div className="flex rounded-full border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] p-1">
-                <button
-                  aria-label="Показать объявления сеткой"
-                  className={[
-                    "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
-                    viewMode === "grid"
-                      ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
-                      : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
-                  ].join(" ")}
-                  onClick={() => setViewMode("grid")}
-                  type="button"
-                >
-                  <LayoutGrid size={16} />
-                </button>
-                <button
-                  aria-label="Показать объявления списком"
-                  className={[
-                    "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors",
-                    viewMode === "list"
-                      ? "bg-[var(--active-button-bg)] text-[var(--active-button-text)]"
-                      : "text-[var(--text-muted)] hover:text-[var(--brand-deep)]",
-                  ].join(" ")}
-                  onClick={() => setViewMode("list")}
-                  type="button"
-                >
-                  <List size={16} />
-                </button>
-              </div>
             </div>
           </div>
 
@@ -274,14 +245,10 @@ export function ListingsPage() {
               />
             ) : (
               <div
-                className={
-                  viewMode === "grid"
-                    ? [
-                      "grid gap-5 lg:grid-cols-2",
-                      isAccountSidebarCollapsed ? "xl:grid-cols-4" : "xl:grid-cols-3",
-                    ].join(" ")
-                    : "grid gap-4"
-                }
+                className={[
+                  "grid gap-5 lg:grid-cols-2",
+                  isAccountSidebarCollapsed ? "xl:grid-cols-4" : "xl:grid-cols-3",
+                ].join(" ")}
               >
                 {listings.map((listing) => (
                   <ListingCard
@@ -292,7 +259,6 @@ export function ListingsPage() {
                     listing={listing}
                     onFavoriteToggleAction={toggleFavorite}
                     onSelectToggleAction={handleSelectToggle}
-                    viewMode={viewMode}
                   />
                 ))}
               </div>

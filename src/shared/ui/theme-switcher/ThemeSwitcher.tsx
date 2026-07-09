@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 import { markThemePreferenceAsManual } from "./time-based-theme";
+import { useAppTheme } from "./theme-context";
 
 export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useAppTheme();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

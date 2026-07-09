@@ -45,6 +45,7 @@ export const activeUserSessionSchema = z.object({
   deviceName: z.string(),
   browser: z.string(),
   ipAddress: nullableStringSchema,
+  locationLabel: z.string(),
   type: z.enum(["desktop", "mobile", "tablet"]),
   isCurrent: z.boolean(),
   lastActivityAt: nullableStringSchema,

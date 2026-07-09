@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
-import { useTheme } from "next-themes";
+import { useAppTheme } from "@/src/shared/ui/theme-switcher/theme-context";
 
 export function AppToaster() {
-    const { resolvedTheme } = useTheme();
+    const { resolvedTheme } = useAppTheme();
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {

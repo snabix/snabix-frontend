@@ -33,13 +33,18 @@ function storedTheme(): AppTheme | null {
 }
 
 export function AppThemeProvider({ children }: { children: ReactNode }) {
-  const [resolvedTheme, setResolvedTheme] = useState<AppTheme>(() => {
-    if (typeof window === "undefined") {
-      return "light";
-    }
+  const [resolvedTheme, setResolvedTheme] = useState<AppTheme>("light");
 
-    return storedTheme() ?? "light";
-  });
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const theme = storedTheme() ?? "light";
+
+      setResolvedTheme(theme);
+      applyTheme(theme);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     applyTheme(resolvedTheme);

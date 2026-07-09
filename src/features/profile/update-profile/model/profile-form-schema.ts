@@ -17,7 +17,7 @@ export const profileContactFormSchema = z.object({
   email: z.email("Введите корректный email.").min(1, "Укажите email."),
   phoneNumber: z
     .string()
-    .max(20, "Максимум 20 символов.")
+    .max(25, "Максимум 25 символов.")
     .optional()
     .or(z.literal("")),
 });

@@ -15,14 +15,14 @@ export function formatPhoneNumber(value?: string | null): string {
     return value.trim();
   }
 
-  return `+7 (${normalizedDigits.slice(1, 4)}) ${normalizedDigits.slice(4, 7)}-${normalizedDigits.slice(7, 9)}-${normalizedDigits.slice(9, 11)}`;
+  return `+7 (${normalizedDigits.slice(1, 4)}) ${normalizedDigits.slice(4, 7)} - ${normalizedDigits.slice(7, 9)} - ${normalizedDigits.slice(9, 11)}`;
 }
 
 export function formatPhoneInputValue(value: string): string {
   const digits = normalizeRussianPhoneDigits(value.replace(/\D/g, "")).slice(0, 11);
 
   if (digits === "") {
-    return "";
+    return "+7";
   }
 
   const withoutCountryCode = digits.startsWith("7")
@@ -48,14 +48,24 @@ export function formatPhoneInputValue(value: string): string {
   }
 
   if (secondPart !== "") {
-    formatted += `-${secondPart}`;
+    formatted += ` - ${secondPart}`;
   }
 
   if (thirdPart !== "") {
-    formatted += `-${thirdPart}`;
+    formatted += ` - ${thirdPart}`;
   }
 
   return formatted;
+}
+
+export function normalizePhoneInputValue(value?: string | null): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const digits = normalizeRussianPhoneDigits(value.replace(/\D/g, "")).slice(0, 11);
+
+  return digits.length === 11 ? `+${digits}` : null;
 }
 
 function normalizeRussianPhoneDigits(digits: string): string {

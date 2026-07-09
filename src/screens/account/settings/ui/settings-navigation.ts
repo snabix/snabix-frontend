@@ -16,22 +16,15 @@ export type SettingsNavigationItem = {
 
 export const settingsNavigation: Array<{
   items: SettingsNavigationItem[];
-  title: string;
 }> = [
   {
     items: [
       { href: "/account/settings/profile", icon: UserRound, label: "Профиль" },
       { href: "/account/settings/account", icon: ShieldCheck, label: "Аккаунт" },
-      { href: "/account/settings/privacy", icon: Database, label: "Конфиденциальность и данные" },
+      { href: "/account/settings/privacy", icon: Database, label: "Конфиденциальность\nи данные" },
       { href: "/account/settings/notifications", icon: Bell, label: "Уведомления" },
       { href: "/account/settings/addresses", icon: MapPin, label: "Мои адреса" },
-    ],
-    title: "Общие",
-  },
-  {
-    items: [
       { href: "/account/settings/sessions", icon: MonitorSmartphone, label: "Сессии" },
     ],
-    title: "Доступ",
   },
 ];

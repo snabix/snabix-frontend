@@ -12,7 +12,7 @@ export const signUpSchema = z
     phoneNumber: z
       .string()
       .min(1, "Укажите номер телефона.")
-      .max(20, "Максимум 20 символов."),
+      .max(25, "Максимум 25 символов."),
     email: z.email("Введите корректный email.").min(1, "Укажите email."),
     password: z.string().min(8, "Минимум 8 символов."),
     passwordConfirmation: z.string().min(1, "Повторите пароль."),

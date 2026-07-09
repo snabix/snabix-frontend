@@ -13,27 +13,37 @@ npm run dev
 Адрес:
 
 ```text
-http://127.0.0.1:3000
+http://localhost:3000
 ```
 
 Backend должен быть доступен на:
 
 ```text
-http://127.0.0.1:8080/api/v1
+http://localhost:8080/api/v1
 ```
 
 ## Node и npm
 
-В проекте закреплены версии:
+Единый policy проекта:
 
 ```text
 node >=22 <23
-npm >=11 <12
+npm >=10 <12
 ```
 
-Проверка:
+Рекомендуемая локальная версия Node берется из `.nvmrc`, CI использует тот же файл.
+Рекомендуемая версия npm закреплена в `packageManager` и CI:
+
+```text
+npm 10.9.0
+```
+
+Подготовка и проверка:
 
 ```bash
+nvm install
+nvm use
+npm install -g npm@10.9.0
 node -v
 npm -v
 ```
@@ -51,7 +61,7 @@ npm -v
 Пример:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8080/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
 ```
 
 ## Ежедневная работа
@@ -75,9 +85,9 @@ npm run test:e2e
 Для корректной работы auth/cookies backend должен иметь:
 
 ```env
-APP_URL=http://127.0.0.1:8080
-FRONTEND_URL=http://127.0.0.1:3000
-SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000
+APP_URL=http://localhost:8080
+FRONTEND_URL=http://localhost:3000
+SANCTUM_STATEFUL_DOMAINS=localhost:3000,localhost:3001,127.0.0.1:3000,127.0.0.1:3001
 ```
 
 Если frontend получает `401` или `419`, проверь:
@@ -86,7 +96,8 @@ SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000
 - CSRF flow;
 - `SANCTUM_STATEFUL_DOMAINS`;
 - `SESSION_DOMAIN`;
-- API base URL.
+- API base URL;
+- что frontend и API используют один hostname. Для локальной разработки открывай frontend на `http://localhost:3000` и указывай API как `http://localhost:8080/api/v1`, либо используй `127.0.0.1` в обоих местах.
 
 ## Частые проблемы
 
@@ -102,7 +113,7 @@ rm -rf .next
 
 ### Next Image ругается на hostname
 
-Если backend отдает картинки с `127.0.0.1:8080`, hostname должен быть разрешен в `next.config`.
+Если backend отдает картинки с `localhost:8080` или `127.0.0.1:8080`, hostname должен быть разрешен в `next.config`.
 
 ### Не совпадает DTO
 

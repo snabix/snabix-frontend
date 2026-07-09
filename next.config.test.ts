@@ -2,6 +2,7 @@ import {
   createContentSecurityPolicy,
   createImageRemotePatterns,
   createSecurityHeaders,
+  optimizedImageFormats,
 } from "./next.config";
 
 describe("Next.js security headers", () => {
@@ -57,6 +58,10 @@ describe("Next.js security headers", () => {
 });
 
 describe("Next.js image sources", () => {
+  it("negotiates AVIF before WebP for optimized media", () => {
+    expect(optimizedImageFormats).toEqual(["image/avif", "image/webp"]);
+  });
+
   it("allows only the configured API origin and the editorial image host in production", () => {
     expect(
       createImageRemotePatterns("http://localhost:8080/api/v1"),

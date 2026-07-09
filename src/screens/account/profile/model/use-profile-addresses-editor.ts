@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { listCities, listRegions, type LocationRegion } from "@/src/entities/location";
+import { useLocationStore } from "@/src/entities/location";
 import type { User, UserAddress } from "@/src/entities/user";
 import { replaceProfileAddresses, type ProfileAddressFormItem } from "@/src/features/profile";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
@@ -17,60 +17,52 @@ export function useProfileAddressesEditor({
   onUserChange,
   user,
 }: UseProfileAddressesEditorParams) {
-  const [regions, setRegions] = useState<LocationRegion[]>([]);
-  const [citiesByRegion, setCitiesByRegion] = useState<CitiesByRegion>({});
+  const regions = useLocationStore((state) => state.regions);
+  const regionsStatus = useLocationStore((state) => state.regionsStatus);
+  const regionsErrorMessage = useLocationStore((state) => state.regionsErrorMessage);
+  const citiesByRegion = useLocationStore((state) => state.citiesByRegion);
+  const cityStatuses = useLocationStore((state) => state.cityStatuses);
+  const cityErrorMessages = useLocationStore((state) => state.cityErrorMessages);
+  const loadRegions = useLocationStore((state) => state.loadRegions);
+  const loadCities = useLocationStore((state) => state.loadCities);
   const [drafts, setDrafts] = useState<AddressDraft[]>(() => toDrafts(initialAddresses));
-  const [isRegionsLoading, setIsRegionsLoading] = useState(true);
-  const [regionsError, setRegionsError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const isRegionsLoading = regionsStatus === "idle" || regionsStatus === "loading";
+  const regionsError = regionsStatus === "error"
+    ? (regionsErrorMessage ?? "Не удалось загрузить регионы.")
+    : null;
 
   useEffect(() => {
-    let isMounted = true;
+    void loadRegions();
+  }, [loadRegions]);
 
-    listRegions()
-      .then((items) => {
-        if (isMounted) {
-          setRegions(items);
-          setRegionsError(null);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setRegionsError("Не удалось загрузить регионы.");
-          toast.error("Не удалось загрузить регионы.");
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsRegionsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  useEffect(() => {
+    if (regionsError !== null) {
+      toast.error(regionsError);
+    }
+  }, [regionsError]);
 
   useEffect(() => {
     const regionIds = [...new Set(drafts.map((draft) => draft.regionId).filter(Boolean))];
 
     regionIds.forEach((regionId) => {
-      if (citiesByRegion[regionId]) {
+      const numericRegionId = Number(regionId);
+
+      if (citiesByRegion[numericRegionId]) {
         return;
       }
 
-      listCities({ regionId: Number(regionId) })
-        .then((items) => {
-          setCitiesByRegion((current) => ({
-            ...current,
-            [regionId]: items,
-          }));
-        })
-        .catch(() => {
-          toast.error("Не удалось загрузить города.");
-        });
+      void loadCities(numericRegionId);
     });
-  }, [citiesByRegion, drafts]);
+  }, [citiesByRegion, drafts, loadCities]);
+
+  useEffect(() => {
+    Object.entries(cityErrorMessages).forEach(([regionId, message]) => {
+      if (cityStatuses[Number(regionId)] === "error" && message !== null) {
+        toast.error(message);
+      }
+    });
+  }, [cityErrorMessages, cityStatuses]);
 
   const updateDraft = (index: number, patch: Partial<AddressDraft>) => {
     setDrafts((current) => current.map((draft, draftIndex) => {
@@ -146,7 +138,7 @@ export function useProfileAddressesEditor({
     addAddress,
     canAddAddress: !isRegionsLoading && regionsError === null,
     canSave: !isRegionsLoading && regionsError === null && !isSaving,
-    citiesByRegion,
+    citiesByRegion: citiesByRegion as CitiesByRegion,
     drafts,
     isRegionsLoading,
     isSaving,

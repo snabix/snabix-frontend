@@ -12,6 +12,8 @@ type ImageRemotePattern = {
   protocol: "http" | "https";
 };
 
+export const optimizedImageFormats = ["image/avif", "image/webp"] as const;
+
 function getApiOrigin(apiUrl: string | undefined): string | null {
   if (!apiUrl) {
     return null;
@@ -165,6 +167,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     dangerouslyAllowLocalIP: environment === "development",
+    formats: [...optimizedImageFormats],
     maximumRedirects: 0,
     remotePatterns: createImageRemotePatterns(
       process.env.NEXT_PUBLIC_API_URL,

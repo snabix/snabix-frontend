@@ -54,6 +54,7 @@ export function ListingMediaDetailsGallery({
               alt={title}
               className="object-contain p-3"
               fill
+              priority
               sizes="(min-width: 1024px) 70vw, 100vw"
               src={activeImage}
             />

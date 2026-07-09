@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import {
   CheckCircle2,
-  Clock3,
-  Globe2,
-  MapPin,
   Monitor,
   MonitorSmartphone,
-  Network,
   Smartphone,
   Tablet,
   X,
@@ -30,6 +26,12 @@ const deviceIconByType: Record<ActiveUserSession["type"], LucideIcon> = {
   desktop: Monitor,
   mobile: Smartphone,
   tablet: Tablet,
+};
+
+const deviceIconToneByType: Record<ActiveUserSession["type"], string> = {
+  desktop: "bg-[#3478f6] text-white",
+  mobile: "bg-[#3478f6] text-white",
+  tablet: "bg-[#6f7df7] text-white",
 };
 
 export function SessionsSettingsPage() {
@@ -156,90 +158,18 @@ export function SessionsSettingsPage() {
             </div>
           ) : null}
 
-          {!isLoading && !errorMessage
-            ? sessions.map((session) => {
-                const Icon = deviceIconByType[session.type];
-
-                return (
-                  <article
-                    className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-sm shadow-black/5"
-                    key={session.id}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="relative grid size-14 shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
-                        <Icon aria-hidden="true" size={24} />
-                        {session.isCurrent ? (
-                          <span className="absolute -bottom-0.5 -right-0.5 grid size-5 place-items-center rounded-full bg-[var(--active-button-bg)] text-[var(--active-button-text)] ring-2 ring-[var(--surface)]">
-                            <CheckCircle2 aria-hidden="true" size={13} />
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <h3 className="font-heading truncate text-base font-black text-[var(--brand-deep)]">
-                              {session.deviceName}
-                            </h3>
-                            <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-[var(--text-muted)]">
-                              <span className="truncate">{session.browser}</span>
-                              <span aria-hidden="true">•</span>
-                              <span>{formatSessionActivity(session.lastActivityAt)}</span>
-                            </p>
-                          </div>
-
-                          <div className="flex shrink-0 items-center gap-2">
-                            {session.isCurrent ? (
-                              <span className="rounded-full bg-[var(--active-button-bg)] px-3 py-1 text-xs font-black text-[var(--active-button-text)]">
-                                текущий
-                              </span>
-                            ) : null}
-                            <Button
-                              aria-label={`Завершить сеанс ${session.deviceName}`}
-                              className="size-9 rounded-full"
-                              disabled={isMutating}
-                              onClick={() => setSessionToClose(session)}
-                              type="button"
-                              variant="ghost"
-                            >
-                              <X size={17} />
-                            </Button>
-                          </div>
-                        </div>
-
-                        <dl className="mt-4 grid gap-2 border-t border-[var(--border-soft)] pt-3 text-sm text-[var(--text-muted)] sm:grid-cols-2">
-                          <SessionMetaItem
-                            icon={MapPin}
-                            label="Местоположение"
-                            value={session.locationLabel}
-                          />
-                          <SessionMetaItem
-                            icon={MonitorSmartphone}
-                            label="Устройство"
-                            value={session.deviceName}
-                          />
-                          <SessionMetaItem
-                            icon={Globe2}
-                            label="Браузер"
-                            value={session.browser}
-                          />
-                          <SessionMetaItem
-                            icon={Clock3}
-                            label="Последняя активность"
-                            value={formatSessionActivity(session.lastActivityAt)}
-                          />
-                          <SessionMetaItem
-                            icon={Network}
-                            label="IP-адрес"
-                            value={session.ipAddress ?? "неизвестно"}
-                          />
-                        </dl>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })
-            : null}
+          {!isLoading && !errorMessage && sessions.length > 0 ? (
+            <div className="overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] shadow-sm shadow-black/5">
+              {sessions.map((session) => (
+                <SessionListItem
+                  isMutating={isMutating}
+                  key={session.id}
+                  onTerminateAction={() => setSessionToClose(session)}
+                  session={session}
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
       </SettingsSection>
 
@@ -268,35 +198,82 @@ export function SessionsSettingsPage() {
   );
 }
 
-function formatSessionActivity(value: string | null): string {
+function SessionListItem({
+  isMutating,
+  onTerminateAction,
+  session,
+}: {
+  isMutating: boolean;
+  onTerminateAction: () => void;
+  session: ActiveUserSession;
+}) {
+  const Icon = deviceIconByType[session.type];
+
+  return (
+    <article className="group relative flex gap-4 px-4 py-4 after:absolute after:bottom-0 after:left-[88px] after:right-4 after:h-px after:bg-[var(--border-soft)] last:after:hidden sm:px-5">
+      <div className={`relative mt-0.5 grid size-12 shrink-0 place-items-center rounded-[12px] ${deviceIconToneByType[session.type]}`}>
+        <Icon aria-hidden="true" size={25} />
+        {session.isCurrent ? (
+          <span className="absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full bg-[var(--active-button-bg)] text-[var(--active-button-text)] ring-2 ring-[var(--surface)]">
+            <CheckCircle2 aria-hidden="true" size={13} />
+          </span>
+        ) : null}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h3 className="truncate text-[18px] font-semibold leading-6 text-[var(--brand-deep)]">
+              {session.deviceName}
+            </h3>
+            <p className="mt-0.5 truncate text-[16px] leading-6 text-[var(--brand-deep)]">
+              {session.browser}
+              {session.ipAddress ? `, ${session.ipAddress}` : ""}
+            </p>
+            <p className="truncate text-[16px] leading-6 text-[var(--text-muted)]">
+              {session.locationLabel}
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-start gap-2">
+            <div className="pt-0.5 text-right text-[16px] font-semibold leading-6 text-[var(--text-muted)]">
+              {session.isCurrent ? "сейчас" : formatSessionActivityShort(session.lastActivityAt)}
+            </div>
+            <Button
+              aria-label={`Завершить сеанс ${session.deviceName}`}
+              className="size-8 rounded-full opacity-80 transition-opacity group-hover:opacity-100"
+              disabled={isMutating}
+              onClick={onTerminateAction}
+              type="button"
+              variant="ghost"
+            >
+              <X size={16} />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function formatSessionActivityShort(value: string | null): string {
   if (!value) {
-    return "неизвестно";
+    return "—";
+  }
+
+  const date = new Date(value);
+  const now = new Date();
+
+  if (date.toDateString() === now.toDateString()) {
+    return new Intl.DateTimeFormat("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
   }
 
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "long",
-  }).format(new Date(value));
-}
-
-function SessionMetaItem({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex min-w-0 items-start gap-2.5">
-      <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--accent)]" size={16} />
-      <div className="min-w-0">
-        <dt className="text-xs font-bold uppercase text-[var(--text-muted)]">{label}</dt>
-        <dd className="break-words font-semibold text-[var(--brand-deep)]">{value}</dd>
-      </div>
-    </div>
-  );
+    month: "2-digit",
+    year: "2-digit",
+  }).format(date);
 }

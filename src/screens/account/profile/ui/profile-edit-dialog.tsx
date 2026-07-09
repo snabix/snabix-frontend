@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
-import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Input } from "@/src/shared/ui/shadcn/input";
 import { Label } from "@/src/shared/ui/shadcn/label";
 import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
@@ -72,7 +71,7 @@ export function ProfileEditDialog({
                 </DialogTitle>
 
                 <DialogDescription className="mt-2">
-                  Измените только нужные поля. После смены email потребуется повторное подтверждение.
+                  Измените имя и фамилию. Email, телефон и пароль находятся в настройках конфиденциальности.
                 </DialogDescription>
               </div>
             </div>
@@ -106,30 +105,6 @@ export function ProfileEditDialog({
                 <FieldError message={errors.lastName?.message} />
               </ProfileEditField>
 
-              <ProfileEditField label="Email">
-                <Label className="sr-only" htmlFor="profile-email">
-                  Email
-                </Label>
-                <Input
-                  className="profile-edit-input"
-                  id="profile-email"
-                  placeholder="email@example.com"
-                  {...register("email")}
-                />
-                <FieldError message={errors.email?.message} />
-              </ProfileEditField>
-
-              <ProfileEditField label="Телефон">
-                <Label className="sr-only" htmlFor="profile-phone-number">
-                  Телефон
-                </Label>
-                <PhoneInput
-                  className="profile-edit-input"
-                  id="profile-phone-number"
-                  {...register("phoneNumber")}
-                />
-                <FieldError message={errors.phoneNumber?.message} />
-              </ProfileEditField>
             </div>
 
             <DialogFooter>

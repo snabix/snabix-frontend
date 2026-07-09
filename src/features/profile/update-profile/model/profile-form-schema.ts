@@ -11,6 +11,9 @@ export const profileFormSchema = z.object({
     .trim()
     .min(2, "Минимум 2 символа.")
     .max(100, "Максимум 100 символов."),
+});
+
+export const profileContactFormSchema = z.object({
   email: z.email("Введите корректный email.").min(1, "Укажите email."),
   phoneNumber: z
     .string()

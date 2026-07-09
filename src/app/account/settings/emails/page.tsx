@@ -1,5 +1,5 @@
-import { EmailsSettingsPage } from "@/src/screens/account/settings/ui/settings-pages";
+import { redirect } from "next/navigation";
 
 export default function AccountEmailsSettingsRoutePage() {
-  return <EmailsSettingsPage />;
+  redirect("/account/settings/privacy");
 }

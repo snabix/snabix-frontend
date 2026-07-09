@@ -45,10 +45,8 @@ const mockUser: User = {
 };
 
 const profileValues: ProfileFormValues = {
-  email: "new@example.com",
   firstName: "Imran",
   lastName: "Magomedov",
-  phoneNumber: "+79991112233",
 };
 
 describe("useProfileEditor", () => {
@@ -64,7 +62,6 @@ describe("useProfileEditor", () => {
     const updatedUser: User = {
       ...mockUser,
       ...profileValues,
-      emailVerifiedAt: null,
     };
 
     updateProfileMock.mockResolvedValue(updatedUser);
@@ -82,15 +79,13 @@ describe("useProfileEditor", () => {
     });
 
     expect(updateProfileMock).toHaveBeenCalledWith({
-      email: profileValues.email,
+      email: mockUser.email,
       firstName: profileValues.firstName,
       lastName: profileValues.lastName,
-      phoneNumber: profileValues.phoneNumber,
+      phoneNumber: mockUser.phoneNumber,
     });
     expect(useUserStore.getState().user).toEqual(updatedUser);
-    expect(toastSuccessMock).toHaveBeenCalledWith(
-      "Профиль обновлен. Новый email нужно подтвердить повторно.",
-    );
+    expect(toastSuccessMock).toHaveBeenCalledWith("Профиль обновлен.");
   });
 
   it("rolls back optimistic profile update when request fails", async () => {
@@ -106,7 +101,6 @@ describe("useProfileEditor", () => {
       expect(useUserStore.getState().user).toEqual({
         ...mockUser,
         ...profileValues,
-        emailVerifiedAt: null,
       });
 
       await promise;

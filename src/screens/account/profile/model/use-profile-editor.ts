@@ -8,7 +8,6 @@ import {
   updateProfile,
 } from "@/src/features/profile";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import type { ProfileFormValues } from "@/src/screens/account/profile/ui/profile-types";
 
 type UseProfileEditorOptions = {
@@ -26,13 +25,9 @@ export function useProfileEditor({
   const profileInitialValues = useMemo<ProfileFormValues>(() => ({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
-    email: user?.email ?? "",
-    phoneNumber: formatPhoneNumber(user?.phoneNumber),
   }), [
-    user?.email,
     user?.firstName,
     user?.lastName,
-    user?.phoneNumber,
   ]);
   const {
     formState: { errors },
@@ -70,10 +65,6 @@ export function useProfileEditor({
             ...previousUser,
             firstName: values.firstName,
             lastName: values.lastName,
-            email: values.email,
-            phoneNumber: values.phoneNumber?.trim() || null,
-            emailVerifiedAt:
-              previousEmail !== values.email ? null : previousUser.emailVerifiedAt,
           }
         : null;
 
@@ -84,8 +75,8 @@ export function useProfileEditor({
       const updatedUser = await updateProfile({
         firstName: values.firstName,
         lastName: values.lastName,
-        email: values.email,
-        phoneNumber: values.phoneNumber?.trim() || null,
+        email: previousUser?.email ?? "",
+        phoneNumber: previousUser?.phoneNumber ?? null,
       });
 
       setUser(updatedUser);

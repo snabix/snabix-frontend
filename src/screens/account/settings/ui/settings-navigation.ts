@@ -1,7 +1,6 @@
 import {
   Bell,
-  KeyRound,
-  Mail,
+  Database,
   MapPin,
   MonitorSmartphone,
   ShieldCheck,
@@ -23,6 +22,7 @@ export const settingsNavigation: Array<{
     items: [
       { href: "/account/settings/profile", icon: UserRound, label: "Профиль" },
       { href: "/account/settings/account", icon: ShieldCheck, label: "Аккаунт" },
+      { href: "/account/settings/privacy", icon: Database, label: "Конфиденциальность и данные" },
       { href: "/account/settings/notifications", icon: Bell, label: "Уведомления" },
       { href: "/account/settings/addresses", icon: MapPin, label: "Мои адреса" },
     ],
@@ -30,8 +30,6 @@ export const settingsNavigation: Array<{
   },
   {
     items: [
-      { href: "/account/settings/emails", icon: Mail, label: "Emails" },
-      { href: "/account/settings/password", icon: KeyRound, label: "Пароль и аутентификация" },
       { href: "/account/settings/sessions", icon: MonitorSmartphone, label: "Сессии" },
     ],
     title: "Доступ",

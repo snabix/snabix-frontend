@@ -46,6 +46,7 @@ export type ActiveUserSession = {
   deviceName: string;
   browser: string;
   ipAddress: string | null;
+  locationLabel: string;
   type: "desktop" | "mobile" | "tablet";
   isCurrent: boolean;
   lastActivityAt: string | null;

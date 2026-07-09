@@ -16,7 +16,6 @@ type HomeListingsContentProps = {
   onFavoriteToggleAction: (listingId: string) => Promise<void>;
   onPageChangeAction: Dispatch<SetStateAction<number>>;
   page: number;
-  viewMode: "grid" | "list";
 };
 
 export function HomeListingsContent({
@@ -28,7 +27,6 @@ export function HomeListingsContent({
   onFavoriteToggleAction,
   onPageChangeAction,
   page,
-  viewMode,
 }: HomeListingsContentProps) {
   if (isLoading) {
     return <SkeletonPanel className="min-h-[280px]" />;
@@ -65,13 +63,7 @@ export function HomeListingsContent({
 
   return (
     <>
-      <div
-        className={
-          viewMode === "grid"
-            ? "grid gap-5 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4"
-            : "grid gap-4"
-        }
-      >
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4">
         {items.map((item) => (
           <ListingCard
             detailsHref={`/listings/${item.id}`}
@@ -80,7 +72,6 @@ export function HomeListingsContent({
             listing={item}
             onFavoriteToggleAction={onFavoriteToggleAction}
             showStatus={false}
-            viewMode={viewMode}
           />
         ))}
       </div>

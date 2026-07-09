@@ -15,14 +15,12 @@ type BuildListingCardPresentationParams = {
   favorite: boolean;
   listing: ListingItem | PublicListingItem;
   onFavoriteToggleAction?: (listingId: string) => void;
-  viewMode: "grid" | "list";
 };
 
 export function buildListingCardPresentation({
   favorite,
   listing,
   onFavoriteToggleAction,
-  viewMode,
 }: BuildListingCardPresentationParams): ListingCardPresentation {
   const sellerName = resolveSellerName(listing);
   const sellerRating = listing.sellerRating === null || listing.sellerRating === undefined
@@ -41,7 +39,7 @@ export function buildListingCardPresentation({
     fullLocation: resolveListingLocation(listing),
     highlightedAttributes: listing.attributeValues
       .filter((attribute) => attribute.name !== null && attribute.displayValue !== null)
-      .slice(0, viewMode === "list" ? 3 : 2),
+      .slice(0, 2),
     publishedDate: formatListingDate(listing.publishedAt),
     ratingValue: listing.sellerRating ?? 3,
     reviewCount: resolveSellerReviewCount(listing),

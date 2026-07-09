@@ -6,7 +6,6 @@ import { useHomeListings } from "../model/use-home-listings";
 import { CategoryShowcaseCarouselSection } from "./category-showcase-carousel-section";
 import { HomeFiltersDrawer } from "./home-filters-drawer";
 import { HomeListingsContent } from "./home-listings-content";
-import { HomeViewModeSwitcher } from "./home-view-mode-switcher";
 
 type HomePageProps = {
   initialCategoryId?: string;
@@ -33,15 +32,14 @@ export function HomePage({ initialCategoryId }: HomePageProps) {
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-3 text-sm font-black text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
+              aria-label="Фильтры"
+              className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
               onClick={() => listings.setIsFiltersOpen(true)}
+              title="Фильтры"
               type="button"
             >
-              <SlidersHorizontal size={17} />
-              Фильтры
+              <SlidersHorizontal size={18} />
             </button>
-
-            <HomeViewModeSwitcher onChangeAction={listings.setViewMode} value={listings.viewMode} />
           </div>
 
           <div className="min-w-0">
@@ -54,7 +52,6 @@ export function HomePage({ initialCategoryId }: HomePageProps) {
               onFavoriteToggleAction={listings.toggleFavorite}
               onPageChangeAction={listings.setPage}
               page={listings.page}
-              viewMode={listings.viewMode}
             />
           </div>
         </section>

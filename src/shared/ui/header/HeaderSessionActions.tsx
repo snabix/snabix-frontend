@@ -38,7 +38,7 @@ export function HeaderSessionActions({
       {hasCheckedSession && user !== null ? (
         <Link
           aria-label="Создать объявление"
-          className="inline-flex size-11 items-center justify-center gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--brand-deep)] text-sm font-black text-[var(--active-button-text)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)] sm:w-auto sm:px-4"
+          className="active-button inline-flex size-11 items-center justify-center gap-2 rounded-full text-sm font-bold leading-none shadow-[var(--shadow-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] sm:h-12 sm:w-auto sm:px-5"
           href="/account/listings/create"
         >
           <Plus size={17} strokeWidth={2.4} />

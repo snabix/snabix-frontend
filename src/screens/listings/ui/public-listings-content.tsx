@@ -16,7 +16,6 @@ type PublicListingsContentProps = {
   onFavoriteToggleAction: (listingId: string) => Promise<void>;
   onPageChangeAction: Dispatch<SetStateAction<number>>;
   page: number;
-  viewMode: "grid" | "list";
 };
 
 export function PublicListingsContent({
@@ -28,7 +27,6 @@ export function PublicListingsContent({
   onFavoriteToggleAction,
   onPageChangeAction,
   page,
-  viewMode,
 }: PublicListingsContentProps) {
   if (isLoading) {
     return <SkeletonPanel className="min-h-[280px]" />;
@@ -65,7 +63,7 @@ export function PublicListingsContent({
 
   return (
     <>
-      <div className={viewMode === "grid" ? "grid gap-5 lg:grid-cols-3" : "grid gap-4"}>
+      <div className="grid gap-5 lg:grid-cols-3">
         {items.map((item) => (
           <ListingCard
             detailsHref={`/listings/${item.id}`}
@@ -74,7 +72,6 @@ export function PublicListingsContent({
             listing={item}
             onFavoriteToggleAction={onFavoriteToggleAction}
             showStatus={false}
-            viewMode={viewMode}
           />
         ))}
       </div>

@@ -32,7 +32,6 @@ export function useHomeListings(initialCategoryId?: string) {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [, startFiltersTransition] = useTransition();
 
   useEffect(() => {
@@ -130,8 +129,6 @@ export function useHomeListings(initialCategoryId?: string) {
     setDraftFilters,
     setIsFiltersOpen,
     setPage,
-    setViewMode,
     toggleFavorite,
-    viewMode,
   };
 }

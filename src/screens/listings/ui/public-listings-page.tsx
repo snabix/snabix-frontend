@@ -5,7 +5,7 @@ import { PublicListingFilters } from "@/src/screens/home/ui/public-listing-filte
 import { usePublicListings } from "../model/use-public-listings";
 import { CategoryBranchPanel } from "./category-branch-panel";
 import { PublicListingsContent } from "./public-listings-content";
-import { ViewModeSwitcher } from "./view-mode-switcher";
+import { PublicListingQuickFilters } from "./public-listing-quick-filters";
 
 type PublicListingsPageProps = {
   initialCategoryId?: string;
@@ -47,22 +47,14 @@ export function PublicListingsPage({
         />
 
         <section className="mt-8">
-          <div className="mb-5 flex justify-end">
-            <ViewModeSwitcher
-              onChangeAction={listings.setViewMode}
-              value={listings.viewMode}
-            />
-          </div>
+          {initialCategoryId ? (
+            <div className="grid gap-5">
+              <PublicListingQuickFilters
+                filters={listings.draftFilters}
+                isLoading={listings.isLoading}
+                onChangeAction={listings.setDraftFilters}
+              />
 
-          <div className="grid gap-5 xl:flex xl:items-start">
-            <PublicListingFilters
-              filters={listings.draftFilters}
-              isLoading={listings.isLoading}
-              onChangeAction={listings.setDraftFilters}
-              onResetAction={listings.handleFiltersReset}
-            />
-
-            <div className="min-w-0 flex-1">
               <PublicListingsContent
                 errorMessage={listings.errorMessage}
                 favoriteListingIds={listings.favoriteListingIds}
@@ -72,10 +64,31 @@ export function PublicListingsPage({
                 onFavoriteToggleAction={listings.toggleFavorite}
                 onPageChangeAction={listings.setPage}
                 page={listings.page}
-                viewMode={listings.viewMode}
               />
             </div>
-          </div>
+          ) : (
+            <div className="grid gap-5 xl:flex xl:items-start">
+              <PublicListingFilters
+                filters={listings.draftFilters}
+                isLoading={listings.isLoading}
+                onChangeAction={listings.setDraftFilters}
+                onResetAction={listings.handleFiltersReset}
+              />
+
+              <div className="min-w-0 flex-1">
+                <PublicListingsContent
+                  errorMessage={listings.errorMessage}
+                  favoriteListingIds={listings.favoriteListingIds}
+                  isLoading={listings.isLoading}
+                  items={listings.items}
+                  meta={listings.paginationMeta}
+                  onFavoriteToggleAction={listings.toggleFavorite}
+                  onPageChangeAction={listings.setPage}
+                  page={listings.page}
+                />
+              </div>
+            </div>
+          )}
         </section>
       </Container>
     </main>

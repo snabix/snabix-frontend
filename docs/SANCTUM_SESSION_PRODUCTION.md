@@ -4,7 +4,7 @@ Frontend использует cookie-based session flow через Laravel Sanct
 
 ## Клиентское приложение
 
-- `NEXT_PUBLIC_API_URL` или аналогичная переменная должна указывать на API backend, например `https://api.snabix.ru/api/v1`.
+- `NEXT_PUBLIC_API_URL` должна указывать на API backend, например `https://api.snabix.ru/api/v1`.
 - Frontend берет CSRF cookie с origin этой переменной: для примера выше это `https://api.snabix.ru/sanctum/csrf-cookie`.
 - Запросы выполняются с credentials, поэтому backend обязан разрешать credentials.
 - При `401` или `419` frontend очищает локальное состояние пользователя.

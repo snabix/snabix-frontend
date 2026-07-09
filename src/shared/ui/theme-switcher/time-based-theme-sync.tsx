@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useAppTheme } from "./theme-context";
 import {
   getMillisecondsUntilThemeChange,
   getTimeBasedTheme,
@@ -11,7 +11,7 @@ import {
 const BOUNDARY_DELAY_MS = 1_000;
 
 export function TimeBasedThemeSync() {
-  const { setTheme } = useTheme();
+  const { setTheme } = useAppTheme();
 
   useEffect(() => {
     if (!usesAutomaticTheme()) {

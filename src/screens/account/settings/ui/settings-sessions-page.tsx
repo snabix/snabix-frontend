@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import {
+  CheckCircle2,
   Clock3,
   Globe2,
   MapPin,
   Monitor,
   MonitorSmartphone,
+  Network,
   Smartphone,
   Tablet,
   X,
@@ -159,59 +161,80 @@ export function SessionsSettingsPage() {
                 const Icon = deviceIconByType[session.type];
 
                 return (
-                  <article className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-4" key={session.id}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex min-w-0 flex-1 gap-4">
-                        <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                          <Icon aria-hidden="true" size={22} />
-                        </div>
+                  <article
+                    className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-sm shadow-black/5"
+                    key={session.id}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="relative grid size-14 shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+                        <Icon aria-hidden="true" size={24} />
+                        {session.isCurrent ? (
+                          <span className="absolute -bottom-0.5 -right-0.5 grid size-5 place-items-center rounded-full bg-[var(--active-button-bg)] text-[var(--active-button-text)] ring-2 ring-[var(--surface)]">
+                            <CheckCircle2 aria-hidden="true" size={13} />
+                          </span>
+                        ) : null}
+                      </div>
 
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
                             <h3 className="font-heading truncate text-base font-black text-[var(--brand-deep)]">
                               {session.deviceName}
                             </h3>
+                            <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-[var(--text-muted)]">
+                              <span className="truncate">{session.browser}</span>
+                              <span aria-hidden="true">•</span>
+                              <span>{formatSessionActivity(session.lastActivityAt)}</span>
+                            </p>
+                          </div>
+
+                          <div className="flex shrink-0 items-center gap-2">
                             {session.isCurrent ? (
                               <span className="rounded-full bg-[var(--active-button-bg)] px-3 py-1 text-xs font-black text-[var(--active-button-text)]">
-                                текущий сеанс
+                                текущий
                               </span>
                             ) : null}
+                            <Button
+                              aria-label={`Завершить сеанс ${session.deviceName}`}
+                              className="size-9 rounded-full"
+                              disabled={isMutating}
+                              onClick={() => setSessionToClose(session)}
+                              type="button"
+                              variant="ghost"
+                            >
+                              <X size={17} />
+                            </Button>
                           </div>
-                          <dl className="mt-3 grid gap-2 text-sm text-[var(--text-muted)] sm:grid-cols-2">
-                            <SessionMetaItem
-                              icon={Globe2}
-                              label="Браузер"
-                              value={session.browser}
-                            />
-                            <SessionMetaItem
-                              icon={MapPin}
-                              label="Местоположение"
-                              value={session.locationLabel}
-                            />
-                            <SessionMetaItem
-                              icon={MonitorSmartphone}
-                              label="IP-адрес"
-                              value={session.ipAddress ?? "неизвестно"}
-                            />
-                            <SessionMetaItem
-                              icon={Clock3}
-                              label="Последняя активность"
-                              value={formatSessionActivity(session.lastActivityAt)}
-                            />
-                          </dl>
                         </div>
-                      </div>
 
-                      <Button
-                        aria-label={`Завершить сеанс ${session.deviceName}`}
-                        className="size-10 shrink-0 rounded-2xl"
-                        disabled={isMutating}
-                        onClick={() => setSessionToClose(session)}
-                        type="button"
-                        variant="ghost"
-                      >
-                        <X size={17} />
-                      </Button>
+                        <dl className="mt-4 grid gap-2 border-t border-[var(--border-soft)] pt-3 text-sm text-[var(--text-muted)] sm:grid-cols-2">
+                          <SessionMetaItem
+                            icon={MapPin}
+                            label="Местоположение"
+                            value={session.locationLabel}
+                          />
+                          <SessionMetaItem
+                            icon={MonitorSmartphone}
+                            label="Устройство"
+                            value={session.deviceName}
+                          />
+                          <SessionMetaItem
+                            icon={Globe2}
+                            label="Браузер"
+                            value={session.browser}
+                          />
+                          <SessionMetaItem
+                            icon={Clock3}
+                            label="Последняя активность"
+                            value={formatSessionActivity(session.lastActivityAt)}
+                          />
+                          <SessionMetaItem
+                            icon={Network}
+                            label="IP-адрес"
+                            value={session.ipAddress ?? "неизвестно"}
+                          />
+                        </dl>
+                      </div>
                     </div>
                   </article>
                 );
@@ -268,11 +291,11 @@ function SessionMetaItem({
   value: string;
 }) {
   return (
-    <div className="flex min-w-0 items-start gap-2">
-      <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--accent)]" size={15} />
+    <div className="flex min-w-0 items-start gap-2.5">
+      <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--accent)]" size={16} />
       <div className="min-w-0">
         <dt className="text-xs font-bold uppercase text-[var(--text-muted)]">{label}</dt>
-        <dd className="truncate font-semibold text-[var(--brand-deep)]">{value}</dd>
+        <dd className="break-words font-semibold text-[var(--brand-deep)]">{value}</dd>
       </div>
     </div>
   );

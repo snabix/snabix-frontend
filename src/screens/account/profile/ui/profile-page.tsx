@@ -12,6 +12,7 @@ import {
 import { useUserStore } from "@/src/entities/user";
 import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
+import { ShareProfileButton } from "@/src/shared/ui/share-profile-button";
 import { useEmailVerification } from "@/src/screens/account/profile/model/use-email-verification";
 import {
     EmailVerificationBadge,
@@ -77,6 +78,12 @@ export function ProfilePage() {
                                 </div>
                             </div>
                         </div>
+
+                        <ShareProfileButton
+                            path={user?.id ? `/sellers/${user.id}` : "/account/profile"}
+                            text="Профиль пользователя Snabix"
+                            title={resolveProfileShareTitle(user?.firstName, user?.lastName)}
+                        />
                     </div>
                 </section>
 
@@ -153,6 +160,15 @@ export function ProfilePage() {
             ) : null}
         </>
     );
+}
+
+function resolveProfileShareTitle(firstName?: string | null, lastName?: string | null): string {
+    const label = [firstName, lastName]
+        .map((part) => part?.trim())
+        .filter(Boolean)
+        .join(" ");
+
+    return label !== "" ? `${label} на Snabix` : "Профиль на Snabix";
 }
 
 function formatProfileDate(value?: string | null): string {

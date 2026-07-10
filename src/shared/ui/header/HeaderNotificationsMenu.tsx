@@ -165,7 +165,7 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
                 type="button"
               >
                 <Trash2 size={14} />
-                {isClearing ? "Очищаем..." : "Очистить все"}
+                {isClearing ? "Очищаем..." : "Очистить"}
               </button>
             ) : null}
             {visibleFeed.unreadCount > 0 ? (

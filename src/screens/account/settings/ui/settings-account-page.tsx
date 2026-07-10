@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Globe2, Laptop, Trash2 } from "lucide-react";
+import { AlertTriangle, Globe2, Laptop, PauseCircle, Trash2 } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { ThemeSwitcher } from "@/src/shared/ui/theme-switcher";
 import { ConfirmActionDialog, SettingsSection } from "./settings-shared";
 
 export function AccountSettingsPage() {
+  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
@@ -44,34 +45,74 @@ export function AccountSettingsPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-[26px] border border-[color-mix(in_srgb,var(--danger)_34%,var(--border-soft))] bg-[var(--danger-soft)] p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--danger-bg)] text-[var(--danger-text)]">
-                <AlertTriangle aria-hidden="true" size={20} />
+        <div className="mt-6 grid gap-4">
+          <div className="rounded-[26px] border border-[color-mix(in_srgb,var(--accent)_34%,var(--border-soft))] bg-[var(--accent-soft)] p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--active-button-bg)] text-[var(--active-button-text)]">
+                  <PauseCircle aria-hidden="true" size={20} />
+                </div>
+                <div>
+                  <h3 className="font-heading text-lg font-black text-[var(--brand-deep)]">
+                    Деактивация аккаунта
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+                    Добровольная деактивация должна отключать вход и скрывать активность,
+                    но сохранять данные до восстановления или удаления. Backend-действие
+                    подключим отдельной задачей.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-heading text-lg font-black text-[var(--brand-deep)]">
-                  Удаление аккаунта
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                  Это действие необратимо. Пока кнопка показывает форму подтверждения,
-                  backend-действие подключим отдельно после утверждения политики удаления.
-                </p>
-              </div>
+              <Button
+                className="w-fit rounded-2xl"
+                onClick={() => setIsDeactivateDialogOpen(true)}
+                type="button"
+                variant="outline"
+              >
+                <PauseCircle size={16} />
+                Деактивировать
+              </Button>
             </div>
-            <Button
-              className="w-fit rounded-2xl"
-              onClick={() => setIsDeleteDialogOpen(true)}
-              type="button"
-              variant="destructive"
-            >
-              <Trash2 size={16} />
-              Удалить аккаунт
-            </Button>
+          </div>
+
+          <div className="rounded-[26px] border border-[color-mix(in_srgb,var(--danger)_34%,var(--border-soft))] bg-[var(--danger-soft)] p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--danger-bg)] text-[var(--danger-text)]">
+                  <AlertTriangle aria-hidden="true" size={20} />
+                </div>
+                <div>
+                  <h3 className="font-heading text-lg font-black text-[var(--brand-deep)]">
+                    Удаление аккаунта
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+                    Это действие необратимо. Пока кнопка показывает форму подтверждения,
+                    backend-действие подключим отдельно после утверждения политики удаления.
+                  </p>
+                </div>
+              </div>
+              <Button
+                className="w-fit rounded-2xl"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                type="button"
+                variant="destructive"
+              >
+                <Trash2 size={16} />
+                Удалить аккаунт
+              </Button>
+            </div>
           </div>
         </div>
       </SettingsSection>
+
+      <ConfirmActionDialog
+        actionLabel="Деактивировать"
+        description="Сейчас это только UI-подтверждение. Для рабочей деактивации нужно подключить backend: сменить статус пользователя, завершить сессии и скрыть публичную активность."
+        isOpen={isDeactivateDialogOpen}
+        onConfirmAction={() => setIsDeactivateDialogOpen(false)}
+        onOpenChangeAction={setIsDeactivateDialogOpen}
+        title="Деактивировать аккаунт?"
+      />
 
       <ConfirmActionDialog
         actionLabel="Удалить аккаунт"

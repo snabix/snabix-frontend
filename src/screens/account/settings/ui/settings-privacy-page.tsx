@@ -99,7 +99,8 @@ export function PrivacySettingsPage() {
       const updatedUser = await updateProfile({
         firstName: user.firstName,
         lastName: user.lastName,
-        aboutMe: user.aboutMe,
+        description: user.description,
+        dateOfBirth: user.dateOfBirth,
         email: values.email,
         phoneNumber: normalizePhoneInputValue(values.phoneNumber),
       });
@@ -187,9 +188,10 @@ export function PrivacySettingsPage() {
           />
 
           <PrivacyDataRow
+            canToggle={false}
             isVisible={visibleFields.password}
             label="Пароль"
-            maskedValue="Скрыт"
+            maskedValue="Смена через письмо"
             onEditAction={() => setEditingField("password")}
             onToggleAction={() => toggleVisible("password")}
             value="Смена через письмо"

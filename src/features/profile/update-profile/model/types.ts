@@ -1,7 +1,8 @@
 export type UpdateProfilePayload = {
   firstName: string;
   lastName: string;
-  aboutMe: string | null;
+  description: string | null;
+  dateOfBirth: string | null;
   email: string;
   phoneNumber: string | null;
 };

@@ -2,6 +2,7 @@
 
 import {
     Camera,
+    CalendarDays,
     ChevronRight,
     FileText,
     Mail,
@@ -168,10 +169,15 @@ export function ProfilePage() {
                             value={formatPhoneNumber(user?.phoneNumber)}
                         />
                         <ProfileDataField
+                            icon={CalendarDays}
+                            label="Дата рождения"
+                            value={formatProfileDate(user?.dateOfBirth)}
+                        />
+                        <ProfileDataField
                             className="sm:col-span-2"
                             icon={FileText}
                             label="О себе"
-                            value={user?.aboutMe}
+                            value={user?.description}
                         />
                     </div>
                 </section>
@@ -209,4 +215,16 @@ export function ProfilePage() {
             ) : null}
         </>
     );
+}
+
+function formatProfileDate(value?: string | null): string {
+    if (!value) {
+        return "";
+    }
+
+    return new Intl.DateTimeFormat("ru-RU", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+    }).format(new Date(`${value}T00:00:00`));
 }

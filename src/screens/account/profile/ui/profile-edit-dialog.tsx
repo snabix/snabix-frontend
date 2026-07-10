@@ -71,7 +71,7 @@ export function ProfileEditDialog({
                 </DialogTitle>
 
                 <DialogDescription className="mt-2">
-                  Измените имя, фамилию и краткую информацию о себе. Email, телефон и пароль находятся в настройках конфиденциальности.
+                  Измените имя, фамилию, дату рождения и краткое описание. Email, телефон и пароль находятся в настройках конфиденциальности.
                 </DialogDescription>
               </div>
             </div>
@@ -104,19 +104,32 @@ export function ProfileEditDialog({
                 />
                 <FieldError message={errors.lastName?.message} />
               </ProfileEditField>
+
+              <ProfileEditField label="Дата рождения">
+                <Label className="sr-only" htmlFor="profile-date-of-birth">
+                  Дата рождения
+                </Label>
+                <Input
+                  className="profile-edit-input"
+                  id="profile-date-of-birth"
+                  type="date"
+                  {...register("dateOfBirth")}
+                />
+                <FieldError message={errors.dateOfBirth?.message} />
+              </ProfileEditField>
             </div>
 
             <ProfileEditField label="О себе">
-              <Label className="sr-only" htmlFor="profile-about-me">
+              <Label className="sr-only" htmlFor="profile-description">
                 О себе
               </Label>
               <textarea
                 className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
-                id="profile-about-me"
+                id="profile-description"
                 placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
-                {...register("aboutMe")}
+                {...register("description")}
               />
-              <FieldError message={errors.aboutMe?.message} />
+              <FieldError message={errors.description?.message} />
             </ProfileEditField>
 
             <DialogFooter>

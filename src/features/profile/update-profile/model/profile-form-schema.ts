@@ -11,10 +11,14 @@ export const profileFormSchema = z.object({
     .trim()
     .min(2, "Минимум 2 символа.")
     .max(100, "Максимум 100 символов."),
-  aboutMe: z
+  description: z
     .string()
     .trim()
     .max(1000, "Максимум 1000 символов.")
+    .or(z.literal("")),
+  dateOfBirth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Укажите дату в формате ГГГГ-ММ-ДД.")
     .or(z.literal("")),
 });
 

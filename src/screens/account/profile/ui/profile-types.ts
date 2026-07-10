@@ -1,5 +1,6 @@
 export type ProfileFormValues = {
   firstName: string;
   lastName: string;
-  aboutMe: string;
+  description: string;
+  dateOfBirth: string;
 };

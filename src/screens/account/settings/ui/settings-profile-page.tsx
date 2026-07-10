@@ -21,7 +21,7 @@ export function ProfileSettingsPage() {
 
   return (
     <SettingsSection
-      description="Редактирование профиля теперь находится в настройках. Здесь остаются публичные и нейтральные данные: имя, фамилия и информация о себе."
+      description="Редактирование профиля теперь находится в настройках. Здесь остаются публичные и нейтральные данные: имя, фамилия, дата рождения и описание."
       icon={UserRound}
       title="Профиль"
     >
@@ -42,19 +42,31 @@ export function ProfileSettingsPage() {
             <Input id="settings-last-name" placeholder="Ваша фамилия" {...register("lastName")} />
             <FieldError message={errors.lastName?.message} />
           </ProfileEditField>
+
+          <ProfileEditField label="Дата рождения">
+            <Label className="sr-only" htmlFor="settings-date-of-birth">
+              Дата рождения
+            </Label>
+            <Input
+              id="settings-date-of-birth"
+              type="date"
+              {...register("dateOfBirth")}
+            />
+            <FieldError message={errors.dateOfBirth?.message} />
+          </ProfileEditField>
         </div>
 
         <ProfileEditField label="О себе">
-          <Label className="sr-only" htmlFor="settings-about-me">
+          <Label className="sr-only" htmlFor="settings-description">
             О себе
           </Label>
           <textarea
             className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
-            id="settings-about-me"
+            id="settings-description"
             placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
-            {...register("aboutMe")}
+            {...register("description")}
           />
-          <FieldError message={errors.aboutMe?.message} />
+          <FieldError message={errors.description?.message} />
         </ProfileEditField>
 
         <div className="flex justify-end">

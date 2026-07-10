@@ -41,12 +41,14 @@ const mockUser: User = {
   id: "1",
   isActive: true,
   lastName: "Petrov",
-  aboutMe: null,
+  description: null,
+  dateOfBirth: null,
   phoneNumber: "+79990000000",
 };
 
 const profileValues: ProfileFormValues = {
-  aboutMe: "Работаю с поставками для промышленных объектов.",
+  dateOfBirth: "1994-05-12",
+  description: "Работаю с поставками для промышленных объектов.",
   firstName: "Imran",
   lastName: "Magomedov",
 };
@@ -84,7 +86,8 @@ describe("useProfileEditor", () => {
       email: mockUser.email,
       firstName: profileValues.firstName,
       lastName: profileValues.lastName,
-      aboutMe: profileValues.aboutMe,
+      description: profileValues.description,
+      dateOfBirth: profileValues.dateOfBirth,
       phoneNumber: mockUser.phoneNumber,
     });
     expect(useUserStore.getState().user).toEqual(updatedUser);

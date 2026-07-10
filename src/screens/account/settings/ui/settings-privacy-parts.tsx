@@ -2,6 +2,7 @@ import { Eye, EyeOff, Pencil } from "lucide-react";
 import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 
 export function PrivacyDataRow({
+  canToggle = true,
   isVisible,
   label,
   maskedValue,
@@ -9,6 +10,7 @@ export function PrivacyDataRow({
   onToggleAction,
   value,
 }: {
+  canToggle?: boolean;
   isVisible: boolean;
   label: string;
   maskedValue: string;
@@ -17,6 +19,7 @@ export function PrivacyDataRow({
   value: string;
 }) {
   const VisibilityIcon = isVisible ? EyeOff : Eye;
+  const displayedValue = canToggle && !isVisible ? maskedValue : value;
 
   return (
     <div className="flex items-center justify-between gap-4 py-5">
@@ -25,19 +28,21 @@ export function PrivacyDataRow({
           {label}
         </p>
         <p className="mt-1 truncate text-sm font-black text-[var(--brand-deep)]">
-          {isVisible ? value : maskedValue}
+          {displayedValue}
         </p>
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <button
-          aria-label={isVisible ? `Скрыть ${label}` : `Показать ${label}`}
-          className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-          onClick={onToggleAction}
-          type="button"
-        >
-          <VisibilityIcon size={17} />
-        </button>
+        {canToggle ? (
+          <button
+            aria-label={isVisible ? `Скрыть ${label}` : `Показать ${label}`}
+            className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+            onClick={onToggleAction}
+            type="button"
+          >
+            <VisibilityIcon size={17} />
+          </button>
+        ) : null}
         <button
           aria-label={`Редактировать ${label}`}
           className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"

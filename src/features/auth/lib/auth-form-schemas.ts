@@ -9,10 +9,6 @@ export const signUpSchema = z
   .object({
     firstName: z.string().min(1, "Укажите ваше имя."),
     lastName: z.string().min(1, "Укажите вашу фамилию."),
-    phoneNumber: z
-      .string()
-      .min(1, "Укажите номер телефона.")
-      .max(25, "Максимум 25 символов."),
     email: z.email("Введите корректный email.").min(1, "Укажите email."),
     password: z.string().min(8, "Минимум 8 символов."),
     passwordConfirmation: z.string().min(1, "Повторите пароль."),

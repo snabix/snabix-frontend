@@ -85,10 +85,10 @@ export function ProfileSettingsPage() {
           />
         </div>
 
-        <div className="mb-5 flex gap-3 rounded-[22px] border border-[color-mix(in_srgb,var(--accent)_32%,var(--border-soft))] bg-[var(--accent-soft)] p-4 text-sm leading-6 text-[var(--brand-deep)]">
+        <div className="mb-5 flex gap-3 border-b border-[var(--border-soft)] pb-5 text-sm leading-6 text-[var(--text-muted)]">
           <ShieldCheck className="mt-0.5 shrink-0 text-[var(--accent)]" aria-hidden="true" size={18} />
           <p>
-            Дата рождения, описание и аватар являются персональными данными.
+            Аватар, дата рождения и описание являются персональными данными.
             Заполняйте только те сведения, которые готовы хранить в профиле.
           </p>
         </div>

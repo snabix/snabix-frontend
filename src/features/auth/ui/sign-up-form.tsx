@@ -11,8 +11,6 @@ import { signUp } from "@/src/features/auth/api";
 import { signUpSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignUpFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { normalizePhoneInputValue } from "@/src/shared/lib/format-phone-number";
-import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
@@ -37,7 +35,6 @@ export function SignUpForm() {
       lastName: "",
       password: "",
       passwordConfirmation: "",
-      phoneNumber: "",
     },
     resolver: zodResolver(signUpSchema),
   });
@@ -49,7 +46,6 @@ export function SignUpForm() {
       await signUp({
         firstName: values.firstName,
         lastName: values.lastName,
-        phoneNumber: normalizePhoneInputValue(values.phoneNumber) ?? values.phoneNumber,
         email: values.email,
         password: values.password,
         passwordConfirmation: values.passwordConfirmation,
@@ -119,19 +115,6 @@ export function SignUpForm() {
               </p>
             ) : null}
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="sign-up-phone">Телефон</Label>
-          <PhoneInput
-            id="sign-up-phone"
-            {...register("phoneNumber")}
-          />
-          {errors.phoneNumber ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.phoneNumber.message}
-            </p>
-          ) : null}
         </div>
 
         <div className="space-y-2">

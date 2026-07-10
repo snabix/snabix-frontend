@@ -73,7 +73,7 @@ export function ProfileDataField({
   return (
     <div
       className={[
-        "profile-data-field rounded-[26px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] p-5 shadow-[var(--shadow-card)]",
+        "profile-data-field border-b border-[var(--border-soft)] px-1 py-4 last:border-b-0",
         className,
       ].filter(Boolean).join(" ")}
     >
@@ -90,7 +90,7 @@ export function ProfileDataField({
           )}
         </div>
 
-        <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+        <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
           <Icon aria-hidden="true" size={18} />
         </div>
       </div>
@@ -132,10 +132,6 @@ export function ProfileSectionHeader() {
           <h2 className="font-heading mt-1 text-2xl font-extrabold text-[var(--brand-deep)]">
             Основная информация
           </h2>
-
-          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-            Ключевые контакты и детали аккаунта, которые видны вам и помогают держать профиль в порядке.
-          </p>
         </div>
       </div>
     </div>

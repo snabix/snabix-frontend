@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
 import { HeaderAuthActions } from "@/src/shared/ui/header/HeaderAuthActions";
 import { HeaderNotificationsMenu } from "@/src/shared/ui/header/HeaderNotificationsMenu";
+import { HeaderSearchMenu } from "@/src/shared/ui/header/HeaderSearchMenu";
 import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
 
 type HeaderSessionActionsProps = {
@@ -31,6 +32,8 @@ export function HeaderSessionActions({
           <span className="hidden sm:inline">Создать</span>
         </Link>
       ) : null}
+
+      <HeaderSearchMenu />
 
       <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
 

@@ -22,7 +22,6 @@ test("user signs up and is redirected to sign in when auto-login is unavailable"
   await page.goto("/sign-up");
   await page.getByLabel("Имя").fill("Анна");
   await page.getByLabel("Фамилия").fill("Петрова");
-  await page.getByLabel("Телефон").fill("+79991112233");
   await page.getByLabel("Email").fill("anna@snabix.test");
   await page.getByLabel("Пароль", { exact: true }).fill("password123");
   await page.getByLabel("Повторите пароль").fill("password123");

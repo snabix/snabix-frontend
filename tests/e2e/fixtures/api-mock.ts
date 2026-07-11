@@ -27,6 +27,8 @@ export class SnabixApiMock {
   lastAddressPayload: JsonObject | null = null;
   lastListingPayload: JsonObject | null = null;
   lastNotificationPreferencesPayload: JsonObject | null = null;
+  lastProfileDataExportRequested = false;
+  lastProfilePayload: JsonObject | null = null;
   lastPublicQuery = new URLSearchParams();
   lastSignUpPayload: JsonObject | null = null;
   listing: ListingItem = makeListing();
@@ -119,6 +121,22 @@ export class SnabixApiMock {
 
     if (isPrivateApiRequest(url.pathname) && !this.authenticated) {
       await this.fulfillUnauthorized(route);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/me" && method === "PATCH") {
+      await this.updateProfile(route);
+      return;
+    }
+
+    if (url.pathname === "/api/v1/auth/me/data-export" && method === "POST") {
+      this.lastProfileDataExportRequested = true;
+      await this.fulfill(route, 200, {
+        data: {
+          message: "Запрос отправлен. Письмо с данными профиля придет на email аккаунта.",
+          requested: true,
+        },
+      });
       return;
     }
 
@@ -438,6 +456,32 @@ export class SnabixApiMock {
     await this.fulfill(route, 200, { data: { addresses: this.user.addresses } });
   }
 
+  private async updateProfile(route: Route) {
+    const payload = getJsonBody(route.request());
+
+    this.lastProfilePayload = payload;
+    this.user = {
+      ...this.user,
+      email: typeof payload.email === "string" ? payload.email : this.user.email,
+      emailVerifiedAt: typeof payload.email === "string" && payload.email !== this.user.email
+        ? null
+        : this.user.emailVerifiedAt,
+      firstName: typeof payload.firstName === "string" ? payload.firstName : this.user.firstName,
+      lastName: typeof payload.lastName === "string" ? payload.lastName : this.user.lastName,
+      description: typeof payload.description === "string" || payload.description === null
+        ? payload.description
+        : this.user.description,
+      dateOfBirth: typeof payload.dateOfBirth === "string" || payload.dateOfBirth === null
+        ? payload.dateOfBirth
+        : this.user.dateOfBirth,
+      phoneNumber: typeof payload.phoneNumber === "string" || payload.phoneNumber === null
+        ? payload.phoneNumber
+        : this.user.phoneNumber,
+    };
+
+    await this.fulfill(route, 200, { data: this.user });
+  }
+
   private async updateNotificationPreferences(route: Route) {
     const payload = getJsonBody(route.request());
     const items = Array.isArray(payload.items) ? payload.items : [];
@@ -567,7 +611,9 @@ function makeSessions(): ActiveUserSession[] {
 
 function isPrivateApiRequest(pathname: string): boolean {
   return [
+    "/api/v1/auth/me",
     "/api/v1/auth/me/addresses",
+    "/api/v1/auth/me/data-export",
     "/api/v1/auth/sessions",
     "/api/v1/listings",
     "/api/v1/listings/favorites",

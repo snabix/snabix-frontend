@@ -10,7 +10,7 @@ const privateRoutes = [
   "/account/settings/account",
   "/account/settings/notifications",
   "/account/settings/addresses",
-  "/account/settings/password",
+  "/account/settings/privacy",
   "/account/settings/sessions",
 ];
 

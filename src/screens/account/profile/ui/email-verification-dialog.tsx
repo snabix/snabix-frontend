@@ -147,33 +147,31 @@ export function EmailVerificationDialog({
           </DialogHeader>
 
           <div className="mt-7">
-            <div className="rounded-[24px] border border-[color-mix(in_srgb,var(--accent)_14%,var(--border-soft))] bg-[color-mix(in_srgb,var(--surface)_90%,var(--background))] p-4 shadow-[var(--shadow-card)]">
-              <div className="grid grid-cols-6 gap-2.5">
-                {codeCells.map((_, index) => (
-                  <label className="relative block" key={index}>
-                    <span className="sr-only">Цифра {index + 1}</span>
-                    <input
-                      autoComplete={index === 0 ? "one-time-code" : "off"}
-                      className={[
-                        "h-14 w-full rounded-2xl border bg-[var(--surface)] text-center text-lg font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
-                        codeDigits[index]
-                          ? "border-[color-mix(in_srgb,var(--accent)_26%,var(--border-soft))] text-[var(--brand-deep)]"
-                          : "border-[var(--border-soft)] text-transparent caret-[var(--brand-deep)]",
-                      ].join(" ")}
-                      inputMode="numeric"
-                      maxLength={1}
-                      onChange={(event) => handleChange(index, event.target.value)}
-                      onKeyDown={(event) => handleKeyDown(index, event)}
-                      onPaste={handlePaste}
-                      ref={(element) => {
-                        inputRefs.current[index] = element;
-                      }}
-                      type="text"
-                      value={codeDigits[index]}
-                    />
-                  </label>
-                ))}
-              </div>
+            <div className="grid grid-cols-6 gap-2.5">
+              {codeCells.map((_, index) => (
+                <label className="relative block" key={index}>
+                  <span className="sr-only">Цифра {index + 1}</span>
+                  <input
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    className={[
+                      "h-14 w-full rounded-2xl border bg-[var(--surface)] text-center text-lg font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
+                      codeDigits[index]
+                        ? "border-[color-mix(in_srgb,var(--accent)_26%,var(--border-soft))] text-[var(--brand-deep)]"
+                        : "border-[var(--border-soft)] text-transparent caret-[var(--brand-deep)]",
+                    ].join(" ")}
+                    inputMode="numeric"
+                    maxLength={1}
+                    onChange={(event) => handleChange(index, event.target.value)}
+                    onKeyDown={(event) => handleKeyDown(index, event)}
+                    onPaste={handlePaste}
+                    ref={(element) => {
+                      inputRefs.current[index] = element;
+                    }}
+                    type="text"
+                    value={codeDigits[index]}
+                  />
+                </label>
+              ))}
             </div>
 
             <p className="mt-3 text-center text-sm text-[var(--text-muted)]">

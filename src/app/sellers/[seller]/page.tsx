@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Construction, Star } from "lucide-react";
+import { ShareProfileButton } from "@/src/shared/ui/share-profile-button";
 
 type SellerRoutePageProps = {
   params: Promise<{
@@ -28,9 +29,16 @@ export default async function SellerRoutePage({ params }: SellerRoutePageProps) 
               <Star size={16} />
               Профиль продавца
             </p>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.04em] text-[var(--brand-deep)] sm:text-4xl">
-              {sellerLabel}
-            </h1>
+            <div className="mt-4 flex items-start gap-3">
+              <h1 className="text-3xl font-black tracking-[-0.04em] text-[var(--brand-deep)] sm:text-4xl">
+                {sellerLabel}
+              </h1>
+              <ShareProfileButton
+                path={`/sellers/${encodeURIComponent(seller)}`}
+                text={`Профиль продавца ${sellerLabel} на Snabix`}
+                title={`${sellerLabel} на Snabix`}
+              />
+            </div>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-[var(--text-muted)]">
               Страница продавца уже зарезервирована в маршрутизации. На следующем этапе сюда можно будет
               вывести профиль, активные объявления, рейтинг и отзывы.

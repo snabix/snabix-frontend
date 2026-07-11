@@ -1,5 +1,5 @@
-import { PasswordSettingsPage } from "@/src/screens/account/settings/ui/settings-pages";
+import { redirect } from "next/navigation";
 
 export default function AccountPasswordSettingsRoutePage() {
-  return <PasswordSettingsPage />;
+  redirect("/account/settings/privacy");
 }

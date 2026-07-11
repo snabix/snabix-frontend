@@ -6,7 +6,7 @@ export type SignInPayload = {
 export type SignUpPayload = {
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string | null;
   email: string;
   password: string;
   passwordConfirmation: string;

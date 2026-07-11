@@ -46,6 +46,8 @@ const user: User = {
   id: "1",
   isActive: true,
   lastName: "Petrov",
+  description: null,
+  dateOfBirth: null,
   phoneNumber: "+79990000000",
 };
 

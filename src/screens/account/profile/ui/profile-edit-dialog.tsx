@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
-import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Input } from "@/src/shared/ui/shadcn/input";
 import { Label } from "@/src/shared/ui/shadcn/label";
 import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
@@ -72,7 +71,7 @@ export function ProfileEditDialog({
                 </DialogTitle>
 
                 <DialogDescription className="mt-2">
-                  Измените только нужные поля. После смены email потребуется повторное подтверждение.
+                  Измените имя, фамилию, дату рождения и краткое описание. Email, телефон и пароль находятся в настройках конфиденциальности.
                 </DialogDescription>
               </div>
             </div>
@@ -106,31 +105,32 @@ export function ProfileEditDialog({
                 <FieldError message={errors.lastName?.message} />
               </ProfileEditField>
 
-              <ProfileEditField label="Email">
-                <Label className="sr-only" htmlFor="profile-email">
-                  Email
+              <ProfileEditField label="Дата рождения">
+                <Label className="sr-only" htmlFor="profile-date-of-birth">
+                  Дата рождения
                 </Label>
                 <Input
                   className="profile-edit-input"
-                  id="profile-email"
-                  placeholder="email@example.com"
-                  {...register("email")}
+                  id="profile-date-of-birth"
+                  type="date"
+                  {...register("dateOfBirth")}
                 />
-                <FieldError message={errors.email?.message} />
-              </ProfileEditField>
-
-              <ProfileEditField label="Телефон">
-                <Label className="sr-only" htmlFor="profile-phone-number">
-                  Телефон
-                </Label>
-                <PhoneInput
-                  className="profile-edit-input"
-                  id="profile-phone-number"
-                  {...register("phoneNumber")}
-                />
-                <FieldError message={errors.phoneNumber?.message} />
+                <FieldError message={errors.dateOfBirth?.message} />
               </ProfileEditField>
             </div>
+
+            <ProfileEditField label="О себе">
+              <Label className="sr-only" htmlFor="profile-description">
+                О себе
+              </Label>
+              <textarea
+                className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
+                id="profile-description"
+                placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
+                {...register("description")}
+              />
+              <FieldError message={errors.description?.message} />
+            </ProfileEditField>
 
             <DialogFooter>
               <Button

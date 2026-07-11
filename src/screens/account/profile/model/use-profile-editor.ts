@@ -8,7 +8,6 @@ import {
   updateProfile,
 } from "@/src/features/profile";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import type { ProfileFormValues } from "@/src/screens/account/profile/ui/profile-types";
 
 type UseProfileEditorOptions = {
@@ -24,15 +23,15 @@ export function useProfileEditor({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEmailVerified = Boolean(user?.emailVerifiedAt);
   const profileInitialValues = useMemo<ProfileFormValues>(() => ({
+    dateOfBirth: user?.dateOfBirth ?? "",
+    description: user?.description ?? "",
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
-    email: user?.email ?? "",
-    phoneNumber: formatPhoneNumber(user?.phoneNumber),
   }), [
-    user?.email,
+    user?.dateOfBirth,
+    user?.description,
     user?.firstName,
     user?.lastName,
-    user?.phoneNumber,
   ]);
   const {
     formState: { errors },
@@ -68,12 +67,10 @@ export function useProfileEditor({
       const optimisticUser: User | null = previousUser
         ? {
             ...previousUser,
+            dateOfBirth: values.dateOfBirth || null,
+            description: values.description.trim() || null,
             firstName: values.firstName,
             lastName: values.lastName,
-            email: values.email,
-            phoneNumber: values.phoneNumber?.trim() || null,
-            emailVerifiedAt:
-              previousEmail !== values.email ? null : previousUser.emailVerifiedAt,
           }
         : null;
 
@@ -84,8 +81,10 @@ export function useProfileEditor({
       const updatedUser = await updateProfile({
         firstName: values.firstName,
         lastName: values.lastName,
-        email: values.email,
-        phoneNumber: values.phoneNumber?.trim() || null,
+        description: values.description.trim() || null,
+        dateOfBirth: values.dateOfBirth || null,
+        email: previousUser?.email ?? "",
+        phoneNumber: previousUser?.phoneNumber ?? null,
       });
 
       setUser(updatedUser);

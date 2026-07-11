@@ -1,8 +1,9 @@
 "use client";
 
 import {
-    Camera,
+    CalendarDays,
     ChevronRight,
+    FileText,
     Mail,
     Phone,
     ShieldCheck,
@@ -11,7 +12,7 @@ import {
 import { useUserStore } from "@/src/entities/user";
 import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
-import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
+import { ShareProfileButton } from "@/src/shared/ui/share-profile-button";
 import { useEmailVerification } from "@/src/screens/account/profile/model/use-email-verification";
 import {
     EmailVerificationBadge,
@@ -20,7 +21,6 @@ import {
     ProfileStatusPill,
 } from "@/src/screens/account/profile/ui/profile-parts";
 import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
-import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
 import { ProfileAddressesSection } from "@/src/screens/account/profile/ui/profile-addresses-section";
 
 export function ProfilePage() {
@@ -37,22 +37,6 @@ export function ProfilePage() {
         setIsVerificationDialogOpen,
         verificationCode,
     } = useEmailVerification();
-    const {
-        avatarDraft,
-        avatarInputRef,
-        avatarOffset,
-        avatarScale,
-        handleAvatarChange,
-        handleAvatarMovePointerDown,
-        handleAvatarSave,
-        handleAvatarSelect,
-        handleAvatarViewerClose,
-        isAvatarSubmitting,
-        isAvatarViewerOpen,
-        resetAvatarDraft,
-        setAvatarScale,
-    } = useAvatarEditor();
-
     return (
         <>
             <div className="grid gap-6">
@@ -63,45 +47,16 @@ export function ProfilePage() {
                     <div className="relative flex flex-col gap-8 xl:flex-row xl:items-start xl:justify-between">
                         <div className="flex items-start gap-5">
                             <div className="relative shrink-0">
-                                <button
-                                    aria-label="Загрузить новый аватар"
-                                    className={[
-                                        "relative grid size-24 place-items-center rounded-full",
-                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2",
-                                    ].join(" ")}
-                                    disabled={isAvatarSubmitting}
-                                    onClick={handleAvatarSelect}
-                                    type="button"
-                                >
-                                    <Avatar className="grid size-24 place-items-center rounded-full border-4 border-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--background)] shadow-[var(--shadow-card)]">
-                                        <AvatarImage src={user?.avatar?.url ?? undefined} />
-                                        <AvatarFallback>
-                                            <UserRound
-                                                aria-hidden="true"
-                                                size={42}
-                                                strokeWidth={2.15}
-                                            />
-                                        </AvatarFallback>
-                                    </Avatar>
-                                </button>
-
-                                <button
-                                    aria-label="Загрузить новый аватар"
-                                    className="absolute -bottom-1 -right-1 grid size-9 place-items-center rounded-full border-2 border-[var(--surface)] bg-[var(--active-button-bg)] text-[var(--active-button-text)] shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
-                                    disabled={isAvatarSubmitting}
-                                    onClick={handleAvatarSelect}
-                                    type="button"
-                                >
-                                    <Camera aria-hidden="true" size={15} />
-                                </button>
-
-                                <input
-                                    ref={avatarInputRef}
-                                    accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                                    className="hidden"
-                                    onChange={handleAvatarChange}
-                                    type="file"
-                                />
+                                <Avatar className="grid size-24 place-items-center rounded-full border-4 border-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-[var(--background)] shadow-[var(--shadow-card)]">
+                                    <AvatarImage src={user?.avatar?.url ?? undefined} />
+                                    <AvatarFallback>
+                                        <UserRound
+                                            aria-hidden="true"
+                                            size={42}
+                                            strokeWidth={2.15}
+                                        />
+                                    </AvatarFallback>
+                                </Avatar>
                             </div>
 
                             <div className="max-w-2xl">
@@ -110,7 +65,7 @@ export function ProfilePage() {
                                 </div>
 
                                 <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--text-muted)]">
-                                    Управляйте своими контактами, аватаром и базовой информацией аккаунта в одном месте.
+                                    Просматривайте контакты, статус аккаунта и базовую информацию профиля.
                                 </p>
 
                                 <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -123,6 +78,12 @@ export function ProfilePage() {
                                 </div>
                             </div>
                         </div>
+
+                        <ShareProfileButton
+                            path={user?.id ? `/sellers/${user.id}` : "/account/profile"}
+                            text="Профиль пользователя Snabix"
+                            title={resolveProfileShareTitle(user?.firstName, user?.lastName)}
+                        />
                     </div>
                 </section>
 
@@ -166,25 +127,22 @@ export function ProfilePage() {
                             label="Телефон"
                             value={formatPhoneNumber(user?.phoneNumber)}
                         />
+                        <ProfileDataField
+                            icon={CalendarDays}
+                            label="Дата рождения"
+                            value={formatProfileDate(user?.dateOfBirth)}
+                        />
+                        <ProfileDataField
+                            className="sm:col-span-2"
+                            icon={FileText}
+                            label="О себе"
+                            value={user?.description}
+                        />
                     </div>
                 </section>
 
                 <ProfileAddressesSection mode="view" />
             </div>
-
-            {isAvatarViewerOpen && avatarDraft ? (
-                <ProfileAvatarViewer
-                    avatarDraft={avatarDraft}
-                    avatarOffset={avatarOffset}
-                    avatarScale={avatarScale}
-                    isAvatarSubmitting={isAvatarSubmitting}
-                    onAvatarDraftResetAction={resetAvatarDraft}
-                    onAvatarMovePointerDownAction={handleAvatarMovePointerDown}
-                    onAvatarSaveAction={handleAvatarSave}
-                    onAvatarScaleChangeAction={(value) => setAvatarScale(value[0] ?? 1)}
-                    onAvatarViewerCloseAction={handleAvatarViewerClose}
-                />
-            ) : null}
 
             {user?.email && !isEmailVerified ? (
                 <EmailVerificationDialog
@@ -202,4 +160,27 @@ export function ProfilePage() {
             ) : null}
         </>
     );
+}
+
+function resolveProfileShareTitle(firstName?: string | null, lastName?: string | null): string {
+    const label = [firstName, lastName]
+        .map((part) => part?.trim())
+        .filter(Boolean)
+        .join(" ");
+
+    return label !== "" ? `${label} на Snabix` : "Профиль на Snabix";
+}
+
+function formatProfileDate(value?: string | null): string {
+    if (!value) {
+        return "";
+    }
+
+    const [year, month, day] = value.split("-");
+
+    if (!year || !month || !day) {
+        return value;
+    }
+
+    return `${day}.${month}.${year}`;
 }

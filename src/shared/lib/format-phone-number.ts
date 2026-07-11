@@ -15,23 +15,20 @@ export function formatPhoneNumber(value?: string | null): string {
     return value.trim();
   }
 
-  return `+7 (${normalizedDigits.slice(1, 4)}) ${normalizedDigits.slice(4, 7)}-${normalizedDigits.slice(7, 9)}-${normalizedDigits.slice(9, 11)}`;
+  return `+7 (${normalizedDigits.slice(1, 4)}) ${normalizedDigits.slice(4, 7)} - ${normalizedDigits.slice(7, 9)} - ${normalizedDigits.slice(9, 11)}`;
 }
 
 export function formatPhoneInputValue(value: string): string {
-  const digits = normalizeRussianPhoneDigits(value.replace(/\D/g, "")).slice(0, 11);
+  const nationalDigits = extractRussianNationalDigits(value).slice(0, 10);
 
-  if (digits === "") {
-    return "";
+  if (nationalDigits === "") {
+    return "+7";
   }
 
-  const withoutCountryCode = digits.startsWith("7")
-    ? digits.slice(1)
-    : digits;
-  const operator = withoutCountryCode.slice(0, 3);
-  const firstPart = withoutCountryCode.slice(3, 6);
-  const secondPart = withoutCountryCode.slice(6, 8);
-  const thirdPart = withoutCountryCode.slice(8, 10);
+  const operator = nationalDigits.slice(0, 3);
+  const firstPart = nationalDigits.slice(3, 6);
+  const secondPart = nationalDigits.slice(6, 8);
+  const thirdPart = nationalDigits.slice(8, 10);
 
   let formatted = "+7";
 
@@ -48,14 +45,24 @@ export function formatPhoneInputValue(value: string): string {
   }
 
   if (secondPart !== "") {
-    formatted += `-${secondPart}`;
+    formatted += ` - ${secondPart}`;
   }
 
   if (thirdPart !== "") {
-    formatted += `-${thirdPart}`;
+    formatted += ` - ${thirdPart}`;
   }
 
   return formatted;
+}
+
+export function normalizePhoneInputValue(value?: string | null): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const nationalDigits = extractRussianNationalDigits(value).slice(0, 10);
+
+  return nationalDigits.length === 10 ? `+7${nationalDigits}` : null;
 }
 
 function normalizeRussianPhoneDigits(digits: string): string {
@@ -65,6 +72,20 @@ function normalizeRussianPhoneDigits(digits: string): string {
 
   if (digits.length === 11 && digits.startsWith("8")) {
     return `7${digits.slice(1)}`;
+  }
+
+  return digits;
+}
+
+function extractRussianNationalDigits(value: string): string {
+  const digits = value.replace(/\D/g, "");
+
+  if (digits === "" || digits === "7" || digits === "8") {
+    return "";
+  }
+
+  if ((digits.startsWith("7") || digits.startsWith("8")) && digits.length > 1) {
+    return digits.slice(1);
   }
 
   return digits;

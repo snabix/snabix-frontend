@@ -19,7 +19,7 @@ export function SettingsSection({
   children: ReactNode;
   description: string;
   icon: LucideIcon;
-  title: string;
+  title: ReactNode;
 }) {
   return (
     <section className="surface-card rounded-[30px] p-6 sm:p-7">

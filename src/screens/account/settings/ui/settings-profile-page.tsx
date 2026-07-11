@@ -1,13 +1,13 @@
 "use client";
 
-import { Save, UserRound } from "lucide-react";
+import { Camera, Save, ShieldCheck, UserRound } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
-import { useEmailVerification } from "@/src/screens/account/profile/model/use-email-verification";
+import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
 import { useProfileEditor } from "@/src/screens/account/profile/model/use-profile-editor";
-import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
 import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
-import { PhoneInput } from "@/src/shared/ui/phone-input";
+import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Input } from "@/src/shared/ui/shadcn/input";
 import { Label } from "@/src/shared/ui/shadcn/label";
 import { FieldError, SettingsSection } from "./settings-shared";
@@ -15,35 +15,84 @@ import { FieldError, SettingsSection } from "./settings-shared";
 export function ProfileSettingsPage() {
   const user = useUserStore((state) => state.user);
   const {
-    handleConfirmVerification,
-    handleResendVerification,
-    handleVerificationCodeChange,
-    isConfirmingVerification,
-    isEmailVerified,
-    isResendingVerification,
-    isVerificationDialogOpen,
-    openVerificationDialog,
-    resendCooldownSeconds,
-    setIsVerificationDialogOpen,
-    verificationCode,
-  } = useEmailVerification();
-  const {
     errors,
     handleProfileSubmit,
     handleSubmit,
     isSubmitting,
     register,
   } = useProfileEditor({
-    onEmailVerificationRequired: openVerificationDialog,
+    onEmailVerificationRequired: () => undefined,
   });
+  const {
+    avatarDraft,
+    avatarInputRef,
+    avatarOffset,
+    avatarScale,
+    handleAvatarChange,
+    handleAvatarMovePointerDown,
+    handleAvatarSave,
+    handleAvatarSelect,
+    handleAvatarViewerClose,
+    isAvatarSubmitting,
+    isAvatarViewerOpen,
+    resetAvatarDraft,
+    setAvatarScale,
+  } = useAvatarEditor();
 
   return (
     <>
       <SettingsSection
-        description="Редактирование профиля теперь находится в настройках. Эти данные используются для аккаунта и будущего публичного профиля продавца."
+        description="Здесь находятся данные профиля, которые пользователь может обновлять самостоятельно."
         icon={UserRound}
         title="Профиль"
       >
+        <div className="mb-5 flex flex-col gap-4 rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <Avatar className="grid size-20 place-items-center rounded-full text-[var(--background)] shadow-[var(--shadow-card)]">
+              <AvatarImage src={user?.avatar?.url ?? undefined} />
+              <AvatarFallback>
+                <UserRound aria-hidden="true" size={32} strokeWidth={2.15} />
+              </AvatarFallback>
+            </Avatar>
+
+            <div>
+              <h2 className="font-heading text-lg font-black text-[var(--brand-deep)]">
+                Аватар профиля
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
+                Изображение относится к персональным данным и может отображаться в профиле.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            className="w-fit rounded-2xl"
+            disabled={isAvatarSubmitting}
+            onClick={handleAvatarSelect}
+            type="button"
+            variant="outline"
+          >
+            <Camera size={17} />
+            {isAvatarSubmitting ? "Загружаем..." : "Загрузить"}
+          </Button>
+
+          <input
+            ref={avatarInputRef}
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            className="hidden"
+            onChange={handleAvatarChange}
+            type="file"
+          />
+        </div>
+
+        <div className="mb-5 flex gap-3 border-b border-[var(--border-soft)] pb-5 text-sm leading-6 text-[var(--text-muted)]">
+          <ShieldCheck className="mt-0.5 shrink-0 text-[var(--accent)]" aria-hidden="true" size={18} />
+          <p>
+            Аватар, дата рождения и описание являются персональными данными.
+            Заполняйте только те сведения, которые готовы хранить в профиле.
+          </p>
+        </div>
+
         <form className="grid gap-5" onSubmit={handleSubmit(handleProfileSubmit)}>
           <div className="grid gap-4 md:grid-cols-2">
             <ProfileEditField label="Имя">
@@ -62,22 +111,31 @@ export function ProfileSettingsPage() {
               <FieldError message={errors.lastName?.message} />
             </ProfileEditField>
 
-            <ProfileEditField label="Email">
-              <Label className="sr-only" htmlFor="settings-email">
-                Email
+            <ProfileEditField label="Дата рождения">
+              <Label className="sr-only" htmlFor="settings-date-of-birth">
+                Дата рождения
               </Label>
-              <Input id="settings-email" placeholder="email@example.com" {...register("email")} />
-              <FieldError message={errors.email?.message} />
-            </ProfileEditField>
-
-            <ProfileEditField label="Телефон">
-              <Label className="sr-only" htmlFor="settings-phone-number">
-                Телефон
-              </Label>
-              <PhoneInput id="settings-phone-number" {...register("phoneNumber")} />
-              <FieldError message={errors.phoneNumber?.message} />
+              <Input
+                id="settings-date-of-birth"
+                type="date"
+                {...register("dateOfBirth")}
+              />
+              <FieldError message={errors.dateOfBirth?.message} />
             </ProfileEditField>
           </div>
+
+          <ProfileEditField label="О себе">
+            <Label className="sr-only" htmlFor="settings-description">
+              О себе
+            </Label>
+            <textarea
+              className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
+              id="settings-description"
+              placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
+              {...register("description")}
+            />
+            <FieldError message={errors.description?.message} />
+          </ProfileEditField>
 
           <div className="flex justify-end">
             <Button className="w-fit rounded-2xl" disabled={isSubmitting} type="submit">
@@ -88,18 +146,17 @@ export function ProfileSettingsPage() {
         </form>
       </SettingsSection>
 
-      {user?.email && !isEmailVerified ? (
-        <EmailVerificationDialog
-          code={verificationCode}
-          cooldownSeconds={resendCooldownSeconds}
-          email={user.email}
-          isConfirming={isConfirmingVerification}
-          isOpen={isVerificationDialogOpen}
-          isSending={isResendingVerification}
-          onCodeChangeAction={handleVerificationCodeChange}
-          onConfirmAction={handleConfirmVerification}
-          onOpenChangeAction={setIsVerificationDialogOpen}
-          onResendAction={handleResendVerification}
+      {isAvatarViewerOpen && avatarDraft ? (
+        <ProfileAvatarViewer
+          avatarDraft={avatarDraft}
+          avatarOffset={avatarOffset}
+          avatarScale={avatarScale}
+          isAvatarSubmitting={isAvatarSubmitting}
+          onAvatarDraftResetAction={resetAvatarDraft}
+          onAvatarMovePointerDownAction={handleAvatarMovePointerDown}
+          onAvatarSaveAction={handleAvatarSave}
+          onAvatarScaleChangeAction={(value) => setAvatarScale(value[0] ?? 1)}
+          onAvatarViewerCloseAction={handleAvatarViewerClose}
         />
       ) : null}
     </>

@@ -1,18 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Camera, Search, X } from "lucide-react";
-
-const recentQueries = [
-  { accent: "bg-[#E7F0FF]", image: "Б", label: "Бетон М300" },
-  { accent: "bg-[#F2EFE6]", image: "М", label: "Аренда манипулятора" },
-  { accent: "bg-[#F7E2D1]", image: "К", label: "Кирпич облицовочный" },
-  { accent: "bg-[#E6F4EA]", image: "Щ", label: "Доставка щебня" },
-  { accent: "bg-[#F4E7FA]", image: "И", label: "Инструмент для ремонта" },
-  { accent: "bg-[#FFE7EA]", image: "О", label: "Окна и двери" },
-  { accent: "bg-[#E7F7F5]", image: "С", label: "Сухие смеси" },
-  { accent: "bg-[#FFF0D8]", image: "Г", label: "Грузчики" },
-];
+import { Search, X } from "lucide-react";
 
 type HeaderSearchMenuProps = {
   isOpen: boolean;
@@ -60,7 +49,13 @@ export function HeaderSearchMenu({
   };
 
   return (
-    <div className="relative min-w-0 flex-1" ref={rootRef}>
+    <div
+      className={[
+        "relative min-w-0 transition-all duration-300 ease-out",
+        isOpen ? "w-[min(36vw,420px)] min-w-[240px]" : "w-11",
+      ].join(" ")}
+      ref={rootRef}
+    >
       <button
         aria-expanded={isOpen}
         aria-label="Открыть поиск"
@@ -92,13 +87,6 @@ export function HeaderSearchMenu({
               type="search"
               value={query}
             />
-            <button
-              aria-label="Визуальный поиск"
-              className="grid size-9 shrink-0 place-items-center rounded-full text-[var(--brand-deep)] transition hover:bg-[var(--surface)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-              type="button"
-            >
-              <Camera size={20} />
-            </button>
             {query.length > 0 ? (
               <button
                 aria-label="Очистить поиск"
@@ -111,27 +99,13 @@ export function HeaderSearchMenu({
             ) : null}
           </form>
 
-          <div className="absolute left-0 top-[calc(100%+1rem)] z-50 w-[min(calc(100vw-2rem),980px)] rounded-b-[28px] bg-[var(--surface)] px-8 py-7 shadow-[var(--shadow-soft)]">
-            <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">
+          <div className="absolute left-0 top-[calc(100%+1rem)] z-50 w-full rounded-b-[24px] bg-[var(--surface)] px-5 py-5 shadow-[var(--shadow-soft)]">
+            <h2 className="font-heading text-lg font-black text-[var(--brand-deep)]">
               Недавние поисковые запросы
             </h2>
 
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {recentQueries.map((recentQuery) => (
-                <button
-                  className="group flex min-w-0 items-center gap-4 rounded-[22px] bg-[var(--surface-muted)] p-2 text-left text-lg font-bold text-[var(--brand-deep)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] hover:shadow-[var(--shadow-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-                  key={recentQuery.label}
-                  onClick={() => setQuery(recentQuery.label)}
-                  type="button"
-                >
-                  <span
-                    className={`grid size-16 shrink-0 place-items-center rounded-[18px] text-xl font-black text-[var(--brand-deep)] ${recentQuery.accent}`}
-                  >
-                    {recentQuery.image}
-                  </span>
-                  <span className="min-w-0 truncate">{recentQuery.label}</span>
-                </button>
-              ))}
+            <div className="mt-4 rounded-2xl border border-dashed border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-5 text-sm leading-6 text-[var(--text-muted)]">
+              Недавние запросы появятся здесь после запуска поиска.
             </div>
           </div>
         </div>

@@ -35,37 +35,37 @@ const shareTargets: ShareTarget[] = [
   {
     icon: "native",
     label: "Системно",
-    tone: "bg-[var(--brand-deep)] text-white",
+    tone: "bg-[var(--brand-deep)] !text-white",
     type: "native",
   },
   {
     icon: "telegram",
     label: "Telegram",
-    tone: "bg-[#2AABEE] text-white",
+    tone: "bg-[#2AABEE] !text-white",
     type: "telegram",
   },
   {
     icon: "whatsapp",
     label: "WhatsApp",
-    tone: "bg-[#25D366] text-white",
+    tone: "bg-[#25D366] !text-white",
     type: "whatsapp",
   },
   {
     icon: "vk",
     label: "VK",
-    tone: "bg-[#0077FF] text-white",
+    tone: "bg-[#0077FF] !text-white",
     type: "vk",
   },
   {
     icon: "facebook",
     label: "Facebook",
-    tone: "bg-[#1877F2] text-white",
+    tone: "bg-[#1877F2] !text-white",
     type: "facebook",
   },
   {
     icon: "x",
     label: "X",
-    tone: "bg-black text-white",
+    tone: "bg-black !text-white",
     type: "x",
   },
   {
@@ -195,13 +195,13 @@ export function ShareProfileButton({
         <div className="mt-7 grid grid-cols-3 gap-4 sm:grid-cols-7">
           {shareTargets.map(({ icon, label: targetLabel, tone, type }) => (
             <button
-              className="group flex min-w-0 flex-col items-center gap-3 text-center text-sm font-semibold text-[var(--brand-deep)]"
+              className="group flex min-w-0 flex-col items-center gap-3 text-center text-sm font-semibold text-[var(--brand-deep)] transition-colors duration-300 ease-out hover:text-[var(--accent)] focus-visible:outline-none"
               key={targetLabel}
               onClick={() => handleShareTarget(type)}
               type="button"
             >
               <span
-                className={`grid size-14 place-items-center rounded-full shadow-sm transition group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-card)] ${tone}`}
+                className={`grid size-14 place-items-center rounded-full shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-105 group-hover:shadow-[var(--shadow-card)] group-active:translate-y-0 group-active:scale-95 group-focus-visible:ring-4 group-focus-visible:ring-[var(--accent-soft)] ${tone}`}
               >
                 <ShareTargetIcon icon={icon} />
               </span>
@@ -215,7 +215,7 @@ export function ShareProfileButton({
             {profileUrl}
           </div>
           <button
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--brand-deep)] px-4 py-2 text-sm font-black text-white transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--brand-deep)] px-4 py-2 text-sm font-black !text-white transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent)] active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
             onClick={() => void handleCopyLink()}
             type="button"
           >

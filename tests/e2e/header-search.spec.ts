@@ -8,9 +8,9 @@ test("user opens header search and selects a recent query", async ({ page }) => 
   await page.goto("/");
   await page.getByRole("button", { name: "Открыть поиск" }).click();
 
-  const searchInput = page.getByPlaceholder("Найти товары, услуги или категории");
+  const searchInput = page.getByPlaceholder("Поиск");
   await expect(searchInput).toBeFocused();
-  await expect(page.getByText("Недавние запросы")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Недавние поисковые запросы" })).toBeVisible();
 
   await page.getByRole("button", { name: "Бетон М300" }).click();
   await expect(searchInput).toHaveValue("Бетон М300");

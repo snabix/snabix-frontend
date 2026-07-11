@@ -9,19 +9,23 @@ import { HeaderSearchMenu } from "@/src/shared/ui/header/HeaderSearchMenu";
 import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
 
 type HeaderSessionActionsProps = {
+  isSearchOpen: boolean;
   isPending: boolean;
+  onSearchOpenChangeAction: (isOpen: boolean) => void;
   onLogoutAction: () => void;
 };
 
 export function HeaderSessionActions({
+  isSearchOpen,
   isPending,
+  onSearchOpenChangeAction,
   onLogoutAction,
 }: HeaderSessionActionsProps) {
   const user = useUserStore((state) => state.user);
   const hasCheckedSession = useUserStore((state) => state.hasCheckedSession);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
       {hasCheckedSession && user !== null ? (
         <Link
           aria-label="Создать объявление"
@@ -33,7 +37,10 @@ export function HeaderSessionActions({
         </Link>
       ) : null}
 
-      <HeaderSearchMenu />
+      <HeaderSearchMenu
+        isOpen={isSearchOpen}
+        onOpenChangeAction={onSearchOpenChangeAction}
+      />
 
       <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
 

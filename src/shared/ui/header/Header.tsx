@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
@@ -17,6 +17,7 @@ import { Logo } from "@/src/shared/ui/logo";
 export function Header() {
   const router = useRouter();
   const clearUser = useUserStore((state) => state.clearUser);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const {
     catalogTopOffset,
@@ -52,7 +53,12 @@ export function Header() {
     >
       <Container>
         <div className="surface-card flex items-center justify-between gap-3 rounded-[30px] px-4 py-4 sm:px-5">
-          <div className="flex items-center gap-2.5">
+          <div
+            className={[
+              "items-center gap-2.5 transition-all duration-300 ease-out",
+              isSearchOpen ? "hidden min-w-0 opacity-0 lg:flex lg:w-0 lg:overflow-hidden" : "flex opacity-100",
+            ].join(" ")}
+          >
             <Logo variant="wordmark" />
 
             <nav className="hidden items-center gap-1 lg:flex">
@@ -65,9 +71,16 @@ export function Header() {
             </nav>
           </div>
 
-          <div className="flex min-w-0 items-center justify-end gap-3">
+          <div
+            className={[
+              "flex min-w-0 items-center justify-end gap-3 transition-all duration-300 ease-out",
+              isSearchOpen ? "flex-1" : "",
+            ].join(" ")}
+          >
             <HeaderSessionActions
+              isSearchOpen={isSearchOpen}
               isPending={isPending}
+              onSearchOpenChangeAction={setIsSearchOpen}
               onLogoutAction={handleLogout}
             />
           </div>

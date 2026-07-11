@@ -49,7 +49,7 @@ test("user reads and deletes notifications from the header feed", async ({ page 
   await expect.poll(() => api.deletedNotificationIds).toContain("notification-1");
   await expect(page.getByText("Объявление добавили в избранное")).toBeHidden();
 
-  await page.getByRole("button", { name: "Очистить все" }).click();
+  await page.getByRole("button", { name: "Очистить" }).click();
   await expect(page.getByText("Пока уведомлений нет.")).toBeVisible();
   expect(api.notifications).toHaveLength(0);
 });

@@ -90,6 +90,7 @@ const listingBaseSchema = z.object({
   location: listingLocationSchema.nullable().optional(),
   isFavorite: z.boolean().optional(),
   sellerRating: z.number().nullable().optional(),
+  sellerReviewCount: z.number().optional(),
   city: nullableStringSchema.optional(),
   region: nullableStringSchema.optional(),
   street: nullableStringSchema.optional(),

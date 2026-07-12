@@ -115,6 +115,7 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
     },
     isFavorite: false,
     sellerRating: null,
+    sellerReviewCount: 0,
     city: city.name,
     region: region.name,
     street: null,

@@ -103,10 +103,6 @@ export function HeaderSearchMenu({
             <h2 className="font-heading text-lg font-black text-[var(--brand-deep)]">
               Недавние поисковые запросы
             </h2>
-
-            <div className="mt-4 rounded-2xl border border-dashed border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-5 text-sm leading-6 text-[var(--text-muted)]">
-              Недавние запросы появятся здесь после запуска поиска.
-            </div>
           </div>
         </div>
       ) : null}

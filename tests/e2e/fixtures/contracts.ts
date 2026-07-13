@@ -132,6 +132,28 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
   };
 }
 
+export function makeReview(overrides: Partial<UserReview> = {}): UserReview {
+  return {
+    id: "review-1",
+    reviewer: {
+      id: "buyer-1",
+      firstName: "Анна",
+      lastName: "Покупатель",
+    },
+    revieweeId: "user-1",
+    listing: {
+      id: "listing-1",
+      title: "Тестовый ноутбук",
+    },
+    rating: 5,
+    comment: "Быстрая связь и аккуратная передача товара.",
+    status: "published",
+    statusLabel: "Опубликован",
+    createdAt: "2026-07-12T12:00:00+00:00",
+    ...overrides,
+  };
+}
+
 export function toPublicListing(listing: ReturnType<typeof makeListing>) {
   const {
     contactEmail,
@@ -167,3 +189,4 @@ export function paginated(items: unknown[]) {
 import type { CategoryNode } from "@/src/entities/category";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing";
 import type { User, UserAddress } from "@/src/entities/user";
+import type { UserReview } from "@/src/features/review/api";

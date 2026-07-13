@@ -11,7 +11,7 @@ test("user opens header search and clears the typed query", async ({ page }) => 
   const searchInput = page.getByPlaceholder("Поиск");
   await expect(searchInput).toBeFocused();
   await expect(page.getByRole("heading", { name: "Недавние поисковые запросы" })).toBeVisible();
-  await expect(page.getByText("Недавние запросы появятся здесь после запуска поиска.")).toBeVisible();
+  await expect(page.getByText("Недавние запросы появятся здесь после запуска поиска.")).toBeHidden();
 
   await searchInput.fill("Бетон М300");
   await expect(searchInput).toHaveValue("Бетон М300");

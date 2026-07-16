@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Production dependency security audit
+        run: npm run audit:prod
+
       - name: File size baseline
         run: npm run filesize
 

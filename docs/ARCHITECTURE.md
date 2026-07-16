@@ -120,6 +120,7 @@ Frontend отображает и отправляет медиа, но не ре
 - `LOCAL_DEVELOPMENT.md`
 - `TESTING_STRATEGY.md`
 - `SECRETS.md`
-- backend `docs/LISTING_LIFECYCLE.md`
-- backend `docs/MEDIA_LIFECYCLE.md`
-- backend `docs/NOTIFICATIONS_ARCHITECTURE.md`
+- backend `.docs/LISTING_LIFECYCLE.md`
+- backend `.docs/MEDIA_LIFECYCLE.md`
+- backend `.docs/NOTIFICATIONS_ARCHITECTURE.md`
+- единый межрепозиторный аудит: `$PROJECT_ROOT/snabix-backend/.docs/TECHNICAL_AUDIT.md`

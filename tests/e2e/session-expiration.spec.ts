@@ -6,6 +6,7 @@ const privateRoutes = [
   "/account/listings",
   "/account/listings/create",
   "/account/favorites",
+  "/account/reviews",
   "/account/settings/profile",
   "/account/settings/account",
   "/account/settings/notifications",

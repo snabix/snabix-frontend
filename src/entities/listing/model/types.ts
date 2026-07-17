@@ -76,6 +76,7 @@ export type ListingItem = {
   location?: ListingLocation | null;
   isFavorite?: boolean;
   sellerRating?: number | null;
+  sellerReviewCount?: number;
   city?: string | null;
   region?: string | null;
   street?: string | null;

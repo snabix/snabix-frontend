@@ -6,6 +6,7 @@ import {
   city,
   leafCategory,
   makeListing,
+  makeReview,
   makeUser,
   paginated,
   region,
@@ -37,6 +38,7 @@ export class SnabixApiMock {
   notificationPreferences: NotificationPreference[] = makeNotificationPreferences();
   notifications: UserNotification[] = makeNotifications();
   reorderedMediaIds: number[] = [];
+  reviews = [makeReview()];
   sessions: ActiveUserSession[] = makeSessions();
   terminatedSessionIds: string[] = [];
   terminatedOtherSessions = false;
@@ -294,6 +296,13 @@ export class SnabixApiMock {
     if (url.pathname === "/api/v1/listings/favorites" && method === "GET") {
       await this.fulfill(route, 200, {
         data: paginated(this.favorite ? [{ ...this.listing, isFavorite: true }] : []),
+      });
+      return;
+    }
+
+    if (/^\/api\/v1\/users\/[^/]+\/reviews$/.test(url.pathname) && method === "GET") {
+      await this.fulfill(route, 200, {
+        data: paginated(this.reviews),
       });
       return;
     }

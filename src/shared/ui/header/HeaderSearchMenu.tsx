@@ -1,0 +1,111 @@
+"use client";
+
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { Search, X } from "lucide-react";
+
+type HeaderSearchMenuProps = {
+  isOpen: boolean;
+  onOpenChangeAction: (isOpen: boolean) => void;
+};
+
+export function HeaderSearchMenu({
+  isOpen,
+  onOpenChangeAction,
+}: HeaderSearchMenuProps) {
+  const [query, setQuery] = useState("");
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    inputRef.current?.focus();
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        onOpenChangeAction(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onOpenChangeAction(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onOpenChangeAction]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  return (
+    <div
+      className={[
+        "relative min-w-0 transition-all duration-300 ease-out",
+        isOpen ? "w-[min(36vw,420px)] min-w-[240px]" : "w-11",
+      ].join(" ")}
+      ref={rootRef}
+    >
+      <button
+        aria-expanded={isOpen}
+        aria-label="Открыть поиск"
+        className={[
+          "grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)]",
+          "bg-[var(--surface)] text-[var(--brand-deep)] transition",
+          "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]",
+          "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
+          isOpen ? "hidden" : "",
+        ].join(" ")}
+        onClick={() => onOpenChangeAction(true)}
+        type="button"
+      >
+        <Search size={18} />
+      </button>
+
+      {isOpen ? (
+        <div className="relative min-w-0">
+          <form
+            className="flex h-12 items-center gap-3 rounded-full border-4 border-[#7ABFFF] bg-[var(--surface-muted)] px-5 text-[var(--brand-deep)] shadow-sm transition"
+            onSubmit={handleSubmit}
+          >
+            <Search className="shrink-0 text-[var(--text-muted)]" size={18} />
+            <input
+              className="min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-[var(--text-muted)]"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Поиск"
+              ref={inputRef}
+              type="search"
+              value={query}
+            />
+            {query.length > 0 ? (
+              <button
+                aria-label="Очистить поиск"
+                className="grid size-8 place-items-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--surface)] hover:text-[var(--brand-deep)]"
+                onClick={() => setQuery("")}
+                type="button"
+              >
+                <X size={15} />
+              </button>
+            ) : null}
+          </form>
+
+          <div className="absolute left-0 top-[calc(100%+1rem)] z-50 w-full rounded-b-[24px] bg-[var(--surface)] px-5 py-5 shadow-[var(--shadow-soft)]">
+            <h2 className="font-heading text-lg font-black text-[var(--brand-deep)]">
+              Недавние поисковые запросы
+            </h2>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

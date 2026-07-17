@@ -31,8 +31,6 @@ export function SignUpForm() {
     defaultValues: {
       acceptedTerms: true,
       email: "",
-      firstName: "",
-      lastName: "",
       password: "",
       passwordConfirmation: "",
     },
@@ -44,8 +42,6 @@ export function SignUpForm() {
 
     try {
       await signUp({
-        firstName: values.firstName,
-        lastName: values.lastName,
         email: values.email,
         password: values.password,
         passwordConfirmation: values.passwordConfirmation,
@@ -87,36 +83,6 @@ export function SignUpForm() {
         className="mt-7 space-y-5"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="sign-up-first-name">Имя</Label>
-            <Input
-              id="sign-up-first-name"
-              placeholder="Иван"
-              {...register("firstName")}
-            />
-            {errors.firstName ? (
-              <p className="text-sm text-[var(--danger)]">
-                {errors.firstName.message}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="sign-up-last-name">Фамилия</Label>
-            <Input
-              id="sign-up-last-name"
-              placeholder="Петров"
-              {...register("lastName")}
-            />
-            {errors.lastName ? (
-              <p className="text-sm text-[var(--danger)]">
-                {errors.lastName.message}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
         <div className="space-y-2">
           <Label htmlFor="sign-up-email">Email</Label>
           <Input

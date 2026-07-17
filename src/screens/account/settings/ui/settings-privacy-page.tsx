@@ -162,7 +162,7 @@ export function PrivacySettingsPage() {
   };
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       <SettingsSection
         description="Здесь собраны чувствительные данные аккаунта: контакты, пароль и запрос копии персональных данных."
         icon={ShieldCheck}

@@ -1,10 +1,12 @@
-import { Save, Pencil } from "lucide-react";
+import { useRef } from "react";
+import { Pencil, Save } from "lucide-react";
 import type {
   FieldErrors,
   UseFormHandleSubmit,
   UseFormRegister,
 } from "react-hook-form";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { FormField } from "@/src/shared/ui/form-field";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +16,6 @@ import {
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
 import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
-import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
 import type { ProfileFormValues } from "@/src/screens/account/profile/ui/profile-types";
 
 type ProfileEditDialogProps = {
@@ -29,18 +29,6 @@ type ProfileEditDialogProps = {
   register: UseFormRegister<ProfileFormValues>;
 };
 
-function FieldError({ message }: { message?: string }) {
-  if (!message) {
-    return null;
-  }
-
-  return (
-    <p className="text-sm text-[var(--danger)]">
-      {message}
-    </p>
-  );
-}
-
 export function ProfileEditDialog({
   errors,
   handleCancel,
@@ -51,9 +39,18 @@ export function ProfileEditDialog({
   onSubmitAction,
   register,
 }: ProfileEditDialogProps) {
+  const firstNameInputRef = useRef<HTMLInputElement | null>(null);
+  const firstNameField = register("firstName");
+
   return (
     <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
-      <DialogContent className="max-w-[720px]">
+      <DialogContent
+        className="max-w-[720px]"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          firstNameInputRef.current?.focus();
+        }}
+      >
         <div className="pt-2">
           <DialogHeader className="mb-6">
             <div className="flex items-start gap-3">
@@ -77,60 +74,86 @@ export function ProfileEditDialog({
             </div>
           </DialogHeader>
 
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmitAction)}>
+          <form
+            autoComplete="on"
+            className="space-y-6"
+            noValidate
+            onSubmit={handleSubmit(onSubmitAction)}
+          >
             <div className="grid gap-4 md:grid-cols-2">
-              <ProfileEditField label="Имя">
-                <Label className="sr-only" htmlFor="profile-first-name">
-                  Имя
-                </Label>
-                <Input
-                  className="profile-edit-input"
-                  id="profile-first-name"
-                  placeholder="Ваше имя"
-                  {...register("firstName")}
-                />
-                <FieldError message={errors.firstName?.message} />
-              </ProfileEditField>
+              <FormField
+                error={errors.firstName?.message}
+                id="profile-first-name"
+                label="Имя"
+                labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+              >
+                {(controlProps) => (
+                  <Input
+                    {...controlProps}
+                    autoComplete="given-name"
+                    className="profile-edit-input"
+                    placeholder="Ваше имя"
+                    required
+                    {...firstNameField}
+                    ref={(element) => {
+                      firstNameField.ref(element);
+                      firstNameInputRef.current = element;
+                    }}
+                  />
+                )}
+              </FormField>
 
-              <ProfileEditField label="Фамилия">
-                <Label className="sr-only" htmlFor="profile-last-name">
-                  Фамилия
-                </Label>
-                <Input
-                  className="profile-edit-input"
-                  id="profile-last-name"
-                  placeholder="Ваша фамилия"
-                  {...register("lastName")}
-                />
-                <FieldError message={errors.lastName?.message} />
-              </ProfileEditField>
+              <FormField
+                error={errors.lastName?.message}
+                id="profile-last-name"
+                label="Фамилия"
+                labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+              >
+                {(controlProps) => (
+                  <Input
+                    {...controlProps}
+                    autoComplete="family-name"
+                    className="profile-edit-input"
+                    placeholder="Ваша фамилия"
+                    required
+                    {...register("lastName")}
+                  />
+                )}
+              </FormField>
 
-              <ProfileEditField label="Дата рождения">
-                <Label className="sr-only" htmlFor="profile-date-of-birth">
-                  Дата рождения
-                </Label>
-                <Input
-                  className="profile-edit-input"
-                  id="profile-date-of-birth"
-                  type="date"
-                  {...register("dateOfBirth")}
-                />
-                <FieldError message={errors.dateOfBirth?.message} />
-              </ProfileEditField>
+              <FormField
+                error={errors.dateOfBirth?.message}
+                id="profile-date-of-birth"
+                label="Дата рождения"
+                labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+              >
+                {(controlProps) => (
+                  <Input
+                    {...controlProps}
+                    autoComplete="bday"
+                    className="profile-edit-input"
+                    type="date"
+                    {...register("dateOfBirth")}
+                  />
+                )}
+              </FormField>
             </div>
 
-            <ProfileEditField label="О себе">
-              <Label className="sr-only" htmlFor="profile-description">
-                О себе
-              </Label>
-              <textarea
-                className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
-                id="profile-description"
-                placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
-                {...register("description")}
-              />
-              <FieldError message={errors.description?.message} />
-            </ProfileEditField>
+            <FormField
+              error={errors.description?.message}
+              id="profile-description"
+              label="О себе"
+              labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              {(controlProps) => (
+                <textarea
+                  {...controlProps}
+                  className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
+                  placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
+                  {...register("description")}
+                />
+              )}
+            </FormField>
 
             <DialogFooter>
               <Button

@@ -11,9 +11,9 @@ import { signIn } from "@/src/features/auth/api";
 import { signInSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignInFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
 import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
 
 function getRedirectParam() {
@@ -74,46 +74,53 @@ export function SignInForm() {
       </p>
 
       <form
-        autoComplete="off"
+        autoComplete="on"
         className="mt-7 space-y-5"
+        noValidate
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="space-y-2">
-          <Label htmlFor="sign-in-email">Email</Label>
-          <Input
-            id="sign-in-email"
-            placeholder="you@example.com"
-            {...register("email")}
-          />
-          {errors.email ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.email.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.email?.message}
+          id="sign-in-email"
+          label="Email"
+        >
+          {(controlProps) => (
+            <Input
+              {...controlProps}
+              autoCapitalize="none"
+              autoComplete="username"
+              placeholder="you@example.com"
+              required
+              spellCheck={false}
+              type="email"
+              {...register("email")}
+            />
+          )}
+        </FormField>
 
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <Label htmlFor="sign-in-password">Пароль</Label>
-          <Link
-            className="text-sm font-semibold text-[var(--accent)]"
-            href="/forgot-password"
-          >
-            Забыли пароль?
-          </Link>
-        </div>
-
-        <div className="space-y-2">
-          <PasswordInput
-            id="sign-in-password"
-            placeholder="Введите пароль"
-            {...register("password")}
-          />
-          {errors.password ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.password.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.password?.message}
+          id="sign-in-password"
+          label="Пароль"
+          labelAction={(
+            <Link
+              className="text-sm font-semibold text-[var(--accent)]"
+              href="/forgot-password"
+            >
+              Забыли пароль?
+            </Link>
+          )}
+        >
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="current-password"
+              placeholder="Введите пароль"
+              required
+              {...register("password")}
+            />
+          )}
+        </FormField>
 
         <Button
           className="auth-primary-button mt-1 w-full"

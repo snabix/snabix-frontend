@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Database, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -16,27 +16,14 @@ import { useEmailVerification } from "@/src/screens/account/profile/model/use-em
 import { EmailVerificationDialog } from "@/src/screens/account/profile/ui/email-verification-dialog";
 import { formatPhoneNumber, normalizePhoneInputValue } from "@/src/shared/lib/format-phone-number";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { PhoneInput } from "@/src/shared/ui/phone-input";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/src/shared/ui/shadcn/dialog";
-import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
+  type ContactFormValues,
+  type EditablePrivacyField,
+  PrivacySettingsDialogs,
+} from "./privacy-settings-dialogs";
 import { maskEmail, maskPhone, PrivacyDataRow } from "./settings-privacy-parts";
-import { FieldError, SettingsSection } from "./settings-shared";
-
-type ContactFormValues = {
-  email: string;
-  phoneNumber?: string;
-};
-
-type EditablePrivacyField = "email" | "phone" | "password";
+import { SettingsSection } from "./settings-shared";
 
 export function PrivacySettingsPage() {
   const user = useUserStore((state) => state.user);
@@ -50,6 +37,9 @@ export function PrivacySettingsPage() {
   const [isSubmittingContacts, setIsSubmittingContacts] = useState(false);
   const [isRequestingData, setIsRequestingData] = useState(false);
   const [isSendingPasswordEmail, setIsSendingPasswordEmail] = useState(false);
+  const emailEditButtonRef = useRef<HTMLButtonElement | null>(null);
+  const passwordEditButtonRef = useRef<HTMLButtonElement | null>(null);
+  const phoneEditButtonRef = useRef<HTMLButtonElement | null>(null);
   const {
     handleConfirmVerification,
     handleResendVerification,
@@ -71,6 +61,7 @@ export function PrivacySettingsPage() {
     handleSubmit,
     register,
     reset,
+    setFocus,
   } = useForm<ContactFormValues>({
     defaultValues: initialValues,
     resolver: zodResolver(profileContactFormSchema),
@@ -170,6 +161,7 @@ export function PrivacySettingsPage() {
       >
         <div className="divide-y divide-[var(--border-soft)]">
           <PrivacyDataRow
+            editButtonRef={emailEditButtonRef}
             isVisible={visibleFields.email}
             label="Email"
             maskedValue={maskEmail(user?.email)}
@@ -179,6 +171,7 @@ export function PrivacySettingsPage() {
           />
 
           <PrivacyDataRow
+            editButtonRef={phoneEditButtonRef}
             isVisible={visibleFields.phone}
             label="Телефон"
             maskedValue={maskPhone(user?.phoneNumber)}
@@ -189,6 +182,7 @@ export function PrivacySettingsPage() {
 
           <PrivacyDataRow
             canToggle={false}
+            editButtonRef={passwordEditButtonRef}
             isVisible={visibleFields.password}
             label="Пароль"
             maskedValue="Смена через письмо"
@@ -223,85 +217,24 @@ export function PrivacySettingsPage() {
         </div>
       </SettingsSection>
 
-      <Dialog onOpenChange={(isOpen) => (!isOpen ? closeEditor() : undefined)} open={editingField === "email"}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Изменить email</DialogTitle>
-            <DialogDescription>
-              После смены email потребуется повторное подтверждение кодом.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form className="grid gap-4" onSubmit={handleSubmit(updateContacts)}>
-            <div className="grid gap-2">
-              <Label htmlFor="privacy-email">Email</Label>
-              <Input id="privacy-email" placeholder="email@example.com" {...register("email")} />
-              <FieldError message={errors.email?.message} />
-            </div>
-
-            <DialogFooter>
-              <Button onClick={closeEditor} type="button" variant="outline">
-                Отменить
-              </Button>
-              <Button disabled={isSubmittingContacts} type="submit">
-                {isSubmittingContacts ? "Сохраняем..." : "Сохранить"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog onOpenChange={(isOpen) => (!isOpen ? closeEditor() : undefined)} open={editingField === "phone"}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Изменить телефон</DialogTitle>
-            <DialogDescription>
-              Используйте российский номер в формате +7.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form className="grid gap-4" onSubmit={handleSubmit(updateContacts)}>
-            <div className="grid gap-2">
-              <Label htmlFor="privacy-phone-number">Телефон</Label>
-              <PhoneInput id="privacy-phone-number" {...register("phoneNumber")} />
-              <FieldError message={errors.phoneNumber?.message} />
-            </div>
-
-            <DialogFooter>
-              <Button onClick={closeEditor} type="button" variant="outline">
-                Отменить
-              </Button>
-              <Button disabled={isSubmittingContacts} type="submit">
-                {isSubmittingContacts ? "Сохраняем..." : "Сохранить"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog onOpenChange={(isOpen) => (!isOpen ? closeEditor() : undefined)} open={editingField === "password"}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Сменить пароль</DialogTitle>
-            <DialogDescription>
-              Мы отправим письмо для смены пароля на email аккаунта. Текущий пароль не отображается и не хранится в открытом виде.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <Button onClick={closeEditor} type="button" variant="outline">
-              Отменить
-            </Button>
-            <Button
-              disabled={isSendingPasswordEmail || !user?.email}
-              onClick={handlePasswordResetRequest}
-              type="button"
-            >
-              {isSendingPasswordEmail ? "Отправляем..." : "Отправить письмо"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PrivacySettingsDialogs
+        editingField={editingField}
+        editButtonRefs={{
+          email: emailEditButtonRef,
+          password: passwordEditButtonRef,
+          phone: phoneEditButtonRef,
+        }}
+        errors={errors}
+        handleSubmit={handleSubmit}
+        isSendingPasswordEmail={isSendingPasswordEmail}
+        isSubmittingContacts={isSubmittingContacts}
+        onCloseAction={closeEditor}
+        onPasswordResetRequestAction={handlePasswordResetRequest}
+        onUpdateContactsAction={updateContacts}
+        register={register}
+        setFocus={setFocus}
+        userEmail={user?.email}
+      />
 
       {user?.email ? (
         <EmailVerificationDialog
@@ -315,6 +248,7 @@ export function PrivacySettingsPage() {
           onConfirmAction={handleConfirmVerification}
           onOpenChangeAction={setIsVerificationDialogOpen}
           onResendAction={handleResendVerification}
+          returnFocusRef={emailEditButtonRef}
         />
       ) : null}
     </div>

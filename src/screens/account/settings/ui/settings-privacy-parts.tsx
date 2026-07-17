@@ -1,8 +1,10 @@
+import type { Ref } from "react";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 
 export function PrivacyDataRow({
   canToggle = true,
+  editButtonRef,
   isVisible,
   label,
   maskedValue,
@@ -11,6 +13,7 @@ export function PrivacyDataRow({
   value,
 }: {
   canToggle?: boolean;
+  editButtonRef?: Ref<HTMLButtonElement>;
   isVisible: boolean;
   label: string;
   maskedValue: string;
@@ -47,6 +50,7 @@ export function PrivacyDataRow({
           aria-label={`Редактировать ${label}`}
           className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
           onClick={onEditAction}
+          ref={editButtonRef}
           type="button"
         >
           <Pencil size={16} />

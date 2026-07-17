@@ -9,9 +9,9 @@ import { forgotPassword } from "@/src/features/auth/api";
 import { forgotPasswordSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { ForgotPasswordFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,23 +48,29 @@ export function ForgotPasswordForm() {
       </p>
 
       <form
-        autoComplete="off"
+        autoComplete="on"
         className="mt-7 space-y-5"
+        noValidate
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="space-y-2">
-          <Label htmlFor="forgot-password-email">Email</Label>
-          <Input
-            id="forgot-password-email"
-            placeholder="you@example.com"
-            {...register("email")}
-          />
-          {errors.email ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.email.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.email?.message}
+          id="forgot-password-email"
+          label="Email"
+        >
+          {(controlProps) => (
+            <Input
+              {...controlProps}
+              autoCapitalize="none"
+              autoComplete="email"
+              placeholder="you@example.com"
+              required
+              spellCheck={false}
+              type="email"
+              {...register("email")}
+            />
+          )}
+        </FormField>
 
         <Button
           className="auth-primary-button w-full"

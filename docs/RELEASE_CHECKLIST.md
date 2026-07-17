@@ -44,6 +44,11 @@ Production audit должен завершаться без high/critical adviso
 - Избранное работает.
 - Настройки уведомлений загружаются.
 - Логотип корректен в светлой и темной теме.
+- Auth-формы предлагают browser/password-manager autofill для email и пароля.
+- Sign in и редактирование email в настройках выполняются только клавиатурой.
+- При открытии privacy/verification dialog фокус находится внутри модального
+  окна, `Escape` закрывает его и возвращает фокус на исходную кнопку.
+- `tests/e2e/auth-accessibility.spec.ts` проходит без critical axe violations.
 
 ## Performance Budget Public Listings
 

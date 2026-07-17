@@ -98,24 +98,6 @@ export function ProfileDataField({
   );
 }
 
-export function ProfileEditField({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label: string;
-}) {
-  return (
-    <div className="grid gap-2">
-      <p className="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-        {label}
-      </p>
-
-      {children}
-    </div>
-  );
-}
-
 export function ProfileSectionHeader() {
   return (
     <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

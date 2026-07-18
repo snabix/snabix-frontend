@@ -3,7 +3,7 @@ import {
     LISTING_TYPE_PRODUCT,
     LISTING_TYPE_SERVICE,
 } from "@/src/entities/listing";
-import type { ListPublicListingsParams } from "@/src/features/listing/api";
+import type { ListPublicListingsParams } from "@/src/features/listing/api/public-listing-query";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
 

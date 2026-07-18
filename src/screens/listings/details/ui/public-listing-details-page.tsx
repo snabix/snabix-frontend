@@ -1,74 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, MapPin, SearchX } from "lucide-react";
-import { toast } from "sonner";
 import { ListingMediaGallery, type PublicListingItem } from "@/src/entities/listing";
-import { showPublicListing } from "@/src/features/listing/api";
-import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 type PublicListingDetailsPageProps = {
-  listingId: string;
+  listing: PublicListingItem;
 };
 
-export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPageProps) {
-  const [listing, setListing] = useState<PublicListingItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadListing = async () => {
-      try {
-        setIsLoading(true);
-        const item = await showPublicListing(listingId);
-
-        if (isMounted) {
-          setListing(item);
-        }
-      } catch (error) {
-        if (isMounted) {
-          toast.error(extractApiError(error, "Не удалось загрузить объявление."));
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadListing();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [listingId]);
-
-  if (isLoading) {
-    return (
-      <Container className="py-8">
-        <SkeletonPanel className="min-h-80" />
-      </Container>
-    );
-  }
-
-  if (listing === null) {
-    return (
-      <Container className="py-8">
-        <EmptyState
-          description="Возможно, объявление снято с публикации или больше недоступно."
-          icon={SearchX}
-          title="Объявление не найдено"
-        />
-      </Container>
-    );
-  }
-
+export function PublicListingDetailsPage({
+  listing,
+}: PublicListingDetailsPageProps) {
   const categoryPath = buildCategoryBreadcrumbs(listing);
   const publishedAt = formatListingDate(listing.publishedAt);
 
@@ -181,6 +124,18 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
         </article>
       </Container>
     </main>
+  );
+}
+
+export function PublicListingUnavailablePage() {
+  return (
+    <Container className="py-8">
+      <EmptyState
+        description="Не удалось получить объявление с сервера. Попробуйте обновить страницу чуть позже."
+        icon={SearchX}
+        title="Объявление временно недоступно"
+      />
+    </Container>
   );
 }
 

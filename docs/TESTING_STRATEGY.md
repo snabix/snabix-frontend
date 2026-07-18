@@ -49,6 +49,11 @@ npm run test:e2e:full
 
 Часть e2e использует deterministic API mocks. Поведение Laravel API покрывается backend feature-тестами.
 
+`tests/e2e/public-storefront-ssr.spec.ts` запускается с отдельным deterministic
+HTTP fixture для Server Components. Набор проверяет HTML без JavaScript,
+metadata/OG, отсутствие hydration-запроса списка и то, что browser cookie не
+передается server API client как состояние избранного.
+
 ## Local hooks и CI
 
 Локальный `pre-commit` запускает быстрые проверки: lint, typecheck и unit/integration tests.
@@ -64,6 +69,13 @@ npm run test:e2e:critical
 ```
 
 Полный e2e-набор запускается в GitHub Actions через `npm run test:e2e:full`. Это снижает локальные flaky-timeout при push, но сохраняет полный browser coverage как обязательный CI-gate.
+
+Если локально уже запущен Next dev server, для изолированного e2e можно задать
+другие порты и build directory:
+
+```bash
+E2E_PORT=3011 E2E_API_PORT=4021 E2E_DIST_DIR=.next-e2e-3011 npm run test:e2e:full
+```
 
 ## Что обязательно тестировать
 

@@ -73,6 +73,19 @@ Production audit должен завершаться без high/critical adviso
 - Количество API-запросов при первом открытии: не больше 4.
 - Backend query count для списка объявлений: не больше 12 запросов.
 
+Автоматизированный browser замер запускается против HTTPS staging:
+
+```bash
+PUBLIC_STOREFRONT_URL=https://staging.example.com/ npm run performance:public
+```
+
+Команда использует mobile profile и завершится с ошибкой при превышении TTFB,
+LCP, first-load JS или browser API request budget. Server Components выполняют
+два серверных запроса на первом открытии главной (категории и объявления);
+`public-storefront-ssr.spec.ts` отдельно гарантирует отсутствие повторного
+browser-запроса списка после hydration. Backend query budget фиксируется
+feature-тестом public listing query.
+
 Если бюджет превышен, релиз можно продолжить только с коротким комментарием причины,
 ссылкой на задачу оптимизации и владельцем исправления.
 

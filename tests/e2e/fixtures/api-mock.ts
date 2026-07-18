@@ -52,7 +52,12 @@ export class SnabixApiMock {
   }
 
   async install(page: Page) {
-    await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):8080\/.*$/, (route) => this.handle(route));
+    const apiPort = process.env.E2E_API_PORT ?? "4010";
+    const apiUrlPattern = new RegExp(
+      `^http://(?:localhost|127\\.0\\.0\\.1):${escapeRegExp(apiPort)}/.*$`,
+    );
+
+    await page.route(apiUrlPattern, (route) => this.handle(route));
   }
 
   private async handle(route: Route) {
@@ -636,6 +641,10 @@ function getJsonBody(request: Request): JsonObject {
   } catch {
     return {};
   }
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function pickCategorySummary(category: typeof leafCategory) {

@@ -1,6 +1,8 @@
 "use client";
 
 import { SlidersHorizontal } from "lucide-react";
+import type { CategoryNode } from "@/src/entities/category";
+import type { PublicListingsInitialState } from "@/src/screens/listings/model/public-listings-initial-state";
 import { Container } from "@/src/shared/ui/container";
 import { useHomeListings } from "../model/use-home-listings";
 import { CategoryShowcaseCarouselSection } from "./category-showcase-carousel-section";
@@ -8,16 +10,27 @@ import { HomeFiltersDrawer } from "./home-filters-drawer";
 import { HomeListingsContent } from "./home-listings-content";
 
 type HomePageProps = {
+  initialCategories: CategoryNode[];
+  initialCategoriesError: string | null;
   initialCategoryId?: string;
+  initialListings: PublicListingsInitialState;
 };
 
-export function HomePage({ initialCategoryId }: HomePageProps) {
-  const listings = useHomeListings(initialCategoryId);
+export function HomePage({
+  initialCategories,
+  initialCategoriesError,
+  initialCategoryId,
+  initialListings,
+}: HomePageProps) {
+  const listings = useHomeListings(initialCategoryId, initialListings);
 
   return (
     <main className="pb-12 pt-6">
       <Container>
-        <CategoryShowcaseCarouselSection />
+        <CategoryShowcaseCarouselSection
+          categories={initialCategories}
+          errorMessage={initialCategoriesError}
+        />
 
         <section className="mt-8">
           <div className="mb-5">

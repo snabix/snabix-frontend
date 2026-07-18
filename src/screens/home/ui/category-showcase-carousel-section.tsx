@@ -1,51 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { WheelEvent } from "react";
-import { RefreshCw } from "lucide-react";
-import { useCategoryStore } from "@/src/entities/category";
+import type { CategoryNode } from "@/src/entities/category";
 import { CategoryTiltCard } from "./category-tilt-card";
 
-export function CategoryShowcaseCarouselSection() {
-    const roots = useCategoryStore((state) => state.roots);
-    const loadRoots = useCategoryStore((state) => state.loadRoots);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isFailed, setIsFailed] = useState(false);
+type CategoryShowcaseCarouselSectionProps = {
+    categories: CategoryNode[];
+    errorMessage: string | null;
+};
 
-    useEffect(() => {
-        let isMounted = true;
-
-        const loadCategories = async () => {
-            try {
-                setIsLoading(true);
-                setIsFailed(false);
-
-                await loadRoots();
-
-                if (!isMounted) {
-                    return;
-                }
-            } catch {
-                if (!isMounted) {
-                    return;
-                }
-
-                setIsFailed(true);
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        void loadCategories();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [loadRoots]);
-
-    const hasCategories = roots.length > 0;
+export function CategoryShowcaseCarouselSection({
+    categories,
+    errorMessage,
+}: CategoryShowcaseCarouselSectionProps) {
+    const hasCategories = categories.length > 0;
 
     const handleCarouselWheel = (event: WheelEvent<HTMLDivElement>) => {
         const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
@@ -72,14 +40,7 @@ export function CategoryShowcaseCarouselSection() {
                 </h2>
             </div>
 
-            {isLoading ? (
-                <div className="grid min-h-[180px] place-items-center rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] px-6 py-10">
-                    <div className="flex items-center gap-3 text-sm font-bold text-[var(--text-muted)]">
-                        <RefreshCw className="animate-spin" size={18} />
-                        Загружаем категории...
-                    </div>
-                </div>
-            ) : isFailed || !hasCategories ? (
+            {errorMessage !== null || !hasCategories ? (
                 <div className="rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] px-6 py-8">
                     <p className="text-base font-black text-[var(--brand-deep)]">
                         Не удалось загрузить категории
@@ -103,7 +64,7 @@ export function CategoryShowcaseCarouselSection() {
                                 className="flex shrink-0 gap-3 pr-3"
                                 key={groupIndex}
                             >
-                                {roots.map((category) => (
+                                {categories.map((category) => (
                                     <div
                                         className="w-[184px] shrink-0 sm:w-[196px] lg:w-[208px]"
                                         key={`${groupIndex}-${category.id}`}

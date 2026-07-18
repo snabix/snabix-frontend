@@ -8,7 +8,7 @@ import {
   FAVORITE_LISTINGS_MAX_PER_PAGE,
   listFavoriteListings,
   removeListingFavorite,
-} from "@/src/features/listing/api";
+} from "@/src/features/listing/api/favorite-listing";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { useMutationThrottle } from "@/src/shared/lib/use-mutation-throttle";
 

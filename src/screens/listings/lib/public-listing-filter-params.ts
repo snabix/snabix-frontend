@@ -1,4 +1,4 @@
-import type { ListPublicListingsParams } from "@/src/features/listing/api";
+import type { ListPublicListingsParams } from "@/src/features/listing/api/public-listing-query";
 import type { PublicListingFiltersState } from "@/src/screens/home/ui/public-listing-filters";
 
 export function toPublicListingParams(filters: PublicListingFiltersState): ListPublicListingsParams {

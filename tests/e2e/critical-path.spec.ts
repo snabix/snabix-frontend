@@ -38,13 +38,13 @@ test("critical marketplace path from sign in to listing management", async ({ pa
   expect(api.mediaUploads).toBe(1);
 
   await page.goto("/");
-  await expect(page.getByText("Критический ноутбук SNABIX")).toBeVisible();
   await page.getByRole("button", { name: "Фильтры", exact: true }).click();
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
 
   await expect.poll(() => api.lastPublicQuery.get("regionQuery"), { timeout: 20_000 }).toBe("Московская область");
   await expect.poll(() => api.lastPublicQuery.get("cityQuery"), { timeout: 20_000 }).toBe("Москва");
+  await expect(page.getByText("Критический ноутбук SNABIX")).toBeVisible();
   await page.getByLabel("Закрыть фильтры").click();
 
   await page.getByRole("button", { name: "Добавить объявление в избранное" }).click();

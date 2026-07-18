@@ -16,6 +16,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "typecheck:full": "node scripts/typecheck-full.mjs",
+    "performance:public": "node scripts/check-public-storefront-performance.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:critical": "playwright test tests/e2e/critical-path.spec.ts --workers=1",

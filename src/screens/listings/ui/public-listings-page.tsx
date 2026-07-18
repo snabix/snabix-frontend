@@ -1,5 +1,7 @@
 "use client";
 
+import type { CategoryNode } from "@/src/entities/category";
+import type { PublicListingsInitialState } from "@/src/screens/listings/model/public-listings-initial-state";
 import { Container } from "@/src/shared/ui/container";
 import { PublicListingFilters } from "@/src/screens/home/ui/public-listing-filters";
 import { usePublicListings } from "../model/use-public-listings";
@@ -8,13 +10,24 @@ import { PublicListingsContent } from "./public-listings-content";
 import { PublicListingQuickFilters } from "./public-listing-quick-filters";
 
 type PublicListingsPageProps = {
+  initialCategory: CategoryNode | null;
+  initialCategoryError: string | null;
   initialCategoryId?: string;
+  initialListings: PublicListingsInitialState;
 };
 
 export function PublicListingsPage({
+  initialCategory,
+  initialCategoryError,
   initialCategoryId,
+  initialListings,
 }: PublicListingsPageProps) {
-  const listings = usePublicListings(initialCategoryId);
+  const listings = usePublicListings({
+    initialCategory,
+    initialCategoryError,
+    initialCategoryId,
+    initialState: initialListings,
+  });
 
   return (
     <main className="pb-12 pt-6">

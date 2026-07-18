@@ -11,6 +11,19 @@ npm run test:e2e:full
 npm run build
 ```
 
+Production image собирается как Next standalone runtime и запускается
+непривилегированным пользователем. `NEXT_PUBLIC_API_URL` встраивается на этапе
+build, поэтому один image нельзя продвигать между окружениями с разными API URL.
+После публикации зафиксируй `sha-*` tag или OCI digest, не используй `latest`.
+
+Readiness:
+
+```text
+GET /api/health
+```
+
+Endpoint должен вернуть `200`, `Cache-Control: no-store` и revision образа.
+
 Production audit должен завершаться без high/critical advisories. Допустимое временное исключение для low/moderate оформляется с advisory ID, оценкой применимости, компенсирующими мерами, владельцем и сроком повторной проверки; `npm audit fix --force` для релизной ветки не используется.
 
 ### Активное audit-исключение

@@ -55,6 +55,18 @@ jobs:
       - name: Unit tests
         run: npm run test
 
+      - name: Production build
+        run: npm run build
+
+      - name: Build production image
+        run: >-
+          docker build
+          --build-arg APP_REVISION=${{ github.sha }}
+          --build-arg IMAGE_SOURCE=https://github.com/${{ github.repository }}
+          --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          --tag snabix-frontend:ci
+          .
+
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 

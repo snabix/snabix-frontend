@@ -11,6 +11,24 @@ import {
 } from "./api-schemas";
 
 describe("strict API schemas", () => {
+  it("accepts a user who has not filled in a personal name", () => {
+    const result = userSchema.safeParse({
+      addresses: [],
+      avatar: null,
+      dateOfBirth: null,
+      description: null,
+      email: "unnamed@example.com",
+      emailVerifiedAt: null,
+      firstName: null,
+      id: "user-without-name",
+      isActive: true,
+      lastName: null,
+      phoneNumber: null,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it("rejects unknown fields in the stable user contract", () => {
     const result = userSchema.safeParse({
       id: "user-1",

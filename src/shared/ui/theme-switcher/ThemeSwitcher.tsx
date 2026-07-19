@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
-import { markThemePreferenceAsManual } from "./time-based-theme";
 import { useAppTheme } from "./theme-context";
 
 export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
@@ -22,7 +21,6 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
 
   const isDark = resolvedTheme === "dark";
   const handleToggle = () => {
-    markThemePreferenceAsManual();
     setTheme(isDark ? "light" : "dark");
   };
 

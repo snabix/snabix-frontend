@@ -84,6 +84,19 @@ src/entities/user/model/store.ts
 
 При `401` или `419` frontend должен очищать пользователя и переводить UI в состояние истекшей сессии.
 
+## Тема и hydration
+
+Корневой layout серверно отдает безопасную светлую тему. До hydration
+`next/script` со стратегией `beforeInteractive` читает канонический режим
+`light`, `dark` или `system`, применяет класс только к `<html>` и тем самым
+предотвращает flash неверной темы.
+
+`suppressHydrationWarning` разрешен только на `<html>`, потому что bootstrap
+намеренно меняет его `class`, `data-theme` и `color-scheme`. На `<body>` и ниже
+подавление запрещено: реальные расхождения должны попадать в React console и
+ломать regression test. Старые значения `manual`/`auto` автоматически
+мигрируют в явную тему или `system`.
+
 ## Объявления
 
 Форма объявления разделена на секции и hooks:

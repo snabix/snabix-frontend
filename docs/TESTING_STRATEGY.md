@@ -54,6 +54,10 @@ HTTP fixture для Server Components. Набор проверяет HTML без
 metadata/OG, отсутствие hydration-запроса списка и то, что browser cookie не
 передается server API client как состояние избранного.
 
+`tests/e2e/theme-hydration.spec.ts` проверяет `light`, `dark` и `system`,
+собирает browser console/page errors и запрещает hydration/script warnings.
+System-сценарий дополнительно меняет `prefers-color-scheme` после hydration.
+
 ## Local hooks и CI
 
 Локальный `pre-commit` запускает быстрые проверки: lint, typecheck и unit/integration tests.

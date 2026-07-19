@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
     CalendarDays,
     ChevronRight,
@@ -25,6 +26,7 @@ import { ProfileAddressesSection } from "@/src/screens/account/profile/ui/profil
 
 export function ProfilePage() {
     const user = useUserStore((state) => state.user);
+    const verifyEmailButtonRef = useRef<HTMLButtonElement | null>(null);
     const {
         handleConfirmVerification,
         handleResendVerification,
@@ -114,6 +116,7 @@ export function ProfilePage() {
                                     <button
                                         className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent)] transition-opacity hover:opacity-80"
                                         onClick={() => setIsVerificationDialogOpen(true)}
+                                        ref={verifyEmailButtonRef}
                                         type="button"
                                     >
                                         Подтвердить email
@@ -156,6 +159,7 @@ export function ProfilePage() {
                     onConfirmAction={handleConfirmVerification}
                     onOpenChangeAction={setIsVerificationDialogOpen}
                     onResendAction={handleResendVerification}
+                    returnFocusRef={verifyEmailButtonRef}
                 />
             ) : null}
         </>

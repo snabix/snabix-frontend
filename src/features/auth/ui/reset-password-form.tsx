@@ -10,9 +10,9 @@ import { resetPassword } from "@/src/features/auth/api";
 import { resetPasswordSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { ResetPasswordFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
 import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
 
 type ResetPasswordFormProps = {
@@ -74,51 +74,62 @@ export function ResetPasswordForm({
       ) : null}
 
       <form
-        autoComplete="off"
+        autoComplete="on"
         className="mt-7 space-y-5"
+        noValidate
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="space-y-2">
-          <Label htmlFor="reset-password-email">Email</Label>
-          <Input
-            id="reset-password-email"
-            placeholder="you@example.com"
-            {...register("email")}
-          />
-          {errors.email ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.email.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.email?.message}
+          id="reset-password-email"
+          label="Email"
+        >
+          {(controlProps) => (
+            <Input
+              {...controlProps}
+              autoCapitalize="none"
+              autoComplete="username"
+              placeholder="you@example.com"
+              required
+              spellCheck={false}
+              type="email"
+              {...register("email")}
+            />
+          )}
+        </FormField>
 
-        <div className="space-y-2">
-          <Label htmlFor="reset-password-value">Новый пароль</Label>
-          <PasswordInput
-            id="reset-password-value"
-            placeholder="Не менее 8 символов"
-            {...register("password")}
-          />
-          {errors.password ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.password.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          description="Используйте не менее 8 символов."
+          error={errors.password?.message}
+          id="reset-password-value"
+          label="Новый пароль"
+        >
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="new-password"
+              placeholder="Не менее 8 символов"
+              required
+              {...register("password")}
+            />
+          )}
+        </FormField>
 
-        <div className="space-y-2">
-          <Label htmlFor="reset-password-confirmation">Повторите пароль</Label>
-          <PasswordInput
-            id="reset-password-confirmation"
-            placeholder="Повторите пароль"
-            {...register("passwordConfirmation")}
-          />
-          {errors.passwordConfirmation ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.passwordConfirmation.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.passwordConfirmation?.message}
+          id="reset-password-confirmation"
+          label="Повторите пароль"
+        >
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="new-password"
+              placeholder="Повторите пароль"
+              required
+              {...register("passwordConfirmation")}
+            />
+          )}
+        </FormField>
 
         <Button
           className="auth-primary-button w-full"

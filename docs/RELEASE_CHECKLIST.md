@@ -3,12 +3,36 @@
 ## Проверки
 
 ```bash
+npm run audit:prod
 npm run typecheck
 npm run lint
 npm run test
 npm run test:e2e:full
 npm run build
 ```
+
+Production image собирается как Next standalone runtime и запускается
+непривилегированным пользователем. `NEXT_PUBLIC_API_URL` встраивается на этапе
+build, поэтому один image нельзя продвигать между окружениями с разными API URL.
+После публикации зафиксируй `sha-*` tag или OCI digest, не используй `latest`.
+
+Readiness:
+
+```text
+GET /api/health
+```
+
+Endpoint должен вернуть `200`, `Cache-Control: no-store` и revision образа.
+
+Production audit должен завершаться без high/critical advisories. Допустимое временное исключение для low/moderate оформляется с advisory ID, оценкой применимости, компенсирующими мерами, владельцем и сроком повторной проверки; `npm audit fix --force` для релизной ветки не используется.
+
+### Активное audit-исключение
+
+- Advisory: `GHSA-qx2v-qp2m-jg93`, moderate; npm показывает две записи через `next` и его `postcss`, но это одна исходная уязвимость.
+- Причина: Next `16.2.10` фиксирует внутренний PostCSS на `8.4.31`; автоматический fix предлагает несовместимый откат Next до `9.3.3`.
+- Применимость: приложение не импортирует PostCSS напрямую и не принимает пользовательский CSS для сериализации; пакет обрабатывает только контролируемые репозиторием стили во время сборки.
+- Компенсирующие меры: точный lock-файл, CI блокирует high/critical, `overrides` и `npm audit fix --force` запрещены до поддержанного обновления Next.
+- Владелец: frontend maintainers. Пересмотреть при следующем обновлении Next или не позднее 2026-08-16.
 
 ## API-совместимость
 
@@ -33,6 +57,11 @@ npm run build
 - Избранное работает.
 - Настройки уведомлений загружаются.
 - Логотип корректен в светлой и темной теме.
+- Auth-формы предлагают browser/password-manager autofill для email и пароля.
+- Sign in и редактирование email в настройках выполняются только клавиатурой.
+- При открытии privacy/verification dialog фокус находится внутри модального
+  окна, `Escape` закрывает его и возвращает фокус на исходную кнопку.
+- `tests/e2e/auth-accessibility.spec.ts` проходит без critical axe violations.
 
 ## Performance Budget Public Listings
 

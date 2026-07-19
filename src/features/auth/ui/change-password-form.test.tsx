@@ -39,13 +39,29 @@ describe("ChangePasswordForm", () => {
 
     render(<ChangePasswordForm />);
 
-    fireEvent.change(screen.getByLabelText("Текущий пароль"), {
+    const currentPassword = screen.getByLabelText("Текущий пароль");
+    const newPassword = screen.getByLabelText("Новый пароль");
+    const passwordConfirmation = screen.getByLabelText(
+      "Повторите новый пароль",
+    );
+
+    expect(currentPassword).toHaveAttribute(
+      "autocomplete",
+      "current-password",
+    );
+    expect(newPassword).toHaveAttribute("autocomplete", "new-password");
+    expect(passwordConfirmation).toHaveAttribute(
+      "autocomplete",
+      "new-password",
+    );
+
+    fireEvent.change(currentPassword, {
       target: { value: "OldStrongPassword123!" },
     });
-    fireEvent.change(screen.getByLabelText("Новый пароль"), {
+    fireEvent.change(newPassword, {
       target: { value: "NewStrongPassword123!" },
     });
-    fireEvent.change(screen.getByLabelText("Повторите новый пароль"), {
+    fireEvent.change(passwordConfirmation, {
       target: { value: "NewStrongPassword123!" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Обновить пароль" }));

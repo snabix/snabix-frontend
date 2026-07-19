@@ -1,4 +1,9 @@
 import type { CategoryAttributeDefinition } from "@/src/entities/category";
+import type {
+  ListingCondition,
+  ListingKind,
+  ListingStatus,
+} from "./listing-constants";
 
 export type ListingAttributeValue = string | number | boolean | string[] | null;
 
@@ -42,8 +47,8 @@ export type ListingItem = {
   userId: string;
   category: {
     id: string | number;
-    catalogType: number;
-    catalogTypeLabel: string;
+    catalogKind: "product" | "service";
+    catalogKindLabel: string;
     parentId: string | number | null;
     name: string;
     slug: string;
@@ -55,17 +60,17 @@ export type ListingItem = {
       slug: string;
     }>;
   } | null;
-  type: number;
-  typeLabel: string;
-  status: number;
-  statusLabel: string;
-  condition: number;
-  conditionLabel: string;
+  listingKind: ListingKind;
+  listingKindLabel: string;
+  listingStatus: ListingStatus;
+  listingStatusLabel: string;
+  itemCondition: ListingCondition;
+  itemConditionLabel: string;
   title: string;
   slug: string;
   description: string;
-  price: number | null;
-  currency: string | null;
+  priceAmountMinor: number | null;
+  priceCurrency: string | null;
   isNegotiable: boolean;
   contactName: string | null;
   contactPhone: string | null;
@@ -92,8 +97,8 @@ export type ListingItem = {
     attributeDefinitionId: number;
     name: string | null;
     slug: string | null;
-    type: CategoryAttributeDefinition["type"] | null;
-    typeLabel: string | null;
+    valueType: CategoryAttributeDefinition["valueType"] | null;
+    valueTypeLabel: string | null;
     schemaVersion?: number;
     value: ListingAttributeValue;
     displayValue: string | null;

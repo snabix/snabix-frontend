@@ -56,8 +56,8 @@ export function buildFullLocation(listing: ListingItem): string {
 
 export function buildListingDetailPairs(listing: ListingItem): Array<[string, string]> {
   const basePairs = [
-    ["Тип объявления", listing.typeLabel],
-    ["Состояние", listing.conditionLabel],
+    ["Тип объявления", listing.listingKindLabel],
+    ["Состояние", listing.itemConditionLabel],
     ["Торг уместен", listing.isNegotiable ? "Да" : "Нет"],
   ] as Array<[string, string]>;
 
@@ -70,11 +70,11 @@ export function buildListingDetailPairs(listing: ListingItem): Array<[string, st
 }
 
 export function formatListingPrice(listing: ListingItem): string {
-  if (listing.price === null) {
+  if (listing.priceAmountMinor === null) {
     return "Цена не указана";
   }
 
-  return `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "₽"}`;
+  return `${new Intl.NumberFormat("ru-RU").format(listing.priceAmountMinor)} ${listing.priceCurrency ?? "₽"}`;
 }
 
 export function formatDateTime(value: string | null): string {

@@ -53,10 +53,10 @@ export function ListingDetailsHero({
             <div>
               <div className="mb-4 flex max-w-[calc(100%-64px)] flex-wrap gap-2">
                 <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
-                  {listing.statusLabel}
+                  {listing.listingStatusLabel}
                 </span>
                 <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                  {listing.typeLabel}
+                  {listing.listingKindLabel}
                 </span>
               </div>
               <h1 className="font-heading text-[clamp(2rem,3vw,3.3rem)] font-black tracking-[-0.06em] text-[var(--brand-deep)]">

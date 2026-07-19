@@ -23,7 +23,7 @@ type ListingManagementMenuProps = {
   isArchiving?: boolean;
   isDeleting?: boolean;
   isSubmittingForReview?: boolean;
-  listing: Pick<ListingItem, "status">;
+  listing: Pick<ListingItem, "listingStatus">;
   onArchive: () => void;
   onDelete: () => void;
   onSubmitForReview: () => void;
@@ -45,7 +45,7 @@ export function ListingManagementMenu({
     isSubmittingForReview,
     listing,
   });
-  const isArchived = listing.status === LISTING_STATUS_ARCHIVED;
+  const isArchived = listing.listingStatus === LISTING_STATUS_ARCHIVED;
 
   return (
     <DropdownMenu>

@@ -407,7 +407,11 @@ export class SnabixApiMock {
     }
 
     if (/\/api\/v1\/listings\/[^/]+\/archive$/.test(url.pathname) && method === "POST") {
-      this.listing = { ...this.listing, status: 5, statusLabel: "В архиве" };
+      this.listing = {
+        ...this.listing,
+        listingStatus: "archived",
+        listingStatusLabel: "В архиве",
+      };
       await this.fulfill(route, 200, { data: this.listing });
       return;
     }
@@ -442,8 +446,8 @@ export class SnabixApiMock {
     this.lastListingPayload = payload;
     this.listing = makeListing({
       ...pickListingChanges(payload),
-      status: isDraft ? 1 : 2,
-      statusLabel: isDraft ? "Черновик" : "На проверке",
+      listingStatus: isDraft ? "draft" : "pendingReview",
+      listingStatusLabel: isDraft ? "Черновик" : "На проверке",
     });
     await this.fulfill(route, 201, { data: this.listing });
   }
@@ -648,15 +652,19 @@ function escapeRegExp(value: string): string {
 }
 
 function pickCategorySummary(category: typeof leafCategory) {
-  const { id, catalogType, catalogTypeLabel, parentId, name, slug } = category;
-  return { id, catalogType, catalogTypeLabel, parentId, name, slug };
+  const { id, catalogKind, catalogKindLabel, parentId, name, slug } = category;
+  return { id, catalogKind, catalogKindLabel, parentId, name, slug };
 }
 
 function pickListingChanges(payload: JsonObject): Partial<ListingItem> {
   return {
     ...(typeof payload.title === "string" ? { title: payload.title } : {}),
     ...(typeof payload.description === "string" ? { description: payload.description } : {}),
-    ...(typeof payload.price === "number" || payload.price === null ? { price: payload.price } : {}),
-    ...(typeof payload.currency === "string" || payload.currency === null ? { currency: payload.currency } : {}),
+    ...(typeof payload.priceAmountMinor === "number" || payload.priceAmountMinor === null
+      ? { priceAmountMinor: payload.priceAmountMinor }
+      : {}),
+    ...(typeof payload.priceCurrency === "string" || payload.priceCurrency === null
+      ? { priceCurrency: payload.priceCurrency }
+      : {}),
   };
 }

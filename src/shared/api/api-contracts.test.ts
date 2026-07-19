@@ -19,6 +19,8 @@ import {
   setMainListingMedia,
   updateListing,
   uploadListingMedia,
+  type CreateListingPayload,
+  type UpdateListingPayload,
 } from "@/src/features/listing/api";
 import { api } from "@/src/shared/api";
 
@@ -44,25 +46,25 @@ const listingContract = {
       name: "Оперативная память",
       schemaVersion: 1,
       slug: "ram",
-      type: 1,
-      typeLabel: "Текст",
+      valueType: "text",
+      valueTypeLabel: "Текст",
       value: "16 ГБ",
     },
   ],
   category: {
-    catalogType: 1,
-    catalogTypeLabel: "Товары",
+    catalogKind: "product",
+    catalogKindLabel: "Товары",
     id: 5,
     name: "Ноутбуки",
     parentId: 2,
     slug: "noutbuki",
   },
-  condition: LISTING_CONDITION_USED,
-  conditionLabel: "Б/у",
+  itemCondition: LISTING_CONDITION_USED,
+  itemConditionLabel: "Б/у",
   contactEmail: "seller@example.com",
   contactName: "Seller",
   contactPhone: "+79990000000",
-  currency: "RUB",
+  priceCurrency: "RUB",
   description: "Игровой ноутбук.",
   expiresAt: null,
   id: "listing-1",
@@ -89,15 +91,15 @@ const listingContract = {
   ],
   isFeatured: false,
   isNegotiable: true,
-  price: 85000,
+  priceAmountMinor: 85000,
   publishedAt: "2026-05-24T10:00:00+00:00",
   rejectionReason: null,
   slug: "igrovoj-noutbuk",
-  status: LISTING_STATUS_PUBLISHED,
-  statusLabel: "Опубликовано",
+  listingStatus: LISTING_STATUS_PUBLISHED,
+  listingStatusLabel: "Опубликовано",
   title: "Игровой ноутбук",
-  type: LISTING_TYPE_PRODUCT,
-  typeLabel: "Товар",
+  listingKind: LISTING_TYPE_PRODUCT,
+  listingKindLabel: "Товар",
   userId: "user-1",
   viewsCount: 42,
 };
@@ -188,8 +190,8 @@ describe("api adapter contracts", () => {
       categoryId: 5,
       page: 1,
       perPage: 12,
-      status: LISTING_STATUS_PUBLISHED,
-      type: LISTING_TYPE_PRODUCT,
+      listingStatus: LISTING_STATUS_PUBLISHED,
+      listingKind: LISTING_TYPE_PRODUCT,
     });
 
     expect(result.items).toEqual([listingContract]);
@@ -199,24 +201,24 @@ describe("api adapter contracts", () => {
         categoryId: 5,
         page: 1,
         perPage: 12,
-        status: LISTING_STATUS_PUBLISHED,
-        type: LISTING_TYPE_PRODUCT,
+        listingStatus: LISTING_STATUS_PUBLISHED,
+        listingKind: LISTING_TYPE_PRODUCT,
       },
     });
   });
 
   it("sends create listing payload and validates created listing contract", async () => {
-    const payload = {
+    const payload: CreateListingPayload = {
       attributeValues: {},
       categoryId: 5,
-      condition: LISTING_CONDITION_USED,
-      currency: "RUB",
+      itemCondition: LISTING_CONDITION_USED,
+      priceCurrency: "RUB",
       description: "Игровой ноутбук.",
       isNegotiable: true,
-      price: 85000,
+      priceAmountMinor: 85000,
       saveAsDraft: true,
       title: "Игровой ноутбук",
-      type: LISTING_TYPE_PRODUCT,
+      listingKind: LISTING_TYPE_PRODUCT,
     };
 
     apiPostMock.mockResolvedValueOnce({ data: { data: listingContract } });
@@ -226,16 +228,16 @@ describe("api adapter contracts", () => {
   });
 
   it("sends update listing payload without saveAsDraft and validates listing contract", async () => {
-    const payload = {
+    const payload: UpdateListingPayload = {
       attributeValues: {},
       categoryId: 5,
-      condition: LISTING_CONDITION_USED,
-      currency: "RUB",
+      itemCondition: LISTING_CONDITION_USED,
+      priceCurrency: "RUB",
       description: "Игровой ноутбук.",
       isNegotiable: true,
-      price: 85000,
+      priceAmountMinor: 85000,
       title: "Игровой ноутбук",
-      type: LISTING_TYPE_PRODUCT,
+      listingKind: LISTING_TYPE_PRODUCT,
     };
 
     apiPatchMock.mockResolvedValueOnce({ data: { data: listingContract } });
@@ -267,13 +269,13 @@ describe("api adapter contracts", () => {
 
     const result = await listPublicListings({
       categoryId: 5,
-      maxPrice: 90000,
-      minPrice: 80000,
+      maxPriceAmountMinor: 90000,
+      minPriceAmountMinor: 80000,
       page: 1,
       perPage: 24,
       isNegotiable: true,
       sort: "price_desc",
-      type: LISTING_TYPE_PRODUCT,
+      listingKind: LISTING_TYPE_PRODUCT,
     });
 
     expect(result.items[0]?.imageUrl).toBe("https://cdn.snabix.test/listing-1/main.png");
@@ -282,13 +284,13 @@ describe("api adapter contracts", () => {
     expect(apiGetMock).toHaveBeenCalledWith("/public/listings", {
       params: {
         categoryId: 5,
-        maxPrice: 90000,
-        minPrice: 80000,
+        maxPriceAmountMinor: 90000,
+        minPriceAmountMinor: 80000,
         page: 1,
         perPage: 24,
         isNegotiable: true,
         sort: "price_desc",
-        type: LISTING_TYPE_PRODUCT,
+        listingKind: LISTING_TYPE_PRODUCT,
       },
     });
   });
@@ -345,8 +347,8 @@ describe("api adapter contracts", () => {
         showInCard: true,
         slug: "ram",
         sortOrder: 10,
-        type: 4,
-        typeLabel: "Выбор",
+        valueType: "select",
+        valueTypeLabel: "Выбор",
         unit: null,
       },
     ];
@@ -355,8 +357,8 @@ describe("api adapter contracts", () => {
       data: {
         data: {
           category: {
-            catalogType: 1,
-            catalogTypeLabel: "Товары",
+            catalogKind: "product",
+            catalogKindLabel: "Товары",
             id: 5,
             name: "Ноутбуки",
             parentId: 2,
@@ -374,8 +376,8 @@ describe("api adapter contracts", () => {
   it("returns root categories with media icon URL from categories contract", async () => {
     const categoriesContract = [
       {
-        catalogType: 1,
-        catalogTypeLabel: "Товары",
+        catalogKind: "product",
+        catalogKindLabel: "Товары",
         children: [],
         depth: 0,
         description: null,

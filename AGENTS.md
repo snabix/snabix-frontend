@@ -56,6 +56,8 @@ This version has breaking changes - APIs, conventions, and file structure may al
 - При `401` и `419` очищай локальное session state и используй единый auth-event flow.
 - Не доверяй backend response shape напрямую в UI. Используй API adapters, unwrap/mappers и типы.
 - Backend lists API для объявлений использует контракт `data.items` + `data.meta`; frontend adapters должны учитывать пагинацию.
+- JSON-поля следуют `.docs/API_DTO_CONTRACTS.md` backend: `lowerCamelCase`, semantic string enums, `...Id`, ISO 8601 `...At`, money как `...AmountMinor` + `...Currency`.
+- Deprecated numeric/generic aliases разрешены только внутри `src/shared/api/schemas` compatibility adapters до указанной backend датой границы. Entities, features и screens не должны хранить или отправлять `type/status/price/currency` вместо канонических полей объявления.
 
 ## Auth
 

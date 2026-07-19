@@ -61,17 +61,17 @@ export function PublicListingDetailsPage({
           <aside className="rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] p-5">
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
-                {listing.statusLabel}
+                {listing.listingStatusLabel}
               </span>
               <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                {listing.typeLabel}
+                {listing.listingKindLabel}
               </span>
             </div>
 
             <dl className="mt-6 grid gap-3 text-sm">
-              <Detail label="Цена" value={listing.price === null ? "Цена не указана" : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "RUB"}`} />
-              <Detail label="Тип объявления" value={listing.typeLabel} />
-              <Detail label="Состояние" value={listing.conditionLabel} />
+              <Detail label="Цена" value={listing.priceAmountMinor === null ? "Цена не указана" : `${new Intl.NumberFormat("ru-RU").format(listing.priceAmountMinor)} ${listing.priceCurrency ?? "RUB"}`} />
+              <Detail label="Тип объявления" value={listing.listingKindLabel} />
+              <Detail label="Состояние" value={listing.itemConditionLabel} />
               <Detail label="Публикация" value={publishedAt} />
             </dl>
 
@@ -97,7 +97,7 @@ export function PublicListingDetailsPage({
           <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Детали</h2>
           <dl className="mt-5 grid gap-3">
             <Detail label="Категория" value={categoryPath.map((category) => category.name).join(" / ") || "—"} />
-            <Detail label="Состояние" value={listing.conditionLabel} />
+            <Detail label="Состояние" value={listing.itemConditionLabel} />
             <Detail label="Торг" value={listing.isNegotiable ? "Разрешен" : "Не указан"} />
             <Detail label="Просмотры" value={String(listing.viewsCount)} />
           </dl>

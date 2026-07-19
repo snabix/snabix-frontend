@@ -10,12 +10,12 @@ export function ListingCardBadges({ listing }: ListingCardBadgesProps) {
     <div className="flex flex-wrap items-center gap-2.5">
       <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--accent)_18%,var(--border-soft))] bg-[color-mix(in_srgb,var(--accent)_14%,var(--surface))] px-4 py-2 text-sm font-bold text-[var(--brand-deep)]">
         <Package2 size={16} />
-        {listing.typeLabel}
+        {listing.listingKindLabel}
       </span>
 
       <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--brand)_20%,var(--border-soft))] bg-[color-mix(in_srgb,var(--brand)_14%,var(--surface))] px-4 py-2 text-sm font-bold text-[var(--brand-deep)]">
         <ShieldCheck size={16} />
-        {listing.conditionLabel}
+        {listing.itemConditionLabel}
       </span>
 
       <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--accent)_18%,var(--border-soft))] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-4 py-2 text-sm font-bold text-[var(--brand-deep)]">

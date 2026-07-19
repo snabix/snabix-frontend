@@ -1,10 +1,12 @@
+import type { ListingKind } from "@/src/entities/listing";
+
 export type ListPublicListingsParams = {
   page?: number;
   perPage?: number;
   categoryId?: string | number;
-  type?: number;
-  minPrice?: number;
-  maxPrice?: number;
+  listingKind?: ListingKind;
+  minPriceAmountMinor?: number;
+  maxPriceAmountMinor?: number;
   regionId?: number;
   cityId?: number;
   regionQuery?: string;
@@ -20,9 +22,9 @@ export function publicListingQuery(
     page: params.page ?? 1,
     perPage: params.perPage ?? 15,
     categoryId: params.categoryId,
-    type: params.type,
-    minPrice: params.minPrice,
-    maxPrice: params.maxPrice,
+    listingKind: params.listingKind,
+    minPriceAmountMinor: params.minPriceAmountMinor,
+    maxPriceAmountMinor: params.maxPriceAmountMinor,
     regionId: params.regionId,
     cityId: params.cityId,
     regionQuery: params.regionQuery?.trim() || undefined,

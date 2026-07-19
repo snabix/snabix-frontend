@@ -2,6 +2,7 @@ import { Check, Sparkles, Wrench } from "lucide-react";
 import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
+  type ListingKind,
 } from "@/src/entities/listing";
 import type { ListingFormState } from "@/src/features/listing/model/use-listing-form-state";
 import {
@@ -95,10 +96,10 @@ function ListingTypeCards({
   activeType,
   onTypeChange,
 }: {
-  activeType: number;
-  onTypeChange: (type: number) => void;
+  activeType: ListingKind;
+  onTypeChange: (type: ListingKind) => void;
 }) {
-  return [
+  return ([
     {
       description: "Продажа вещей, техники, одежды и других товаров",
       icon: Sparkles,
@@ -111,7 +112,7 @@ function ListingTypeCards({
       label: "Услуга",
       value: LISTING_TYPE_SERVICE,
     },
-  ].map((option) => {
+  ] as const).map((option) => {
     const isActive = activeType === option.value;
     const Icon = option.icon;
 

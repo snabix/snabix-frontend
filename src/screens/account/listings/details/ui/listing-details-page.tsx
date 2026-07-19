@@ -83,7 +83,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                 <ListingDetailsStatusCard
                   expiresAt={expiresAt}
                   publishedAt={publishedAt}
-                  statusLabel={listing.statusLabel}
+                  statusLabel={listing.listingStatusLabel}
                 />
               </div>
             </section>

@@ -5,7 +5,7 @@ import {
 } from "@/src/shared/api";
 import { nullableStringSchema } from "@/src/shared/api/schemas/common";
 
-const userReviewSchema = z.object({
+const userReviewWireSchema = z.object({
   id: z.string(),
   reviewer: z.object({
     id: z.string(),
@@ -19,10 +19,39 @@ const userReviewSchema = z.object({
   }).strict(),
   rating: z.number(),
   comment: nullableStringSchema,
-  status: z.string(),
-  statusLabel: z.string(),
+  reviewStatus: z.enum(["published", "hidden", "rejected"]).optional(),
+  reviewStatusLabel: z.string().optional(),
+  // Deprecated wire aliases are accepted for rolling deploys until 2026-10-31.
+  status: z.enum(["published", "hidden", "rejected"]).optional(),
+  statusLabel: z.string().optional(),
   createdAt: nullableStringSchema,
-}).strict();
+}).strict().superRefine((value, context) => {
+  if (value.reviewStatus === undefined && value.status === undefined) {
+    context.addIssue({
+      code: "custom",
+      message: "Missing canonical API field reviewStatus.",
+      path: ["reviewStatus"],
+    });
+  }
+
+  if (value.reviewStatusLabel === undefined && value.statusLabel === undefined) {
+    context.addIssue({
+      code: "custom",
+      message: "Missing canonical API field reviewStatusLabel.",
+      path: ["reviewStatusLabel"],
+    });
+  }
+});
+
+export const userReviewSchema = userReviewWireSchema.transform(({
+  status,
+  statusLabel,
+  ...review
+}) => ({
+  ...review,
+  reviewStatus: review.reviewStatus ?? status!,
+  reviewStatusLabel: review.reviewStatusLabel ?? statusLabel ?? "",
+}));
 
 export type UserReview = z.infer<typeof userReviewSchema>;
 

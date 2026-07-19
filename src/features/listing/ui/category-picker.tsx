@@ -1,10 +1,11 @@
 import type { CategoryNode } from "@/src/entities/category";
+import type { ListingKind } from "@/src/entities/listing";
 import type { BranchOption } from "@/src/features/listing/model/category-options";
 import { listingTypeCards } from "@/src/features/listing/model/listing-form-options";
 import { ListingFormField, ListingFormSelect } from "@/src/features/listing/ui/listing-form-field";
 
 type CategoryPickerProps = {
-  activeType: number;
+  activeType: ListingKind;
   branchOptions: BranchOption[];
   effectiveSelectedCategoryId: string | null;
   effectiveSelectedRootId: string | null;
@@ -13,7 +14,7 @@ type CategoryPickerProps = {
   isLoadingRoots: boolean;
   onCategoryChange: (categoryId: string) => void;
   onRootChange: (rootId: string) => void;
-  onTypeChange: (type: number) => void;
+  onTypeChange: (type: ListingKind) => void;
 };
 
 export function CategoryPicker({

@@ -6,11 +6,11 @@ type ListingWithSeller = ListingItem & {
 };
 
 export function formatListingPrice(listing: ListingItem | PublicListingItem): string {
-  if (listing.price === null) {
+  if (listing.priceAmountMinor === null) {
     return "Цена не указана";
   }
 
-  return `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "RUB"}`;
+  return `${new Intl.NumberFormat("ru-RU").format(listing.priceAmountMinor)} ${listing.priceCurrency ?? "RUB"}`;
 }
 
 export function formatListingDate(value: string | null): string | null {

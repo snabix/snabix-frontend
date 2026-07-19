@@ -105,11 +105,11 @@ function defaultAttributeValue(
 ): ListingAttributeValue {
   const defaultValue = normalizeDefaultValue(attribute.defaultValue);
 
-  if (attribute.type === ATTRIBUTE_TYPE_MULTISELECT) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_MULTISELECT) {
     return Array.isArray(defaultValue) ? defaultValue.map(String) : [];
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_BOOLEAN) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_BOOLEAN) {
     if (typeof defaultValue === "boolean") {
       return defaultValue;
     }
@@ -121,7 +121,7 @@ function defaultAttributeValue(
     return false;
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_NUMBER) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_NUMBER) {
     if (typeof defaultValue === "number") {
       return defaultValue;
     }

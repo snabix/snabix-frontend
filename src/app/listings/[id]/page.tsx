@@ -21,9 +21,9 @@ export async function generateMetadata({
 
   try {
     const listing = await showPublicListingServer(id);
-    const price = listing.price === null
+    const price = listing.priceAmountMinor === null
       ? null
-      : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "RUB"}`;
+      : `${new Intl.NumberFormat("ru-RU").format(listing.priceAmountMinor)} ${listing.priceCurrency ?? "RUB"}`;
     const description = truncateDescription(listing.description, 160);
     const title = price === null
       ? listing.title

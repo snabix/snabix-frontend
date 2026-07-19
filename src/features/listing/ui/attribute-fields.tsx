@@ -98,7 +98,7 @@ function renderAttributeInput(
   onChange: (attributeId: number, value: ListingAttributeValue) => void,
   onMultiselectChange: (attributeId: number, optionValue: string, checked: boolean) => void,
 ) {
-  if (attribute.type === ATTRIBUTE_TYPE_TEXT) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_TEXT) {
     return (
       <Input
         aria-label={attribute.name}
@@ -109,7 +109,7 @@ function renderAttributeInput(
     );
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_NUMBER) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_NUMBER) {
     return (
       <Input
         aria-label={attribute.name}
@@ -121,7 +121,7 @@ function renderAttributeInput(
     );
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_BOOLEAN) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_BOOLEAN) {
     return (
       <label className="flex items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3">
         <Checkbox
@@ -134,7 +134,7 @@ function renderAttributeInput(
     );
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_SELECT) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_SELECT) {
     return (
       <ListingFormSelect
         aria-label={attribute.name}
@@ -151,7 +151,7 @@ function renderAttributeInput(
     );
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_MULTISELECT) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_MULTISELECT) {
     const selectedValues = Array.isArray(value) ? value : [];
 
     return (
@@ -170,7 +170,7 @@ function renderAttributeInput(
     );
   }
 
-  if (attribute.type === ATTRIBUTE_TYPE_DATE) {
+  if (attribute.valueType === ATTRIBUTE_TYPE_DATE) {
     return (
       <Input
         aria-label={attribute.name}

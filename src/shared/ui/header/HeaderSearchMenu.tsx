@@ -5,12 +5,12 @@ import { Search, X } from "lucide-react";
 
 type HeaderSearchMenuProps = {
   isOpen: boolean;
-  onOpenChangeAction: (isOpen: boolean) => void;
+  onOpenChange: (isOpen: boolean) => void;
 };
 
 export function HeaderSearchMenu({
   isOpen,
-  onOpenChangeAction,
+  onOpenChange,
 }: HeaderSearchMenuProps) {
   const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -25,13 +25,13 @@ export function HeaderSearchMenu({
 
     const handlePointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
-        onOpenChangeAction(false);
+        onOpenChange(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onOpenChangeAction(false);
+        onOpenChange(false);
       }
     };
 
@@ -42,7 +42,7 @@ export function HeaderSearchMenu({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onOpenChangeAction]);
+  }, [isOpen, onOpenChange]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,7 +66,7 @@ export function HeaderSearchMenu({
           "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
           isOpen ? "hidden" : "",
         ].join(" ")}
-        onClick={() => onOpenChangeAction(true)}
+        onClick={() => onOpenChange(true)}
         type="button"
       >
         <Search size={18} />

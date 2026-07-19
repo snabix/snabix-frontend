@@ -8,6 +8,7 @@ Frontend-тесты проверяют UI-состояния, формы, contra
 cd $PROJECT_ROOT/snabix-frontend
 npm run typecheck
 npm run lint
+npm run architecture:client
 npm run test
 npm run test:e2e:full
 ```
@@ -57,6 +58,10 @@ metadata/OG, отсутствие hydration-запроса списка и то,
 `tests/e2e/theme-hydration.spec.ts` проверяет `light`, `dark` и `system`,
 собирает browser console/page errors и запрещает hydration/script warnings.
 System-сценарий дополнительно меняет `prefers-color-scheme` после hydration.
+
+`npm run architecture:client` контролирует максимальное количество явных
+`"use client"` entry points и запрещает обычные callback props с суффиксом
+`Action`. Команда входит в `npm run lint`.
 
 ## Local hooks и CI
 

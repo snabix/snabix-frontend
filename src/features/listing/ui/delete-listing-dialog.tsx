@@ -1,4 +1,4 @@
-import { AlertTriangle, LoaderCircle, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import {
   Dialog,
@@ -8,14 +8,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
+import { Spinner } from "@/src/shared/ui/shadcn/spinner";
 
 type DeleteListingDialogProps = {
   isDeleting: boolean;
   isOpen: boolean;
   itemsCount?: number;
   listingTitle?: string | null;
-  onConfirmAction: () => void;
-  onOpenChangeAction: (isOpen: boolean) => void;
+  onConfirm: () => void;
+  onOpenChange: (isOpen: boolean) => void;
 };
 
 export function DeleteListingDialog({
@@ -23,13 +24,13 @@ export function DeleteListingDialog({
   isOpen,
   itemsCount = 1,
   listingTitle,
-  onConfirmAction,
-  onOpenChangeAction,
+  onConfirm,
+  onOpenChange,
 }: DeleteListingDialogProps) {
   const isBulkDelete = itemsCount > 1;
 
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent className="max-w-[520px]">
         <DialogHeader>
           <div className="grid size-12 place-items-center rounded-2xl bg-[var(--danger-soft)] text-[var(--danger)]">
@@ -59,7 +60,7 @@ export function DeleteListingDialog({
         <DialogFooter className="mt-6">
           <Button
             disabled={isDeleting}
-            onClick={() => onOpenChangeAction(false)}
+            onClick={() => onOpenChange(false)}
             type="button"
             variant="outline"
           >
@@ -68,13 +69,13 @@ export function DeleteListingDialog({
 
           <Button
             disabled={isDeleting}
-            onClick={onConfirmAction}
+            onClick={onConfirm}
             type="button"
             variant="destructive"
           >
             {isDeleting ? (
               <>
-                <LoaderCircle aria-hidden="true" className="animate-spin" size={17} />
+                <Spinner aria-hidden="true" className="size-[17px]" />
                 Удаляем...
               </>
             ) : (

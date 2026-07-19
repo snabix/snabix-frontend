@@ -9,6 +9,7 @@ test.describe("server-first public storefront", () => {
 
     await page.goto("/");
 
+    await expect(page.getByText("Популярные направления")).toBeVisible();
     await expect(page.getByText("Тестовый ноутбук")).toBeVisible();
     await expect(page.getByText(/75\s?000/)).toBeVisible();
     await expect(page.getByText("Электроника", { exact: true }).first()).toBeVisible();

@@ -11,9 +11,9 @@ type CategoryPickerProps = {
   filteredRoots: CategoryNode[];
   isLoadingBranch: boolean;
   isLoadingRoots: boolean;
-  onCategoryChangeAction: (categoryId: string) => void;
-  onRootChangeAction: (rootId: string) => void;
-  onTypeChangeAction: (type: number) => void;
+  onCategoryChange: (categoryId: string) => void;
+  onRootChange: (rootId: string) => void;
+  onTypeChange: (type: number) => void;
 };
 
 export function CategoryPicker({
@@ -24,9 +24,9 @@ export function CategoryPicker({
   filteredRoots,
   isLoadingBranch,
   isLoadingRoots,
-  onCategoryChangeAction,
-  onRootChangeAction,
-  onTypeChangeAction,
+  onCategoryChange,
+  onRootChange,
+  onTypeChange,
 }: CategoryPickerProps) {
   return (
     <>
@@ -44,7 +44,7 @@ export function CategoryPicker({
                   : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] hover:border-[var(--accent)]",
               ].join(" ")}
               key={card.value}
-              onClick={() => onTypeChangeAction(card.value)}
+              onClick={() => onTypeChange(card.value)}
               type="button"
             >
               <div className={`grid size-12 place-items-center rounded-2xl ${isActive ? "bg-[color-mix(in_srgb,var(--active-button-text)_14%,transparent)] text-[var(--active-button-text)]" : "bg-[var(--accent-soft)]"}`}>
@@ -63,7 +63,7 @@ export function CategoryPicker({
         <ListingFormField label="Корневая категория">
           <ListingFormSelect
             disabled={isLoadingRoots || filteredRoots.length === 0}
-            onChangeAction={onRootChangeAction}
+            onChange={onRootChange}
             value={effectiveSelectedRootId ?? ""}
           >
             <option value="">
@@ -80,7 +80,7 @@ export function CategoryPicker({
         <ListingFormField label="Конечная категория">
           <ListingFormSelect
             disabled={effectiveSelectedRootId === null || isLoadingBranch || branchOptions.length === 0}
-            onChangeAction={onCategoryChangeAction}
+            onChange={onCategoryChange}
             value={effectiveSelectedCategoryId ?? ""}
           >
             <option value="">

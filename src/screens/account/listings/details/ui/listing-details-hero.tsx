@@ -8,9 +8,9 @@ type ListingDetailsHeroProps = {
   isDeleting: boolean;
   isSubmittingForReview: boolean;
   listing: ListingItem;
-  onArchiveAction: () => void;
-  onDeleteAction: () => void;
-  onSubmitForReviewAction: () => void;
+  onArchive: () => void;
+  onDelete: () => void;
+  onSubmitForReview: () => void;
   priceLabel: string;
 };
 
@@ -20,9 +20,9 @@ export function ListingDetailsHero({
   isDeleting,
   isSubmittingForReview,
   listing,
-  onArchiveAction,
-  onDeleteAction,
-  onSubmitForReviewAction,
+  onArchive,
+  onDelete,
+  onSubmitForReview,
   priceLabel,
 }: ListingDetailsHeroProps) {
   return (
@@ -44,9 +44,9 @@ export function ListingDetailsHero({
                 isDeleting={isDeleting}
                 isSubmittingForReview={isSubmittingForReview}
                 listing={listing}
-                onArchiveAction={onArchiveAction}
-                onDeleteAction={onDeleteAction}
-                onSubmitForReviewAction={onSubmitForReviewAction}
+                onArchive={onArchive}
+                onDelete={onDelete}
+                onSubmitForReview={onSubmitForReview}
               />
             </div>
 

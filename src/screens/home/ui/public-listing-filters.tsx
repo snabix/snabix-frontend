@@ -20,8 +20,8 @@ export type PublicListingFiltersState = {
 type PublicListingFiltersProps = {
     filters: PublicListingFiltersState;
     isLoading: boolean;
-    onChangeAction: (filters: PublicListingFiltersState) => void;
-    onResetAction: () => void;
+    onChange: (filters: PublicListingFiltersState) => void;
+    onReset: () => void;
 };
 
 const listingTypeOptions = [
@@ -66,14 +66,14 @@ export const defaultPublicListingFilters: PublicListingFiltersState = {
 export function PublicListingFilters({
                                          filters,
                                          isLoading,
-                                         onChangeAction,
-                                         onResetAction,
+                                         onChange,
+                                         onReset,
                                      }: PublicListingFiltersProps) {
     const updateFilter = (
         key: keyof PublicListingFiltersState,
         value: string | boolean,
     ) => {
-        onChangeAction({
+        onChange({
             ...filters,
             [key]: value,
         });
@@ -82,7 +82,7 @@ export function PublicListingFilters({
     const updatePricePreset = (minPrice: string, maxPrice: string) => {
         const isSelected = filters.minPrice === minPrice && filters.maxPrice === maxPrice;
 
-        onChangeAction({
+        onChange({
             ...filters,
             maxPrice: isSelected ? "" : maxPrice,
             minPrice: isSelected ? "" : minPrice,
@@ -229,7 +229,7 @@ export function PublicListingFilters({
                 <button
                     className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-3 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:opacity-60"
                     disabled={isLoading}
-                    onClick={onResetAction}
+                    onClick={onReset}
                     type="button"
                 >
                     Сбросить фильтры

@@ -65,7 +65,7 @@ export function PublicListingsPage({
               <PublicListingQuickFilters
                 filters={listings.draftFilters}
                 isLoading={listings.isLoading}
-                onChangeAction={listings.setDraftFilters}
+                onChange={listings.setDraftFilters}
               />
 
               <PublicListingsContent
@@ -74,8 +74,8 @@ export function PublicListingsPage({
                 isLoading={listings.isLoading}
                 items={listings.items}
                 meta={listings.paginationMeta}
-                onFavoriteToggleAction={listings.toggleFavorite}
-                onPageChangeAction={listings.setPage}
+                onFavoriteToggle={listings.toggleFavorite}
+                onPageChange={listings.setPage}
                 page={listings.page}
               />
             </div>
@@ -84,8 +84,8 @@ export function PublicListingsPage({
               <PublicListingFilters
                 filters={listings.draftFilters}
                 isLoading={listings.isLoading}
-                onChangeAction={listings.setDraftFilters}
-                onResetAction={listings.handleFiltersReset}
+                onChange={listings.setDraftFilters}
+                onReset={listings.handleFiltersReset}
               />
 
               <div className="min-w-0 flex-1">
@@ -95,8 +95,8 @@ export function PublicListingsPage({
                   isLoading={listings.isLoading}
                   items={listings.items}
                   meta={listings.paginationMeta}
-                  onFavoriteToggleAction={listings.toggleFavorite}
-                  onPageChangeAction={listings.setPage}
+                  onFavoriteToggle={listings.toggleFavorite}
+                  onPageChange={listings.setPage}
                   page={listings.page}
                 />
               </div>

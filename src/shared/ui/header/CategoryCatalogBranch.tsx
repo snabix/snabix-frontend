@@ -11,9 +11,9 @@ type CategoryCatalogBranchProps = {
   activeBranchStatus: "idle" | "loading" | "success" | "error";
   activeRoot: CategoryNode | null;
   hasLoadedCategories: boolean;
-  onCategorySelectAction: () => void;
-  onRetryBranchAction: () => void;
-  onRetryRootsAction: () => void;
+  onCategorySelect: () => void;
+  onRetryBranch: () => void;
+  onRetryRoots: () => void;
   rootsErrorMessage: string | null;
   rootsStatus: "idle" | "loading" | "success" | "error";
 };
@@ -24,9 +24,9 @@ export function CategoryCatalogBranch({
   activeBranchStatus,
   activeRoot,
   hasLoadedCategories,
-  onCategorySelectAction,
-  onRetryBranchAction,
-  onRetryRootsAction,
+  onCategorySelect,
+  onRetryBranch,
+  onRetryRoots,
   rootsErrorMessage,
   rootsStatus,
 }: CategoryCatalogBranchProps) {
@@ -61,7 +61,7 @@ export function CategoryCatalogBranch({
           </div>
           <Button
             className="rounded-[18px] px-5 font-semibold"
-            onClick={onRetryRootsAction}
+            onClick={onRetryRoots}
           >
             Повторить загрузку
           </Button>
@@ -97,7 +97,7 @@ export function CategoryCatalogBranch({
               </p>
               <Button
                 className="rounded-[18px] px-5 font-semibold"
-                onClick={onRetryBranchAction}
+                onClick={onRetryBranch}
               >
                 Повторить загрузку
               </Button>
@@ -114,7 +114,7 @@ export function CategoryCatalogBranch({
                   >
                     <CategoryTitleLink
                       category={category}
-                      onCategorySelectAction={onCategorySelectAction}
+                      onCategorySelect={onCategorySelect}
                     />
 
                     {category.children.length > 0 ? (
@@ -127,7 +127,7 @@ export function CategoryCatalogBranch({
                             <Link
                               className="transition-colors duration-200 hover:text-[var(--brand)]"
                               href={`/?categoryId=${child.id}`}
-                              onClick={onCategorySelectAction}
+                              onClick={onCategorySelect}
                             >
                               {child.name}
                             </Link>
@@ -168,16 +168,16 @@ export function CategoryCatalogBranch({
 
 function CategoryTitleLink({
   category,
-  onCategorySelectAction,
+  onCategorySelect,
 }: {
   category: CategoryNode;
-  onCategorySelectAction: () => void;
+  onCategorySelect: () => void;
 }) {
   return (
     <Link
       className="inline-flex text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
       href={`/?categoryId=${category.id}`}
-      onClick={onCategorySelectAction}
+      onClick={onCategorySelect}
     >
       {category.name}
     </Link>

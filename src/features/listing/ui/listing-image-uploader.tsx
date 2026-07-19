@@ -12,20 +12,20 @@ type ListingImageUploaderProps = {
   existingMedia?: ListingMediaItem[];
   files: File[];
   isDisabled?: boolean;
-  onChangeAction: (files: File[]) => void;
-  onDeleteExistingAction?: (mediaId: number) => void;
-  onReorderExistingAction?: (mediaId: number, direction: "left" | "right") => void;
-  onSetMainExistingAction?: (mediaId: number) => void;
+  onChange: (files: File[]) => void;
+  onDeleteExisting?: (mediaId: number) => void;
+  onReorderExisting?: (mediaId: number, direction: "left" | "right") => void;
+  onSetMainExisting?: (mediaId: number) => void;
 };
 
 export function ListingImageUploader({
   existingMedia = [],
   files,
   isDisabled = false,
-  onChangeAction,
-  onDeleteExistingAction,
-  onReorderExistingAction,
-  onSetMainExistingAction,
+  onChange,
+  onDeleteExisting,
+  onReorderExisting,
+  onSetMainExisting,
 }: ListingImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previews = useMemo(
@@ -52,7 +52,7 @@ export function ListingImageUploader({
       .filter((file) => file.type.startsWith("image/"))
       .slice(0, availableSlots);
 
-    onChangeAction([...files, ...nextFiles]);
+    onChange([...files, ...nextFiles]);
 
     if (inputRef.current !== null) {
       inputRef.current.value = "";
@@ -60,7 +60,7 @@ export function ListingImageUploader({
   };
 
   const removeFile = (fileIndex: number) => {
-    onChangeAction(files.filter((_, index) => index !== fileIndex));
+    onChange(files.filter((_, index) => index !== fileIndex));
   };
 
   return (
@@ -115,10 +115,10 @@ export function ListingImageUploader({
                 isMain={item.isMain}
                 key={`existing-${item.id}`}
                 name={item.fileName}
-                onDeleteAction={onDeleteExistingAction ? () => onDeleteExistingAction(item.id) : undefined}
-                onMoveLeftAction={onReorderExistingAction ? () => onReorderExistingAction(item.id, "left") : undefined}
-                onMoveRightAction={onReorderExistingAction ? () => onReorderExistingAction(item.id, "right") : undefined}
-                onSetMainAction={onSetMainExistingAction ? () => onSetMainExistingAction(item.id) : undefined}
+                onDelete={onDeleteExisting ? () => onDeleteExisting(item.id) : undefined}
+                onMoveLeft={onReorderExisting ? () => onReorderExisting(item.id, "left") : undefined}
+                onMoveRight={onReorderExisting ? () => onReorderExisting(item.id, "right") : undefined}
+                onSetMain={onSetMainExisting ? () => onSetMainExisting(item.id) : undefined}
                 statusLabel={item.isMain ? "Главное фото" : "Загружено"}
                 thumbnailUrl={item.url}
               />
@@ -131,7 +131,7 @@ export function ListingImageUploader({
                 isDisabled={isDisabled}
                 key={preview.id}
                 name={preview.name}
-                onDeleteAction={() => removeFile(index)}
+                onDelete={() => removeFile(index)}
                 statusLabel={formatFileSize(preview.file.size)}
                 thumbnailUrl={preview.url}
               />
@@ -149,10 +149,10 @@ type MediaListRowProps = {
   isDisabled: boolean;
   isMain?: boolean;
   name: string;
-  onDeleteAction?: () => void;
-  onMoveLeftAction?: () => void;
-  onMoveRightAction?: () => void;
-  onSetMainAction?: () => void;
+  onDelete?: () => void;
+  onMoveLeft?: () => void;
+  onMoveRight?: () => void;
+  onSetMain?: () => void;
   statusLabel: string;
   thumbnailUrl: string;
 };
@@ -163,10 +163,10 @@ function MediaListRow({
   isDisabled,
   isMain = false,
   name,
-  onDeleteAction,
-  onMoveLeftAction,
-  onMoveRightAction,
-  onSetMainAction,
+  onDelete,
+  onMoveLeft,
+  onMoveRight,
+  onSetMain,
   statusLabel,
   thumbnailUrl,
 }: MediaListRowProps) {
@@ -186,7 +186,7 @@ function MediaListRow({
       </div>
 
       <div className="flex items-center gap-1">
-        {onSetMainAction ? (
+        {onSetMain ? (
           <button
             aria-label="Сделать фото главным"
             className={cn(
@@ -194,31 +194,31 @@ function MediaListRow({
               isMain && "bg-[var(--accent-soft)] text-[var(--accent)]",
             )}
             disabled={isDisabled || isMain}
-            onClick={onSetMainAction}
+            onClick={onSetMain}
             type="button"
           >
             <Star fill={isMain ? "currentColor" : "none"} size={15} />
           </button>
         ) : null}
 
-        {onMoveLeftAction ? (
+        {onMoveLeft ? (
           <button
             aria-label="Сдвинуть фото левее"
             className="grid size-8 place-items-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)] disabled:opacity-40"
             disabled={isDisabled || !canMoveLeft}
-            onClick={onMoveLeftAction}
+            onClick={onMoveLeft}
             type="button"
           >
             <ArrowLeft size={14} />
           </button>
         ) : null}
 
-        {onMoveRightAction ? (
+        {onMoveRight ? (
           <button
             aria-label="Сдвинуть фото правее"
             className="grid size-8 place-items-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)] disabled:opacity-40"
             disabled={isDisabled || !canMoveRight}
-            onClick={onMoveRightAction}
+            onClick={onMoveRight}
             type="button"
           >
             <ArrowRight size={14} />
@@ -228,8 +228,8 @@ function MediaListRow({
         <button
           aria-label="Удалить фото"
           className="grid size-8 place-items-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-soft)] hover:text-[var(--danger)] disabled:opacity-40"
-          disabled={isDisabled || onDeleteAction === undefined}
-          onClick={onDeleteAction}
+          disabled={isDisabled || onDelete === undefined}
+          onClick={onDelete}
           type="button"
         >
           <Trash2 size={15} />

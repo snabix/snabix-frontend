@@ -39,7 +39,7 @@ export function ListingCategorySection({
       <div>
         <p className="text-[1.35rem] font-black text-[var(--brand-deep)]">Тип объявления</p>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          <ListingTypeCards activeType={activeType} onTypeChangeAction={handleTypeChange} />
+          <ListingTypeCards activeType={activeType} onTypeChange={handleTypeChange} />
         </div>
       </div>
     );
@@ -53,7 +53,7 @@ export function ListingCategorySection({
           <ListingFormField label="Выберите категорию">
             <ListingFormSelect
               disabled={isLoadingRoots || filteredRoots.length === 0}
-              onChangeAction={handleRootChange}
+              onChange={handleRootChange}
               value={effectiveSelectedRootId ?? ""}
             >
               <option value="">
@@ -70,7 +70,7 @@ export function ListingCategorySection({
           <ListingFormField label="Выберите подкатегорию">
             <ListingFormSelect
               disabled={effectiveSelectedRootId === null || isLoadingBranch || branchOptions.length === 0}
-              onChangeAction={handleCategoryChange}
+              onChange={handleCategoryChange}
               value={effectiveSelectedCategoryId ?? ""}
             >
               <option value="">
@@ -93,10 +93,10 @@ export function ListingCategorySection({
 
 function ListingTypeCards({
   activeType,
-  onTypeChangeAction,
+  onTypeChange,
 }: {
   activeType: number;
-  onTypeChangeAction: (type: number) => void;
+  onTypeChange: (type: number) => void;
 }) {
   return [
     {
@@ -124,7 +124,7 @@ function ListingTypeCards({
             : "border-[var(--border-soft)] bg-[var(--surface)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
         ].join(" ")}
         key={option.value}
-        onClick={() => onTypeChangeAction(option.value)}
+        onClick={() => onTypeChange(option.value)}
         type="button"
       >
         <div className="flex items-start gap-4">

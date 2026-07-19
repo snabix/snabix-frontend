@@ -1,6 +1,3 @@
-"use client";
-
-import type { WheelEvent } from "react";
 import type { CategoryNode } from "@/src/entities/category";
 import { CategoryTiltCard } from "./category-tilt-card";
 
@@ -14,19 +11,6 @@ export function CategoryShowcaseCarouselSection({
     errorMessage,
 }: CategoryShowcaseCarouselSectionProps) {
     const hasCategories = categories.length > 0;
-
-    const handleCarouselWheel = (event: WheelEvent<HTMLDivElement>) => {
-        const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-
-        if (horizontalDelta === 0) {
-            return;
-        }
-
-        event.currentTarget.scrollBy({
-            left: horizontalDelta,
-            behavior: "smooth",
-        });
-    };
 
     return (
         <section className="category-conveyor mt-8 bg-transparent">
@@ -54,7 +38,6 @@ export function CategoryShowcaseCarouselSection({
                 <div
                     aria-label="Популярные категории"
                     className="category-conveyor-viewport -mx-2 bg-transparent overflow-x-auto overflow-y-hidden px-2 py-8"
-                    onWheel={handleCarouselWheel}
                     role="region"
                 >
                     <div className="category-conveyor-track flex w-max">

@@ -162,9 +162,9 @@ function ProfileAddressesEditorContent({
           draft={draft}
           index={index}
           key={draft.id ?? `new-${index}`}
-          onPrimaryChangeAction={setPrimaryAddress}
-          onRemoveAction={removeAddress}
-          onUpdateAction={updateDraft}
+          onPrimaryChange={setPrimaryAddress}
+          onRemove={removeAddress}
+          onUpdate={updateDraft}
           regions={regions}
         />
       ))}

@@ -22,10 +22,10 @@ export function ListingMediaSection({
       existingMedia={existingMedia}
       files={imageFiles}
       isDisabled={isFormBusy}
-      onChangeAction={setImageFiles}
-      onDeleteExistingAction={handleDeleteExistingMedia}
-      onReorderExistingAction={handleReorderExistingMedia}
-      onSetMainExistingAction={handleSetMainExistingMedia}
+      onChange={setImageFiles}
+      onDeleteExisting={handleDeleteExistingMedia}
+      onReorderExisting={handleReorderExistingMedia}
+      onSetMainExisting={handleSetMainExistingMedia}
     />
   );
 

@@ -9,7 +9,7 @@ type ListingCardMediaProps = {
   imageUrls?: string[];
   isSelected: boolean;
   listingId: string;
-  onSelectToggleAction?: (listingId: string) => void;
+  onSelectToggle?: (listingId: string) => void;
   title: string;
 };
 
@@ -20,7 +20,7 @@ export function ListingCardMedia({
   imageUrls,
   isSelected,
   listingId,
-  onSelectToggleAction,
+  onSelectToggle,
   title,
 }: ListingCardMediaProps) {
   return (
@@ -36,11 +36,11 @@ export function ListingCardMedia({
         {favoriteButton}
       </div>
 
-      {onSelectToggleAction ? (
+      {onSelectToggle ? (
         <ListingSelectToggle
           isSelected={isSelected}
           listingId={listingId}
-          onSelectToggleAction={onSelectToggleAction}
+          onSelectToggle={onSelectToggle}
         />
       ) : null}
     </div>

@@ -181,11 +181,11 @@ export function ProfileSettingsPage() {
           avatarOffset={avatarOffset}
           avatarScale={avatarScale}
           isAvatarSubmitting={isAvatarSubmitting}
-          onAvatarDraftResetAction={resetAvatarDraft}
-          onAvatarMovePointerDownAction={handleAvatarMovePointerDown}
-          onAvatarSaveAction={handleAvatarSave}
-          onAvatarScaleChangeAction={(value) => setAvatarScale(value[0] ?? 1)}
-          onAvatarViewerCloseAction={handleAvatarViewerClose}
+          onAvatarDraftReset={resetAvatarDraft}
+          onAvatarMovePointerDown={handleAvatarMovePointerDown}
+          onAvatarSave={handleAvatarSave}
+          onAvatarScaleChange={(value) => setAvatarScale(value[0] ?? 1)}
+          onAvatarViewerClose={handleAvatarViewerClose}
         />
       ) : null}
     </>

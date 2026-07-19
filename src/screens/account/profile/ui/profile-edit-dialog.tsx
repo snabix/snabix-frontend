@@ -24,8 +24,8 @@ type ProfileEditDialogProps = {
   handleSubmit: UseFormHandleSubmit<ProfileFormValues>;
   isOpen: boolean;
   isSubmitting: boolean;
-  onOpenChangeAction: (isOpen: boolean) => void;
-  onSubmitAction: (values: ProfileFormValues) => Promise<void>;
+  onOpenChange: (isOpen: boolean) => void;
+  onSubmit: (values: ProfileFormValues) => Promise<void>;
   register: UseFormRegister<ProfileFormValues>;
 };
 
@@ -35,15 +35,15 @@ export function ProfileEditDialog({
   handleSubmit,
   isOpen,
   isSubmitting,
-  onOpenChangeAction,
-  onSubmitAction,
+  onOpenChange,
+  onSubmit,
   register,
 }: ProfileEditDialogProps) {
   const firstNameInputRef = useRef<HTMLInputElement | null>(null);
   const firstNameField = register("firstName");
 
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent
         className="max-w-[720px]"
         onOpenAutoFocus={(event) => {
@@ -78,7 +78,7 @@ export function ProfileEditDialog({
             autoComplete="on"
             className="space-y-6"
             noValidate
-            onSubmit={handleSubmit(onSubmitAction)}
+            onSubmit={handleSubmit(onSubmit)}
           >
             <div className="grid gap-4 md:grid-cols-2">
               <FormField

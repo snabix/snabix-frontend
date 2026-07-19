@@ -47,7 +47,7 @@ export function ListingPricingSection({
         {activeType === LISTING_TYPE_PRODUCT ? (
           <ListingFormField label="Состояние товара">
             <ListingFormSelect
-              onChangeAction={(value) => setCondition(Number(value))}
+              onChange={(value) => setCondition(Number(value))}
               value={condition}
             >
               {conditionOptions.map((option) => (

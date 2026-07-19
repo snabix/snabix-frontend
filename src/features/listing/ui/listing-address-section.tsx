@@ -42,19 +42,19 @@ export function ListingAddressSection({ state }: { state: ListingFormState }) {
           description="Быстрее всего, если адрес уже добавлен в профиле."
           isActive={addressMode === "profile"}
           label="Из профиля"
-          onClickAction={() => handleAddressModeChange("profile")}
+          onClick={() => handleAddressModeChange("profile")}
         />
         <AddressModeButton
           description="Регион, город и строка адреса только для этого объявления."
           isActive={addressMode === "custom"}
           label="Другой адрес"
-          onClickAction={() => handleAddressModeChange("custom")}
+          onClick={() => handleAddressModeChange("custom")}
         />
         <AddressModeButton
           description="Можно оставить для черновика или если место не важно."
           isActive={addressMode === "none"}
           label="Не указывать"
-          onClickAction={() => handleAddressModeChange("none")}
+          onClick={() => handleAddressModeChange("none")}
         />
       </div>
 
@@ -63,7 +63,7 @@ export function ListingAddressSection({ state }: { state: ListingFormState }) {
           {userAddresses.length > 0 ? (
             <ListingFormField label="Адрес из профиля">
               <ListingFormSelect
-                onChangeAction={(value) => setProfileAddressId(value || null)}
+                onChange={(value) => setProfileAddressId(value || null)}
                 value={profileAddressId ?? ""}
               >
                 <option value="">Выберите адрес</option>
@@ -85,7 +85,7 @@ export function ListingAddressSection({ state }: { state: ListingFormState }) {
           <ListingFormField label="Регион">
             <ListingFormSelect
               disabled={isLoadingRegions}
-              onChangeAction={(value) => handleRegionChange(value === "" ? null : Number(value))}
+              onChange={(value) => handleRegionChange(value === "" ? null : Number(value))}
               value={regionId ?? ""}
             >
               <option value="">
@@ -102,7 +102,7 @@ export function ListingAddressSection({ state }: { state: ListingFormState }) {
           <ListingFormField label="Город">
             <ListingFormSelect
               disabled={regionId === null || isLoadingCities}
-              onChangeAction={(value) => setCityId(value === "" ? null : Number(value))}
+              onChange={(value) => setCityId(value === "" ? null : Number(value))}
               value={cityId ?? ""}
             >
               <option value="">
@@ -138,12 +138,12 @@ function AddressModeButton({
   description,
   isActive,
   label,
-  onClickAction,
+  onClick,
 }: {
   description: string;
   isActive: boolean;
   label: string;
-  onClickAction: () => void;
+  onClick: () => void;
 }) {
   return (
     <button
@@ -153,7 +153,7 @@ function AddressModeButton({
           ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--brand-deep)] shadow-[var(--shadow-card)]"
           : "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
       ].join(" ")}
-      onClick={onClickAction}
+      onClick={onClick}
       type="button"
     >
       <span className="text-sm font-black text-[var(--brand-deep)]">{label}</span>

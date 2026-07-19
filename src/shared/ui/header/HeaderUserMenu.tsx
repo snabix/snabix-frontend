@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
     Heart,
@@ -23,7 +21,7 @@ import {ThemeSwitcher} from "@/src/shared/ui/theme-switcher/ThemeSwitcher";
 
 type HeaderUserMenuProps = {
     isPending: boolean;
-    onLogoutAction: () => void;
+    onLogout: () => void;
     user: User;
 };
 
@@ -36,7 +34,7 @@ const userMenuItems = [
 
 export function HeaderUserMenu({
                                    isPending,
-                                   onLogoutAction,
+                                   onLogout,
                                    user,
                                }: HeaderUserMenuProps) {
     const userName = getUserFullName(user);
@@ -90,7 +88,7 @@ export function HeaderUserMenu({
                 <DropdownMenuItem
                     className="text-[var(--danger)] focus:text-[var(--danger)]"
                     disabled={isPending}
-                    onClick={onLogoutAction}
+                    onClick={onLogout}
                 >
                     <LogOut size={16}/>
                     <span>Выход</span>

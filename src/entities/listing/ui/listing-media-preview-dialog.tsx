@@ -1,5 +1,3 @@
-"use client";
-
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Dialog,
@@ -14,9 +12,9 @@ type ListingMediaPreviewDialogProps = {
   activeIndex: number;
   hasMultipleImages: boolean;
   isOpen: boolean;
-  onNextAction: () => void;
-  onOpenChangeAction: (isOpen: boolean) => void;
-  onPreviousAction: () => void;
+  onNext: () => void;
+  onOpenChange: (isOpen: boolean) => void;
+  onPrevious: () => void;
   title: string;
 };
 
@@ -25,13 +23,13 @@ export function ListingMediaPreviewDialog({
   activeIndex,
   hasMultipleImages,
   isOpen,
-  onNextAction,
-  onOpenChangeAction,
-  onPreviousAction,
+  onNext,
+  onOpenChange,
+  onPrevious,
   title,
 }: ListingMediaPreviewDialogProps) {
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent className="w-[calc(100vw-1.5rem)] max-w-[1200px] border-none bg-transparent p-0 shadow-none">
         <DialogTitle className="sr-only">{title}</DialogTitle>
 
@@ -53,7 +51,7 @@ export function ListingMediaPreviewDialog({
               <button
                 aria-label="Предыдущее изображение"
                 className="absolute left-2 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_62%,transparent)] text-white shadow-[var(--shadow-card)] transition hover:bg-[var(--brand-deep)] sm:left-4"
-                onClick={onPreviousAction}
+                onClick={onPrevious}
                 type="button"
               >
                 <ChevronLeft size={22} />
@@ -61,7 +59,7 @@ export function ListingMediaPreviewDialog({
               <button
                 aria-label="Следующее изображение"
                 className="absolute right-2 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_62%,transparent)] text-white shadow-[var(--shadow-card)] transition hover:bg-[var(--brand-deep)] sm:right-4"
-                onClick={onNextAction}
+                onClick={onNext}
                 type="button"
               >
                 <ChevronRight size={22} />

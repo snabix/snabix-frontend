@@ -9,7 +9,7 @@ import { ListingEditorForm } from "@/src/features/listing/ui/listing-editor-form
 type ListingFormProps = {
   initialListing?: ListingItem;
   mode: "create" | "edit";
-  onSubmitAction: (
+  onSubmit: (
     payload: CreateListingPayload | UpdateListingPayload,
   ) => Promise<ListingItem>;
 };
@@ -17,12 +17,12 @@ type ListingFormProps = {
 export function ListingForm({
   initialListing,
   mode,
-  onSubmitAction,
+  onSubmit,
 }: ListingFormProps) {
   const state = useListingFormState({
     initialListing,
     mode,
-    onSubmit: onSubmitAction,
+    onSubmit: onSubmit,
   });
 
   return <ListingEditorForm mode={mode} state={state} />;

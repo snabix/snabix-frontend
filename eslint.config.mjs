@@ -5,6 +5,19 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          message:
+            "Ordinary callback props must use names such as onChange or onRetry. Reserve the Action suffix for real Server Actions.",
+          selector: "Identifier[name=/^on[A-Z][A-Za-z0-9]*Action$/]",
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

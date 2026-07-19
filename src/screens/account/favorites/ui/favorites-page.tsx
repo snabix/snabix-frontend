@@ -112,7 +112,7 @@ export function FavoritesPage() {
                 isFavorite={favoriteListingIds.has(item.id)}
                 key={item.id}
                 listing={item}
-                onFavoriteToggleAction={handleFavoriteToggle}
+                onFavoriteToggle={handleFavoriteToggle}
                 showStatus={false}
               />
             ))}
@@ -123,7 +123,7 @@ export function FavoritesPage() {
           align="between"
           isLoading={isLoading}
           meta={paginationMeta}
-          onPageChangeAction={setPage}
+          onPageChange={setPage}
           page={page}
           showRange
         />

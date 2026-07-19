@@ -113,7 +113,7 @@ export function ReviewsPage() {
           align="between"
           isLoading={visibleLoading}
           meta={visibleMeta}
-          onPageChangeAction={setPage}
+          onPageChange={setPage}
           page={page}
           showRange
         />

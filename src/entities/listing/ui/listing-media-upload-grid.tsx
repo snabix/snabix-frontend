@@ -1,13 +1,11 @@
-"use client";
-
 import { ImagePlus, X } from "lucide-react";
 import { MediaImage } from "@/src/shared/ui/media-image";
 
 type ListingMediaUploadGridProps = {
   availableSlots: number;
   isDisabled?: boolean;
-  onAddAction: () => void;
-  onRemoveAction: (index: number) => void;
+  onAdd: () => void;
+  onRemove: (index: number) => void;
   previews: Array<{
     id: string;
     name: string;
@@ -18,8 +16,8 @@ type ListingMediaUploadGridProps = {
 export function ListingMediaUploadGrid({
   availableSlots,
   isDisabled = false,
-  onAddAction,
-  onRemoveAction,
+  onAdd,
+  onRemove,
   previews,
 }: ListingMediaUploadGridProps) {
   return (
@@ -39,7 +37,7 @@ export function ListingMediaUploadGrid({
           <button
             aria-label={`Удалить фото ${preview.name}`}
             className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-[color-mix(in_srgb,var(--brand-deep)_72%,transparent)] text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--brand-deep)]"
-            onClick={() => onRemoveAction(index)}
+            onClick={() => onRemove(index)}
             type="button"
           >
             <X size={16} />
@@ -58,7 +56,7 @@ export function ListingMediaUploadGrid({
           className="grid aspect-[4/3] place-items-center rounded-[22px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--brand-deep)]"
           disabled={isDisabled}
           key={`empty-${index}`}
-          onClick={onAddAction}
+          onClick={onAdd}
           type="button"
         >
           <span className="grid justify-items-center gap-2 text-sm font-black">

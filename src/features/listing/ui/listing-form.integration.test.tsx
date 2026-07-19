@@ -126,7 +126,7 @@ describe("ListingForm integration", () => {
   it("creates listing as draft when draft action is selected", async () => {
     const onSubmit = vi.fn().mockResolvedValue(listingContract);
 
-    render(<ListingForm mode="create" onSubmitAction={onSubmit} />);
+    render(<ListingForm mode="create" onSubmit={onSubmit} />);
 
     fillListingForm();
     fireEvent.click(screen.getByRole("button", { name: "Сохранить как черновик" }));
@@ -145,7 +145,7 @@ describe("ListingForm integration", () => {
   it("creates listing for pending review when primary action is selected", async () => {
     const onSubmit = vi.fn().mockResolvedValue(listingContract);
 
-    render(<ListingForm mode="create" onSubmitAction={onSubmit} />);
+    render(<ListingForm mode="create" onSubmit={onSubmit} />);
 
     fillListingForm();
     fireEvent.click(screen.getByRole("button", { name: "Отправить на проверку" }));
@@ -167,7 +167,7 @@ describe("ListingForm integration", () => {
       <ListingForm
         initialListing={listingContract}
         mode="edit"
-        onSubmitAction={onSubmit}
+        onSubmit={onSubmit}
       />,
     );
 
@@ -230,7 +230,7 @@ describe("ListingForm integration", () => {
       }),
     ]);
 
-    render(<ListingForm mode="create" onSubmitAction={vi.fn()} />);
+    render(<ListingForm mode="create" onSubmit={vi.fn()} />);
 
     expect(screen.getByLabelText("Бренд")).toBeInTheDocument();
     expect(screen.queryByLabelText("Модель")).not.toBeInTheDocument();

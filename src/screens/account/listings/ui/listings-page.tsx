@@ -257,8 +257,8 @@ export function ListingsPage() {
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
-                    onFavoriteToggleAction={toggleFavorite}
-                    onSelectToggleAction={handleSelectToggle}
+                    onFavoriteToggle={toggleFavorite}
+                    onSelectToggle={handleSelectToggle}
                   />
                 ))}
               </div>
@@ -269,7 +269,7 @@ export function ListingsPage() {
             align="between"
             isLoading={isLoading}
             meta={paginationMeta}
-            onPageChangeAction={setPage}
+            onPageChange={setPage}
             page={page}
             showRange
           />
@@ -281,8 +281,8 @@ export function ListingsPage() {
         isOpen={deleteTarget !== null}
         itemsCount={selectedCount}
         listingTitle={null}
-        onConfirmAction={handleDeleteConfirm}
-        onOpenChangeAction={(isOpen) => {
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={(isOpen) => {
           if (!isOpen && deletingListingId === null) {
             setDeleteTarget(null);
           }

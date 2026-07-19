@@ -165,8 +165,8 @@ export function PrivacySettingsPage() {
             isVisible={visibleFields.email}
             label="Email"
             maskedValue={maskEmail(user?.email)}
-            onEditAction={() => setEditingField("email")}
-            onToggleAction={() => toggleVisible("email")}
+            onEdit={() => setEditingField("email")}
+            onToggle={() => toggleVisible("email")}
             value={user?.email ?? "Не указан"}
           />
 
@@ -175,8 +175,8 @@ export function PrivacySettingsPage() {
             isVisible={visibleFields.phone}
             label="Телефон"
             maskedValue={maskPhone(user?.phoneNumber)}
-            onEditAction={() => setEditingField("phone")}
-            onToggleAction={() => toggleVisible("phone")}
+            onEdit={() => setEditingField("phone")}
+            onToggle={() => toggleVisible("phone")}
             value={formatPhoneNumber(user?.phoneNumber) || "Не указан"}
           />
 
@@ -186,8 +186,8 @@ export function PrivacySettingsPage() {
             isVisible={visibleFields.password}
             label="Пароль"
             maskedValue="Смена через письмо"
-            onEditAction={() => setEditingField("password")}
-            onToggleAction={() => toggleVisible("password")}
+            onEdit={() => setEditingField("password")}
+            onToggle={() => toggleVisible("password")}
             value="Смена через письмо"
           />
 
@@ -228,9 +228,9 @@ export function PrivacySettingsPage() {
         handleSubmit={handleSubmit}
         isSendingPasswordEmail={isSendingPasswordEmail}
         isSubmittingContacts={isSubmittingContacts}
-        onCloseAction={closeEditor}
-        onPasswordResetRequestAction={handlePasswordResetRequest}
-        onUpdateContactsAction={updateContacts}
+        onClose={closeEditor}
+        onPasswordResetRequest={handlePasswordResetRequest}
+        onUpdateContacts={updateContacts}
         register={register}
         setFocus={setFocus}
         userEmail={user?.email}
@@ -244,10 +244,10 @@ export function PrivacySettingsPage() {
           isConfirming={isConfirmingVerification}
           isOpen={isVerificationDialogOpen}
           isSending={isResendingVerification}
-          onCodeChangeAction={handleVerificationCodeChange}
-          onConfirmAction={handleConfirmVerification}
-          onOpenChangeAction={setIsVerificationDialogOpen}
-          onResendAction={handleResendVerification}
+          onCodeChange={handleVerificationCodeChange}
+          onConfirm={handleConfirmVerification}
+          onOpenChange={setIsVerificationDialogOpen}
+          onResend={handleResendVerification}
           returnFocusRef={emailEditButtonRef}
         />
       ) : null}

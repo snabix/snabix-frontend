@@ -32,8 +32,8 @@ function renderHeaderSessionActions() {
     <HeaderSessionActions
       isPending={false}
       isSearchOpen={false}
-      onLogoutAction={vi.fn()}
-      onSearchOpenChangeAction={vi.fn()}
+      onLogout={vi.fn()}
+      onSearchOpenChange={vi.fn()}
     />,
   );
 }

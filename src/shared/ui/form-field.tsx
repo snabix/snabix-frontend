@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
-import { cn } from "@/src/shared/lib/utils";
-import { Label } from "@/src/shared/ui/shadcn/label";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/src/shared/ui/shadcn/field";
 
 export type FormControlAccessibilityProps = {
   "aria-describedby"?: string;
@@ -16,7 +20,7 @@ type FormFieldProps = {
   error?: string;
   id: string;
   label: ReactNode;
-  labelAction?: ReactNode;
+  labelAccessory?: ReactNode;
   labelClassName?: string;
 };
 
@@ -27,7 +31,7 @@ export function FormField({
   error,
   id,
   label,
-  labelAction,
+  labelAccessory,
   labelClassName,
 }: FormFieldProps) {
   const descriptionId = description ? `${id}-description` : undefined;
@@ -35,10 +39,10 @@ export function FormField({
   const describedBy = [descriptionId, errorId].filter(Boolean).join(" ");
 
   return (
-    <div className={cn("relative grid gap-2", className)}>
-      <Label className={labelClassName} htmlFor={id}>
+    <Field className={className} data-invalid={error ? true : undefined}>
+      <FieldLabel className={labelClassName} htmlFor={id}>
         {label}
-      </Label>
+      </FieldLabel>
 
       {children({
         "aria-describedby": describedBy || undefined,
@@ -47,30 +51,23 @@ export function FormField({
         id,
       })}
 
-      {labelAction ? (
+      {labelAccessory ? (
         <div className="absolute right-0 top-0">
-          {labelAction}
+          {labelAccessory}
         </div>
       ) : null}
 
       {description ? (
-        <p
-          className="text-sm leading-5 text-[var(--text-muted)]"
-          id={descriptionId}
-        >
+        <FieldDescription id={descriptionId}>
           {description}
-        </p>
+        </FieldDescription>
       ) : null}
 
       {error ? (
-        <p
-          className="text-sm text-[var(--danger)]"
-          id={errorId}
-          role="alert"
-        >
+        <FieldError id={errorId}>
           {error}
-        </p>
+        </FieldError>
       ) : null}
-    </div>
+    </Field>
   );
 }

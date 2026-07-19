@@ -1,5 +1,3 @@
-"use client";
-
 import type { ApiPaginationMeta } from "@/src/shared/api";
 import { Button } from "@/src/shared/ui/shadcn/button";
 
@@ -7,7 +5,7 @@ type PaginationProps = {
   align?: "between" | "end";
   isLoading?: boolean;
   meta: ApiPaginationMeta;
-  onPageChangeAction: (page: number | ((currentPage: number) => number)) => void;
+  onPageChange: (page: number | ((currentPage: number) => number)) => void;
   page: number;
   showRange?: boolean;
 };
@@ -16,7 +14,7 @@ export function Pagination({
   align = "end",
   isLoading = false,
   meta,
-  onPageChangeAction,
+  onPageChange,
   page,
   showRange = false,
 }: PaginationProps) {
@@ -40,7 +38,7 @@ export function Pagination({
       <div className="flex items-center gap-2">
         <Button
           disabled={page <= 1 || isLoading}
-          onClick={() => onPageChangeAction((currentPage) => Math.max(currentPage - 1, 1))}
+          onClick={() => onPageChange((currentPage) => Math.max(currentPage - 1, 1))}
           type="button"
           variant="outline"
         >
@@ -51,7 +49,7 @@ export function Pagination({
         </span>
         <Button
           disabled={page >= meta.lastPage || isLoading}
-          onClick={() => onPageChangeAction((currentPage) => Math.min(currentPage + 1, meta.lastPage))}
+          onClick={() => onPageChange((currentPage) => Math.min(currentPage + 1, meta.lastPage))}
           type="button"
           variant="outline"
         >

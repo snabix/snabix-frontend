@@ -5,7 +5,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { LoaderCircle, MailCheck } from "lucide-react";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
+import { Spinner } from "@/src/shared/ui/shadcn/spinner";
 
 type EmailVerificationDialogProps = {
   code: string;
@@ -23,10 +24,10 @@ type EmailVerificationDialogProps = {
   isConfirming: boolean;
   isOpen: boolean;
   isSending: boolean;
-  onCodeChangeAction: (value: string) => void;
-  onConfirmAction: () => void;
-  onOpenChangeAction: (isOpen: boolean) => void;
-  onResendAction: () => void;
+  onCodeChange: (value: string) => void;
+  onConfirm: () => void;
+  onOpenChange: (isOpen: boolean) => void;
+  onResend: () => void;
   returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
@@ -37,10 +38,10 @@ export function EmailVerificationDialog({
   isConfirming,
   isOpen,
   isSending,
-  onCodeChangeAction,
-  onConfirmAction,
-  onOpenChangeAction,
-  onResendAction,
+  onCodeChange,
+  onConfirm,
+  onOpenChange,
+  onResend,
   returnFocusRef,
 }: EmailVerificationDialogProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -58,7 +59,7 @@ export function EmailVerificationDialog({
     const nextCode = value.replace(/\D/g, "").slice(0, 6);
 
     codeRef.current = nextCode;
-    onCodeChangeAction(nextCode);
+    onCodeChange(nextCode);
   };
 
   const handleChange = (index: number, value: string) => {
@@ -123,7 +124,7 @@ export function EmailVerificationDialog({
   };
 
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent
         className="max-w-[460px] p-0"
         onCloseAutoFocus={(event) => {
@@ -204,13 +205,13 @@ export function EmailVerificationDialog({
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isSending || cooldownSeconds > 0}
-              onClick={onResendAction}
+              onClick={onResend}
               type="button"
               variant="secondary"
             >
               {isSending ? (
                 <>
-                  <LoaderCircle aria-hidden="true" className="animate-spin" size={16} />
+                  <Spinner aria-hidden="true" />
                   Отправляем...
                 </>
               ) : cooldownSeconds > 0 ? (
@@ -223,12 +224,12 @@ export function EmailVerificationDialog({
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isConfirming || !isCodeComplete}
-              onClick={onConfirmAction}
+              onClick={onConfirm}
               type="button"
             >
               {isConfirming ? (
                 <>
-                  <LoaderCircle aria-hidden="true" className="animate-spin" size={16} />
+                  <Spinner aria-hidden="true" />
                   Проверяем...
                 </>
               ) : (

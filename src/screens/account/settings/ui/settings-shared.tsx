@@ -45,19 +45,19 @@ export function ConfirmActionDialog({
   actionLabel,
   description,
   isOpen,
-  onConfirmAction,
-  onOpenChangeAction,
+  onConfirm,
+  onOpenChange,
   title,
 }: {
   actionLabel: string;
   description: string;
   isOpen: boolean;
-  onConfirmAction: () => void;
-  onOpenChangeAction: (isOpen: boolean) => void;
+  onConfirm: () => void;
+  onOpenChange: (isOpen: boolean) => void;
   title: string;
 }) {
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -65,10 +65,10 @@ export function ConfirmActionDialog({
         </DialogHeader>
 
         <DialogFooter>
-          <Button onClick={() => onOpenChangeAction(false)} type="button" variant="outline">
+          <Button onClick={() => onOpenChange(false)} type="button" variant="outline">
             Отменить
           </Button>
-          <Button onClick={onConfirmAction} type="button" variant="destructive">
+          <Button onClick={onConfirm} type="button" variant="destructive">
             {actionLabel}
           </Button>
         </DialogFooter>

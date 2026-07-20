@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useAppTheme } from "./theme-context";
 
@@ -37,43 +36,40 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
       onClick={handleToggle}
       type="button"
     >
-      <motion.span
-        animate={{
-          scale: isDark ? 1.02 : 1,
-        }}
+      <span
         className={[
-          "relative h-6 w-11 overflow-hidden rounded-full border transition-colors duration-300",
+          "relative h-6 w-11 overflow-hidden rounded-full border transition-[background-color,border-color,transform] duration-300 motion-reduce:transition-none",
           isDark
-            ? "border-[var(--accent)] bg-[var(--active-button-bg)]"
+            ? "scale-[1.02] border-[var(--accent)] bg-[var(--active-button-bg)]"
             : "border-[var(--border-soft)] bg-[var(--accent-soft)]",
         ].join(" ")}
-        transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        <motion.span
-          animate={{
-            rotate: isDark ? 360 : 0,
-            x: isDark ? 20 : 2,
-          }}
+        <span
           className={[
-            "absolute top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-full",
+            "absolute left-0.5 top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-full",
             "bg-[var(--surface)] text-[var(--brand-deep)] shadow-[0_6px_16px_color-mix(in_srgb,var(--brand-deep)_18%,transparent)]",
+            "transition-transform duration-300 ease-out motion-reduce:transition-none",
+            isDark ? "translate-x-5 rotate-[360deg]" : "translate-x-0 rotate-0",
           ].join(" ")}
-          transition={{ type: "spring", stiffness: 420, damping: 28 }}
         >
-          <AnimatePresence initial={false} mode="wait">
-            <motion.span
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              className="grid place-items-center"
-              exit={{ opacity: 0, scale: 0.65, rotate: isDark ? -90 : 90 }}
-              initial={{ opacity: 0, scale: 0.65, rotate: isDark ? 90 : -90 }}
-              key={isDark ? "moon" : "sun"}
-              transition={{ duration: 0.18, ease: "easeOut" }}
-            >
-              {isDark ? <Moon size={12} /> : <Sun size={12} />}
-            </motion.span>
-          </AnimatePresence>
-        </motion.span>
-      </motion.span>
+          <Sun
+            aria-hidden="true"
+            className={[
+              "absolute transition-[opacity,transform] duration-200 motion-reduce:transition-none",
+              isDark ? "scale-50 rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100",
+            ].join(" ")}
+            size={12}
+          />
+          <Moon
+            aria-hidden="true"
+            className={[
+              "absolute transition-[opacity,transform] duration-200 motion-reduce:transition-none",
+              isDark ? "scale-100 rotate-0 opacity-100" : "scale-50 -rotate-90 opacity-0",
+            ].join(" ")}
+            size={12}
+          />
+        </span>
+      </span>
     </button>
   );
 }

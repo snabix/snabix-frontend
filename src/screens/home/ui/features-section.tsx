@@ -1,4 +1,4 @@
-import { featureCards } from "@/src/shared/lib/mock-data";
+import { featureCards } from "@/src/screens/home/model/home-content";
 
 export function FeaturesSection() {
   return (
@@ -8,7 +8,7 @@ export function FeaturesSection() {
           Возможности
         </p>
         <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
-          Несколько важных блоков для наполнения главной страницы
+          Основные возможности платформы
         </h2>
       </div>
 

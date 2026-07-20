@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { SnabixApiMock } from "./fixtures/api-mock";
 
 type ConsoleIssue = {
   source: "console" | "pageerror";
@@ -49,6 +50,24 @@ test("system theme follows the browser without hydration warnings", async ({
   await page.emulateMedia({ colorScheme: "light" });
   await expectTheme(page, "system", "light");
   await assertNoHydrationIssues(page, issues);
+});
+
+test("CSS theme switcher toggles and persists the selected theme", async ({
+  page,
+}) => {
+  const api = new SnabixApiMock();
+  await api.install(page);
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  await seedThemeMode(page, "light");
+  await page.goto("/account/settings/account");
+
+  await page.getByRole("button", { name: "Включить темную тему" }).click();
+  await expectTheme(page, "dark", "dark");
+  await expect(page.getByRole("button", { name: "Включить светлую тему" })).toBeVisible();
+  await expect.poll(() => page.evaluate(
+    () => window.localStorage.getItem("snabix-theme-mode"),
+  )).toBe("dark");
 });
 
 function collectConsoleIssues(page: Page): ConsoleIssue[] {

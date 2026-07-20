@@ -15,6 +15,7 @@
     "filesize": "node scripts/check-file-sizes.mjs",
     "lint": "eslint && npm run architecture:client",
     "architecture:client": "node scripts/check-client-boundaries.mjs",
+    "bundle:report": "node scripts/report-client-bundle.mjs",
     "typecheck": "tsc --noEmit",
     "typecheck:full": "node scripts/typecheck-full.mjs",
     "performance:public": "node scripts/check-public-storefront-performance.mjs",
@@ -25,7 +26,6 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@fiddle-digital/string-tune": "^1.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -39,8 +39,6 @@
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.38.0",
     "lucide-react": "^1.14.0",
     "next": "16.2.10",
     "react": "19.2.4",

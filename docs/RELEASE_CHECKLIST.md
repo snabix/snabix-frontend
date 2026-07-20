@@ -9,6 +9,7 @@ npm run lint
 npm run test
 npm run test:e2e:full
 npm run build
+npm run bundle:report
 ```
 
 Production image собирается как Next standalone runtime и запускается

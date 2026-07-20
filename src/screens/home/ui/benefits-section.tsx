@@ -1,4 +1,4 @@
-import { benefitCards } from "@/src/shared/lib/mock-data";
+import { benefitCards } from "@/src/screens/home/model/home-content";
 
 export function BenefitsSection() {
   return (
@@ -8,7 +8,7 @@ export function BenefitsSection() {
           Почему это важно
         </p>
         <h2 className="font-heading mt-3 text-3xl font-extrabold text-[var(--brand-deep)]">
-          Строим не просто экран, а фундамент будущего продукта
+          Основа надежного продукта
         </h2>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-3">

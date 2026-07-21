@@ -6,6 +6,8 @@ import {
   LISTING_CONDITION_USED,
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
+  type ListingCondition,
+  type ListingKind,
   type ListingItem,
 } from "@/src/entities/listing";
 import { flattenBranchOptions } from "@/src/features/listing/model/category-options";
@@ -24,10 +26,12 @@ export function useListingCategoryState(initialListing?: ListingItem) {
   const branchErrorMessages = useCategoryStore((state) => state.branchErrorMessages);
   const loadRoots = useCategoryStore((state) => state.loadRoots);
   const loadBranch = useCategoryStore((state) => state.loadBranch);
-  const [activeType, setActiveType] = useState(initialListing?.type ?? LISTING_TYPE_PRODUCT);
+  const [activeType, setActiveType] = useState<ListingKind>(initialListing?.listingKind ?? LISTING_TYPE_PRODUCT);
   const [selectedRootId, setSelectedRootId] = useState<string | null>(initialRootId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialCategoryId);
-  const [condition, setCondition] = useState(initialListing?.condition ?? LISTING_CONDITION_USED);
+  const [condition, setCondition] = useState<ListingCondition>(
+    initialListing?.itemCondition ?? LISTING_CONDITION_USED,
+  );
 
   useEffect(() => {
     void loadRoots();
@@ -40,7 +44,7 @@ export function useListingCategoryState(initialListing?: ListingItem) {
   }, [rootsErrorMessage, rootsStatus]);
 
   const filteredRoots = useMemo(
-    () => roots.filter((root) => root.catalogType === activeType),
+    () => roots.filter((root) => root.catalogKind === activeType),
     [activeType, roots],
   );
 
@@ -96,11 +100,11 @@ export function useListingCategoryState(initialListing?: ListingItem) {
       branchStatuses[effectiveSelectedRootId] === undefined
       || branchStatuses[effectiveSelectedRootId] === "loading"
     );
-  const effectiveCondition = activeType === LISTING_TYPE_SERVICE
+  const effectiveCondition: ListingCondition = activeType === LISTING_TYPE_SERVICE
     ? LISTING_CONDITION_NOT_APPLICABLE
     : (condition === LISTING_CONDITION_NOT_APPLICABLE ? LISTING_CONDITION_USED : condition);
 
-  const handleTypeChange = (type: number) => {
+  const handleTypeChange = (type: typeof activeType) => {
     setActiveType(type);
     setSelectedRootId(null);
     setSelectedCategoryId(null);

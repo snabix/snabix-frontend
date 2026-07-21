@@ -1,5 +1,11 @@
-import { type ClipboardEvent, type KeyboardEvent, useEffect, useRef } from "react";
-import { LoaderCircle, MailCheck } from "lucide-react";
+import {
+  type ClipboardEvent,
+  type KeyboardEvent,
+  type RefObject,
+  useEffect,
+  useRef,
+} from "react";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import {
   Dialog,
@@ -9,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/shared/ui/shadcn/dialog";
+import { Spinner } from "@/src/shared/ui/shadcn/spinner";
 
 type EmailVerificationDialogProps = {
   code: string;
@@ -17,10 +24,11 @@ type EmailVerificationDialogProps = {
   isConfirming: boolean;
   isOpen: boolean;
   isSending: boolean;
-  onCodeChangeAction: (value: string) => void;
-  onConfirmAction: () => void;
-  onOpenChangeAction: (isOpen: boolean) => void;
-  onResendAction: () => void;
+  onCodeChange: (value: string) => void;
+  onConfirm: () => void;
+  onOpenChange: (isOpen: boolean) => void;
+  onResend: () => void;
+  returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
 export function EmailVerificationDialog({
@@ -30,10 +38,11 @@ export function EmailVerificationDialog({
   isConfirming,
   isOpen,
   isSending,
-  onCodeChangeAction,
-  onConfirmAction,
-  onOpenChangeAction,
-  onResendAction,
+  onCodeChange,
+  onConfirm,
+  onOpenChange,
+  onResend,
+  returnFocusRef,
 }: EmailVerificationDialogProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const codeRef = useRef(code);
@@ -46,25 +55,11 @@ export function EmailVerificationDialog({
     codeRef.current = code;
   }, [code]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    window.setTimeout(() => {
-      const currentDigits = getCodeDigits(codeRef.current);
-      const nextEmptyIndex = currentDigits.findIndex((digit) => digit === "");
-      const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
-
-      inputRefs.current[focusIndex]?.focus();
-    }, 0);
-  }, [code, isOpen]);
-
   const applyCodeChange = (value: string) => {
     const nextCode = value.replace(/\D/g, "").slice(0, 6);
 
     codeRef.current = nextCode;
-    onCodeChangeAction(nextCode);
+    onCodeChange(nextCode);
   };
 
   const handleChange = (index: number, value: string) => {
@@ -129,8 +124,25 @@ export function EmailVerificationDialog({
   };
 
   return (
-    <Dialog onOpenChange={onOpenChangeAction} open={isOpen}>
-      <DialogContent className="max-w-[460px] p-0">
+    <Dialog onOpenChange={onOpenChange} open={isOpen}>
+      <DialogContent
+        className="max-w-[460px] p-0"
+        onCloseAutoFocus={(event) => {
+          if (returnFocusRef?.current) {
+            event.preventDefault();
+            returnFocusRef.current.focus();
+          }
+        }}
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+
+          const currentDigits = getCodeDigits(code);
+          const nextEmptyIndex = currentDigits.findIndex((digit) => digit === "");
+          const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
+
+          inputRefs.current[focusIndex]?.focus();
+        }}
+      >
         <div className="p-6 sm:p-7">
           <DialogHeader className="items-center text-center">
             <div className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
@@ -146,13 +158,19 @@ export function EmailVerificationDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-7">
+          <fieldset
+            aria-describedby="email-verification-code-description"
+            className="mt-7"
+          >
+            <legend className="sr-only">Код подтверждения из шести цифр</legend>
             <div className="grid grid-cols-6 gap-2.5">
               {codeCells.map((_, index) => (
                 <label className="relative block" key={index}>
-                  <span className="sr-only">Цифра {index + 1}</span>
+                  <span className="sr-only">
+                    Цифра {index + 1} из 6
+                  </span>
                   <input
-                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    autoComplete={index === 0 ? "one-time-code" : undefined}
                     className={[
                       "h-14 w-full rounded-2xl border bg-[var(--surface)] text-center text-lg font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
                       codeDigits[index]
@@ -161,6 +179,7 @@ export function EmailVerificationDialog({
                     ].join(" ")}
                     inputMode="numeric"
                     maxLength={1}
+                    name={index === 0 ? "verification-code" : undefined}
                     onChange={(event) => handleChange(index, event.target.value)}
                     onKeyDown={(event) => handleKeyDown(index, event)}
                     onPaste={handlePaste}
@@ -174,22 +193,25 @@ export function EmailVerificationDialog({
               ))}
             </div>
 
-            <p className="mt-3 text-center text-sm text-[var(--text-muted)]">
+            <p
+              className="mt-3 text-center text-sm text-[var(--text-muted)]"
+              id="email-verification-code-description"
+            >
               Новый код можно запросить через 1 минуту.
             </p>
-          </div>
+          </fieldset>
 
           <DialogFooter className="mt-7">
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isSending || cooldownSeconds > 0}
-              onClick={onResendAction}
+              onClick={onResend}
               type="button"
               variant="secondary"
             >
               {isSending ? (
                 <>
-                  <LoaderCircle aria-hidden="true" className="animate-spin" size={16} />
+                  <Spinner aria-hidden="true" />
                   Отправляем...
                 </>
               ) : cooldownSeconds > 0 ? (
@@ -202,12 +224,12 @@ export function EmailVerificationDialog({
             <Button
               className="h-11 rounded-2xl px-4"
               disabled={isConfirming || !isCodeComplete}
-              onClick={onConfirmAction}
+              onClick={onConfirm}
               type="button"
             >
               {isConfirming ? (
                 <>
-                  <LoaderCircle aria-hidden="true" className="animate-spin" size={16} />
+                  <Spinner aria-hidden="true" />
                   Проверяем...
                 </>
               ) : (

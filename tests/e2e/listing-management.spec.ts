@@ -37,5 +37,8 @@ test("user creates a listing with media, edits it and archives it", async ({ pag
   await page.getByRole("button", { name: "Открыть меню действий объявления" }).click();
   await page.getByRole("menuitem", { name: "Архивировать" }).click();
   await expect(page.getByText("Объявление перенесено в архив.")).toBeVisible();
-  expect(api.listing).toMatchObject({ status: 5, statusLabel: "В архиве" });
+  expect(api.listing).toMatchObject({
+    listingStatus: "archived",
+    listingStatusLabel: "В архиве",
+  });
 });

@@ -4,7 +4,7 @@ import { useUserStore, type User } from "@/src/entities/user";
 import {
   FAVORITE_LISTINGS_MAX_PER_PAGE,
   type ListFavoriteListingsParams,
-} from "@/src/features/listing/api";
+} from "@/src/features/listing/api/favorite-listing";
 import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
 
 const {
@@ -17,9 +17,11 @@ const {
   removeListingFavoriteMock: vi.fn(),
 }));
 
-vi.mock("@/src/features/listing/api", async () => {
-  const actual = await vi.importActual<typeof import("@/src/features/listing/api")>(
-    "@/src/features/listing/api",
+vi.mock("@/src/features/listing/api/favorite-listing", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/src/features/listing/api/favorite-listing")
+  >(
+    "@/src/features/listing/api/favorite-listing",
   );
 
   return {

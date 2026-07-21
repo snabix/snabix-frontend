@@ -38,8 +38,8 @@ export function makeUser(addresses: UserAddress[] = [profileAddress]): User {
 
 export const leafCategory: CategoryNode = {
   id: 11,
-  catalogType: 1,
-  catalogTypeLabel: "Товар",
+  catalogKind: "product",
+  catalogKindLabel: "Товар",
   parentId: 1,
   name: "Ноутбуки",
   slug: "laptops",
@@ -54,8 +54,8 @@ export const leafCategory: CategoryNode = {
 
 export const rootCategory: CategoryNode = {
   id: 1,
-  catalogType: 1,
-  catalogTypeLabel: "Товар",
+  catalogKind: "product",
+  catalogKindLabel: "Товар",
   parentId: null,
   name: "Электроника",
   slug: "electronics",
@@ -74,8 +74,8 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
     userId: "user-1",
     category: {
       id: leafCategory.id,
-      catalogType: 1,
-      catalogTypeLabel: "Товар",
+      catalogKind: "product",
+      catalogKindLabel: "Товар",
       parentId: rootCategory.id,
       name: leafCategory.name,
       slug: leafCategory.slug,
@@ -86,17 +86,17 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
         { id: leafCategory.id, name: leafCategory.name, slug: leafCategory.slug },
       ],
     },
-    type: 1,
-    typeLabel: "Товар",
-    status: 3,
-    statusLabel: "Опубликовано",
-    condition: 2,
-    conditionLabel: "Б/у",
+    listingKind: "product",
+    listingKindLabel: "Товар",
+    listingStatus: "published",
+    listingStatusLabel: "Опубликовано",
+    itemCondition: "used",
+    itemConditionLabel: "Б/у",
     title: "Тестовый ноутбук",
     slug: "testovyi-noutbuk",
     description: "Описание тестового объявления для браузерного сценария.",
-    price: 75_000,
-    currency: "RUB",
+    priceAmountMinor: 75_000,
+    priceCurrency: "RUB",
     isNegotiable: true,
     contactName: "Иван Тестов",
     contactPhone: "+79991112233",
@@ -115,6 +115,7 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
     },
     isFavorite: false,
     sellerRating: null,
+    sellerReviewCount: 0,
     city: city.name,
     region: region.name,
     street: null,
@@ -127,6 +128,28 @@ export function makeListing(overrides: Partial<ListingItem> = {}): ListingItem {
     publishedAt: "2026-06-20T12:00:00+00:00",
     expiresAt: null,
     attributeValues: [],
+    ...overrides,
+  };
+}
+
+export function makeReview(overrides: Partial<UserReview> = {}): UserReview {
+  return {
+    id: "review-1",
+    reviewer: {
+      id: "buyer-1",
+      firstName: "Анна",
+      lastName: "Покупатель",
+    },
+    revieweeId: "user-1",
+    listing: {
+      id: "listing-1",
+      title: "Тестовый ноутбук",
+    },
+    rating: 5,
+    comment: "Быстрая связь и аккуратная передача товара.",
+    reviewStatus: "published",
+    reviewStatusLabel: "Опубликован",
+    createdAt: "2026-07-12T12:00:00+00:00",
     ...overrides,
   };
 }
@@ -166,3 +189,4 @@ export function paginated(items: unknown[]) {
 import type { CategoryNode } from "@/src/entities/category";
 import type { ListingItem, PublicListingItem } from "@/src/entities/listing";
 import type { User, UserAddress } from "@/src/entities/user";
+import type { UserReview } from "@/src/features/review/api";

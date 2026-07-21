@@ -27,7 +27,7 @@ import { Input } from "@/src/shared/ui/shadcn/input";
 type PublicListingQuickFiltersProps = {
   filters: PublicListingFiltersState;
   isLoading: boolean;
-  onChangeAction: (filters: PublicListingFiltersState) => void;
+  onChange: (filters: PublicListingFiltersState) => void;
 };
 
 const sortActions: Array<{
@@ -42,7 +42,7 @@ const sortActions: Array<{
 export function PublicListingQuickFilters({
   filters,
   isLoading,
-  onChangeAction,
+  onChange,
 }: PublicListingQuickFiltersProps) {
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(filters.minPrice);
@@ -51,7 +51,7 @@ export function PublicListingQuickFilters({
   const hasSortFilter = filters.sort !== "newest";
 
   const updateFilters = (nextFilters: Partial<PublicListingFiltersState>) => {
-    onChangeAction({
+    onChange({
       ...filters,
       ...nextFilters,
     });

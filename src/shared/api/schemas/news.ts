@@ -16,7 +16,8 @@ const newsAuthorSchema = z.object({
 
 const newsContentBlockBaseSchema = z.object({
   id: z.string(),
-  typeValue: z.number(),
+  // Deprecated numeric alias; `type` is the canonical string discriminator.
+  typeValue: z.number().optional(),
   typeLabel: z.string(),
   sortOrder: z.number(),
 }).strict();
@@ -113,12 +114,19 @@ export const newsContentBlockSchema = z.discriminatedUnion("type", [
   newsTableBlockSchema,
   newsImageGridBlockSchema,
   newsCtaBlockSchema,
-]);
+]).transform(({ typeValue, ...block }) => {
+  void typeValue;
 
-export const newsPostItemSchema = z.object({
+  return block;
+});
+
+const newsPostItemWireSchema = z.object({
   id: z.string(),
-  status: z.number(),
-  statusLabel: z.string(),
+  publicationStatus: z.enum(["draft", "published", "archived"]).optional(),
+  publicationStatusLabel: z.string().optional(),
+  // Deprecated wire aliases are accepted for rolling deploys until 2026-10-31.
+  status: z.number().optional(),
+  statusLabel: z.string().optional(),
   title: z.string(),
   slug: z.string(),
   category: z.string(),
@@ -135,7 +143,59 @@ export const newsPostItemSchema = z.object({
   createdAt: nullableStringSchema,
   updatedAt: nullableStringSchema,
 }).strict();
+type NewsPostWire = z.infer<typeof newsPostItemWireSchema>;
 
-export const newsPostDetailSchema = newsPostItemSchema.extend({
+export const newsPostItemSchema = newsPostItemWireSchema
+  .superRefine(validateNewsPostWire)
+  .transform(normalizeNewsPostWire);
+
+export const newsPostDetailSchema = newsPostItemWireSchema.extend({
   contentBlocks: z.array(newsContentBlockSchema),
-}).strict();
+}).strict()
+  .superRefine(validateNewsPostWire)
+  .transform(normalizeNewsPostWire);
+
+function validateNewsPostWire(value: NewsPostWire, context: z.RefinementCtx): void {
+  if (value.publicationStatus === undefined && value.status === undefined) {
+    context.addIssue({
+      code: "custom",
+      message: "Missing canonical API field publicationStatus.",
+      path: ["publicationStatus"],
+    });
+  }
+
+  if (value.publicationStatusLabel === undefined && value.statusLabel === undefined) {
+    context.addIssue({
+      code: "custom",
+      message: "Missing canonical API field publicationStatusLabel.",
+      path: ["publicationStatusLabel"],
+    });
+  }
+}
+
+function normalizeNewsPostWire<T extends NewsPostWire>({
+    status,
+    statusLabel,
+    ...post
+  }: T) {
+  return {
+    ...post,
+    publicationStatus: post.publicationStatus ?? resolveLegacyPublicationStatus(status),
+    publicationStatusLabel: post.publicationStatusLabel ?? statusLabel ?? "",
+  };
+}
+
+function resolveLegacyPublicationStatus(status: number | undefined) {
+  const values = {
+    1: "draft",
+    2: "published",
+    3: "archived",
+  } as const;
+  const resolved = status === undefined ? undefined : values[status as keyof typeof values];
+
+  if (resolved === undefined) {
+    throw new Error(`Unknown legacy news status: ${String(status)}`);
+  }
+
+  return resolved;
+}

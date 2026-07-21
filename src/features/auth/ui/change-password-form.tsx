@@ -9,8 +9,8 @@ import { changePassword } from "@/src/features/auth/api";
 import { changePasswordSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import type { ChangePasswordFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { Label } from "@/src/shared/ui/shadcn/label";
 import { PasswordInput } from "@/src/shared/ui/shadcn/password-input";
 
 export function ChangePasswordForm() {
@@ -45,48 +45,60 @@ export function ChangePasswordForm() {
   };
 
   return (
-    <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid gap-2">
-        <Label htmlFor="current-password">Текущий пароль</Label>
-        <PasswordInput
-          id="current-password"
-          placeholder="Введите текущий пароль"
-          {...register("currentPassword")}
-        />
-        {errors.currentPassword ? (
-          <p className="text-sm text-[var(--danger)]">
-            {errors.currentPassword.message}
-          </p>
-        ) : null}
-      </div>
+    <form
+      autoComplete="on"
+      className="grid gap-5"
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <FormField
+        error={errors.currentPassword?.message}
+        id="current-password"
+        label="Текущий пароль"
+      >
+        {(controlProps) => (
+          <PasswordInput
+            {...controlProps}
+            autoComplete="current-password"
+            placeholder="Введите текущий пароль"
+            required
+            {...register("currentPassword")}
+          />
+        )}
+      </FormField>
 
-      <div className="grid gap-2">
-        <Label htmlFor="new-password">Новый пароль</Label>
-        <PasswordInput
-          id="new-password"
-          placeholder="Не менее 8 символов"
-          {...register("password")}
-        />
-        {errors.password ? (
-          <p className="text-sm text-[var(--danger)]">
-            {errors.password.message}
-          </p>
-        ) : null}
-      </div>
+      <FormField
+        description="Используйте не менее 8 символов."
+        error={errors.password?.message}
+        id="new-password"
+        label="Новый пароль"
+      >
+        {(controlProps) => (
+          <PasswordInput
+            {...controlProps}
+            autoComplete="new-password"
+            placeholder="Не менее 8 символов"
+            required
+            {...register("password")}
+          />
+        )}
+      </FormField>
 
-      <div className="grid gap-2">
-        <Label htmlFor="new-password-confirmation">Повторите новый пароль</Label>
-        <PasswordInput
-          id="new-password-confirmation"
-          placeholder="Повторите новый пароль"
-          {...register("passwordConfirmation")}
-        />
-        {errors.passwordConfirmation ? (
-          <p className="text-sm text-[var(--danger)]">
-            {errors.passwordConfirmation.message}
-          </p>
-        ) : null}
-      </div>
+      <FormField
+        error={errors.passwordConfirmation?.message}
+        id="new-password-confirmation"
+        label="Повторите новый пароль"
+      >
+        {(controlProps) => (
+          <PasswordInput
+            {...controlProps}
+            autoComplete="new-password"
+            placeholder="Повторите новый пароль"
+            required
+            {...register("passwordConfirmation")}
+          />
+        )}
+      </FormField>
 
       <Button
         className="h-12 rounded-2xl text-[var(--active-button-text)]"

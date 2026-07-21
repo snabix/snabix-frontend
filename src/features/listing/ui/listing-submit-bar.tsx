@@ -26,8 +26,8 @@ export function ListingSubmitBar({
         isUploadingMedia={isUploadingMedia}
         mediaRetryListingId={mediaRetryListingId}
         mode="edit"
-        onRetryMediaUploadAction={retryMediaUpload}
-        onSubmitAction={submitForm}
+        onRetryMediaUpload={retryMediaUpload}
+        onSubmit={submitForm}
       />
     );
   }
@@ -72,8 +72,8 @@ export function ListingSubmitBar({
             isUploadingMedia={isUploadingMedia}
             mediaRetryListingId={mediaRetryListingId}
             mode="create"
-            onRetryMediaUploadAction={retryMediaUpload}
-            onSubmitAction={submitForm}
+            onRetryMediaUpload={retryMediaUpload}
+            onSubmit={submitForm}
           />
         </div>
       ) : null}

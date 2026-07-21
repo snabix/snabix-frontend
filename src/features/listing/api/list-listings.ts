@@ -1,4 +1,8 @@
-import type { ListingItem } from "@/src/entities/listing";
+import type {
+  ListingItem,
+  ListingKind,
+  ListingStatus,
+} from "@/src/entities/listing";
 import {
   getPaginated,
   listingItemSchema,
@@ -9,8 +13,8 @@ export type ListListingsParams = {
   categoryId?: string | number | null;
   page?: number;
   perPage?: number;
-  status?: number | null;
-  type?: number | null;
+  listingStatus?: ListingStatus | null;
+  listingKind?: ListingKind | null;
 };
 
 export async function listListings(params: ListListingsParams = {}): Promise<ApiPaginatedData<ListingItem>> {

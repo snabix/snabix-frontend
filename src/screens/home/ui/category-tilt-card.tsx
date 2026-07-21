@@ -1,6 +1,3 @@
-"use client";
-
-import { type MouseEvent } from "react";
 import Link from "next/link";
 import { MediaImage } from "@/src/shared/ui/media-image";
 
@@ -10,34 +7,14 @@ type CategoryTiltCardProps = {
   title: string;
 };
 
-const initialTransform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
-
 export function CategoryTiltCard({ href, imageUrl, title }: CategoryTiltCardProps) {
-  function handleMouseMove(event: MouseEvent<HTMLElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width;
-    const y = (event.clientY - rect.top) / rect.height;
-    const rotateY = (x - 0.5) * 10;
-    const rotateX = (0.5 - y) * 8;
-
-    event.currentTarget.style.transform =
-      `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px)`;
-  }
-
-  function handleMouseLeave(event: MouseEvent<HTMLElement>) {
-    event.currentTarget.style.transform = initialTransform;
-  }
-
   return (
     <Link
       className="block text-current no-underline"
       href={href}
     >
       <article
-        className="group relative min-h-[286px] overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-2 shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-200 ease-out will-change-transform hover:border-[var(--brand)] hover:shadow-[0_26px_80px_color-mix(in_srgb,var(--brand)_20%,transparent)]"
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-        style={{ transform: initialTransform }}
+        className="group relative min-h-[286px] overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-2 shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-1 hover:border-[var(--brand)] hover:shadow-[0_26px_80px_color-mix(in_srgb,var(--brand)_20%,transparent)]"
       >
 
         <div className="relative aspect-square overflow-hidden rounded-[22px]">

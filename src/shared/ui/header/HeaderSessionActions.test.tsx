@@ -27,6 +27,17 @@ const mockUser: User = {
   avatar: null,
 };
 
+function renderHeaderSessionActions() {
+  return render(
+    <HeaderSessionActions
+      isPending={false}
+      isSearchOpen={false}
+      onLogout={vi.fn()}
+      onSearchOpenChange={vi.fn()}
+    />,
+  );
+}
+
 describe("HeaderSessionActions", () => {
   beforeEach(() => {
     useUserStore.setState(useUserStore.getInitialState(), true);
@@ -38,12 +49,7 @@ describe("HeaderSessionActions", () => {
       user: mockUser,
     });
 
-    render(
-      <HeaderSessionActions
-        isPending={false}
-        onLogoutAction={vi.fn()}
-      />,
-    );
+    renderHeaderSessionActions();
 
     expect(screen.getByLabelText("Проверка сессии пользователя")).toBeInTheDocument();
     expect(screen.queryByLabelText("Открыть меню пользователя")).not.toBeInTheDocument();
@@ -56,12 +62,7 @@ describe("HeaderSessionActions", () => {
       user: null,
     });
 
-    render(
-      <HeaderSessionActions
-        isPending={false}
-        onLogoutAction={vi.fn()}
-      />,
-    );
+    renderHeaderSessionActions();
 
     expect(screen.getByText("Войти")).toBeInTheDocument();
     expect(screen.queryByLabelText("Открыть меню пользователя")).not.toBeInTheDocument();
@@ -73,12 +74,7 @@ describe("HeaderSessionActions", () => {
       user: mockUser,
     });
 
-    render(
-      <HeaderSessionActions
-        isPending={false}
-        onLogoutAction={vi.fn()}
-      />,
-    );
+    renderHeaderSessionActions();
 
     expect(screen.getByLabelText("Открыть меню пользователя")).toBeInTheDocument();
     expect(screen.queryByText("Войти")).not.toBeInTheDocument();

@@ -1,5 +1,3 @@
-"use client";
-
 import { ImageIcon, Maximize2 } from "lucide-react";
 import { cn } from "@/src/shared/lib/utils";
 import { MediaImage } from "@/src/shared/ui/media-image";
@@ -14,11 +12,11 @@ type ListingMediaDetailsGalleryProps = {
   hiddenImagesCount: number;
   images: string[];
   isPreviewOpen: boolean;
-  onActiveIndexChangeAction: (index: number) => void;
-  onNextAction: () => void;
-  onOpenPreviewAction: (index: number) => void;
-  onPreviewOpenChangeAction: (isOpen: boolean) => void;
-  onPreviousAction: () => void;
+  onActiveIndexChange: (index: number) => void;
+  onNext: () => void;
+  onOpenPreview: (index: number) => void;
+  onPreviewOpenChange: (isOpen: boolean) => void;
+  onPrevious: () => void;
   previewImages: string[];
   title: string;
 };
@@ -31,11 +29,11 @@ export function ListingMediaDetailsGallery({
   hiddenImagesCount,
   images,
   isPreviewOpen,
-  onActiveIndexChangeAction,
-  onNextAction,
-  onOpenPreviewAction,
-  onPreviewOpenChangeAction,
-  onPreviousAction,
+  onActiveIndexChange,
+  onNext,
+  onOpenPreview,
+  onPreviewOpenChange,
+  onPrevious,
   previewImages,
   title,
 }: ListingMediaDetailsGalleryProps) {
@@ -46,7 +44,7 @@ export function ListingMediaDetailsGallery({
           aria-label="Открыть просмотр фотографий"
           className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 text-left shadow-[var(--shadow-card)]"
           disabled={!hasRealImages}
-          onClick={() => onOpenPreviewAction(activeIndex)}
+          onClick={() => onOpenPreview(activeIndex)}
           type="button"
         >
           {activeImage ? (
@@ -101,9 +99,9 @@ export function ListingMediaDetailsGallery({
                 )}
                 key={`${image}-${index}`}
                 onClick={() => {
-                  onActiveIndexChangeAction(targetIndex);
+                  onActiveIndexChange(targetIndex);
                   if (isRemainderPreview) {
-                    onOpenPreviewAction(targetIndex);
+                    onOpenPreview(targetIndex);
                   }
                 }}
                 type="button"
@@ -138,9 +136,9 @@ export function ListingMediaDetailsGallery({
         activeIndex={activeIndex}
         hasMultipleImages={hasMultipleImages}
         isOpen={isPreviewOpen}
-        onNextAction={onNextAction}
-        onOpenChangeAction={onPreviewOpenChangeAction}
-        onPreviousAction={onPreviousAction}
+        onNext={onNext}
+        onOpenChange={onPreviewOpenChange}
+        onPrevious={onPrevious}
         title={title}
       />
     </>

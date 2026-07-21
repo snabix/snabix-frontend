@@ -1,0 +1,14 @@
+.env
+.env.*
+.git
+.github
+.idea
+.next
+.vscode
+Dockerfile
+docs
+node_modules
+playwright-report
+test-results
+tests
+*.tsbuildinfo

@@ -6,6 +6,7 @@ import { z } from "zod";
 import {
   categoryAttributeDefinitionSchema,
   categoryNodeSchema,
+  categorySummarySchema,
   getData,
 } from "@/src/shared/api";
 
@@ -36,13 +37,6 @@ export async function getCategoryAttributes(categoryId: string | number): Promis
 }
 
 const categoryAttributesPayloadSchema = z.object({
-  category: z.object({
-    id: z.union([z.string(), z.number()]),
-    catalogType: z.number(),
-    catalogTypeLabel: z.string(),
-    parentId: z.union([z.string(), z.number()]).nullable(),
-    name: z.string(),
-    slug: z.string(),
-  }).strict(),
+  category: categorySummarySchema,
   items: z.array(categoryAttributeDefinitionSchema),
 }).strict();

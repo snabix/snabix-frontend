@@ -8,7 +8,6 @@ export * from "./list-public-listings";
 export * from "./reorder-listing-media";
 export * from "./set-main-listing-media";
 export * from "./show-listing";
-export * from "./show-public-listing";
 export * from "./submit-listing-for-review";
 export * from "./update-listing";
 export * from "./upload-listing-media";

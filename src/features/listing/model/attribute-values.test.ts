@@ -28,8 +28,8 @@ function makeAttribute(
     showInCard: false,
     slug: "attribute",
     sortOrder: 10,
-    type: 1,
-    typeLabel: "Текст",
+    valueType: "text",
+    valueTypeLabel: "Текст",
     unit: null,
     ...overrides,
   };

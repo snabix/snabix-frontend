@@ -164,7 +164,7 @@ export function SessionsSettingsPage() {
                 <SessionListItem
                   isMutating={isMutating}
                   key={session.id}
-                  onTerminateAction={() => setSessionToClose(session)}
+                  onTerminate={() => setSessionToClose(session)}
                   session={session}
                 />
               ))}
@@ -177,8 +177,8 @@ export function SessionsSettingsPage() {
         actionLabel={isMutating ? "Завершаем..." : "Завершить сеанс"}
         description={sessionToClose ? `Сеанс на устройстве ${sessionToClose.deviceName} будет завершен.` : ""}
         isOpen={sessionToClose !== null}
-        onConfirmAction={handleTerminateSession}
-        onOpenChangeAction={(isOpen) => {
+        onConfirm={handleTerminateSession}
+        onOpenChange={(isOpen) => {
           if (!isOpen) {
             setSessionToClose(null);
           }
@@ -190,8 +190,8 @@ export function SessionsSettingsPage() {
         actionLabel={isMutating ? "Завершаем..." : "Завершить остальные"}
         description="Все сеансы кроме текущего будут завершены."
         isOpen={isCloseAllOpen}
-        onConfirmAction={handleTerminateOtherSessions}
-        onOpenChangeAction={setIsCloseAllOpen}
+        onConfirm={handleTerminateOtherSessions}
+        onOpenChange={setIsCloseAllOpen}
         title="Завершить остальные сеансы?"
       />
     </>
@@ -200,11 +200,11 @@ export function SessionsSettingsPage() {
 
 function SessionListItem({
   isMutating,
-  onTerminateAction,
+  onTerminate,
   session,
 }: {
   isMutating: boolean;
-  onTerminateAction: () => void;
+  onTerminate: () => void;
   session: ActiveUserSession;
 }) {
   const Icon = deviceIconByType[session.type];
@@ -243,7 +243,7 @@ function SessionListItem({
               aria-label={`Завершить сеанс ${session.deviceName}`}
               className="size-8 rounded-full opacity-80 transition-opacity group-hover:opacity-100"
               disabled={isMutating}
-              onClick={onTerminateAction}
+              onClick={onTerminate}
               type="button"
               variant="ghost"
             >

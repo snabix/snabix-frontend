@@ -1,74 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, MapPin, SearchX } from "lucide-react";
-import { toast } from "sonner";
 import { ListingMediaGallery, type PublicListingItem } from "@/src/entities/listing";
-import { showPublicListing } from "@/src/features/listing/api";
-import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import { Container } from "@/src/shared/ui/container";
 import { EmptyState } from "@/src/shared/ui/empty-state";
 import { Button } from "@/src/shared/ui/shadcn/button";
-import { SkeletonPanel } from "@/src/shared/ui/skeleton";
 
 type PublicListingDetailsPageProps = {
-  listingId: string;
+  listing: PublicListingItem;
 };
 
-export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPageProps) {
-  const [listing, setListing] = useState<PublicListingItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadListing = async () => {
-      try {
-        setIsLoading(true);
-        const item = await showPublicListing(listingId);
-
-        if (isMounted) {
-          setListing(item);
-        }
-      } catch (error) {
-        if (isMounted) {
-          toast.error(extractApiError(error, "Не удалось загрузить объявление."));
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadListing();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [listingId]);
-
-  if (isLoading) {
-    return (
-      <Container className="py-8">
-        <SkeletonPanel className="min-h-80" />
-      </Container>
-    );
-  }
-
-  if (listing === null) {
-    return (
-      <Container className="py-8">
-        <EmptyState
-          description="Возможно, объявление снято с публикации или больше недоступно."
-          icon={SearchX}
-          title="Объявление не найдено"
-        />
-      </Container>
-    );
-  }
-
+export function PublicListingDetailsPage({
+  listing,
+}: PublicListingDetailsPageProps) {
   const categoryPath = buildCategoryBreadcrumbs(listing);
   const publishedAt = formatListingDate(listing.publishedAt);
 
@@ -118,17 +61,17 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
           <aside className="rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] p-5">
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
-                {listing.statusLabel}
+                {listing.listingStatusLabel}
               </span>
               <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                {listing.typeLabel}
+                {listing.listingKindLabel}
               </span>
             </div>
 
             <dl className="mt-6 grid gap-3 text-sm">
-              <Detail label="Цена" value={listing.price === null ? "Цена не указана" : `${new Intl.NumberFormat("ru-RU").format(listing.price)} ${listing.currency ?? "RUB"}`} />
-              <Detail label="Тип объявления" value={listing.typeLabel} />
-              <Detail label="Состояние" value={listing.conditionLabel} />
+              <Detail label="Цена" value={listing.priceAmountMinor === null ? "Цена не указана" : `${new Intl.NumberFormat("ru-RU").format(listing.priceAmountMinor)} ${listing.priceCurrency ?? "RUB"}`} />
+              <Detail label="Тип объявления" value={listing.listingKindLabel} />
+              <Detail label="Состояние" value={listing.itemConditionLabel} />
               <Detail label="Публикация" value={publishedAt} />
             </dl>
 
@@ -154,7 +97,7 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
           <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Детали</h2>
           <dl className="mt-5 grid gap-3">
             <Detail label="Категория" value={categoryPath.map((category) => category.name).join(" / ") || "—"} />
-            <Detail label="Состояние" value={listing.conditionLabel} />
+            <Detail label="Состояние" value={listing.itemConditionLabel} />
             <Detail label="Торг" value={listing.isNegotiable ? "Разрешен" : "Не указан"} />
             <Detail label="Просмотры" value={String(listing.viewsCount)} />
           </dl>
@@ -181,6 +124,18 @@ export function PublicListingDetailsPage({ listingId }: PublicListingDetailsPage
         </article>
       </Container>
     </main>
+  );
+}
+
+export function PublicListingUnavailablePage() {
+  return (
+    <Container className="py-8">
+      <EmptyState
+        description="Не удалось получить объявление с сервера. Попробуйте обновить страницу чуть позже."
+        icon={SearchX}
+        title="Объявление временно недоступно"
+      />
+    </Container>
   );
 }
 

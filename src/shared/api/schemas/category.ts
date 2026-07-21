@@ -1,26 +1,32 @@
 import { z } from "zod";
+import type {
+  CategoryAttributeDefinition,
+  CategoryNode,
+} from "@/src/entities/category/model/types";
 import { nullableStringSchema, stringOrNumberSchema } from "./common";
+import {
+  attributeValueTypeSchema,
+  catalogKindSchema,
+  legacyAttributeValueTypes,
+  legacyCatalogKinds,
+  resolveLegacyEnum,
+} from "./marketplace-enums";
 
-type CategoryNodeContract = {
-  id: string | number;
-  catalogType: number;
-  catalogTypeLabel: string;
-  parentId: string | number | null;
-  name: string;
-  slug: string;
-  description: string | null;
-  icon: string | null;
-  sortOrder: number;
-  isActive: boolean;
-  path: string | null;
-  depth: number;
-  children: CategoryNodeContract[];
+type CategoryNodeWire = Omit<CategoryNode, "catalogKind" | "catalogKindLabel" | "children"> & {
+  catalogKind?: CategoryNode["catalogKind"];
+  catalogKindLabel?: string;
+  catalogType?: number;
+  catalogTypeLabel?: string;
+  children: CategoryNodeWire[];
 };
 
-export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = z.lazy(() => z.object({
+const categoryNodeWireSchema: z.ZodType<CategoryNodeWire> = z.lazy(() => z.object({
   id: stringOrNumberSchema,
-  catalogType: z.number(),
-  catalogTypeLabel: z.string(),
+  catalogKind: catalogKindSchema.optional(),
+  catalogKindLabel: z.string().optional(),
+  // Deprecated wire aliases are accepted for rolling deploys until 2026-10-31.
+  catalogType: z.number().optional(),
+  catalogTypeLabel: z.string().optional(),
   parentId: stringOrNumberSchema.nullable(),
   name: z.string(),
   slug: z.string(),
@@ -30,8 +36,38 @@ export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = z.lazy(() => 
   isActive: z.boolean(),
   path: nullableStringSchema,
   depth: z.number(),
-  children: z.array(categoryNodeSchema),
-}).strict());
+  children: z.array(categoryNodeWireSchema),
+}).strict().superRefine((value, context) => {
+  requireCanonicalOrLegacy(value.catalogKind, value.catalogType, "catalogKind", context);
+  requireCanonicalOrLegacy(value.catalogKindLabel, value.catalogTypeLabel, "catalogKindLabel", context);
+}));
+
+export const categoryNodeSchema: z.ZodType<CategoryNode> = categoryNodeWireSchema.transform(
+  normalizeCategoryNode,
+);
+
+export const categorySummarySchema = z.object({
+  id: stringOrNumberSchema,
+  catalogKind: catalogKindSchema.optional(),
+  catalogKindLabel: z.string().optional(),
+  // Deprecated wire aliases are accepted for rolling deploys until 2026-10-31.
+  catalogType: z.number().optional(),
+  catalogTypeLabel: z.string().optional(),
+  parentId: stringOrNumberSchema.nullable(),
+  name: z.string(),
+  slug: z.string(),
+}).strict().superRefine((value, context) => {
+  requireCanonicalOrLegacy(value.catalogKind, value.catalogType, "catalogKind", context);
+  requireCanonicalOrLegacy(value.catalogKindLabel, value.catalogTypeLabel, "catalogKindLabel", context);
+}).transform(({
+  catalogType,
+  catalogTypeLabel,
+  ...value
+}) => ({
+  ...value,
+  catalogKind: value.catalogKind ?? resolveLegacyEnum(legacyCatalogKinds, catalogType),
+  catalogKindLabel: value.catalogKindLabel ?? catalogTypeLabel ?? "",
+}));
 
 const categoryAttributeDependencyRuleSchema = z.object({
   attributeDefinitionId: z.number().optional(),
@@ -40,14 +76,17 @@ const categoryAttributeDependencyRuleSchema = z.object({
   value: z.unknown().optional(),
 }).strict();
 
-export const categoryAttributeDefinitionSchema = z.object({
+const categoryAttributeDefinitionWireSchema = z.object({
   id: z.number(),
   categoryId: stringOrNumberSchema,
   isInherited: z.boolean(),
   name: z.string(),
   slug: z.string(),
-  type: z.number(),
-  typeLabel: z.string(),
+  valueType: attributeValueTypeSchema.optional(),
+  valueTypeLabel: z.string().optional(),
+  // Deprecated wire aliases are accepted for rolling deploys until 2026-10-31.
+  type: z.number().optional(),
+  typeLabel: z.string().optional(),
   unit: nullableStringSchema,
   description: nullableStringSchema,
   placeholder: nullableStringSchema,
@@ -67,4 +106,47 @@ export const categoryAttributeDefinitionSchema = z.object({
   isActive: z.boolean(),
   appliesToChildren: z.boolean(),
   sortOrder: z.number(),
-}).strict();
+}).strict().superRefine((value, context) => {
+  requireCanonicalOrLegacy(value.valueType, value.type, "valueType", context);
+  requireCanonicalOrLegacy(value.valueTypeLabel, value.typeLabel, "valueTypeLabel", context);
+});
+
+export const categoryAttributeDefinitionSchema: z.ZodType<CategoryAttributeDefinition> =
+  categoryAttributeDefinitionWireSchema.transform(({
+    type,
+    typeLabel,
+    ...value
+  }) => ({
+    ...value,
+    valueType: value.valueType ?? resolveLegacyEnum(legacyAttributeValueTypes, type),
+    valueTypeLabel: value.valueTypeLabel ?? typeLabel ?? "",
+  }));
+
+function normalizeCategoryNode({
+  catalogType,
+  catalogTypeLabel,
+  children,
+  ...value
+}: CategoryNodeWire): CategoryNode {
+  return {
+    ...value,
+    catalogKind: value.catalogKind ?? resolveLegacyEnum(legacyCatalogKinds, catalogType),
+    catalogKindLabel: value.catalogKindLabel ?? catalogTypeLabel ?? "",
+    children: children.map(normalizeCategoryNode),
+  };
+}
+
+function requireCanonicalOrLegacy(
+  canonical: unknown,
+  legacy: unknown,
+  path: string,
+  context: z.RefinementCtx,
+): void {
+  if (canonical === undefined && legacy === undefined) {
+    context.addIssue({
+      code: "custom",
+      message: `Missing canonical API field ${path}.`,
+      path: [path],
+    });
+  }
+}

@@ -6,9 +6,9 @@ export {
   LISTING_TYPE_SERVICE,
 } from "@/src/entities/listing";
 
-export const ATTRIBUTE_TYPE_TEXT = 1;
-export const ATTRIBUTE_TYPE_NUMBER = 2;
-export const ATTRIBUTE_TYPE_BOOLEAN = 3;
-export const ATTRIBUTE_TYPE_SELECT = 4;
-export const ATTRIBUTE_TYPE_MULTISELECT = 5;
-export const ATTRIBUTE_TYPE_DATE = 6;
+export const ATTRIBUTE_TYPE_TEXT = "text";
+export const ATTRIBUTE_TYPE_NUMBER = "number";
+export const ATTRIBUTE_TYPE_BOOLEAN = "boolean";
+export const ATTRIBUTE_TYPE_SELECT = "select";
+export const ATTRIBUTE_TYPE_MULTISELECT = "multiSelect";
+export const ATTRIBUTE_TYPE_DATE = "date";

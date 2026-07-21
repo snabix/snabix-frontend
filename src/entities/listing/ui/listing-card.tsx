@@ -13,8 +13,8 @@ type ListingCardProps = {
   isFavorite?: boolean;
   isSelected?: boolean;
   listing: ListingItem | PublicListingItem;
-  onFavoriteToggleAction?: (listingId: string) => void;
-  onSelectToggleAction?: (listingId: string) => void;
+  onFavoriteToggle?: (listingId: string) => void;
+  onSelectToggle?: (listingId: string) => void;
   showStatus?: boolean;
 };
 
@@ -23,15 +23,15 @@ export function ListingCard({
   isFavorite,
   isSelected = false,
   listing,
-  onFavoriteToggleAction,
-  onSelectToggleAction,
+  onFavoriteToggle,
+  onSelectToggle,
 }: ListingCardProps) {
   const href = detailsHref ?? `/account/listings/${listing.id}`;
   const favorite = isFavorite ?? listing.isFavorite ?? false;
   const presentation = buildListingCardPresentation({
     favorite,
     listing,
-    onFavoriteToggleAction,
+    onFavoriteToggle,
   });
 
   function handleMouseMove(event: MouseEvent<HTMLElement>) {
@@ -57,7 +57,7 @@ export function ListingCard({
       imageUrls={listing.imageUrls}
       isSelected={isSelected}
       listingId={listing.id}
-      onSelectToggleAction={onSelectToggleAction}
+      onSelectToggle={onSelectToggle}
       title={listing.title}
     />
   );

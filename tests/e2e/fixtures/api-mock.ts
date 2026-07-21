@@ -6,6 +6,7 @@ import {
   city,
   leafCategory,
   makeListing,
+  makeReview,
   makeUser,
   paginated,
   region,
@@ -37,6 +38,7 @@ export class SnabixApiMock {
   notificationPreferences: NotificationPreference[] = makeNotificationPreferences();
   notifications: UserNotification[] = makeNotifications();
   reorderedMediaIds: number[] = [];
+  reviews = [makeReview()];
   sessions: ActiveUserSession[] = makeSessions();
   terminatedSessionIds: string[] = [];
   terminatedOtherSessions = false;
@@ -50,7 +52,12 @@ export class SnabixApiMock {
   }
 
   async install(page: Page) {
-    await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):8080\/.*$/, (route) => this.handle(route));
+    const apiPort = process.env.E2E_API_PORT ?? "4010";
+    const apiUrlPattern = new RegExp(
+      `^http://(?:localhost|127\\.0\\.0\\.1):${escapeRegExp(apiPort)}/.*$`,
+    );
+
+    await page.route(apiUrlPattern, (route) => this.handle(route));
   }
 
   private async handle(route: Route) {
@@ -298,6 +305,13 @@ export class SnabixApiMock {
       return;
     }
 
+    if (/^\/api\/v1\/users\/[^/]+\/reviews$/.test(url.pathname) && method === "GET") {
+      await this.fulfill(route, 200, {
+        data: paginated(this.reviews),
+      });
+      return;
+    }
+
     if (url.pathname === "/api/v1/listings" && method === "POST") {
       await this.createListing(route);
       return;
@@ -393,7 +407,11 @@ export class SnabixApiMock {
     }
 
     if (/\/api\/v1\/listings\/[^/]+\/archive$/.test(url.pathname) && method === "POST") {
-      this.listing = { ...this.listing, status: 5, statusLabel: "В архиве" };
+      this.listing = {
+        ...this.listing,
+        listingStatus: "archived",
+        listingStatusLabel: "В архиве",
+      };
       await this.fulfill(route, 200, { data: this.listing });
       return;
     }
@@ -428,8 +446,8 @@ export class SnabixApiMock {
     this.lastListingPayload = payload;
     this.listing = makeListing({
       ...pickListingChanges(payload),
-      status: isDraft ? 1 : 2,
-      statusLabel: isDraft ? "Черновик" : "На проверке",
+      listingStatus: isDraft ? "draft" : "pendingReview",
+      listingStatusLabel: isDraft ? "Черновик" : "На проверке",
     });
     await this.fulfill(route, 201, { data: this.listing });
   }
@@ -629,16 +647,24 @@ function getJsonBody(request: Request): JsonObject {
   }
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function pickCategorySummary(category: typeof leafCategory) {
-  const { id, catalogType, catalogTypeLabel, parentId, name, slug } = category;
-  return { id, catalogType, catalogTypeLabel, parentId, name, slug };
+  const { id, catalogKind, catalogKindLabel, parentId, name, slug } = category;
+  return { id, catalogKind, catalogKindLabel, parentId, name, slug };
 }
 
 function pickListingChanges(payload: JsonObject): Partial<ListingItem> {
   return {
     ...(typeof payload.title === "string" ? { title: payload.title } : {}),
     ...(typeof payload.description === "string" ? { description: payload.description } : {}),
-    ...(typeof payload.price === "number" || payload.price === null ? { price: payload.price } : {}),
-    ...(typeof payload.currency === "string" || payload.currency === null ? { currency: payload.currency } : {}),
+    ...(typeof payload.priceAmountMinor === "number" || payload.priceAmountMinor === null
+      ? { priceAmountMinor: payload.priceAmountMinor }
+      : {}),
+    ...(typeof payload.priceCurrency === "string" || payload.priceCurrency === null
+      ? { priceCurrency: payload.priceCurrency }
+      : {}),
   };
 }

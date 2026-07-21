@@ -20,8 +20,6 @@ test("user signs up and is redirected to sign in when auto-login is unavailable"
   await api.install(page);
 
   await page.goto("/sign-up");
-  await page.getByLabel("Имя").fill("Анна");
-  await page.getByLabel("Фамилия").fill("Петрова");
   await page.getByLabel("Email").fill("anna@snabix.test");
   await page.getByLabel("Пароль", { exact: true }).fill("password123");
   await page.getByLabel("Повторите пароль").fill("password123");
@@ -31,7 +29,5 @@ test("user signs up and is redirected to sign in when auto-login is unavailable"
   await expect(page.getByRole("heading", { name: "Вход" })).toBeVisible();
   expect(api.lastSignUpPayload).toMatchObject({
     email: "anna@snabix.test",
-    firstName: "Анна",
-    lastName: "Петрова",
   });
 });

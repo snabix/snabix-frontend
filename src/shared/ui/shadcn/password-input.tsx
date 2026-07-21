@@ -26,12 +26,18 @@ const PasswordInput = React.forwardRef<
       />
 
       <button
+        aria-controls={props.id}
         aria-label={isVisible ? "Скрыть пароль" : "Показать пароль"}
+        aria-pressed={isVisible}
         className="inline-flex size-8 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-soft)]"
         onClick={() => setIsVisible((currentState) => !currentState)}
         type="button"
       >
-        {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+        {isVisible ? (
+          <EyeOff aria-hidden="true" size={16} />
+        ) : (
+          <Eye aria-hidden="true" size={16} />
+        )}
       </button>
     </div>
   );

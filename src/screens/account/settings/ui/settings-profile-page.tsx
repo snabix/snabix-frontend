@@ -4,13 +4,12 @@ import { Camera, Save, ShieldCheck, UserRound } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
 import { useAvatarEditor } from "@/src/screens/account/profile/model/use-avatar-editor";
 import { useProfileEditor } from "@/src/screens/account/profile/model/use-profile-editor";
-import { ProfileEditField } from "@/src/screens/account/profile/ui/profile-parts";
 import { ProfileAvatarViewer } from "@/src/screens/account/profile/ui/profile-avatar-viewer";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/shadcn/avatar";
 import { Input } from "@/src/shared/ui/shadcn/input";
-import { Label } from "@/src/shared/ui/shadcn/label";
-import { FieldError, SettingsSection } from "./settings-shared";
+import { SettingsSection } from "./settings-shared";
 
 export function ProfileSettingsPage() {
   const user = useUserStore((state) => state.user);
@@ -93,49 +92,79 @@ export function ProfileSettingsPage() {
           </p>
         </div>
 
-        <form className="grid gap-5" onSubmit={handleSubmit(handleProfileSubmit)}>
+        <form
+          autoComplete="on"
+          className="grid gap-5"
+          noValidate
+          onSubmit={handleSubmit(handleProfileSubmit)}
+        >
           <div className="grid gap-4 md:grid-cols-2">
-            <ProfileEditField label="Имя">
-              <Label className="sr-only" htmlFor="settings-first-name">
-                Имя
-              </Label>
-              <Input id="settings-first-name" placeholder="Ваше имя" {...register("firstName")} />
-              <FieldError message={errors.firstName?.message} />
-            </ProfileEditField>
+            <FormField
+              error={errors.firstName?.message}
+              id="settings-first-name"
+              label="Имя"
+              labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              {(controlProps) => (
+                <Input
+                  {...controlProps}
+                  autoComplete="given-name"
+                  placeholder="Ваше имя"
+                  required
+                  {...register("firstName")}
+                />
+              )}
+            </FormField>
 
-            <ProfileEditField label="Фамилия">
-              <Label className="sr-only" htmlFor="settings-last-name">
-                Фамилия
-              </Label>
-              <Input id="settings-last-name" placeholder="Ваша фамилия" {...register("lastName")} />
-              <FieldError message={errors.lastName?.message} />
-            </ProfileEditField>
+            <FormField
+              error={errors.lastName?.message}
+              id="settings-last-name"
+              label="Фамилия"
+              labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              {(controlProps) => (
+                <Input
+                  {...controlProps}
+                  autoComplete="family-name"
+                  placeholder="Ваша фамилия"
+                  required
+                  {...register("lastName")}
+                />
+              )}
+            </FormField>
 
-            <ProfileEditField label="Дата рождения">
-              <Label className="sr-only" htmlFor="settings-date-of-birth">
-                Дата рождения
-              </Label>
-              <Input
-                id="settings-date-of-birth"
-                type="date"
-                {...register("dateOfBirth")}
-              />
-              <FieldError message={errors.dateOfBirth?.message} />
-            </ProfileEditField>
+            <FormField
+              error={errors.dateOfBirth?.message}
+              id="settings-date-of-birth"
+              label="Дата рождения"
+              labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              {(controlProps) => (
+                <Input
+                  {...controlProps}
+                  autoComplete="bday"
+                  type="date"
+                  {...register("dateOfBirth")}
+                />
+              )}
+            </FormField>
           </div>
 
-          <ProfileEditField label="О себе">
-            <Label className="sr-only" htmlFor="settings-description">
-              О себе
-            </Label>
-            <textarea
-              className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
-              id="settings-description"
-              placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
-              {...register("description")}
-            />
-            <FieldError message={errors.description?.message} />
-          </ProfileEditField>
+          <FormField
+            error={errors.description?.message}
+            id="settings-description"
+            label="О себе"
+            labelClassName="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]"
+          >
+            {(controlProps) => (
+              <textarea
+                {...controlProps}
+                className="profile-edit-input min-h-32 w-full resize-y px-4 py-3 text-sm text-[var(--brand-deep)] focus-visible:outline-none"
+                placeholder="Расскажите, чем занимаетесь, с какими товарами или услугами работаете"
+                {...register("description")}
+              />
+            )}
+          </FormField>
 
           <div className="flex justify-end">
             <Button className="w-fit rounded-2xl" disabled={isSubmitting} type="submit">
@@ -152,11 +181,11 @@ export function ProfileSettingsPage() {
           avatarOffset={avatarOffset}
           avatarScale={avatarScale}
           isAvatarSubmitting={isAvatarSubmitting}
-          onAvatarDraftResetAction={resetAvatarDraft}
-          onAvatarMovePointerDownAction={handleAvatarMovePointerDown}
-          onAvatarSaveAction={handleAvatarSave}
-          onAvatarScaleChangeAction={(value) => setAvatarScale(value[0] ?? 1)}
-          onAvatarViewerCloseAction={handleAvatarViewerClose}
+          onAvatarDraftReset={resetAvatarDraft}
+          onAvatarMovePointerDown={handleAvatarMovePointerDown}
+          onAvatarSave={handleAvatarSave}
+          onAvatarScaleChange={(value) => setAvatarScale(value[0] ?? 1)}
+          onAvatarViewerClose={handleAvatarViewerClose}
         />
       ) : null}
     </>

@@ -1,21 +1,24 @@
+import type { Ref } from "react";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 import { formatPhoneNumber } from "@/src/shared/lib/format-phone-number";
 
 export function PrivacyDataRow({
   canToggle = true,
+  editButtonRef,
   isVisible,
   label,
   maskedValue,
-  onEditAction,
-  onToggleAction,
+  onEdit,
+  onToggle,
   value,
 }: {
   canToggle?: boolean;
+  editButtonRef?: Ref<HTMLButtonElement>;
   isVisible: boolean;
   label: string;
   maskedValue: string;
-  onEditAction: () => void;
-  onToggleAction: () => void;
+  onEdit: () => void;
+  onToggle: () => void;
   value: string;
 }) {
   const VisibilityIcon = isVisible ? EyeOff : Eye;
@@ -37,7 +40,7 @@ export function PrivacyDataRow({
           <button
             aria-label={isVisible ? `Скрыть ${label}` : `Показать ${label}`}
             className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-            onClick={onToggleAction}
+            onClick={onToggle}
             type="button"
           >
             <VisibilityIcon size={17} />
@@ -46,7 +49,8 @@ export function PrivacyDataRow({
         <button
           aria-label={`Редактировать ${label}`}
           className="grid size-10 place-items-center rounded-full border border-[var(--border-soft)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
-          onClick={onEditAction}
+          onClick={onEdit}
+          ref={editButtonRef}
           type="button"
         >
           <Pencil size={16} />

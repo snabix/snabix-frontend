@@ -13,7 +13,9 @@ import {
   LISTING_TYPE_PRODUCT,
   LISTING_TYPE_SERVICE,
   ListingCard,
+  type ListingKind,
   type ListingItem,
+  type ListingStatus,
 } from "@/src/entities/listing";
 import { deleteListing, listListings } from "@/src/features/listing/api";
 import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
@@ -74,8 +76,8 @@ export function ListingsPage() {
         const result = await listListings({
           page,
           perPage: paginationMeta.perPage,
-          status: statusFilter === "" ? null : Number(statusFilter),
-          type: typeFilter === "" ? null : Number(typeFilter),
+          listingStatus: statusFilter === "" ? null : statusFilter as ListingStatus,
+          listingKind: typeFilter === "" ? null : typeFilter as ListingKind,
         });
 
         if (isMounted) {
@@ -257,8 +259,8 @@ export function ListingsPage() {
                     isSelected={selectedListingIds.has(listing.id)}
                     key={listing.id}
                     listing={listing}
-                    onFavoriteToggleAction={toggleFavorite}
-                    onSelectToggleAction={handleSelectToggle}
+                    onFavoriteToggle={toggleFavorite}
+                    onSelectToggle={handleSelectToggle}
                   />
                 ))}
               </div>
@@ -269,7 +271,7 @@ export function ListingsPage() {
             align="between"
             isLoading={isLoading}
             meta={paginationMeta}
-            onPageChangeAction={setPage}
+            onPageChange={setPage}
             page={page}
             showRange
           />
@@ -281,8 +283,8 @@ export function ListingsPage() {
         isOpen={deleteTarget !== null}
         itemsCount={selectedCount}
         listingTitle={null}
-        onConfirmAction={handleDeleteConfirm}
-        onOpenChangeAction={(isOpen) => {
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={(isOpen) => {
           if (!isOpen && deletingListingId === null) {
             setDeleteTarget(null);
           }

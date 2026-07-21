@@ -139,3 +139,12 @@ git diff --check
 npm run test:e2e
 npm run build
 ```
+
+Production container smoke:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1 \
+  --build-arg APP_REVISION=local \
+  -t snabix-frontend:local .
+```

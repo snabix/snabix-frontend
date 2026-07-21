@@ -14,13 +14,13 @@ import type { ListingCardPresentation } from "./listing-card-types";
 type BuildListingCardPresentationParams = {
   favorite: boolean;
   listing: ListingItem | PublicListingItem;
-  onFavoriteToggleAction?: (listingId: string) => void;
+  onFavoriteToggle?: (listingId: string) => void;
 };
 
 export function buildListingCardPresentation({
   favorite,
   listing,
-  onFavoriteToggleAction,
+  onFavoriteToggle,
 }: BuildListingCardPresentationParams): ListingCardPresentation {
   const sellerName = resolveSellerName(listing);
   const sellerRating = listing.sellerRating === null || listing.sellerRating === undefined
@@ -32,7 +32,7 @@ export function buildListingCardPresentation({
       <ListingFavoriteButton
         isFavorite={favorite}
         listingId={listing.id}
-        onFavoriteToggleAction={onFavoriteToggleAction}
+        onFavoriteToggle={onFavoriteToggle}
       />
     ),
     formattedPrice: formatListingPrice(listing),

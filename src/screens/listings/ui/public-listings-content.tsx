@@ -13,8 +13,8 @@ type PublicListingsContentProps = {
   isLoading: boolean;
   items: PublicListingItem[];
   meta: ApiPaginationMeta;
-  onFavoriteToggleAction: (listingId: string) => Promise<void>;
-  onPageChangeAction: Dispatch<SetStateAction<number>>;
+  onFavoriteToggle: (listingId: string) => Promise<void>;
+  onPageChange: Dispatch<SetStateAction<number>>;
   page: number;
 };
 
@@ -24,8 +24,8 @@ export function PublicListingsContent({
   isLoading,
   items,
   meta,
-  onFavoriteToggleAction,
-  onPageChangeAction,
+  onFavoriteToggle,
+  onPageChange,
   page,
 }: PublicListingsContentProps) {
   if (isLoading) {
@@ -70,7 +70,7 @@ export function PublicListingsContent({
             isFavorite={favoriteListingIds.has(item.id)}
             key={item.id}
             listing={item}
-            onFavoriteToggleAction={onFavoriteToggleAction}
+            onFavoriteToggle={onFavoriteToggle}
             showStatus={false}
           />
         ))}
@@ -79,7 +79,7 @@ export function PublicListingsContent({
       <Pagination
         isLoading={isLoading}
         meta={meta}
-        onPageChangeAction={onPageChangeAction}
+        onPageChange={onPageChange}
         page={page}
       />
     </>

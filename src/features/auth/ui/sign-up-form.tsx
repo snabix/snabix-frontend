@@ -11,6 +11,7 @@ import { signUp } from "@/src/features/auth/api";
 import { signUpSchema } from "@/src/features/auth/lib/auth-form-schemas";
 import { SignUpFormValues } from "@/src/features/auth/lib/auth-form-values";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
+import { FormField } from "@/src/shared/ui/form-field";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Checkbox } from "@/src/shared/ui/shadcn/checkbox";
 import { Input } from "@/src/shared/ui/shadcn/input";
@@ -31,8 +32,6 @@ export function SignUpForm() {
     defaultValues: {
       acceptedTerms: true,
       email: "",
-      firstName: "",
-      lastName: "",
       password: "",
       passwordConfirmation: "",
     },
@@ -44,8 +43,6 @@ export function SignUpForm() {
 
     try {
       await signUp({
-        firstName: values.firstName,
-        lastName: values.lastName,
         email: values.email,
         password: values.password,
         passwordConfirmation: values.passwordConfirmation,
@@ -83,98 +80,92 @@ export function SignUpForm() {
       </h1>
 
       <form
-        autoComplete="off"
+        autoComplete="on"
         className="mt-7 space-y-5"
+        noValidate
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="sign-up-first-name">Имя</Label>
+        <FormField
+          error={errors.email?.message}
+          id="sign-up-email"
+          label="Email"
+        >
+          {(controlProps) => (
             <Input
-              id="sign-up-first-name"
-              placeholder="Иван"
-              {...register("firstName")}
+              {...controlProps}
+              autoCapitalize="none"
+              autoComplete="username"
+              placeholder="team@company.ru"
+              required
+              spellCheck={false}
+              type="email"
+              {...register("email")}
             />
-            {errors.firstName ? (
-              <p className="text-sm text-[var(--danger)]">
-                {errors.firstName.message}
-              </p>
-            ) : null}
-          </div>
+          )}
+        </FormField>
 
-          <div className="space-y-2">
-            <Label htmlFor="sign-up-last-name">Фамилия</Label>
-            <Input
-              id="sign-up-last-name"
-              placeholder="Петров"
-              {...register("lastName")}
+        <FormField
+          description="Используйте не менее 8 символов."
+          error={errors.password?.message}
+          id="sign-up-password"
+          label="Пароль"
+        >
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="new-password"
+              placeholder="Не менее 8 символов"
+              required
+              {...register("password")}
             />
-            {errors.lastName ? (
-              <p className="text-sm text-[var(--danger)]">
-                {errors.lastName.message}
-              </p>
-            ) : null}
-          </div>
-        </div>
+          )}
+        </FormField>
 
-        <div className="space-y-2">
-          <Label htmlFor="sign-up-email">Email</Label>
-          <Input
-            id="sign-up-email"
-            placeholder="team@company.ru"
-            {...register("email")}
-          />
-          {errors.email ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.email.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="sign-up-password">Пароль</Label>
-          <PasswordInput
-            id="sign-up-password"
-            placeholder="Не менее 8 символов"
-            {...register("password")}
-          />
-          {errors.password ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.password.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="sign-up-password-confirmation">Повторите пароль</Label>
-          <PasswordInput
-            id="sign-up-password-confirmation"
-            placeholder="Повторите пароль"
-            {...register("passwordConfirmation")}
-          />
-          {errors.passwordConfirmation ? (
-            <p className="text-sm text-[var(--danger)]">
-              {errors.passwordConfirmation.message}
-            </p>
-          ) : null}
-        </div>
+        <FormField
+          error={errors.passwordConfirmation?.message}
+          id="sign-up-password-confirmation"
+          label="Повторите пароль"
+        >
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="new-password"
+              placeholder="Повторите пароль"
+              required
+              {...register("passwordConfirmation")}
+            />
+          )}
+        </FormField>
 
         <div className="space-y-2">
           <Controller
             control={control}
             name="acceptedTerms"
             render={({ field }) => (
-              <label className="flex items-start gap-3 text-sm text-[var(--text-muted)]">
+              <div className="flex items-start gap-3 text-sm text-[var(--text-muted)]">
                 <Checkbox
+                  aria-describedby={errors.acceptedTerms ? "accepted-terms-error" : undefined}
+                  aria-invalid={errors.acceptedTerms ? true : undefined}
                   checked={field.value}
+                  id="accepted-terms"
+                  name={field.name}
+                  onBlur={field.onBlur}
                   onCheckedChange={(checked) => field.onChange(checked === true)}
+                  ref={field.ref}
+                  required
                 />
-                <span>Я принимаю условия платформы</span>
-              </label>
+                <Label htmlFor="accepted-terms">
+                  Я принимаю условия платформы
+                </Label>
+              </div>
             )}
           />
           {errors.acceptedTerms ? (
-            <p className="text-sm text-[var(--danger)]">
+            <p
+              className="text-sm text-[var(--danger)]"
+              id="accepted-terms-error"
+              role="alert"
+            >
               {errors.acceptedTerms.message}
             </p>
           ) : null}

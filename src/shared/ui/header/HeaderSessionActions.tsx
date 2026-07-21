@@ -5,22 +5,27 @@ import { Plus } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
 import { HeaderAuthActions } from "@/src/shared/ui/header/HeaderAuthActions";
 import { HeaderNotificationsMenu } from "@/src/shared/ui/header/HeaderNotificationsMenu";
+import { HeaderSearchMenu } from "@/src/shared/ui/header/HeaderSearchMenu";
 import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
 
 type HeaderSessionActionsProps = {
+  isSearchOpen: boolean;
   isPending: boolean;
-  onLogoutAction: () => void;
+  onSearchOpenChange: (isOpen: boolean) => void;
+  onLogout: () => void;
 };
 
 export function HeaderSessionActions({
+  isSearchOpen,
   isPending,
-  onLogoutAction,
+  onSearchOpenChange,
+  onLogout,
 }: HeaderSessionActionsProps) {
   const user = useUserStore((state) => state.user);
   const hasCheckedSession = useUserStore((state) => state.hasCheckedSession);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
       {hasCheckedSession && user !== null ? (
         <Link
           aria-label="Создать объявление"
@@ -31,6 +36,11 @@ export function HeaderSessionActions({
           <span className="hidden sm:inline">Создать</span>
         </Link>
       ) : null}
+
+      <HeaderSearchMenu
+        isOpen={isSearchOpen}
+        onOpenChange={onSearchOpenChange}
+      />
 
       <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
 
@@ -45,7 +55,7 @@ export function HeaderSessionActions({
       ) : user ? (
         <HeaderUserMenu
           isPending={isPending}
-          onLogoutAction={onLogoutAction}
+          onLogout={onLogout}
           user={user}
         />
       ) : (

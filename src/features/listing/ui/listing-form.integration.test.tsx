@@ -51,8 +51,8 @@ vi.mock("@/src/features/listing/api", async () => {
 });
 
 const rootCategory: CategoryNode = {
-  catalogType: 1,
-  catalogTypeLabel: "Товары",
+  catalogKind: "product",
+  catalogKindLabel: "Товары",
   children: [],
   depth: 0,
   description: null,
@@ -69,19 +69,19 @@ const rootCategory: CategoryNode = {
 const listingContract: ListingItem = {
   attributeValues: [],
   category: {
-    catalogType: 1,
-    catalogTypeLabel: "Товары",
+    catalogKind: "product",
+    catalogKindLabel: "Товары",
     id: 5,
     name: "Электроника",
     parentId: null,
     slug: "elektronika",
   },
-  condition: LISTING_CONDITION_USED,
-  conditionLabel: "Б/у",
+  itemCondition: LISTING_CONDITION_USED,
+  itemConditionLabel: "Б/у",
   contactEmail: null,
   contactName: null,
   contactPhone: null,
-  currency: "RUB",
+  priceCurrency: "RUB",
   description: "Игровой ноутбук в хорошем состоянии.",
   expiresAt: null,
   id: "listing-1",
@@ -90,15 +90,15 @@ const listingContract: ListingItem = {
   isFeatured: false,
   isNegotiable: false,
   media: [],
-  price: 85000,
+  priceAmountMinor: 85000,
   publishedAt: null,
   rejectionReason: null,
   slug: "igrovoj-noutbuk",
-  status: LISTING_STATUS_DRAFT,
-  statusLabel: "Черновик",
+  listingStatus: LISTING_STATUS_DRAFT,
+  listingStatusLabel: "Черновик",
   title: "Игровой ноутбук",
-  type: LISTING_TYPE_PRODUCT,
-  typeLabel: "Товар",
+  listingKind: LISTING_TYPE_PRODUCT,
+  listingKindLabel: "Товар",
   userId: "user-1",
   viewsCount: 0,
 };
@@ -126,7 +126,7 @@ describe("ListingForm integration", () => {
   it("creates listing as draft when draft action is selected", async () => {
     const onSubmit = vi.fn().mockResolvedValue(listingContract);
 
-    render(<ListingForm mode="create" onSubmitAction={onSubmit} />);
+    render(<ListingForm mode="create" onSubmit={onSubmit} />);
 
     fillListingForm();
     fireEvent.click(screen.getByRole("button", { name: "Сохранить как черновик" }));
@@ -134,7 +134,7 @@ describe("ListingForm integration", () => {
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
         categoryId: "5",
-        price: 85000,
+        priceAmountMinor: 85000,
         saveAsDraft: true,
         title: "Игровой ноутбук",
       }));
@@ -145,7 +145,7 @@ describe("ListingForm integration", () => {
   it("creates listing for pending review when primary action is selected", async () => {
     const onSubmit = vi.fn().mockResolvedValue(listingContract);
 
-    render(<ListingForm mode="create" onSubmitAction={onSubmit} />);
+    render(<ListingForm mode="create" onSubmit={onSubmit} />);
 
     fillListingForm();
     fireEvent.click(screen.getByRole("button", { name: "Отправить на проверку" }));
@@ -167,7 +167,7 @@ describe("ListingForm integration", () => {
       <ListingForm
         initialListing={listingContract}
         mode="edit"
-        onSubmitAction={onSubmit}
+        onSubmit={onSubmit}
       />,
     );
 
@@ -210,8 +210,8 @@ describe("ListingForm integration", () => {
         name: "Бренд",
         options: ["Apple", "Samsung"],
         slug: "brand",
-        type: ATTRIBUTE_TYPE_SELECT,
-        typeLabel: "Список",
+        valueType: ATTRIBUTE_TYPE_SELECT,
+        valueTypeLabel: "Список",
       }),
       makeAttribute({
         dependencyRules: [
@@ -225,12 +225,12 @@ describe("ListingForm integration", () => {
         name: "Модель",
         placeholder: "Например, iPhone 15",
         slug: "model",
-        type: ATTRIBUTE_TYPE_TEXT,
-        typeLabel: "Текст",
+        valueType: ATTRIBUTE_TYPE_TEXT,
+        valueTypeLabel: "Текст",
       }),
     ]);
 
-    render(<ListingForm mode="create" onSubmitAction={vi.fn()} />);
+    render(<ListingForm mode="create" onSubmit={vi.fn()} />);
 
     expect(screen.getByLabelText("Бренд")).toBeInTheDocument();
     expect(screen.queryByLabelText("Модель")).not.toBeInTheDocument();
@@ -281,7 +281,7 @@ function setCategoryAttributes(attributes: CategoryAttributeDefinition[]) {
 }
 
 function makeAttribute(
-  attribute: Partial<CategoryAttributeDefinition> & Pick<CategoryAttributeDefinition, "id" | "name" | "slug" | "type" | "typeLabel">,
+  attribute: Partial<CategoryAttributeDefinition> & Pick<CategoryAttributeDefinition, "id" | "name" | "slug" | "valueType" | "valueTypeLabel">,
 ): CategoryAttributeDefinition {
   return {
     appliesToChildren: false,

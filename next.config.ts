@@ -157,6 +157,8 @@ const securityHeaders = createSecurityHeaders({
 });
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR?.trim() || ".next",
+  output: "standalone",
   async headers() {
     return [
       {

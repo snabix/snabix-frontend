@@ -4,8 +4,8 @@ export type SignInPayload = {
 };
 
 export type SignUpPayload = {
-  firstName: string;
-  lastName: string;
+  firstName?: string | null;
+  lastName?: string | null;
   phoneNumber?: string | null;
   email: string;
   password: string;

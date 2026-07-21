@@ -66,10 +66,10 @@ export function useListingSubmit({
     defaultValues: {
       title: initialListing?.title ?? "",
       description: initialListing?.description ?? "",
-      price: initialListing?.price === null || initialListing?.price === undefined
+      price: initialListing?.priceAmountMinor === null || initialListing?.priceAmountMinor === undefined
         ? ""
-        : String(initialListing.price),
-      currency: initialListing?.currency ?? "RUB",
+        : String(initialListing.priceAmountMinor),
+      currency: initialListing?.priceCurrency ?? "RUB",
     },
     resolver: zodResolver(listingFormSchema),
   });
@@ -97,12 +97,12 @@ export function useListingSubmit({
 
     const payload: CreateListingPayload | UpdateListingPayload = {
       categoryId,
-      type: categoryState.activeType,
-      condition: categoryState.condition,
+      listingKind: categoryState.activeType,
+      itemCondition: categoryState.condition,
       title: values.title.trim(),
       description: values.description.trim(),
-      price: parseIntegerMoney(values.price),
-      currency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
+      priceAmountMinor: parseIntegerMoney(values.price),
+      priceCurrency: values.currency.trim() === "" ? null : values.currency.trim().toUpperCase(),
       isNegotiable,
       addressMode: addressState.addressMode,
       profileAddressId: addressState.addressMode === "profile"

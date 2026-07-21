@@ -1,38 +1,38 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import type { PublicListingItem } from "@/src/entities/listing";
-import { listPublicListings } from "@/src/features/listing/api";
+import { listPublicListings } from "@/src/features/listing/api/list-public-listings";
 import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
-import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import {
   defaultPublicListingFilters,
   type PublicListingFiltersState,
 } from "@/src/screens/home/ui/public-listing-filters";
 import { toPublicListingParams } from "@/src/screens/listings/lib/public-listing-filter-params";
+import {
+  emptyPublicListingsData,
+  HOME_LISTINGS_PER_PAGE,
+  type PublicListingsInitialState,
+} from "@/src/screens/listings/model/public-listings-initial-state";
 
-const homeListingsPerPage = 16;
+const defaultHomeListingsData = emptyPublicListingsData(HOME_LISTINGS_PER_PAGE);
 
-const defaultHomePaginationMeta: ApiPaginationMeta = {
-  currentPage: 1,
-  from: null,
-  lastPage: 1,
-  perPage: homeListingsPerPage,
-  to: null,
-  total: 0,
-};
-
-export function useHomeListings(initialCategoryId?: string) {
-  const [items, setItems] = useState<PublicListingItem[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export function useHomeListings(
+  initialCategoryId: string | undefined,
+  initialState: PublicListingsInitialState,
+) {
+  const [items, setItems] = useState(initialState.data.items);
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    initialState.errorMessage,
+  );
   const { favoriteListingIds, setFavoriteListingIds, toggleFavorite } = useFavoriteListings();
-  const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultHomePaginationMeta);
+  const [paginationMeta, setPaginationMeta] = useState(initialState.data.meta);
   const [draftFilters, setDraftFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
   const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [, startFiltersTransition] = useTransition();
+  const canRunClientRequest = useRef(false);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -54,6 +54,14 @@ export function useHomeListings(initialCategoryId?: string) {
   }, [isFiltersOpen]);
 
   useEffect(() => {
+    if (!canRunClientRequest.current) {
+      const timeoutId = window.setTimeout(() => {
+        canRunClientRequest.current = true;
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+
     let isMounted = true;
 
     const loadItems = async () => {
@@ -65,7 +73,7 @@ export function useHomeListings(initialCategoryId?: string) {
           ...toPublicListingParams(appliedFilters),
           categoryId: initialCategoryId,
           page,
-          perPage: homeListingsPerPage,
+          perPage: HOME_LISTINGS_PER_PAGE,
         });
 
         if (!isMounted) {
@@ -94,7 +102,7 @@ export function useHomeListings(initialCategoryId?: string) {
 
         setErrorMessage(message);
         setItems([]);
-        setPaginationMeta(defaultHomePaginationMeta);
+        setPaginationMeta(defaultHomeListingsData.meta);
         toast.error(message);
       } finally {
         if (isMounted) {

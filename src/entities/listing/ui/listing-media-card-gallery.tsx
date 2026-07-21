@@ -10,7 +10,7 @@ type ListingMediaCardGalleryProps = {
   detailsHref?: string;
   hasMultipleImages: boolean;
   images: string[];
-  onActiveIndexChangeAction: (index: number) => void;
+  onActiveIndexChange: (index: number) => void;
   title: string;
 };
 
@@ -20,7 +20,7 @@ export function ListingMediaCardGallery({
   detailsHref,
   hasMultipleImages,
   images,
-  onActiveIndexChangeAction,
+  onActiveIndexChange,
   title,
 }: ListingMediaCardGalleryProps) {
   const router = useRouter();
@@ -56,14 +56,14 @@ export function ListingMediaCardGallery({
                 key={`${image}-${index}`}
                 onClick={(event) => {
                   if (detailsHref === undefined) {
-                    onActiveIndexChangeAction(index);
+                    onActiveIndexChange(index);
                     return;
                   }
 
                   event.preventDefault();
                   router.push(detailsHref);
                 }}
-                onMouseEnter={() => onActiveIndexChangeAction(index)}
+                onMouseEnter={() => onActiveIndexChange(index)}
                 type="button"
               />
             ))}

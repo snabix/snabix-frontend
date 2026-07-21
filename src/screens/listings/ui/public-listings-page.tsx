@@ -1,5 +1,7 @@
 "use client";
 
+import type { CategoryNode } from "@/src/entities/category";
+import type { PublicListingsInitialState } from "@/src/screens/listings/model/public-listings-initial-state";
 import { Container } from "@/src/shared/ui/container";
 import { PublicListingFilters } from "@/src/screens/home/ui/public-listing-filters";
 import { usePublicListings } from "../model/use-public-listings";
@@ -8,13 +10,24 @@ import { PublicListingsContent } from "./public-listings-content";
 import { PublicListingQuickFilters } from "./public-listing-quick-filters";
 
 type PublicListingsPageProps = {
+  initialCategory: CategoryNode | null;
+  initialCategoryError: string | null;
   initialCategoryId?: string;
+  initialListings: PublicListingsInitialState;
 };
 
 export function PublicListingsPage({
+  initialCategory,
+  initialCategoryError,
   initialCategoryId,
+  initialListings,
 }: PublicListingsPageProps) {
-  const listings = usePublicListings(initialCategoryId);
+  const listings = usePublicListings({
+    initialCategory,
+    initialCategoryError,
+    initialCategoryId,
+    initialState: initialListings,
+  });
 
   return (
     <main className="pb-12 pt-6">
@@ -52,7 +65,7 @@ export function PublicListingsPage({
               <PublicListingQuickFilters
                 filters={listings.draftFilters}
                 isLoading={listings.isLoading}
-                onChangeAction={listings.setDraftFilters}
+                onChange={listings.setDraftFilters}
               />
 
               <PublicListingsContent
@@ -61,8 +74,8 @@ export function PublicListingsPage({
                 isLoading={listings.isLoading}
                 items={listings.items}
                 meta={listings.paginationMeta}
-                onFavoriteToggleAction={listings.toggleFavorite}
-                onPageChangeAction={listings.setPage}
+                onFavoriteToggle={listings.toggleFavorite}
+                onPageChange={listings.setPage}
                 page={listings.page}
               />
             </div>
@@ -71,8 +84,8 @@ export function PublicListingsPage({
               <PublicListingFilters
                 filters={listings.draftFilters}
                 isLoading={listings.isLoading}
-                onChangeAction={listings.setDraftFilters}
-                onResetAction={listings.handleFiltersReset}
+                onChange={listings.setDraftFilters}
+                onReset={listings.handleFiltersReset}
               />
 
               <div className="min-w-0 flex-1">
@@ -82,8 +95,8 @@ export function PublicListingsPage({
                   isLoading={listings.isLoading}
                   items={listings.items}
                   meta={listings.paginationMeta}
-                  onFavoriteToggleAction={listings.toggleFavorite}
-                  onPageChangeAction={listings.setPage}
+                  onFavoriteToggle={listings.toggleFavorite}
+                  onPageChange={listings.setPage}
                   page={listings.page}
                 />
               </div>

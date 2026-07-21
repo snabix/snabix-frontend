@@ -31,8 +31,8 @@ const userAvatarSchema = z.object({
 export const userSchema = z.object({
   id: z.string(),
   email: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: nullableStringSchema,
+  lastName: nullableStringSchema,
   description: nullableStringSchema,
   dateOfBirth: nullableStringSchema,
   phoneNumber: nullableStringSchema,

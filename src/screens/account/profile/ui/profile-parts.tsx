@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import {
   CheckCircle2,
@@ -94,24 +92,6 @@ export function ProfileDataField({
           <Icon aria-hidden="true" size={18} />
         </div>
       </div>
-    </div>
-  );
-}
-
-export function ProfileEditField({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label: string;
-}) {
-  return (
-    <div className="grid gap-2">
-      <p className="pl-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-        {label}
-      </p>
-
-      {children}
     </div>
   );
 }

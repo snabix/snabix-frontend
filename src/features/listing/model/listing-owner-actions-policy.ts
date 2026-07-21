@@ -18,7 +18,7 @@ type BuildListingOwnerActionsPolicyOptions = {
   isArchiving?: boolean;
   isDeleting?: boolean;
   isSubmittingForReview?: boolean;
-  listing: Pick<ListingItem, "status">;
+  listing: Pick<ListingItem, "listingStatus">;
 };
 
 export function buildListingOwnerActionsPolicy({
@@ -27,8 +27,8 @@ export function buildListingOwnerActionsPolicy({
   isSubmittingForReview = false,
   listing,
 }: BuildListingOwnerActionsPolicyOptions): ListingOwnerActionsPolicy {
-  const isArchived = listing.status === LISTING_STATUS_ARCHIVED;
-  const isDraft = listing.status === LISTING_STATUS_DRAFT;
+  const isArchived = listing.listingStatus === LISTING_STATUS_ARCHIVED;
+  const isDraft = listing.listingStatus === LISTING_STATUS_DRAFT;
 
   return {
     archive: {

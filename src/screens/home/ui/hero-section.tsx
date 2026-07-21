@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Search, Sparkles } from "lucide-react";
-import { heroStats } from "@/src/shared/lib/mock-data";
+import { heroHighlights } from "@/src/screens/home/model/home-content";
 import { Button } from "@/src/shared/ui/shadcn/button";
 import { Input } from "@/src/shared/ui/shadcn/input";
 
@@ -65,23 +65,28 @@ export function HeroSection() {
               />
             </div>
           </div>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {heroStats.map((item) => (
+          <div className="mt-6 divide-y divide-[var(--border-soft)] border-y border-[var(--border-soft)]">
+            {heroHighlights.map((item) => (
               <div
-                key={item.label}
-                className="rounded-[24px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_76%,transparent)] px-5 py-5"
+                key={item.title}
+                className="grid gap-1 py-4 sm:grid-cols-[120px_1fr] sm:gap-4"
               >
-                <p className="font-heading text-3xl font-extrabold text-[var(--brand-deep)]">
-                  {item.value}
+                <p className="font-heading font-extrabold text-[var(--brand-deep)]">
+                  {item.title}
                 </p>
-                <p className="mt-1 text-sm text-[var(--text-muted)]">{item.label}</p>
+                <p className="text-sm leading-6 text-[var(--text-muted)]">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>
-          <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-[var(--accent)]">
-            Смотреть roadmap главной
+          <Link
+            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] hover:underline"
+            href="/listings"
+          >
+            Смотреть объявления
             <ArrowRight className="h-4 w-4" strokeWidth={2} />
-          </div>
+          </Link>
         </div>
       </div>
     </section>

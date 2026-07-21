@@ -35,9 +35,9 @@ type PrivacySettingsDialogsProps = {
   handleSubmit: UseFormHandleSubmit<ContactFormValues>;
   isSendingPasswordEmail: boolean;
   isSubmittingContacts: boolean;
-  onCloseAction: () => void;
-  onPasswordResetRequestAction: () => void;
-  onUpdateContactsAction: (values: ContactFormValues) => Promise<void>;
+  onClose: () => void;
+  onPasswordResetRequest: () => void;
+  onUpdateContacts: (values: ContactFormValues) => Promise<void>;
   register: UseFormRegister<ContactFormValues>;
   setFocus: UseFormSetFocus<ContactFormValues>;
   userEmail?: string | null;
@@ -50,9 +50,9 @@ export function PrivacySettingsDialogs({
   handleSubmit,
   isSendingPasswordEmail,
   isSubmittingContacts,
-  onCloseAction,
-  onPasswordResetRequestAction,
-  onUpdateContactsAction,
+  onClose,
+  onPasswordResetRequest,
+  onUpdateContacts,
   register,
   setFocus,
   userEmail,
@@ -62,7 +62,7 @@ export function PrivacySettingsDialogs({
   return (
     <>
       <Dialog
-        onOpenChange={(isOpen) => (!isOpen ? onCloseAction() : undefined)}
+        onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}
         open={editingField === "email"}
       >
         <DialogContent
@@ -87,7 +87,7 @@ export function PrivacySettingsDialogs({
             autoComplete="on"
             className="grid gap-4"
             noValidate
-            onSubmit={handleSubmit(onUpdateContactsAction)}
+            onSubmit={handleSubmit(onUpdateContacts)}
           >
             <FormField
               error={errors.email?.message}
@@ -109,7 +109,7 @@ export function PrivacySettingsDialogs({
             </FormField>
 
             <DialogFooter>
-              <Button onClick={onCloseAction} type="button" variant="outline">
+              <Button onClick={onClose} type="button" variant="outline">
                 Отменить
               </Button>
               <Button disabled={isSubmittingContacts} type="submit">
@@ -121,7 +121,7 @@ export function PrivacySettingsDialogs({
       </Dialog>
 
       <Dialog
-        onOpenChange={(isOpen) => (!isOpen ? onCloseAction() : undefined)}
+        onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}
         open={editingField === "phone"}
       >
         <DialogContent
@@ -146,7 +146,7 @@ export function PrivacySettingsDialogs({
             autoComplete="on"
             className="grid gap-4"
             noValidate
-            onSubmit={handleSubmit(onUpdateContactsAction)}
+            onSubmit={handleSubmit(onUpdateContacts)}
           >
             <FormField
               error={errors.phoneNumber?.message}
@@ -162,7 +162,7 @@ export function PrivacySettingsDialogs({
             </FormField>
 
             <DialogFooter>
-              <Button onClick={onCloseAction} type="button" variant="outline">
+              <Button onClick={onClose} type="button" variant="outline">
                 Отменить
               </Button>
               <Button disabled={isSubmittingContacts} type="submit">
@@ -174,7 +174,7 @@ export function PrivacySettingsDialogs({
       </Dialog>
 
       <Dialog
-        onOpenChange={(isOpen) => (!isOpen ? onCloseAction() : undefined)}
+        onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}
         open={editingField === "password"}
       >
         <DialogContent
@@ -198,7 +198,7 @@ export function PrivacySettingsDialogs({
 
           <DialogFooter>
             <Button
-              onClick={onCloseAction}
+              onClick={onClose}
               ref={passwordCancelButtonRef}
               type="button"
               variant="outline"
@@ -207,7 +207,7 @@ export function PrivacySettingsDialogs({
             </Button>
             <Button
               disabled={isSendingPasswordEmail || !userEmail}
-              onClick={onPasswordResetRequestAction}
+              onClick={onPasswordResetRequest}
               type="button"
             >
               {isSendingPasswordEmail ? "Отправляем..." : "Отправить письмо"}

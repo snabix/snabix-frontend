@@ -117,7 +117,7 @@ export function NotificationsSettingsPage() {
                     <NotificationPreferenceRow
                       item={item}
                       key={item.key}
-                      onToggleAction={toggleChannel}
+                      onToggle={toggleChannel}
                     />
                   ))}
                 </div>
@@ -148,10 +148,10 @@ export function NotificationsSettingsPage() {
 
 function NotificationPreferenceRow({
   item,
-  onToggleAction,
+  onToggle,
 }: {
   item: NotificationPreference;
-  onToggleAction: (
+  onToggle: (
     key: string,
     channel: "siteEnabled" | "emailEnabled",
     checked: boolean,
@@ -173,13 +173,13 @@ function NotificationPreferenceRow({
         checked={item.siteEnabled}
         disabled={item.isRequired}
         label="На сайте"
-        onCheckedChange={(checked) => onToggleAction(item.key, "siteEnabled", checked)}
+        onCheckedChange={(checked) => onToggle(item.key, "siteEnabled", checked)}
       />
       <DeliverySwitch
         checked={item.emailEnabled}
         disabled={item.isRequired}
         label="Email"
-        onCheckedChange={(checked) => onToggleAction(item.key, "emailEnabled", checked)}
+        onCheckedChange={(checked) => onToggle(item.key, "emailEnabled", checked)}
       />
     </article>
   );

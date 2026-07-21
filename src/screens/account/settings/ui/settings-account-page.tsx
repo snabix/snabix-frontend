@@ -109,8 +109,8 @@ export function AccountSettingsPage() {
         actionLabel="Деактивировать"
         description="Сейчас это только UI-подтверждение. Для рабочей деактивации нужно подключить backend: сменить статус пользователя, завершить сессии и скрыть публичную активность."
         isOpen={isDeactivateDialogOpen}
-        onConfirmAction={() => setIsDeactivateDialogOpen(false)}
-        onOpenChangeAction={setIsDeactivateDialogOpen}
+        onConfirm={() => setIsDeactivateDialogOpen(false)}
+        onOpenChange={setIsDeactivateDialogOpen}
         title="Деактивировать аккаунт?"
       />
 
@@ -118,8 +118,8 @@ export function AccountSettingsPage() {
         actionLabel="Удалить аккаунт"
         description="Для безопасности сейчас это только UI-подтверждение. После подключения backend мы отправим запрос удаления аккаунта здесь."
         isOpen={isDeleteDialogOpen}
-        onConfirmAction={() => setIsDeleteDialogOpen(false)}
-        onOpenChangeAction={setIsDeleteDialogOpen}
+        onConfirm={() => setIsDeleteDialogOpen(false)}
+        onOpenChange={setIsDeleteDialogOpen}
         title="Удалить аккаунт?"
       />
     </>

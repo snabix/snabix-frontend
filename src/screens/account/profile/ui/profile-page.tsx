@@ -155,10 +155,10 @@ export function ProfilePage() {
                     isConfirming={isConfirmingVerification}
                     isOpen={isVerificationDialogOpen}
                     isSending={isResendingVerification}
-                    onCodeChangeAction={handleVerificationCodeChange}
-                    onConfirmAction={handleConfirmVerification}
-                    onOpenChangeAction={setIsVerificationDialogOpen}
-                    onResendAction={handleResendVerification}
+                    onCodeChange={handleVerificationCodeChange}
+                    onConfirm={handleConfirmVerification}
+                    onOpenChange={setIsVerificationDialogOpen}
+                    onResend={handleResendVerification}
                     returnFocusRef={verifyEmailButtonRef}
                 />
             ) : null}

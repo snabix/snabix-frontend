@@ -70,9 +70,9 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
               isDeleting={isDeleting}
               isSubmittingForReview={isSubmittingForReview}
               listing={listing}
-              onArchiveAction={handleArchive}
-              onDeleteAction={() => setIsDeleteDialogOpen(true)}
-              onSubmitForReviewAction={handleSubmitForReview}
+              onArchive={handleArchive}
+              onDelete={() => setIsDeleteDialogOpen(true)}
+              onSubmitForReview={handleSubmitForReview}
               priceLabel={priceLabel}
             />
 
@@ -83,7 +83,7 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
                 <ListingDetailsStatusCard
                   expiresAt={expiresAt}
                   publishedAt={publishedAt}
-                  statusLabel={listing.statusLabel}
+                  statusLabel={listing.listingStatusLabel}
                 />
               </div>
             </section>
@@ -95,8 +95,8 @@ export function ListingDetailsPage({ listingId }: ListingDetailsPageProps) {
         isDeleting={isDeleting}
         isOpen={isDeleteDialogOpen}
         listingTitle={listing.title}
-        onConfirmAction={handleDeleteConfirm}
-        onOpenChangeAction={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onOpenChange={setIsDeleteDialogOpen}
       />
     </>
   );

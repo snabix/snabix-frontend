@@ -23,8 +23,8 @@ vi.mock("@/src/entities/category/api/list-categories", () => ({
 
 const rootCategory: CategoryNode = {
   id: 1,
-  catalogType: 1,
-  catalogTypeLabel: "Товары",
+  catalogKind: "product",
+  catalogKindLabel: "Товары",
   parentId: null,
   name: "Электроника",
   slug: "electronics",
@@ -42,8 +42,8 @@ const branchCategory: CategoryNode = {
   children: [
     {
       id: 2,
-      catalogType: 1,
-      catalogTypeLabel: "Товары",
+      catalogKind: "product",
+      catalogKindLabel: "Товары",
       parentId: 1,
       name: "Смартфоны",
       slug: "smartphones",
@@ -78,8 +78,8 @@ const categoryAttributes: CategoryAttributeDefinition[] = [
     showInCard: true,
     slug: "brand",
     sortOrder: 10,
-    type: 4,
-    typeLabel: "Выбор",
+    valueType: "select",
+    valueTypeLabel: "Выбор",
     unit: null,
   },
 ];

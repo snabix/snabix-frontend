@@ -1,7 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.E2E_PORT ?? 3000);
+const apiPort = Number(process.env.E2E_API_PORT ?? 4010);
 const baseURL = `http://localhost:${port}`;
+const apiOrigin = `http://127.0.0.1:${apiPort}`;
+const distDir = process.env.E2E_DIST_DIR?.trim() || ".next";
 
 export default defineConfig({
   expect: {
@@ -26,10 +29,18 @@ export default defineConfig({
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
-  webServer: {
-    command: `npm run dev -- --port ${port}`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    url: baseURL,
-  },
+  webServer: [
+    {
+      command: `E2E_API_PORT=${apiPort} node tests/e2e/fixtures/server-api.mjs`,
+      reuseExistingServer: false,
+      timeout: 30_000,
+      url: `${apiOrigin}/health`,
+    },
+    {
+      command: `NEXT_DIST_DIR=${distDir} NEXT_PUBLIC_API_URL=${apiOrigin}/api/v1 npm run dev -- --port ${port}`,
+      reuseExistingServer: false,
+      timeout: 120_000,
+      url: baseURL,
+    },
+  ],
 });

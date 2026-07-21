@@ -3,8 +3,8 @@ import {
   loadBlogPost,
   loadBlogPosts,
 } from "@/src/screens/blog/lib/load-blog-content";
-import { fallbackBlogPosts } from "@/src/screens/blog/model/fallback-posts";
 import type { BlogPost } from "@/src/screens/blog/model/types";
+import { blogPostFixture } from "@/tests/fixtures/blog-post";
 
 const {
   listRuntimeBlogPostsMock,
@@ -19,14 +19,8 @@ vi.mock("@/src/screens/blog/api/news-runtime-source", () => ({
   showRuntimeBlogPost: showRuntimeBlogPostMock,
 }));
 
-const fallbackPost = fallbackBlogPosts[0];
-
-if (!fallbackPost) {
-  throw new Error("Blog fallback fixture must contain at least one post.");
-}
-
 const runtimePost: BlogPost = {
-  ...fallbackPost,
+  ...blogPostFixture,
   slug: "runtime-post",
   title: "Runtime API post",
 };
@@ -62,7 +56,7 @@ describe("blog content loader", () => {
   it("keeps post detail missing when runtime API is unavailable", async () => {
     showRuntimeBlogPostMock.mockRejectedValue(new Error("API unavailable"));
 
-    await expect(loadBlogPost(fallbackPost.slug)).resolves.toBeNull();
+    await expect(loadBlogPost(blogPostFixture.slug)).resolves.toBeNull();
     await expect(loadBlogPost("missing-post")).resolves.toBeNull();
   });
 });

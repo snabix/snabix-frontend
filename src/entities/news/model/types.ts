@@ -12,7 +12,6 @@ export type NewsAuthor = {
 };
 
 export type NewsContentBlock = {
-  typeValue: number;
   typeLabel: string;
   sortOrder: number;
   id: string;
@@ -80,8 +79,8 @@ export type NewsContentBlock = {
 
 export type NewsPostItem = {
   id: string;
-  status: number;
-  statusLabel: string;
+  publicationStatus: "draft" | "published" | "archived";
+  publicationStatusLabel: string;
   title: string;
   slug: string;
   category: string;

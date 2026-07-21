@@ -11,15 +11,15 @@ import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
 type HeaderSessionActionsProps = {
   isSearchOpen: boolean;
   isPending: boolean;
-  onSearchOpenChangeAction: (isOpen: boolean) => void;
-  onLogoutAction: () => void;
+  onSearchOpenChange: (isOpen: boolean) => void;
+  onLogout: () => void;
 };
 
 export function HeaderSessionActions({
   isSearchOpen,
   isPending,
-  onSearchOpenChangeAction,
-  onLogoutAction,
+  onSearchOpenChange,
+  onLogout,
 }: HeaderSessionActionsProps) {
   const user = useUserStore((state) => state.user);
   const hasCheckedSession = useUserStore((state) => state.hasCheckedSession);
@@ -39,7 +39,7 @@ export function HeaderSessionActions({
 
       <HeaderSearchMenu
         isOpen={isSearchOpen}
-        onOpenChangeAction={onSearchOpenChangeAction}
+        onOpenChange={onSearchOpenChange}
       />
 
       <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
@@ -55,7 +55,7 @@ export function HeaderSessionActions({
       ) : user ? (
         <HeaderUserMenu
           isPending={isPending}
-          onLogoutAction={onLogoutAction}
+          onLogout={onLogout}
           user={user}
         />
       ) : (

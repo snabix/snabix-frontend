@@ -1,7 +1,7 @@
 export type CategoryNode = {
   id: string | number;
-  catalogType: number;
-  catalogTypeLabel: string;
+  catalogKind: "product" | "service";
+  catalogKindLabel: string;
   parentId: string | number | null;
   name: string;
   slug: string;
@@ -20,8 +20,8 @@ export type CategoryAttributeDefinition = {
   isInherited: boolean;
   name: string;
   slug: string;
-  type: number;
-  typeLabel: string;
+  valueType: "text" | "number" | "boolean" | "select" | "multiSelect" | "date";
+  valueTypeLabel: string;
   unit: string | null;
   description: string | null;
   placeholder: string | null;

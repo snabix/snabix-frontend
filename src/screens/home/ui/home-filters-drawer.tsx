@@ -4,18 +4,18 @@ type HomeFiltersDrawerProps = {
   filters: PublicListingFiltersState;
   isLoading: boolean;
   isOpen: boolean;
-  onChangeAction: (filters: PublicListingFiltersState) => void;
-  onCloseAction: () => void;
-  onResetAction: () => void;
+  onChange: (filters: PublicListingFiltersState) => void;
+  onClose: () => void;
+  onReset: () => void;
 };
 
 export function HomeFiltersDrawer({
   filters,
   isLoading,
   isOpen,
-  onChangeAction,
-  onCloseAction,
-  onResetAction,
+  onChange,
+  onClose,
+  onReset,
 }: HomeFiltersDrawerProps) {
   return (
     <div
@@ -31,7 +31,7 @@ export function HomeFiltersDrawer({
           "absolute inset-0 bg-[color-mix(in_srgb,var(--brand-deep)_42%,transparent)] backdrop-blur-sm transition-opacity",
           isOpen ? "opacity-100" : "opacity-0",
         ].join(" ")}
-        onClick={onCloseAction}
+        onClick={onClose}
         type="button"
       />
 
@@ -45,8 +45,8 @@ export function HomeFiltersDrawer({
         <PublicListingFilters
           filters={filters}
           isLoading={isLoading}
-          onChangeAction={onChangeAction}
-          onResetAction={onResetAction}
+          onChange={onChange}
+          onReset={onReset}
         />
       </aside>
     </div>

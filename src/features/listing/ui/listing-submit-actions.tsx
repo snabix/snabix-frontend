@@ -1,5 +1,5 @@
-import { LoaderCircle } from "lucide-react";
 import { Button } from "@/src/shared/ui/shadcn/button";
+import { Spinner } from "@/src/shared/ui/shadcn/spinner";
 
 type ListingSubmitActionsProps = {
   isDisabled: boolean;
@@ -7,8 +7,8 @@ type ListingSubmitActionsProps = {
   isUploadingMedia: boolean;
   mediaRetryListingId: string | null;
   mode: "create" | "edit";
-  onRetryMediaUploadAction: () => void;
-  onSubmitAction: (saveAsDraft?: boolean) => void;
+  onRetryMediaUpload: () => void;
+  onSubmit: (saveAsDraft?: boolean) => void;
 };
 
 export function ListingSubmitActions({
@@ -17,8 +17,8 @@ export function ListingSubmitActions({
   isUploadingMedia,
   mediaRetryListingId,
   mode,
-  onRetryMediaUploadAction,
-  onSubmitAction,
+  onRetryMediaUpload,
+  onSubmit,
 }: ListingSubmitActionsProps) {
   const isBusy = isSubmitting || isUploadingMedia;
 
@@ -27,13 +27,13 @@ export function ListingSubmitActions({
       <Button
         className="w-full"
         disabled={isDisabled}
-        onClick={() => onSubmitAction(false)}
+        onClick={() => onSubmit(false)}
         size="lg"
         type="button"
       >
         {isBusy ? (
           <>
-            <LoaderCircle className="animate-spin" size={18} />
+            <Spinner aria-hidden="true" className="size-[18px]" />
             {isUploadingMedia ? "Загружаем фото" : "Сохраняем"}
           </>
         ) : mode === "create" ? (
@@ -47,7 +47,7 @@ export function ListingSubmitActions({
         <Button
           className="w-full"
           disabled={isDisabled}
-          onClick={() => onSubmitAction(true)}
+          onClick={() => onSubmit(true)}
           size="lg"
           type="button"
           variant="outline"
@@ -60,14 +60,14 @@ export function ListingSubmitActions({
         <Button
           className="w-full"
           disabled={isDisabled}
-          onClick={onRetryMediaUploadAction}
+          onClick={onRetryMediaUpload}
           size="lg"
           type="button"
           variant="secondary"
         >
           {isUploadingMedia ? (
             <>
-              <LoaderCircle className="animate-spin" size={18} />
+              <Spinner aria-hidden="true" className="size-[18px]" />
               Загружаем фото
             </>
           ) : (

@@ -9,6 +9,7 @@ npm run lint
 npm run test
 npm run test:e2e:full
 npm run build
+npm run bundle:report
 ```
 
 Production image собирается как Next standalone runtime и запускается
@@ -57,11 +58,14 @@ Production audit должен завершаться без high/critical adviso
 - Избранное работает.
 - Настройки уведомлений загружаются.
 - Логотип корректен в светлой и темной теме.
+- Light/dark/system применяются до первого paint без вспышки другой темы.
+- Browser console не содержит hydration или script-render warnings.
 - Auth-формы предлагают browser/password-manager autofill для email и пароля.
 - Sign in и редактирование email в настройках выполняются только клавиатурой.
 - При открытии privacy/verification dialog фокус находится внутри модального
   окна, `Escape` закрывает его и возвращает фокус на исходную кнопку.
 - `tests/e2e/auth-accessibility.spec.ts` проходит без critical axe violations.
+- `tests/e2e/theme-hydration.spec.ts` проходит для light/dark/system.
 
 ## Performance Budget Public Listings
 
@@ -72,6 +76,19 @@ Production audit должен завершаться без high/critical adviso
 - First-load JS для публичной витрины: не выше 250 KB gzip.
 - Количество API-запросов при первом открытии: не больше 4.
 - Backend query count для списка объявлений: не больше 12 запросов.
+
+Автоматизированный browser замер запускается против HTTPS staging:
+
+```bash
+PUBLIC_STOREFRONT_URL=https://staging.example.com/ npm run performance:public
+```
+
+Команда использует mobile profile и завершится с ошибкой при превышении TTFB,
+LCP, first-load JS или browser API request budget. Server Components выполняют
+два серверных запроса на первом открытии главной (категории и объявления);
+`public-storefront-ssr.spec.ts` отдельно гарантирует отсутствие повторного
+browser-запроса списка после hydration. Backend query budget фиксируется
+feature-тестом public listing query.
 
 Если бюджет превышен, релиз можно продолжить только с коротким комментарием причины,
 ссылкой на задачу оптимизации и владельцем исправления.

@@ -63,7 +63,7 @@ export function EditListingPage({ listingId }: EditListingPageProps) {
     <ListingForm
       initialListing={listing}
       mode="edit"
-      onSubmitAction={(payload) => updateListing(listing.id, payload as UpdateListingPayload)}
+      onSubmit={(payload) => updateListing(listing.id, payload as UpdateListingPayload)}
     />
   );
 }

@@ -1,51 +1,49 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { useCategoryStore } from "@/src/entities/category";
-import type { PublicListingItem } from "@/src/entities/listing";
-import { listPublicListings } from "@/src/features/listing/api";
+import type { CategoryNode } from "@/src/entities/category";
+import { listPublicListings } from "@/src/features/listing/api/list-public-listings";
 import { useFavoriteListings } from "@/src/features/listing/model/use-favorite-listings";
-import type { ApiPaginationMeta } from "@/src/shared/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import {
   defaultPublicListingFilters,
   type PublicListingFiltersState,
 } from "@/src/screens/home/ui/public-listing-filters";
 import { toPublicListingParams } from "../lib/public-listing-filter-params";
+import {
+  CATEGORY_LISTINGS_PER_PAGE,
+  emptyPublicListingsData,
+  type PublicListingsInitialState,
+} from "./public-listings-initial-state";
 
-const publicListingsPerPage = 15;
+const defaultPublicListingsData = emptyPublicListingsData(
+  CATEGORY_LISTINGS_PER_PAGE,
+);
 
-export const defaultPublicListingsPaginationMeta: ApiPaginationMeta = {
-  currentPage: 1,
-  from: null,
-  lastPage: 1,
-  perPage: publicListingsPerPage,
-  to: null,
-  total: 0,
+type UsePublicListingsOptions = {
+  initialCategory: CategoryNode | null;
+  initialCategoryError: string | null;
+  initialCategoryId?: string;
+  initialState: PublicListingsInitialState;
 };
 
-export function usePublicListings(initialCategoryId?: string) {
-  const [items, setItems] = useState<PublicListingItem[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export function usePublicListings({
+  initialCategory,
+  initialCategoryError,
+  initialCategoryId,
+  initialState,
+}: UsePublicListingsOptions) {
+  const [items, setItems] = useState(initialState.data.items);
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    initialState.errorMessage,
+  );
   const { favoriteListingIds, setFavoriteListingIds, toggleFavorite } = useFavoriteListings();
-  const [paginationMeta, setPaginationMeta] = useState<ApiPaginationMeta>(defaultPublicListingsPaginationMeta);
+  const [paginationMeta, setPaginationMeta] = useState(initialState.data.meta);
   const [draftFilters, setDraftFilters] = useState<PublicListingFiltersState>(defaultPublicListingFilters);
   const [appliedFilters, setAppliedFilters] = useState<PublicListingFiltersState>(draftFilters);
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [, startFiltersTransition] = useTransition();
-  const branches = useCategoryStore((state) => state.branches);
-  const branchStatuses = useCategoryStore((state) => state.branchStatuses);
-  const branchErrorMessages = useCategoryStore((state) => state.branchErrorMessages);
-  const loadBranch = useCategoryStore((state) => state.loadBranch);
-  const selectedCategory = initialCategoryId ? branches[initialCategoryId] ?? null : null;
-  const selectedCategoryStatus = initialCategoryId ? branchStatuses[initialCategoryId] ?? "idle" : "idle";
-  const selectedCategoryError = initialCategoryId ? branchErrorMessages[initialCategoryId] ?? null : null;
-
-  useEffect(() => {
-    if (initialCategoryId) {
-      void loadBranch(initialCategoryId);
-    }
-  }, [initialCategoryId, loadBranch]);
+  const canRunClientRequest = useRef(false);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -59,6 +57,14 @@ export function usePublicListings(initialCategoryId?: string) {
   }, [draftFilters]);
 
   useEffect(() => {
+    if (!canRunClientRequest.current) {
+      const timeoutId = window.setTimeout(() => {
+        canRunClientRequest.current = true;
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+
     let isMounted = true;
 
     const loadItems = async () => {
@@ -69,7 +75,7 @@ export function usePublicListings(initialCategoryId?: string) {
           ...toPublicListingParams(appliedFilters),
           categoryId: initialCategoryId,
           page,
-          perPage: publicListingsPerPage,
+          perPage: CATEGORY_LISTINGS_PER_PAGE,
         });
 
         if (!isMounted) {
@@ -98,7 +104,7 @@ export function usePublicListings(initialCategoryId?: string) {
 
         setErrorMessage(message);
         setItems([]);
-        setPaginationMeta(defaultPublicListingsPaginationMeta);
+        setPaginationMeta(defaultPublicListingsData.meta);
         toast.error(message);
       } finally {
         if (isMounted) {
@@ -129,9 +135,11 @@ export function usePublicListings(initialCategoryId?: string) {
     items,
     page,
     paginationMeta,
-    selectedCategory,
-    selectedCategoryError,
-    selectedCategoryStatus,
+    selectedCategory: initialCategory,
+    selectedCategoryError: initialCategoryError,
+    selectedCategoryStatus: initialCategoryError !== null
+      ? ("error" as const)
+      : ("success" as const),
     setDraftFilters,
     setPage,
     toggleFavorite,

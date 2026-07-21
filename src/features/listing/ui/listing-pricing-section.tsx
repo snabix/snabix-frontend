@@ -1,5 +1,8 @@
 import type { ListingFormState } from "@/src/features/listing/model/use-listing-form-state";
-import { LISTING_TYPE_PRODUCT } from "@/src/entities/listing";
+import {
+  LISTING_TYPE_PRODUCT,
+  type ListingCondition,
+} from "@/src/entities/listing";
 import { conditionOptions } from "@/src/features/listing/model/listing-form-options";
 import {
   ListingFormField,
@@ -47,7 +50,7 @@ export function ListingPricingSection({
         {activeType === LISTING_TYPE_PRODUCT ? (
           <ListingFormField label="Состояние товара">
             <ListingFormSelect
-              onChangeAction={(value) => setCondition(Number(value))}
+              onChange={(value) => setCondition(value as ListingCondition)}
               value={condition}
             >
               {conditionOptions.map((option) => (

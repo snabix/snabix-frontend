@@ -62,11 +62,11 @@ export function ListingMediaGallery({
         hiddenImagesCount={hiddenImagesCount}
         images={images}
         isPreviewOpen={isPreviewOpen}
-        onActiveIndexChangeAction={setActiveIndex}
-        onNextAction={showNextImage}
-        onOpenPreviewAction={openPreview}
-        onPreviewOpenChangeAction={setIsPreviewOpen}
-        onPreviousAction={showPreviousImage}
+        onActiveIndexChange={setActiveIndex}
+        onNext={showNextImage}
+        onOpenPreview={openPreview}
+        onPreviewOpenChange={setIsPreviewOpen}
+        onPrevious={showPreviousImage}
         previewImages={previewImages}
         title={title}
       />
@@ -80,7 +80,7 @@ export function ListingMediaGallery({
       detailsHref={detailsHref}
       hasMultipleImages={hasMultipleImages}
       images={images}
-      onActiveIndexChangeAction={setActiveIndex}
+      onActiveIndexChange={setActiveIndex}
       title={title}
     />
   );

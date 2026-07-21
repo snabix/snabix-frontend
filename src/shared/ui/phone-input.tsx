@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { formatPhoneInputValue } from "@/src/shared/lib/format-phone-number";
 import { Input } from "@/src/shared/ui/shadcn/input";

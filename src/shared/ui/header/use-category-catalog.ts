@@ -3,12 +3,12 @@ import { useCategoryStore } from "@/src/entities/category";
 
 type UseCategoryCatalogOptions = {
   isOpen: boolean;
-  onToggleAction: () => void;
+  onToggle: () => void;
 };
 
 export function useCategoryCatalog({
   isOpen,
-  onToggleAction,
+  onToggle,
 }: UseCategoryCatalogOptions) {
   const rootHoverTimeoutRef = useRef<number | null>(null);
   const [activeRootId, setActiveRootId] = useState<string | null>(null);
@@ -56,14 +56,14 @@ export function useCategoryCatalog({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onToggleAction();
+        onToggle();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onToggleAction]);
+  }, [isOpen, onToggle]);
 
   useEffect(() => {
     if (!isOpen || resolvedRootId === null) {

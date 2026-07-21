@@ -2,6 +2,7 @@ import type { useListingAttributeState } from "@/src/features/listing/model/use-
 import type { useListingCategoryState } from "@/src/features/listing/model/use-listing-category-state";
 import type { useListingMediaState } from "@/src/features/listing/model/use-listing-media-state";
 import type { useListingSubmit } from "@/src/features/listing/model/use-listing-submit";
+import type { ListingKind } from "@/src/entities/listing";
 
 type UseListingFormCoordinatorOptions = {
   attributeState: Pick<
@@ -26,7 +27,7 @@ export function useListingFormCoordinator({
   mediaState,
   submitState,
 }: UseListingFormCoordinatorOptions) {
-  const handleTypeChange = (type: number) => {
+  const handleTypeChange = (type: ListingKind) => {
     categoryState.handleTypeChange(type);
     attributeState.resetAttributeValues();
   };

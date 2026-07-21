@@ -39,7 +39,7 @@ test("redirects when a private request fails with csrf expiration", async ({ pag
   api.authenticated = false;
   api.unauthorizedStatus = 419;
 
-  await page.getByLabel("Фильтр по статусу объявления").selectOption("1");
+  await page.getByLabel("Фильтр по статусу объявления").selectOption("draft");
 
   await expect(page).toHaveURL(/\/sign-in\?redirectTo=%2Faccount%2Flistings/);
   await expect(page.getByRole("heading", { name: "Вход" })).toBeVisible();

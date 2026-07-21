@@ -27,10 +27,27 @@ This version has breaking changes - APIs, conventions, and file structure may al
 
 - Основной UI-kit: shadcn/Radix components в `src/shared/ui/shadcn`.
 - Ant Design не используется и не должен возвращаться без отдельного решения.
+- Новые shadcn-компоненты добавляй точечно под подтвержденное повторное
+  использование. Не мигрируй существующий Radix-base на Base UI массово без
+  отдельного ADR, accessibility smoke и измерения bundle.
 - Палитра проекта: OAT `#FFF0E1` и INDIGO `#C8C3FF` через CSS variables.
 - Не добавляй случайные hardcoded цвета, если можно использовать существующие CSS variables.
 - Все интерактивные действия должны иметь понятные hover/focus/disabled/loading states.
 - Для destructive actions используй подтверждающий dialog, а не `window.confirm`, когда это часть пользовательского flow.
+
+## Server и Client Components
+
+- `"use client"` обозначает client entry point, а не каждый файл с JSX или
+  обработчиком события. Ставь директиву только там, где компонент напрямую
+  импортируется Server Component и ему нужны state/effect/context, browser API
+  или интерактивная библиотека.
+- Presentation leaf, импортируемый только из существующего client entry point,
+  должен оставаться без собственной директивы.
+- Обычные callback props называются `onChange`, `onRetry`, `onOpenChange`,
+  `onSubmit`. Суффикс `Action` зарезервирован для настоящих Server Actions с
+  `"use server"` и не используется в именах `on*`.
+- После изменения boundaries запускай `npm run architecture:client`. Увеличение
+  budget требует измерения browser JS и явного обоснования в документации.
 
 ## API И Сессия
 
@@ -39,6 +56,8 @@ This version has breaking changes - APIs, conventions, and file structure may al
 - При `401` и `419` очищай локальное session state и используй единый auth-event flow.
 - Не доверяй backend response shape напрямую в UI. Используй API adapters, unwrap/mappers и типы.
 - Backend lists API для объявлений использует контракт `data.items` + `data.meta`; frontend adapters должны учитывать пагинацию.
+- JSON-поля следуют `.docs/API_DTO_CONTRACTS.md` backend: `lowerCamelCase`, semantic string enums, `...Id`, ISO 8601 `...At`, money как `...AmountMinor` + `...Currency`.
+- Deprecated numeric/generic aliases разрешены только внутри `src/shared/api/schemas` compatibility adapters до указанной backend датой границы. Entities, features и screens не должны хранить или отправлять `type/status/price/currency` вместо канонических полей объявления.
 
 ## Auth
 
@@ -76,6 +95,8 @@ This version has breaking changes - APIs, conventions, and file structure may al
 
 - Новая страница подключена через App Router корректно.
 - Client component помечен `"use client"` только когда реально нужен state/effect/browser API.
+- Обычные callbacks не используют суффикс `Action`; client boundary budget
+  проходит через `npm run architecture:client`.
 - API adapter синхронизирован с backend DTO.
 - Loading, empty, error и success states не забыты.
 - Mobile layout не получает горизонтальный scroll.

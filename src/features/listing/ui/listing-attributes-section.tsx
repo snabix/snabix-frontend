@@ -23,8 +23,8 @@ export function ListingAttributesSection({
       attributeValues={attributeValues}
       groupedAttributes={groupedAttributes}
       isLoading={isLoadingBranch || isLoadingAttributes}
-      onAttributeChangeAction={handleAttributeChange}
-      onMultiselectChangeAction={handleMultiselectChange}
+      onAttributeChange={handleAttributeChange}
+      onMultiselectChange={handleMultiselectChange}
     />
   ) : (
     <ListingFormInlineHint text="Сначала выберите категорию и подкатегорию, чтобы загрузить характеристики." />

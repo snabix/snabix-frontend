@@ -8,11 +8,11 @@ import { Skeleton } from "@/src/shared/ui/skeleton";
 type CategoryCatalogRootsProps = {
   activeRootId: string | null;
   hasLoadedCategories: boolean;
-  onRetryAction: () => void;
-  onCategorySelectAction: () => void;
-  onRootClickAction: (categoryId: string) => void;
-  onRootFocusAction: (categoryId: string) => void;
-  onRootHoverAction: (categoryId: string) => void;
+  onRetry: () => void;
+  onCategorySelect: () => void;
+  onRootClick: (categoryId: string) => void;
+  onRootFocus: (categoryId: string) => void;
+  onRootHover: (categoryId: string) => void;
   roots: CategoryNode[];
   rootsErrorMessage: string | null;
   rootsStatus: "idle" | "loading" | "success" | "error";
@@ -21,11 +21,11 @@ type CategoryCatalogRootsProps = {
 export function CategoryCatalogRoots({
   activeRootId,
   hasLoadedCategories,
-  onCategorySelectAction,
-  onRetryAction,
-  onRootClickAction,
-  onRootFocusAction,
-  onRootHoverAction,
+  onCategorySelect,
+  onRetry,
+  onRootClick,
+  onRootFocus,
+  onRootHover,
   roots,
   rootsErrorMessage,
   rootsStatus,
@@ -50,7 +50,7 @@ export function CategoryCatalogRoots({
           </p>
           <Button
             className="mt-4 rounded-[16px]"
-            onClick={onRetryAction}
+            onClick={onRetry}
             variant="outline"
           >
             Повторить
@@ -77,11 +77,11 @@ export function CategoryCatalogRoots({
                   ].join(" ")}
                   href={`/?categoryId=${categoryId}`}
                   onClick={() => {
-                    onRootClickAction(categoryId);
-                    onCategorySelectAction();
+                    onRootClick(categoryId);
+                    onCategorySelect();
                   }}
-                  onFocus={() => onRootFocusAction(categoryId)}
-                  onMouseEnter={() => onRootHoverAction(categoryId)}
+                  onFocus={() => onRootFocus(categoryId)}
+                  onMouseEnter={() => onRootHover(categoryId)}
                 >
                   {category.icon ? (
                     <span

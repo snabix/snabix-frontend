@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   Archive,
@@ -25,10 +23,10 @@ type ListingManagementMenuProps = {
   isArchiving?: boolean;
   isDeleting?: boolean;
   isSubmittingForReview?: boolean;
-  listing: Pick<ListingItem, "status">;
-  onArchiveAction: () => void;
-  onDeleteAction: () => void;
-  onSubmitForReviewAction: () => void;
+  listing: Pick<ListingItem, "listingStatus">;
+  onArchive: () => void;
+  onDelete: () => void;
+  onSubmitForReview: () => void;
 };
 
 export function ListingManagementMenu({
@@ -37,9 +35,9 @@ export function ListingManagementMenu({
   isDeleting = false,
   isSubmittingForReview = false,
   listing,
-  onArchiveAction,
-  onDeleteAction,
-  onSubmitForReviewAction,
+  onArchive,
+  onDelete,
+  onSubmitForReview,
 }: ListingManagementMenuProps) {
   const policy = buildListingOwnerActionsPolicy({
     isArchiving,
@@ -47,7 +45,7 @@ export function ListingManagementMenu({
     isSubmittingForReview,
     listing,
   });
-  const isArchived = listing.status === LISTING_STATUS_ARCHIVED;
+  const isArchived = listing.listingStatus === LISTING_STATUS_ARCHIVED;
 
   return (
     <DropdownMenu>
@@ -75,7 +73,7 @@ export function ListingManagementMenu({
           <DropdownMenuItem
             className="rounded-2xl"
             disabled={policy.archive.isDisabled}
-            onClick={onArchiveAction}
+            onClick={onArchive}
           >
             <Archive size={17} />
             <span>{isArchived ? "Уже в архиве" : (isArchiving ? "Архивируем..." : "Архивировать")}</span>
@@ -86,7 +84,7 @@ export function ListingManagementMenu({
           <DropdownMenuItem
             className="rounded-2xl"
             disabled={policy.submitForReview.isDisabled}
-            onClick={onSubmitForReviewAction}
+            onClick={onSubmitForReview}
           >
             <ChevronRight size={17} />
             <span>{isSubmittingForReview ? "Отправляем..." : "Отправить на проверку"}</span>
@@ -99,7 +97,7 @@ export function ListingManagementMenu({
           <DropdownMenuItem
             className="rounded-2xl text-[var(--danger)] focus:text-[var(--danger)]"
             disabled={policy.delete.isDisabled}
-            onClick={onDeleteAction}
+            onClick={onDelete}
           >
             <Trash2 size={17} />
             <span>Удалить объявление</span>

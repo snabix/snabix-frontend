@@ -102,7 +102,7 @@ export function SignInForm() {
           error={errors.password?.message}
           id="sign-in-password"
           label="Пароль"
-          labelAction={(
+          labelAccessory={(
             <Link
               className="text-sm font-semibold text-[var(--accent)]"
               href="/forgot-password"

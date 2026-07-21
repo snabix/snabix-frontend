@@ -31,20 +31,20 @@ test("critical marketplace path from sign in to listing management", async ({ pa
   await expect(page.getByRole("heading", { name: "Критический ноутбук SNABIX" })).toBeVisible();
   expect(api.lastListingPayload).toMatchObject({
     categoryId: "11",
-    price: 99000,
+    priceAmountMinor: 99000,
     saveAsDraft: true,
     title: "Критический ноутбук SNABIX",
   });
   expect(api.mediaUploads).toBe(1);
 
   await page.goto("/");
-  await expect(page.getByText("Критический ноутбук SNABIX")).toBeVisible();
   await page.getByRole("button", { name: "Фильтры", exact: true }).click();
   await page.getByPlaceholder("Регион, например Краснодарский край").fill("Московская область");
   await page.getByPlaceholder("Город, например Краснодар").fill("Москва");
 
   await expect.poll(() => api.lastPublicQuery.get("regionQuery"), { timeout: 20_000 }).toBe("Московская область");
   await expect.poll(() => api.lastPublicQuery.get("cityQuery"), { timeout: 20_000 }).toBe("Москва");
+  await expect(page.getByText("Критический ноутбук SNABIX")).toBeVisible();
   await page.getByLabel("Закрыть фильтры").click();
 
   await page.getByRole("button", { name: "Добавить объявление в избранное" }).click();
@@ -68,8 +68,8 @@ test("critical marketplace path from sign in to listing management", async ({ pa
 
   await expect(page.getByText("Объявление перенесено в архив.")).toBeVisible();
   expect(api.listing).toMatchObject({
-    status: 5,
-    statusLabel: "В архиве",
+    listingStatus: "archived",
+    listingStatusLabel: "В архиве",
     title: "Критический ноутбук SNABIX обновлен",
   });
 });

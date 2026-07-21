@@ -1,4 +1,9 @@
-import type { ListingAttributeValue, ListingItem } from "@/src/entities/listing";
+import type {
+  ListingAttributeValue,
+  ListingCondition,
+  ListingItem,
+  ListingKind,
+} from "@/src/entities/listing";
 import {
   listingItemSchema,
   postData,
@@ -8,12 +13,12 @@ export type { ListingAttributeValue, ListingItem } from "@/src/entities/listing"
 
 export type CreateListingPayload = {
   categoryId: string | number;
-  type: number;
-  condition: number | null;
+  listingKind: ListingKind;
+  itemCondition: ListingCondition | null;
   title: string;
   description: string;
-  price: number | null;
-  currency: string | null;
+  priceAmountMinor: number | null;
+  priceCurrency: string | null;
   isNegotiable: boolean;
   contactName?: string | null;
   contactPhone?: string | null;

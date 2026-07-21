@@ -59,7 +59,7 @@ export function Header() {
             <nav className="hidden items-center gap-1 lg:flex">
               <CatalogToggleButton
                 isOpen={isCatalogOpen}
-                onToggleAction={toggleCatalog}
+                onToggle={toggleCatalog}
               />
               <HeaderLink href="/about">О проекте</HeaderLink>
               <HeaderLink href="/blog">Новости</HeaderLink>
@@ -70,8 +70,8 @@ export function Header() {
             <HeaderSessionActions
               isSearchOpen={isSearchOpen}
               isPending={isPending}
-              onSearchOpenChangeAction={setIsSearchOpen}
-              onLogoutAction={handleLogout}
+              onSearchOpenChange={setIsSearchOpen}
+              onLogout={handleLogout}
             />
           </div>
         </div>
@@ -79,7 +79,7 @@ export function Header() {
 
       <CategoryCatalog
         isOpen={isCatalogOpen}
-        onToggleAction={toggleCatalog}
+        onToggle={toggleCatalog}
         topOffset={catalogTopOffset}
       />
     </header>

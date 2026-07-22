@@ -22,7 +22,7 @@ export function CategoryBranchPanel({
 
   if (status === "loading" && branch === null) {
     return (
-      <section className="mt-6 rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_74%,transparent)] p-5">
+      <section className="mt-6 border-y border-[var(--border-soft)] py-5">
         <Skeleton className="h-6 w-2/5" />
         <div className="mt-4 flex flex-wrap gap-2">
           <Skeleton className="h-10 w-32" />
@@ -35,7 +35,7 @@ export function CategoryBranchPanel({
 
   if (status === "error" && branch === null) {
     return (
-      <section className="mt-6 rounded-[30px] border border-dashed border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_74%,transparent)] p-5 text-sm font-semibold text-[var(--text-muted)]">
+      <section className="mt-6 border-y border-dashed border-[var(--border-soft)] py-5 text-sm font-semibold text-[var(--text-muted)]">
         {errorMessage ?? "Не удалось загрузить ветку категории."}
       </section>
     );
@@ -48,7 +48,7 @@ export function CategoryBranchPanel({
   const breadcrumbs = findCategoryPath(branch, selectedCategoryId) ?? [branch];
 
   return (
-    <section className="mt-6 rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] p-5 shadow-[var(--shadow-card)]">
+    <section className="mt-6 border-y border-[var(--border-soft)] py-5">
       <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
         <Link className="hover:text-[var(--brand-deep)]" href="/">
           Все объявления

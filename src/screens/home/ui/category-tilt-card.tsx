@@ -14,10 +14,10 @@ export function CategoryTiltCard({ href, imageUrl, title }: CategoryTiltCardProp
       href={href}
     >
       <article
-        className="group relative min-h-[286px] overflow-hidden rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-2 shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-1 hover:border-[var(--brand)] hover:shadow-[0_26px_80px_color-mix(in_srgb,var(--brand)_20%,transparent)]"
+        className="group relative min-h-[244px] overflow-hidden rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface)] p-2 shadow-sm transition-[border-color,box-shadow] duration-200 ease-out hover:border-[var(--brand)] hover:shadow-[var(--shadow-card)]"
       >
 
-        <div className="relative aspect-square overflow-hidden rounded-[22px]">
+        <div className="relative aspect-square overflow-hidden rounded-[var(--radius-media)] bg-[var(--surface-muted)]">
           {imageUrl !== null && (
             <MediaImage
               alt={title}

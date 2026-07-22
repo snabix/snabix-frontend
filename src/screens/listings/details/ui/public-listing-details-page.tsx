@@ -19,7 +19,7 @@ export function PublicListingDetailsPage({
     <main className="py-8">
       <Container>
         <article className="grid gap-6">
-          <section className="surface-card overflow-hidden rounded-[32px] p-6 sm:p-8">
+          <section className="border-b border-[var(--border-soft)] pb-8">
             <Button asChild variant="ghost">
               <Link href="/">
                 <ArrowLeft size={17} />
@@ -28,14 +28,14 @@ export function PublicListingDetailsPage({
             </Button>
 
         <nav aria-label="Категория объявления" className="mt-6 flex flex-wrap items-center gap-2 text-sm font-black text-[var(--text-muted)]">
-          <Link className="transition-colors hover:text-[var(--brand-deep)]" href="/">
+          <Link className="inline-flex min-h-6 items-center transition-colors hover:text-[var(--brand-deep)]" href="/">
             Объявления
           </Link>
           {categoryPath.map((category) => (
             <span className="inline-flex items-center gap-2" key={category.id}>
               <ChevronRight size={15} />
               <Link
-                className="transition-colors hover:text-[var(--brand-deep)]"
+                className="inline-flex min-h-6 items-center transition-colors hover:text-[var(--brand-deep)]"
                 href={`/?categoryId=${encodeURIComponent(String(category.id))}`}
               >
                 {category.name}
@@ -45,7 +45,7 @@ export function PublicListingDetailsPage({
         </nav>
 
         <div className="mt-6">
-          <h1 className="font-heading max-w-5xl text-4xl font-black leading-tight text-[var(--brand-deep)] sm:text-5xl">
+          <h1 className="font-heading max-w-5xl text-3xl font-black leading-tight tracking-normal text-[var(--brand-deep)] sm:text-4xl">
             {listing.title}
           </h1>
         </div>
@@ -58,12 +58,12 @@ export function PublicListingDetailsPage({
             title={listing.title}
           />
 
-          <aside className="rounded-[30px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] p-5">
+          <aside className="rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface)] p-5">
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--brand-deep)]">
+              <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-black uppercase tracking-normal text-[var(--brand-deep)]">
                 {listing.listingStatusLabel}
               </span>
-              <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
+              <span className="rounded-full border border-[var(--border-soft)] px-3 py-1 text-xs font-black uppercase tracking-normal text-[var(--text-muted)]">
                 {listing.listingKindLabel}
               </span>
             </div>
@@ -76,7 +76,7 @@ export function PublicListingDetailsPage({
             </dl>
 
             {listing.category ? (
-              <div className="mt-5 inline-flex items-start gap-2 rounded-2xl bg-[var(--accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--brand-deep)]">
+              <div className="mt-5 inline-flex items-start gap-2 rounded-[var(--radius-control)] bg-[var(--accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--brand-deep)]">
                 <MapPin className="mt-0.5 shrink-0" size={17} />
                 {listing.category.name}
               </div>
@@ -86,14 +86,14 @@ export function PublicListingDetailsPage({
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="surface-card rounded-[30px] p-6 sm:p-7">
+        <div className="surface-card rounded-[var(--radius-surface)] p-6 sm:p-7">
           <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Описание</h2>
           <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-[var(--text-muted)]">
             {listing.description}
           </p>
         </div>
 
-        <aside className="surface-card rounded-[30px] p-6 sm:p-7">
+        <aside className="surface-card rounded-[var(--radius-surface)] p-6 sm:p-7">
           <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Детали</h2>
           <dl className="mt-5 grid gap-3">
             <Detail label="Категория" value={categoryPath.map((category) => category.name).join(" / ") || "—"} />
@@ -105,12 +105,12 @@ export function PublicListingDetailsPage({
       </section>
 
           {listing.attributeValues.length > 0 ? (
-            <section className="surface-card rounded-[30px] p-6 sm:p-7">
+            <section className="border-t border-[var(--border-soft)] pt-6">
               <h2 className="font-heading text-2xl font-black text-[var(--brand-deep)]">Характеристики</h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {listing.attributeValues.map((attribute) => (
-                  <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-4" key={attribute.attributeDefinitionId}>
-                    <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                  <div className="border-b border-[var(--border-soft)] px-1 py-4" key={attribute.attributeDefinitionId}>
+                    <p className="text-xs font-black uppercase tracking-normal text-[var(--text-muted)]">
                       {attribute.name ?? "Параметр"}
                     </p>
                     <p className="mt-2 font-black text-[var(--brand-deep)]">
@@ -186,8 +186,8 @@ function formatListingDate(value: string | null): string {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3">
-      <dt className="text-xs font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">{label}</dt>
+    <div className="border-b border-[var(--border-soft)] py-3 last:border-b-0">
+      <dt className="text-xs font-black uppercase tracking-normal text-[var(--text-muted)]">{label}</dt>
       <dd className="mt-2 text-sm font-black text-[var(--brand-deep)]">{value}</dd>
     </div>
   );

@@ -37,3 +37,24 @@ test("favorite listing is available in the account section", async ({ page }) =>
   await expect(page.getByText("Тестовый ноутбук")).toBeVisible();
   await expect(page.getByRole("button", { name: "Удалить объявление из избранного" })).toBeVisible();
 });
+
+test("filter dialog contains and restores keyboard focus", async ({ page }) => {
+  const api = new SnabixApiMock({ authenticated: false });
+  await api.install(page);
+  await page.setViewportSize({ height: 800, width: 360 });
+  await page.goto("/");
+
+  const trigger = page.getByRole("button", { name: "Фильтры", exact: true });
+  await trigger.click();
+
+  const dialog = page.getByRole("dialog", { name: "Фильтры объявлений" });
+  await expect(dialog).toBeVisible();
+  await expect.poll(() => dialog.evaluate((element) => (
+    element.contains(document.activeElement)
+  ))).toBe(true);
+
+  await page.keyboard.press("Escape");
+
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});

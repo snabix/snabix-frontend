@@ -140,7 +140,7 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Уведомления"
-          className="relative grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
+          className="relative grid size-11 place-items-center rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
           type="button"
         >
           <Bell size={18} />
@@ -151,7 +151,7 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
           ) : null}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[min(92vw,380px)] rounded-[24px] p-3">
+      <DropdownMenuContent align="end" className="w-[min(92vw,380px)] rounded-[var(--radius-surface)] p-3">
         <div className="flex items-center justify-between gap-3 px-2 py-1">
           <DropdownMenuLabel className="p-0 text-sm font-black text-[var(--brand-deep)]">
             Уведомления
@@ -182,7 +182,7 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
         </div>
 
         {visibleFeed.items.length === 0 ? (
-          <div className="mt-2 rounded-2xl border border-dashed border-[var(--border-soft)] p-4 text-sm leading-6 text-[var(--text-muted)]">
+          <div className="mt-2 rounded-[var(--radius-control)] border border-dashed border-[var(--border-soft)] p-4 text-sm leading-6 text-[var(--text-muted)]">
             Пока уведомлений нет.
           </div>
         ) : (

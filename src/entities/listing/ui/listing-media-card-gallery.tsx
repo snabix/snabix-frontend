@@ -36,10 +36,7 @@ export function ListingMediaCardGallery({
           src={activeImage}
         />
       ) : (
-        <>
-          <div className="absolute -right-8 -top-10 size-28 rounded-full bg-[color-mix(in_srgb,var(--foreground)_18%,transparent)] blur-sm" />
-          <div className="absolute bottom-5 left-5 h-16 w-32 rounded-[26px] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)]" />
-        </>
+        <div className="absolute inset-0 bg-[var(--surface-muted)]" />
       )}
 
       {hasMultipleImages ? (

@@ -25,11 +25,11 @@ export function HeaderSessionActions({
   const hasCheckedSession = useUserStore((state) => state.hasCheckedSession);
 
   return (
-    <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+    <div className="relative flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
       {hasCheckedSession && user !== null ? (
         <Link
           aria-label="Создать объявление"
-          className="active-button inline-flex size-11 items-center justify-center gap-2 rounded-full text-sm font-bold leading-none shadow-[var(--shadow-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] sm:h-12 sm:w-auto sm:px-5"
+          className="active-button inline-flex size-11 items-center justify-center gap-2 rounded-[var(--radius-control)] text-sm font-bold leading-none shadow-[var(--shadow-card)] focus-visible:outline-none sm:h-12 sm:w-auto sm:px-5"
           href="/account/listings/create"
         >
           <Plus size={17} strokeWidth={2.4} />
@@ -49,8 +49,8 @@ export function HeaderSessionActions({
           aria-label="Проверка сессии пользователя"
           className="flex items-center gap-3"
         >
-          <div className="h-11 w-28 rounded-[18px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)]" />
-          <div className="h-11 w-32 rounded-[18px] bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]" />
+          <div className="hidden h-11 w-28 rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface-muted)] sm:block" />
+          <div className="h-11 w-20 rounded-[var(--radius-control)] bg-[var(--surface-muted)] sm:w-32" />
         </div>
       ) : user ? (
         <HeaderUserMenu

@@ -59,6 +59,12 @@ metadata/OG, отсутствие hydration-запроса списка и то,
 собирает browser console/page errors и запрещает hydration/script warnings.
 System-сценарий дополнительно меняет `prefers-color-scheme` после hydration.
 
+`tests/e2e/marketplace-responsive.spec.ts` фиксирует responsive/accessibility
+baseline для `/`, `/?categoryId=1` и `/listings/listing-1` в light/dark theme
+на ширинах 360, 390, 768 и 1440 px. Матрица запрещает horizontal overflow, targets меньше 24 px и
+нарушения WCAG A/AA, а также прикладывает viewport screenshots к HTML report.
+Подробные инварианты описаны в `docs/MARKETPLACE_RESPONSIVE_ACCESSIBILITY.md`.
+
 `npm run architecture:client` контролирует максимальное количество явных
 `"use client"` entry points и запрещает обычные callback props с суффиксом
 `Action`. Команда входит в `npm run lint`.

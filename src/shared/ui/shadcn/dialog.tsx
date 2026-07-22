@@ -26,24 +26,28 @@ const DialogOverlay = React.forwardRef<
 
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+  closeLabel?: string;
+};
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ children, className, ...props }, ref) => (
+  DialogContentProps
+>(({ children, className, closeLabel = "Закрыть", ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]",
+        "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]",
         className,
       )}
       ref={ref}
       {...props}
     >
       {children}
-      <DialogClose className="absolute right-4 top-4 rounded-full p-2 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]">
+      <DialogClose className="absolute right-4 top-4 rounded-[var(--radius-control)] p-2 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--brand-deep)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]">
         <X size={18} />
-        <span className="sr-only">Закрыть</span>
+        <span className="sr-only">{closeLabel}</span>
       </DialogClose>
     </DialogPrimitive.Content>
   </DialogPortal>

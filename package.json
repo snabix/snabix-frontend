@@ -23,6 +23,7 @@
     "test:e2e": "playwright test",
     "test:e2e:critical": "playwright test tests/e2e/critical-path.spec.ts --workers=1",
     "test:e2e:full": "playwright test",
+    "test:e2e:responsive": "playwright test tests/e2e/marketplace-responsive.spec.ts --workers=1",
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {

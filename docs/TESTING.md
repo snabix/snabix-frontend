@@ -100,6 +100,16 @@ ARIA-связи полей соответствуют
 npx playwright test tests/e2e/auth-accessibility.spec.ts --workers=1
 ```
 
+Контракт backend/frontend:
+
+```bash
+npm run contracts:check
+```
+
+Команда проверяет versioned listing snapshot существующими Zod adapters и
+обязательную public/private privacy boundary. Полный процесс синхронизации
+описан в `docs/API_CONTRACTS.md`.
+
 Полная frontend-проверка:
 
 ```bash

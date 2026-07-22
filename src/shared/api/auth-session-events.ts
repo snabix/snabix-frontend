@@ -1,5 +1,3 @@
-"use client";
-
 export const AUTH_UNAUTHORIZED_EVENT = "snabix:auth:unauthorized";
 
 export type AuthUnauthorizedReason = "unauthenticated" | "csrf-token-mismatch";

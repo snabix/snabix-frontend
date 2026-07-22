@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   AUTH_CONTINUE_MESSAGE,
   notifyUnauthorized,
-} from "@/src/features/auth/session/auth-events";
+} from "@/src/shared/api/auth-session-events";
 import { publicEnv } from "@/src/shared/config/env";
 
 const csrfApi = axios.create({

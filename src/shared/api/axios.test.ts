@@ -67,7 +67,7 @@ vi.mock("@/src/shared/config/env", () => ({
   },
 }));
 
-vi.mock("@/src/features/auth/session/auth-events", () => ({
+vi.mock("@/src/shared/api/auth-session-events", () => ({
   AUTH_CONTINUE_MESSAGE: "Продолжите работу после входа.",
   notifyUnauthorized: notifyUnauthorizedMock,
 }));

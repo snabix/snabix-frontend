@@ -12,7 +12,7 @@ const trackedFiles = [
     decision: "static page can remain large until the next content or interaction change",
   },
   {
-    path: "src/shared/ui/header/HeaderSessionActions.tsx",
+    path: "src/widgets/header/ui/HeaderSessionActions.tsx",
     maxLines: 310,
     decision: "decompose on next functional change or document why it remains large",
   },

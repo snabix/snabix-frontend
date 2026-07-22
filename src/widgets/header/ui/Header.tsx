@@ -7,12 +7,12 @@ import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { CategoryCatalog } from "@/src/shared/ui/header/CategoryCatalog";
-import { CatalogToggleButton } from "@/src/shared/ui/header/CatalogToggleButton";
-import { HeaderSessionActions } from "@/src/shared/ui/header/HeaderSessionActions";
-import { useHeaderState } from "@/src/shared/ui/header/use-header-state";
 import { Container } from "@/src/shared/ui/container";
 import { Logo } from "@/src/shared/ui/logo";
+import { CatalogToggleButton } from "./CatalogToggleButton";
+import { CategoryCatalog } from "./CategoryCatalog";
+import { HeaderSessionActions } from "./HeaderSessionActions";
+import { useHeaderState } from "./use-header-state";
 
 export function Header() {
   const router = useRouter();

@@ -11,6 +11,10 @@ Unit и integration тесты хранятся рядом с кодом, кот
 
 Это соответствует текущей Feature-Sliced структуре: slice владеет model, UI, API adapter и тестами вместе. Если фича переносится, тесты переносятся вместе с ней.
 
+Межслойные API contract tests хранятся в `tests/contracts/**`. Они проверяют
+совместную работу `shared` schemas и adapters из `entities/features`, поэтому не
+должны создавать обратные зависимости внутри нижнего FSD-слоя.
+
 ## Browser и E2E тесты
 
 Browser-level smoke и E2E тесты хранятся отдельно:

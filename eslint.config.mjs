@@ -18,6 +18,24 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    files: ["src/shared/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              message:
+                "FSD boundary violation: shared may not import app, entities, features, screens, or widgets.",
+              regex:
+                "^(?:@/src/(?:app|entities|features|screens|widgets)(?:/|$)|(?:\\.\\./)+(?:app|entities|features|screens|widgets)(?:/|$))",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

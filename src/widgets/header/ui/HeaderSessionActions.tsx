@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useUserStore } from "@/src/entities/user";
-import { HeaderAuthActions } from "@/src/shared/ui/header/HeaderAuthActions";
-import { HeaderNotificationsMenu } from "@/src/shared/ui/header/HeaderNotificationsMenu";
-import { HeaderSearchMenu } from "@/src/shared/ui/header/HeaderSearchMenu";
-import { HeaderUserMenu } from "@/src/shared/ui/header/HeaderUserMenu";
+import { HeaderAuthActions } from "./HeaderAuthActions";
+import { HeaderNotificationsMenu } from "./HeaderNotificationsMenu";
+import { HeaderSearchMenu } from "./HeaderSearchMenu";
+import { HeaderUserMenu } from "./HeaderUserMenu";
 
 type HeaderSessionActionsProps = {
   isSearchOpen: boolean;

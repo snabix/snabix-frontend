@@ -21,6 +21,11 @@ This version has breaking changes - APIs, conventions, and file structure may al
 - `src/entities` содержит бизнес-сущности: user, category, listing.
 - `src/shared` содержит API-клиент, UI-kit, config, utils и базовые стили.
 
+Направление зависимостей идет сверху вниз. Production-модули `src/shared` не
+импортируют `app`, `widgets`, `screens`, `features` или `entities`; это правило
+проверяется ESLint через `no-restricted-imports`. Межслойные contract tests
+хранятся отдельно в `tests/contracts`, а не внутри одного из FSD-слоев.
+
 Не смешивай API-запросы, состояние формы и крупную верстку в одном компоненте. Если компонент растет, выноси state/hook/model отдельно.
 
 ## UI

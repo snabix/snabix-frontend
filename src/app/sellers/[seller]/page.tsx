@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Construction, Star } from "lucide-react";
+import { getServerPlatformCapabilities } from "@/src/entities/platform-capability";
 import { ShareProfileButton } from "@/src/shared/ui/share-profile-button";
 
 type SellerRoutePageProps = {
@@ -9,6 +11,12 @@ type SellerRoutePageProps = {
 };
 
 export default async function SellerRoutePage({ params }: SellerRoutePageProps) {
+  const capabilities = await getServerPlatformCapabilities().catch(() => null);
+
+  if (capabilities?.sellerProfiles.enabled !== true) {
+    notFound();
+  }
+
   const { seller } = await params;
   const sellerLabel = decodeURIComponent(seller).replace(/-/g, " ");
 

@@ -73,7 +73,7 @@
 | `src/entities/listing/ui/listing-media-gallery.tsx` | 87 | Entity UI + modal + upload grid | Выполнено: facade + card/details galleries, preview dialog, upload grid и normalize helper |
 | `src/screens/about/ui/about-page.tsx` | 323 | Static page UI | Можно оставить временно |
 | `src/screens/account/listings/ui/listings-page.tsx` | 327 | Page UI + data loading | Разделить при следующем изменении |
-| `src/shared/ui/header/HeaderSessionActions.tsx` | 310 | Header state/actions | Разделить при следующем изменении |
+| `src/widgets/header/ui/HeaderSessionActions.tsx` | 310 | Header state/actions | Разделить при следующем изменении |
 
 Baseline крупных файлов проверяется командой:
 
@@ -123,7 +123,6 @@ src/entities/listing/ui/listing-card.tsx
 src/entities/listing/ui/listing-card-media.tsx
 src/entities/listing/ui/listing-card-badges.tsx
 src/entities/listing/ui/listing-card-price.tsx
-src/entities/listing/ui/listing-card-seller.tsx
 src/entities/listing/ui/listing-card-meta.tsx
 src/entities/listing/ui/listing-card-actions.tsx
 src/entities/listing/lib/listing-card-formatters.ts
@@ -305,10 +304,10 @@ src/screens/account/listings/ui/listings-empty-state.tsx
 Рекомендуемая структура:
 
 ```text
-src/shared/ui/header/HeaderSessionActions.tsx
-src/shared/ui/header/HeaderNotificationsButton.tsx
-src/shared/ui/header/HeaderAccountDropdown.tsx
-src/shared/ui/header/HeaderGuestActions.tsx
+src/widgets/header/ui/HeaderSessionActions.tsx
+src/widgets/header/ui/HeaderNotificationsButton.tsx
+src/widgets/header/ui/HeaderAccountDropdown.tsx
+src/widgets/header/ui/HeaderGuestActions.tsx
 ```
 
 ## Приоритет рефакторинга

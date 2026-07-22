@@ -104,6 +104,14 @@ const listingLocationSchema = z.object({
   mapPlaceId: nullableStringSchema.optional(),
 }).strict();
 
+const listingMediaSchema = z.array(z.object({
+  id: z.number(),
+  url: z.string(),
+  fileName: z.string(),
+  order: z.number(),
+  isMain: z.boolean(),
+}).strict());
+
 const listingBaseShape = {
   id: z.string(),
   category: listingCategorySchema.nullable(),
@@ -130,13 +138,6 @@ const listingBaseShape = {
   isNegotiable: z.boolean(),
   imageUrl: nullableStringSchema.optional(),
   imageUrls: z.array(z.string()).optional(),
-  media: z.array(z.object({
-    id: z.number(),
-    url: z.string(),
-    fileName: z.string(),
-    order: z.number(),
-    isMain: z.boolean(),
-  }).strict()).optional(),
   location: listingLocationSchema.nullable().optional(),
   isFavorite: z.boolean().optional(),
   sellerRating: z.number().nullable().optional(),
@@ -159,6 +160,7 @@ const listingPrivateShape = {
   contactName: nullableStringSchema,
   contactPhone: nullableStringSchema,
   contactEmail: nullableStringSchema,
+  media: listingMediaSchema,
   rejectionReason: nullableStringSchema,
 };
 

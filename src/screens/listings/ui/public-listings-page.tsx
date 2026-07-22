@@ -32,19 +32,20 @@ export function PublicListingsPage({
   return (
     <main className="pb-12 pt-6">
       <Container>
-        <section className="surface-card relative overflow-hidden rounded-[34px] p-7 sm:p-10">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--brand)_16%,transparent),transparent_72%)]" />
-
-          <div className="relative max-w-4xl">
-            <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
+        <section
+          className="border-b border-[var(--border-soft)] py-5 sm:py-7"
+          data-testid="marketplace-page-header"
+        >
+          <div className="max-w-4xl">
+            <p className="section-kicker text-sm font-semibold uppercase tracking-normal">
               Публичная витрина
             </p>
 
-            <h1 className="font-heading mt-4 text-4xl font-extrabold tracking-[-0.03em] text-[var(--brand-deep)] sm:text-5xl">
+            <h1 className="font-heading mt-3 text-3xl font-extrabold tracking-normal text-[var(--brand-deep)] sm:text-4xl">
               {listings.selectedCategory?.name ?? "Все товары и услуги"}
             </h1>
 
-            <p className="section-copy mt-5 max-w-2xl text-base leading-8">
+            <p className="section-copy mt-3 max-w-2xl text-sm leading-6 sm:text-base">
               Уточните цену и тип объявления. Если вы пришли из каталога,
               ниже покажем выбранную ветку и вложенные разделы для быстрого
               перехода.

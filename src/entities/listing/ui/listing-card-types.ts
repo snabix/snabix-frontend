@@ -9,8 +9,5 @@ export type ListingCardPresentation = {
   publishedDate: string | null;
   ratingValue: number;
   reviewCount: number;
-  sellerHref: string;
-  sellerInitials: string;
-  sellerName: string;
   sellerRating: string;
 };

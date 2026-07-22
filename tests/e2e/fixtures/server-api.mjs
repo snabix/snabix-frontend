@@ -62,7 +62,6 @@ const listing = {
   isNegotiable: true,
   imageUrl: null,
   imageUrls: [],
-  media: [],
   location: {
     source: "profile",
     profileAddressId: "address-1",
@@ -107,6 +106,24 @@ const server = createServer((request, response) => {
 
   if (url.pathname === "/api/v1/categories/list") {
     respond(response, 200, { data: [category] });
+    return;
+  }
+
+  if (url.pathname === "/api/v1/capabilities") {
+    respond(response, 200, {
+      data: {
+        account: {
+          deactivation: false,
+          deletion: false,
+        },
+        notifications: {
+          eventKeys: ["listing_moderation", "favorite_listings", "security_login"],
+        },
+        sellerProfiles: {
+          enabled: false,
+        },
+      },
+    });
     return;
   }
 

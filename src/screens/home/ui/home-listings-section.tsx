@@ -6,6 +6,8 @@ import { useHomeListings } from "../model/use-home-listings";
 import { HomeFiltersDrawer } from "./home-filters-drawer";
 import { HomeListingsContent } from "./home-listings-content";
 
+const filtersTriggerId = "home-listings-filters-trigger";
+
 type HomeListingsSectionProps = {
   initialCategoryId?: string;
   initialListings: PublicListingsInitialState;
@@ -21,7 +23,7 @@ export function HomeListingsSection({
     <>
       <section className="mt-8">
         <div className="mb-5">
-          <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
+          <p className="section-kicker text-sm font-semibold uppercase tracking-normal">
             Живая витрина
           </p>
 
@@ -33,7 +35,8 @@ export function HomeListingsSection({
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button
             aria-label="Фильтры"
-            className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+            className="inline-flex size-11 items-center justify-center rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--brand-deep)] shadow-sm transition hover:border-[var(--brand)] hover:text-[var(--brand)] focus-visible:outline-none"
+            id={filtersTriggerId}
             onClick={() => listings.setIsFiltersOpen(true)}
             title="Фильтры"
             type="button"
@@ -63,6 +66,7 @@ export function HomeListingsSection({
         onChange={listings.setDraftFilters}
         onClose={() => listings.setIsFiltersOpen(false)}
         onReset={listings.handleFiltersReset}
+        triggerId={filtersTriggerId}
       />
     </>
   );

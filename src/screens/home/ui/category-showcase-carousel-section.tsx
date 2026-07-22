@@ -15,7 +15,7 @@ export function CategoryShowcaseCarouselSection({
     return (
         <section className="category-conveyor mt-8 bg-transparent">
             <div className="mb-5">
-                <p className="section-kicker text-sm font-semibold uppercase tracking-[0.16em]">
+                <p className="section-kicker text-sm font-semibold uppercase tracking-normal">
                     Популярные направления
                 </p>
 
@@ -25,7 +25,7 @@ export function CategoryShowcaseCarouselSection({
             </div>
 
             {errorMessage !== null || !hasCategories ? (
-                <div className="rounded-[28px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] px-6 py-8">
+                <div className="rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-6">
                     <p className="text-base font-black text-[var(--brand-deep)]">
                         Не удалось загрузить категории
                     </p>
@@ -38,18 +38,21 @@ export function CategoryShowcaseCarouselSection({
                 <div
                     aria-label="Популярные категории"
                     className="category-conveyor-viewport -mx-2 bg-transparent overflow-x-auto overflow-y-hidden px-2 py-8"
+                    data-horizontal-scroll
                     role="region"
+                    tabIndex={0}
                 >
                     <div className="category-conveyor-track flex w-max">
                         {[0, 1].map((groupIndex) => (
                             <div
                                 aria-hidden={groupIndex === 1 ? true : undefined}
                                 className="flex shrink-0 gap-3 pr-3"
+                                inert={groupIndex === 1 ? true : undefined}
                                 key={groupIndex}
                             >
                                 {categories.map((category) => (
                                     <div
-                                        className="w-[184px] shrink-0 sm:w-[196px] lg:w-[208px]"
+                                        className="w-[168px] shrink-0 sm:w-[184px] lg:w-[192px]"
                                         key={`${groupIndex}-${category.id}`}
                                     >
                                         <CategoryTiltCard

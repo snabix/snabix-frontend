@@ -161,6 +161,7 @@ export function PublicListingQuickFilters({
 
           <div className="grid grid-cols-2 gap-3 py-2">
             <Input
+              aria-label="Минимальная цена"
               disabled={isLoading}
               inputMode="numeric"
               min="0"
@@ -171,6 +172,7 @@ export function PublicListingQuickFilters({
             />
 
             <Input
+              aria-label="Максимальная цена"
               disabled={isLoading}
               inputMode="numeric"
               min="0"
@@ -203,7 +205,7 @@ export function PublicListingQuickFilters({
 
 function quickFilterButtonClassName(isActive: boolean) {
   return [
-    "relative inline-flex size-11 items-center justify-center rounded-full border text-[var(--brand-deep)] shadow-[var(--shadow-card)] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] disabled:cursor-not-allowed disabled:opacity-60",
+    "relative inline-flex size-11 items-center justify-center rounded-[var(--radius-control)] border text-[var(--brand-deep)] shadow-sm transition focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60",
     isActive
       ? "border-[var(--brand)] bg-[var(--accent-soft)]"
       : "border-[var(--border-soft)] bg-[var(--surface)] hover:border-[var(--brand)] hover:text-[var(--brand)]",

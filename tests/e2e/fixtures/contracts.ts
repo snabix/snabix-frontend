@@ -159,6 +159,7 @@ export function toPublicListing(listing: ReturnType<typeof makeListing>) {
     contactEmail,
     contactName,
     contactPhone,
+    media,
     rejectionReason,
     userId,
     ...publicListing
@@ -167,6 +168,7 @@ export function toPublicListing(listing: ReturnType<typeof makeListing>) {
   void contactEmail;
   void contactName;
   void contactPhone;
+  void media;
   void rejectionReason;
   void userId;
 

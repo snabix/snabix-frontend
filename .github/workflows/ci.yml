@@ -52,6 +52,9 @@ jobs:
       - name: Full typecheck without skipLibCheck
         run: npm run typecheck:full
 
+      - name: Backend/frontend API contracts
+        run: npm run contracts:check
+
       - name: Unit tests
         run: npm run test
 

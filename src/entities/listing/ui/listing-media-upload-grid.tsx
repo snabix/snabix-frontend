@@ -24,7 +24,7 @@ export function ListingMediaUploadGrid({
     <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {previews.map((preview, index) => (
         <div
-          className="group relative aspect-[4/3] overflow-hidden rounded-[22px] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--brand)_12%,var(--surface))]"
+          className="group relative aspect-[4/3] overflow-hidden rounded-[var(--radius-media)] border border-[var(--border-soft)] bg-[var(--surface-muted)]"
           key={preview.id}
         >
           <MediaImage
@@ -53,7 +53,7 @@ export function ListingMediaUploadGrid({
       {Array.from({ length: Math.max(availableSlots, 0) }).map((_, index) => (
         <button
           aria-label="Добавить фото объявления"
-          className="grid aspect-[4/3] place-items-center rounded-[22px] border border-dashed border-[var(--border-strong)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--brand-deep)]"
+          className="grid aspect-[4/3] place-items-center rounded-[var(--radius-media)] border border-dashed border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--brand-deep)]"
           disabled={isDisabled}
           key={`empty-${index}`}
           onClick={onAdd}

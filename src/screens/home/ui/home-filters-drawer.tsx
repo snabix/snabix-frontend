@@ -1,3 +1,8 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/src/shared/ui/shadcn/dialog";
 import { PublicListingFilters, type PublicListingFiltersState } from "./public-listing-filters";
 
 type HomeFiltersDrawerProps = {
@@ -7,6 +12,7 @@ type HomeFiltersDrawerProps = {
   onChange: (filters: PublicListingFiltersState) => void;
   onClose: () => void;
   onReset: () => void;
+  triggerId: string;
 };
 
 export function HomeFiltersDrawer({
@@ -16,39 +22,34 @@ export function HomeFiltersDrawer({
   onChange,
   onClose,
   onReset,
+  triggerId,
 }: HomeFiltersDrawerProps) {
   return (
-    <div
-      aria-hidden={!isOpen}
-      className={[
-        "fixed inset-0 z-50 transition",
-        isOpen ? "pointer-events-auto" : "pointer-events-none",
-      ].join(" ")}
+    <Dialog
+      onOpenChange={(nextIsOpen) => {
+        if (!nextIsOpen) {
+          onClose();
+        }
+      }}
+      open={isOpen}
     >
-      <button
-        aria-label="Закрыть фильтры"
-        className={[
-          "absolute inset-0 bg-[color-mix(in_srgb,var(--brand-deep)_42%,transparent)] backdrop-blur-sm transition-opacity",
-          isOpen ? "opacity-100" : "opacity-0",
-        ].join(" ")}
-        onClick={onClose}
-        type="button"
-      />
-
-      <aside
-        aria-label="Фильтры объявлений"
-        className={[
-          "absolute left-0 top-0 h-full w-full max-w-[390px] overflow-hidden border-r border-[var(--border-soft)] bg-[var(--surface)] shadow-2xl transition-transform duration-300",
-          isOpen ? "translate-x-0" : "-translate-x-full",
-        ].join(" ")}
+      <DialogContent
+        aria-describedby={undefined}
+        className="left-0 top-0 h-full w-full max-w-[390px] translate-x-0 translate-y-0 overflow-hidden rounded-none border-y-0 border-l-0 p-0"
+        closeLabel="Закрыть фильтры"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          document.getElementById(triggerId)?.focus();
+        }}
       >
+        <DialogTitle className="sr-only">Фильтры объявлений</DialogTitle>
         <PublicListingFilters
           filters={filters}
           isLoading={isLoading}
           onChange={onChange}
           onReset={onReset}
         />
-      </aside>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

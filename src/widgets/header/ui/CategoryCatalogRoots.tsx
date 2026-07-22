@@ -33,7 +33,7 @@ export function CategoryCatalogRoots({
   const activeRootButtonClass = "text-[var(--brand)]";
 
   return (
-    <aside className="surface-card flex h-full min-h-0 flex-col overflow-hidden rounded-[24px] p-4 sm:p-5">
+    <aside className="surface-card flex h-full min-h-0 flex-col overflow-hidden rounded-[var(--radius-surface)] p-4 sm:p-5">
       {rootsStatus === "loading" && !hasLoadedCategories ? (
         <div className="mt-4 grid min-h-[18rem] content-start gap-2">
           <Skeleton className="h-[72px] rounded-[5px]" />
@@ -44,12 +44,12 @@ export function CategoryCatalogRoots({
       ) : null}
 
       {rootsStatus === "error" && !hasLoadedCategories ? (
-        <div className="mt-4 rounded-[24px] border border-dashed border-[var(--border-strong)] px-4 py-6 text-center">
+        <div className="mt-4 rounded-[var(--radius-surface)] border border-dashed border-[var(--border-strong)] px-4 py-6 text-center">
           <p className="text-sm font-semibold text-[var(--text-muted)]">
             {rootsErrorMessage ?? "Не удалось загрузить разделы."}
           </p>
           <Button
-            className="mt-4 rounded-[16px]"
+            className="mt-4 rounded-[var(--radius-control)]"
             onClick={onRetry}
             variant="outline"
           >
@@ -86,25 +86,18 @@ export function CategoryCatalogRoots({
                   {category.icon ? (
                     <span
                       aria-hidden="true"
-                      className={[
-                        "pointer-events-none absolute -left-4 top-1/2 size-24 -translate-y-1/2 overflow-hidden rounded-full",
-                        "[mask-image:radial-gradient(circle_at_center,black_0%,black_58%,transparent_84%)]",
-                        "[-webkit-mask-image:radial-gradient(circle_at_center,black_0%,black_58%,transparent_84%)]",
-                        "opacity-90 transition-opacity duration-200",
-                        "before:absolute before:inset-0 before:rounded-full before:bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--surface)_20%,transparent),transparent_70%)] before:content-['']",
-                      ].join(" ")}
+                      className="pointer-events-none absolute left-3 top-1/2 size-11 -translate-y-1/2 overflow-hidden rounded-[var(--radius-media)] bg-[var(--surface-muted)]"
                     >
                       <Image
                         alt=""
                         className={[
-                          "size-full object-contain mix-blend-multiply",
-                          "opacity-[0.5] saturate-100 transition-all duration-200",
-                          "group-hover:opacity-[0.62] group-hover:saturate-[1.08]",
-                          isActive ? "opacity-[0.68] saturate-[1.08]" : "",
+                          "size-full object-contain p-1 transition-opacity duration-200",
+                          "opacity-80 group-hover:opacity-100",
+                          isActive ? "opacity-100" : "",
                         ].join(" ")}
-                        height={96}
+                        height={44}
                         src={category.icon}
-                        width={96}
+                        width={44}
                       />
                     </span>
                   ) : null}

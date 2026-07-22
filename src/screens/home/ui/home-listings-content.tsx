@@ -37,7 +37,7 @@ export function HomeListingsContent({
       <EmptyState
         action={
           <Button
-            className="rounded-[18px] px-5 py-6"
+            className="rounded-[var(--radius-control)] px-5 py-6"
             onClick={() => window.location.reload()}
             type="button"
           >

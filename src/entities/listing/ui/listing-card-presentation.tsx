@@ -3,9 +3,6 @@ import {
   formatListingDate,
   formatListingPrice,
   resolveListingLocation,
-  resolveSellerHref,
-  resolveSellerInitials,
-  resolveSellerName,
   resolveSellerReviewCount,
 } from "@/src/entities/listing/lib/listing-card-formatters";
 import { ListingFavoriteButton } from "./listing-card-actions";
@@ -22,7 +19,6 @@ export function buildListingCardPresentation({
   listing,
   onFavoriteToggle,
 }: BuildListingCardPresentationParams): ListingCardPresentation {
-  const sellerName = resolveSellerName(listing);
   const sellerRating = listing.sellerRating === null || listing.sellerRating === undefined
     ? "Нет рейтинга"
     : listing.sellerRating.toFixed(1);
@@ -43,9 +39,6 @@ export function buildListingCardPresentation({
     publishedDate: formatListingDate(listing.publishedAt),
     ratingValue: listing.sellerRating ?? 3,
     reviewCount: resolveSellerReviewCount(listing),
-    sellerHref: resolveSellerHref(listing, sellerName),
-    sellerInitials: resolveSellerInitials(sellerName),
-    sellerName,
     sellerRating,
   };
 }

@@ -49,7 +49,7 @@ const pricePresetOptions = [
 ];
 
 const selectClassName =
-    "h-12 w-full appearance-none rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none transition focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)] disabled:cursor-not-allowed disabled:opacity-60";
+    "h-12 w-full appearance-none rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface)] px-4 text-sm font-black text-[var(--brand-deep)] outline-none transition disabled:cursor-not-allowed disabled:opacity-60";
 
 const optionClassName = "bg-[var(--surface)] text-[var(--brand-deep)]";
 
@@ -100,6 +100,7 @@ export function PublicListingFilters({
             <div className="grid gap-6">
                 <FilterGroup title="Тип объявления">
                     <select
+                        aria-label="Тип объявления"
                         className={selectClassName}
                         disabled={isLoading}
                         onChange={(event) => updateFilter("type", event.target.value)}
@@ -116,6 +117,7 @@ export function PublicListingFilters({
                 <FilterGroup title="Локация">
                     <div className="grid gap-2">
                         <Input
+                            aria-label="Регион"
                             disabled={isLoading}
                             onChange={(event) => updateFilter("regionQuery", event.target.value)}
                             placeholder="Регион, например Краснодарский край"
@@ -124,6 +126,7 @@ export function PublicListingFilters({
                         />
 
                         <Input
+                            aria-label="Город"
                             disabled={isLoading}
                             onChange={(event) => updateFilter("cityQuery", event.target.value)}
                             placeholder="Город, например Краснодар"
@@ -139,6 +142,7 @@ export function PublicListingFilters({
                 <FilterGroup title="Цена">
                     <div className="grid grid-cols-2 gap-2">
                         <Input
+                            aria-label="Минимальная цена"
                             disabled={isLoading}
                             inputMode="numeric"
                             min="0"
@@ -149,6 +153,7 @@ export function PublicListingFilters({
                         />
 
                         <Input
+                            aria-label="Максимальная цена"
                             disabled={isLoading}
                             inputMode="numeric"
                             min="0"
@@ -167,7 +172,7 @@ export function PublicListingFilters({
                             return (
                                 <button
                                     aria-pressed={isChecked}
-                                    className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] px-4 py-3 text-left text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-3 text-left text-sm font-bold text-[var(--brand-deep)] transition hover:border-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60"
                                     disabled={isLoading}
                                     key={option.label}
                                     onClick={() => updatePricePreset(option.minPrice, option.maxPrice)}
@@ -213,6 +218,7 @@ export function PublicListingFilters({
 
                 <FilterGroup title="Сортировка">
                     <select
+                        aria-label="Сортировка"
                         className={selectClassName}
                         disabled={isLoading}
                         onChange={(event) => updateFilter("sort", event.target.value)}
@@ -227,7 +233,7 @@ export function PublicListingFilters({
                 </FilterGroup>
 
                 <button
-                    className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-3 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:opacity-60"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--radius-control)] border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-3 text-sm font-black text-[var(--brand-deep)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:opacity-60"
                     disabled={isLoading}
                     onClick={onReset}
                     type="button"
@@ -248,7 +254,7 @@ function FilterGroup({
 }) {
     return (
         <section>
-            <h4 className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            <h4 className="mb-3 text-xs font-black uppercase tracking-normal text-[var(--text-muted)]">
                 {title}
             </h4>
 

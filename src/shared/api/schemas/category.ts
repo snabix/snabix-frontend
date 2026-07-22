@@ -1,8 +1,4 @@
 import { z } from "zod";
-import type {
-  CategoryAttributeDefinition,
-  CategoryNode,
-} from "@/src/entities/category/model/types";
 import { nullableStringSchema, stringOrNumberSchema } from "./common";
 import {
   attributeValueTypeSchema,
@@ -12,8 +8,24 @@ import {
   resolveLegacyEnum,
 } from "./marketplace-enums";
 
-type CategoryNodeWire = Omit<CategoryNode, "catalogKind" | "catalogKindLabel" | "children"> & {
-  catalogKind?: CategoryNode["catalogKind"];
+type CategoryNodeContract = {
+  id: string | number;
+  catalogKind: "product" | "service";
+  catalogKindLabel: string;
+  parentId: string | number | null;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  path: string | null;
+  depth: number;
+  children: CategoryNodeContract[];
+};
+
+type CategoryNodeWire = Omit<CategoryNodeContract, "catalogKind" | "catalogKindLabel" | "children"> & {
+  catalogKind?: CategoryNodeContract["catalogKind"];
   catalogKindLabel?: string;
   catalogType?: number;
   catalogTypeLabel?: string;
@@ -42,7 +54,7 @@ const categoryNodeWireSchema: z.ZodType<CategoryNodeWire> = z.lazy(() => z.objec
   requireCanonicalOrLegacy(value.catalogKindLabel, value.catalogTypeLabel, "catalogKindLabel", context);
 }));
 
-export const categoryNodeSchema: z.ZodType<CategoryNode> = categoryNodeWireSchema.transform(
+export const categoryNodeSchema: z.ZodType<CategoryNodeContract> = categoryNodeWireSchema.transform(
   normalizeCategoryNode,
 );
 
@@ -111,8 +123,7 @@ const categoryAttributeDefinitionWireSchema = z.object({
   requireCanonicalOrLegacy(value.valueTypeLabel, value.typeLabel, "valueTypeLabel", context);
 });
 
-export const categoryAttributeDefinitionSchema: z.ZodType<CategoryAttributeDefinition> =
-  categoryAttributeDefinitionWireSchema.transform(({
+export const categoryAttributeDefinitionSchema = categoryAttributeDefinitionWireSchema.transform(({
     type,
     typeLabel,
     ...value
@@ -127,7 +138,7 @@ function normalizeCategoryNode({
   catalogTypeLabel,
   children,
   ...value
-}: CategoryNodeWire): CategoryNode {
+}: CategoryNodeWire): CategoryNodeContract {
   return {
     ...value,
     catalogKind: value.catalogKind ?? resolveLegacyEnum(legacyCatalogKinds, catalogType),

@@ -2,10 +2,10 @@
 
 import { createPortal } from "react-dom";
 import { useSyncExternalStore } from "react";
-import { CategoryCatalogBranch } from "@/src/shared/ui/header/CategoryCatalogBranch";
-import { CategoryCatalogRoots } from "@/src/shared/ui/header/CategoryCatalogRoots";
-import { useCategoryCatalog } from "@/src/shared/ui/header/use-category-catalog";
 import { Container } from "@/src/shared/ui/container";
+import { CategoryCatalogBranch } from "./CategoryCatalogBranch";
+import { CategoryCatalogRoots } from "./CategoryCatalogRoots";
+import { useCategoryCatalog } from "./use-category-catalog";
 
 type CategoryCatalogProps = {
   isOpen: boolean;

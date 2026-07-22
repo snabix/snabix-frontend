@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { setAuthSessionHint } from "@/src/shared/api/auth-session-hint";
 import { User } from "./types";
 
 export type SessionStatus = "unknown" | "checking" | "authenticated" | "guest" | "expired";
@@ -22,20 +23,26 @@ export const useUserStore = create<UserState>((set) => ({
   hasCheckedSession: false,
   sessionStatus: "unknown",
   sessionEndReason: null,
-  setUser: (user) => set({
-    user,
-    isLoading: false,
-    hasCheckedSession: true,
-    sessionStatus: user ? "authenticated" : "guest",
-    sessionEndReason: null,
-  }),
-  clearUser: (reason = "unauthenticated") => set({
-    user: null,
-    isLoading: false,
-    hasCheckedSession: true,
-    sessionStatus: reason === "signed-out" ? "guest" : "expired",
-    sessionEndReason: reason,
-  }),
+  setUser: (user) => {
+    setAuthSessionHint(user !== null);
+    set({
+      user,
+      isLoading: false,
+      hasCheckedSession: true,
+      sessionStatus: user ? "authenticated" : "guest",
+      sessionEndReason: null,
+    });
+  },
+  clearUser: (reason = "unauthenticated") => {
+    setAuthSessionHint(false);
+    set({
+      user: null,
+      isLoading: false,
+      hasCheckedSession: true,
+      sessionStatus: reason === "signed-out" ? "guest" : "expired",
+      sessionEndReason: reason,
+    });
+  },
   setLoading: (isLoading) => set((state) => ({
     isLoading,
     sessionStatus: isLoading ? "checking" : state.sessionStatus,

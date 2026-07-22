@@ -59,6 +59,13 @@ metadata/OG, отсутствие hydration-запроса списка и то,
 собирает browser console/page errors и запрещает hydration/script warnings.
 System-сценарий дополнительно меняет `prefers-color-scheme` после hydration.
 
+`tests/e2e/session-request-budget.spec.ts` контролирует приватный request budget
+header: анонимная public page не вызывает `/auth/me` и `/notifications`, а
+подтвержденная сессия выполняет не более одного начального запроса каждого
+типа. Unit-тест scheduler отдельно фиксирует паузу в hidden/offline, refresh
+после visibility/online, backoff после `500` и отсутствие unhandled rejection
+при ошибке mutation.
+
 `tests/e2e/marketplace-responsive.spec.ts` фиксирует responsive/accessibility
 baseline для `/`, `/?categoryId=1` и `/listings/listing-1` в light/dark theme
 на ширинах 360, 390, 768 и 1440 px. Матрица запрещает horizontal overflow, targets меньше 24 px и

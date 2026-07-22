@@ -585,7 +585,16 @@ export class SnabixApiMock {
 function makeNotificationPreferences(): NotificationPreference[] {
   return [
     {
-      key: "listing.favorite.created",
+      key: "listing_moderation",
+      category: "listings",
+      title: "Модерация объявлений",
+      description: "Решения модерации по вашим объявлениям.",
+      siteEnabled: true,
+      emailEnabled: true,
+      isRequired: true,
+    },
+    {
+      key: "favorite_listings",
       category: "activity",
       title: "Добавление в избранное",
       description: "Когда ваше объявление добавляют в избранное.",
@@ -594,7 +603,7 @@ function makeNotificationPreferences(): NotificationPreference[] {
       isRequired: false,
     },
     {
-      key: "auth.login",
+      key: "security_login",
       category: "system",
       title: "Вход в аккаунт",
       description: "Уведомлять о новых входах в аккаунт.",
@@ -609,7 +618,7 @@ function makeNotifications(): UserNotification[] {
   return [
     {
       id: "notification-1",
-      eventKey: "listing.favorite.created",
+      eventKey: "favorite_listings",
       category: "activity",
       title: "Объявление добавили в избранное",
       body: "Тестовый ноутбук теперь в избранном у покупателя.",
@@ -621,7 +630,7 @@ function makeNotifications(): UserNotification[] {
     },
     {
       id: "notification-2",
-      eventKey: "auth.login",
+      eventKey: "security_login",
       category: "system",
       title: "Новый вход в аккаунт",
       body: "Выполнен вход с устройства Chrome.",

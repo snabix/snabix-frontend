@@ -99,6 +99,10 @@ export function NotificationsSettingsPage() {
           {categorySections.map((section) => {
             const items = preferences.filter((item) => item.category === section.key);
 
+            if (items.length === 0) {
+              return null;
+            }
+
             return (
               <section className="border-t border-[var(--border-soft)] py-7" key={section.key}>
                 <div className="mb-4">

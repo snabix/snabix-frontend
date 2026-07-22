@@ -20,7 +20,7 @@ test("user updates and resets notification settings", async ({ page }) => {
     items: expect.arrayContaining([
       expect.objectContaining({
         emailEnabled: true,
-        key: "listing.favorite.created",
+        key: "favorite_listings",
         siteEnabled: true,
       }),
     ]),
@@ -28,6 +28,8 @@ test("user updates and resets notification settings", async ({ page }) => {
 
   await page.getByRole("button", { name: "Сбросить настройки" }).click();
   await expect(page.getByText("Настройки уведомлений сброшены.")).toBeVisible();
+
+  await expect(page.getByRole("heading", { name: "Сообщения" })).toHaveCount(0);
 });
 
 test("user reads and deletes notifications from the header feed", async ({ page }) => {

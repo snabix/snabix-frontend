@@ -123,7 +123,6 @@ src/entities/listing/ui/listing-card.tsx
 src/entities/listing/ui/listing-card-media.tsx
 src/entities/listing/ui/listing-card-badges.tsx
 src/entities/listing/ui/listing-card-price.tsx
-src/entities/listing/ui/listing-card-seller.tsx
 src/entities/listing/ui/listing-card-meta.tsx
 src/entities/listing/ui/listing-card-actions.tsx
 src/entities/listing/lib/listing-card-formatters.ts

@@ -2,6 +2,7 @@ import type { Page, Request, Route } from "@playwright/test";
 import type { UserNotification, NotificationPreference } from "@/src/entities/notification";
 import type { ListingItem } from "@/src/entities/listing";
 import type { ActiveUserSession } from "@/src/features/auth/model/types";
+import { AUTH_SESSION_HINT_KEY } from "@/src/shared/api/auth-session-hint";
 import {
   city,
   leafCategory,
@@ -20,6 +21,7 @@ type ApiMockOptions = {
 };
 
 type JsonObject = Record<string, unknown>;
+type ObservedApiRequest = { method: string; pathname: string };
 
 export class SnabixApiMock {
   authenticated: boolean;
@@ -38,6 +40,7 @@ export class SnabixApiMock {
   notificationPreferences: NotificationPreference[] = makeNotificationPreferences();
   notifications: UserNotification[] = makeNotifications();
   reorderedMediaIds: number[] = [];
+  requests: ObservedApiRequest[] = [];
   reviews = [makeReview()];
   sessions: ActiveUserSession[] = makeSessions();
   terminatedSessionIds: string[] = [];
@@ -58,12 +61,41 @@ export class SnabixApiMock {
     );
 
     await page.route(apiUrlPattern, (route) => this.handle(route));
+    await page.addInitScript(
+      ({ isAuthenticated, storageKey }) => {
+        const initializationKey = `${storageKey}:e2e-initialized`;
+
+        if (window.sessionStorage.getItem(initializationKey) === "1") {
+          return;
+        }
+
+        window.sessionStorage.setItem(initializationKey, "1");
+
+        if (isAuthenticated) {
+          window.localStorage.setItem(storageKey, "1");
+        } else {
+          window.localStorage.removeItem(storageKey);
+        }
+      },
+      {
+        isAuthenticated: this.authenticated,
+        storageKey: AUTH_SESSION_HINT_KEY,
+      },
+    );
+  }
+
+  countRequests(pathname: string, method = "GET") {
+    return this.requests.filter((request) => (
+      request.pathname === pathname && request.method === method
+    )).length;
   }
 
   private async handle(route: Route) {
     const request = route.request();
     const url = new URL(request.url());
     const method = request.method();
+
+    this.requests.push({ method, pathname: url.pathname });
 
     if (method === "OPTIONS" || url.pathname === "/sanctum/csrf-cookie") {
       await this.fulfill(route, 204);
@@ -553,7 +585,16 @@ export class SnabixApiMock {
 function makeNotificationPreferences(): NotificationPreference[] {
   return [
     {
-      key: "listing.favorite.created",
+      key: "listing_moderation",
+      category: "listings",
+      title: "Модерация объявлений",
+      description: "Решения модерации по вашим объявлениям.",
+      siteEnabled: true,
+      emailEnabled: true,
+      isRequired: true,
+    },
+    {
+      key: "favorite_listings",
       category: "activity",
       title: "Добавление в избранное",
       description: "Когда ваше объявление добавляют в избранное.",
@@ -562,7 +603,7 @@ function makeNotificationPreferences(): NotificationPreference[] {
       isRequired: false,
     },
     {
-      key: "auth.login",
+      key: "security_login",
       category: "system",
       title: "Вход в аккаунт",
       description: "Уведомлять о новых входах в аккаунт.",
@@ -577,7 +618,7 @@ function makeNotifications(): UserNotification[] {
   return [
     {
       id: "notification-1",
-      eventKey: "listing.favorite.created",
+      eventKey: "favorite_listings",
       category: "activity",
       title: "Объявление добавили в избранное",
       body: "Тестовый ноутбук теперь в избранном у покупателя.",
@@ -589,7 +630,7 @@ function makeNotifications(): UserNotification[] {
     },
     {
       id: "notification-2",
-      eventKey: "auth.login",
+      eventKey: "security_login",
       category: "system",
       title: "Новый вход в аккаунт",
       body: "Выполнен вход с устройства Chrome.",

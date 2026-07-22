@@ -7,6 +7,7 @@ import {
 } from "@/src/shared/api/auth-session-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
+import { hasAuthSessionHint, setAuthSessionHint } from "@/src/shared/api/auth-session-hint";
 import type { User } from "@/src/entities/user";
 
 const {
@@ -65,8 +66,40 @@ describe("SessionProvider", () => {
     pathnameMock.mockReset();
     replaceMock.mockReset();
     toastInfoMock.mockReset();
+    window.localStorage.clear();
     pathnameMock.mockReturnValue("/account/profile");
     useUserStore.setState(useUserStore.getInitialState(), true);
+  });
+
+  it("skips private session bootstrap on an anonymous public route", async () => {
+    pathnameMock.mockReturnValue("/");
+
+    render(<SessionProvider />);
+
+    await waitFor(() => {
+      const state = useUserStore.getState();
+
+      expect(state.hasCheckedSession).toBe(true);
+      expect(state.sessionStatus).toBe("guest");
+    });
+
+    expect(getMeMock).not.toHaveBeenCalled();
+    expect(hasAuthSessionHint()).toBe(false);
+  });
+
+  it("restores a hinted session on a public route", async () => {
+    pathnameMock.mockReturnValue("/");
+    setAuthSessionHint(true);
+    getMeMock.mockResolvedValue(mockUser);
+
+    render(<SessionProvider />);
+
+    await waitFor(() => {
+      expect(useUserStore.getState().user).toEqual(mockUser);
+    });
+
+    expect(getMeMock).toHaveBeenCalledTimes(1);
+    expect(hasAuthSessionHint()).toBe(true);
   });
 
   it("hydrates user from the server session on startup", async () => {
@@ -85,6 +118,7 @@ describe("SessionProvider", () => {
     });
 
     expect(getMeMock).toHaveBeenCalledTimes(1);
+    expect(hasAuthSessionHint()).toBe(true);
   });
 
   it("clears local session when getMe fails", async () => {
@@ -103,6 +137,7 @@ describe("SessionProvider", () => {
     });
 
     expect(getMeMock).toHaveBeenCalledTimes(1);
+    expect(hasAuthSessionHint()).toBe(false);
   });
 
   it("clears local user state when unauthorized event is received", async () => {

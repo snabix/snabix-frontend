@@ -42,7 +42,10 @@ export function HeaderSessionActions({
         onOpenChange={onSearchOpenChange}
       />
 
-      <HeaderNotificationsMenu isEnabled={hasCheckedSession && user !== null} />
+      <HeaderNotificationsMenu
+        isEnabled={hasCheckedSession && user !== null}
+        key={user?.id ?? "guest"}
+      />
 
       {!hasCheckedSession ? (
         <div

@@ -3,27 +3,34 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell, CheckCheck, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   deleteAllNotifications,
   deleteNotification,
-  listNotifications,
   markAllNotificationsRead,
   markNotificationRead,
-  type NotificationFeed,
 } from "@/src/entities/notification";
+import { extractApiError } from "@/src/shared/lib/extract-api-error";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/src/shared/ui/shadcn/dropdown-menu";
+import { useNotificationFeedPolling } from "./use-notification-feed-polling";
 
 export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
-  const [feed, setFeed] = useState<NotificationFeed>({ items: [], unreadCount: 0 });
   const [isClearing, setIsClearing] = useState(false);
   const [deletingNotificationIds, setDeletingNotificationIds] = useState<Set<string>>(new Set());
-  const latestNotificationId = useRef<string | null>(null);
   const canPlaySound = useRef(false);
+  const { feed, refresh } = useNotificationFeedPolling({
+    isEnabled,
+    onNewNotification: () => {
+      if (canPlaySound.current) {
+        playNotificationSound();
+      }
+    },
+  });
   const visibleFeed = isEnabled ? feed : { items: [], unreadCount: 0 };
 
   useEffect(() => {
@@ -35,58 +42,23 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
     return () => window.removeEventListener("pointerdown", unlockSound);
   }, []);
 
-  useEffect(() => {
-    if (!isEnabled) {
-      latestNotificationId.current = null;
-      return;
-    }
-
-    let isMounted = true;
-    const load = async () => {
-      try {
-        const nextFeed = await listNotifications();
-        const nextLatestId = nextFeed.items[0]?.id ?? null;
-
-        if (
-          latestNotificationId.current !== null
-          && nextLatestId !== null
-          && nextLatestId !== latestNotificationId.current
-          && canPlaySound.current
-        ) {
-          playNotificationSound();
-        }
-
-        latestNotificationId.current = nextLatestId;
-        if (isMounted) setFeed(nextFeed);
-      } catch {
-        // Session handling is centralized in the API interceptor.
-      }
-    };
-
-    void load();
-    const intervalId = window.setInterval(load, 30_000);
-
-    return () => {
-      isMounted = false;
-      window.clearInterval(intervalId);
-    };
-  }, [isEnabled]);
-
   const handleMarkAllRead = async () => {
-    await markAllNotificationsRead();
-    setFeed((current) => ({
-      items: current.items.map((item) => ({ ...item, isRead: true })),
-      unreadCount: 0,
-    }));
+    await runNotificationMutation(
+      markAllNotificationsRead,
+      () => refresh(true),
+      "Не удалось отметить уведомления прочитанными.",
+    );
   };
 
   const handleDeleteAll = async () => {
     setIsClearing(true);
 
     try {
-      await deleteAllNotifications();
-      latestNotificationId.current = null;
-      setFeed({ items: [], unreadCount: 0 });
+      await runNotificationMutation(
+        deleteAllNotifications,
+        () => refresh(true),
+        "Не удалось очистить уведомления.",
+      );
     } finally {
       setIsClearing(false);
     }
@@ -96,17 +68,11 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
     setDeletingNotificationIds((current) => new Set(current).add(notificationId));
 
     try {
-      await deleteNotification(notificationId);
-      setFeed((current) => {
-        const deletedNotification = current.items.find((item) => item.id === notificationId);
-
-        return {
-          items: current.items.filter((item) => item.id !== notificationId),
-          unreadCount: deletedNotification !== undefined && !deletedNotification.isRead
-            ? Math.max(current.unreadCount - 1, 0)
-            : current.unreadCount,
-        };
-      });
+      await runNotificationMutation(
+        () => deleteNotification(notificationId),
+        () => refresh(true),
+        "Не удалось удалить уведомление.",
+      );
     } finally {
       setDeletingNotificationIds((current) => {
         const next = new Set(current);
@@ -119,19 +85,21 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
 
   const handleNotificationOpen = async (notificationId: string, isRead: boolean) => {
     if (!isRead) {
-      await markNotificationRead(notificationId);
-      setFeed((current) => ({
-        items: current.items.map((item) => (
-          item.id === notificationId ? { ...item, isRead: true } : item
-        )),
-        unreadCount: Math.max(current.unreadCount - 1, 0),
-      }));
+      await runNotificationMutation(
+        () => markNotificationRead(notificationId),
+        () => refresh(true),
+        "Не удалось отметить уведомление прочитанным.",
+      );
     }
   };
 
   const handleMenuOpenChange = (isOpen: boolean) => {
-    if (isOpen && visibleFeed.unreadCount > 0) {
-      void handleMarkAllRead();
+    if (isOpen) {
+      refresh();
+
+      if (visibleFeed.unreadCount > 0) {
+        void handleMarkAllRead();
+      }
     }
   };
 
@@ -247,19 +215,36 @@ export function HeaderNotificationsMenu({ isEnabled }: { isEnabled: boolean }) {
 }
 
 function playNotificationSound() {
-  const AudioContextClass = window.AudioContext;
-  const context = new AudioContextClass();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
+  try {
+    const AudioContextClass = window.AudioContext;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
 
-  oscillator.frequency.setValueAtTime(740, context.currentTime);
-  oscillator.frequency.exponentialRampToValueAtTime(980, context.currentTime + 0.12);
-  gain.gain.setValueAtTime(0.0001, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.18);
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start();
-  oscillator.stop(context.currentTime + 0.2);
-  oscillator.addEventListener("ended", () => void context.close());
+    oscillator.frequency.setValueAtTime(740, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(980, context.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.18);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.2);
+    oscillator.addEventListener("ended", () => void context.close());
+  } catch {
+    // Browser audio policies must not break notification refresh.
+  }
+}
+
+async function runNotificationMutation<T>(
+  mutation: () => Promise<T>,
+  onSuccess: () => void,
+  fallbackMessage: string,
+): Promise<void> {
+  try {
+    await mutation();
+    onSuccess();
+  } catch (error) {
+    toast.error(extractApiError(error, fallbackMessage));
+  }
 }

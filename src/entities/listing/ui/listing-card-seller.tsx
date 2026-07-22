@@ -20,7 +20,7 @@ export function ListingCardSeller({
 }: ListingCardSellerProps) {
   return (
     <Link
-      className="group/seller pointer-events-auto relative z-30 flex min-w-0 items-center justify-between gap-4 rounded-[22px] border border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[linear-gradient(135deg,var(--accent),color-mix(in_srgb,var(--accent)_74%,var(--brand)))] px-4 py-3 text-white shadow-[var(--shadow-card)] transition hover:border-[color-mix(in_srgb,var(--accent)_54%,white)] hover:bg-[linear-gradient(135deg,color-mix(in_srgb,var(--accent)_84%,var(--brand)),var(--brand))] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]"
+      className="group/seller pointer-events-auto relative z-30 flex min-w-0 items-center justify-between gap-4 rounded-[var(--radius-surface)] border border-[var(--brand-deep)] bg-[var(--brand-deep)] px-4 py-3 text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[color-mix(in_srgb,var(--brand-deep)_88%,black)] focus-visible:outline-none"
       href={href}
       onClick={(event) => event.stopPropagation()}
     >
@@ -32,7 +32,7 @@ export function ListingCardSeller({
         </Avatar>
 
         <div className="min-w-0">
-          <p className="truncate text-lg font-black tracking-[-0.03em] text-white">
+          <p className="truncate text-lg font-black tracking-normal text-white">
             {name}
           </p>
 

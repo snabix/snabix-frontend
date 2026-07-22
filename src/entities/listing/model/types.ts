@@ -107,5 +107,5 @@ export type ListingItem = {
 
 export type PublicListingItem = Omit<
   ListingItem,
-  "userId" | "contactName" | "contactPhone" | "contactEmail" | "rejectionReason"
+  "userId" | "contactName" | "contactPhone" | "contactEmail" | "media" | "rejectionReason"
 >;

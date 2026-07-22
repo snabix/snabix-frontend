@@ -62,7 +62,6 @@ const listing = {
   isNegotiable: true,
   imageUrl: null,
   imageUrls: [],
-  media: [],
   location: {
     source: "profile",
     profileAddressId: "address-1",

@@ -8,7 +8,7 @@ import {
   newsContentBlockSchema,
   publicListingItemSchema,
   userSchema,
-} from "./api-schemas";
+} from "@/src/shared/api/api-schemas";
 
 describe("strict API schemas", () => {
   it("accepts a user who has not filled in a personal name", () => {

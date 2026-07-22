@@ -16,6 +16,7 @@
     "lint": "eslint && npm run architecture:client",
     "architecture:client": "node scripts/check-client-boundaries.mjs",
     "bundle:report": "node scripts/report-client-bundle.mjs",
+    "contracts:check": "vitest run tests/contracts/backend-listing-contract.test.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:full": "node scripts/typecheck-full.mjs",
     "performance:public": "node scripts/check-public-storefront-performance.mjs",
@@ -23,6 +24,7 @@
     "test:e2e": "playwright test",
     "test:e2e:critical": "playwright test tests/e2e/critical-path.spec.ts --workers=1",
     "test:e2e:full": "playwright test",
+    "test:e2e:responsive": "playwright test tests/e2e/marketplace-responsive.spec.ts --workers=1",
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
@@ -40,7 +42,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.14.0",
-    "next": "16.2.10",
+    "next": "16.2.11",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.75.0",
@@ -61,10 +63,16 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.2.11",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.6"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.22",
+      "sharp": "0.35.3"
+    }
   }
 }

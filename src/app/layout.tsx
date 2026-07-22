@@ -3,8 +3,8 @@ import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/src/app/providers";
 import { AppFooter } from "@/src/shared/ui/footer/Footer";
-import { Header } from "@/src/shared/ui/header/Header";
 import { themeBootstrapScript } from "@/src/shared/ui/theme-switcher/theme-bootstrap";
+import { Header } from "@/src/widgets/header";
 
 export const metadata: Metadata = {
     title: {

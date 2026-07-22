@@ -8,7 +8,7 @@ import {
   AUTH_CONTINUE_MESSAGE,
   AUTH_UNAUTHORIZED_EVENT,
   type AuthUnauthorizedEventDetail,
-} from "@/src/features/auth/session/auth-events";
+} from "@/src/shared/api/auth-session-events";
 
 export function SessionProvider() {
   const hasHydratedSessionRef = useRef(false);

@@ -42,7 +42,7 @@ export function ListingMediaDetailsGallery({
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_92px]">
         <button
           aria-label="Открыть просмотр фотографий"
-          className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[26px] border border-[var(--border-soft)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--brand)_10%,var(--surface)),color-mix(in_srgb,var(--brand-deep)_7%,var(--surface)))] p-3 text-left shadow-[var(--shadow-card)]"
+          className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface-muted)] p-3 text-left shadow-sm"
           disabled={!hasRealImages}
           onClick={() => onOpenPreview(activeIndex)}
           type="button"
@@ -81,7 +81,7 @@ export function ListingMediaDetailsGallery({
           ) : null}
         </button>
 
-        <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1">
+        <div className="flex gap-3 overflow-x-auto pb-1 lg:max-h-[520px] lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1" data-horizontal-scroll>
           {previewImages.map((image, index) => {
             const isRemainderPreview = images.length > 4 && index === 4;
             const targetIndex = isRemainderPreview ? 4 : index;
@@ -92,7 +92,7 @@ export function ListingMediaDetailsGallery({
                   ? `Показать ещё ${hiddenImagesCount} изображений`
                   : `Показать изображение ${index + 1}`}
                 className={cn(
-                  "relative size-20 shrink-0 overflow-hidden rounded-2xl border bg-[var(--surface)] p-1 transition lg:size-[84px]",
+                  "relative size-20 shrink-0 overflow-hidden rounded-[var(--radius-control)] border bg-[var(--surface)] p-1 transition lg:size-[84px]",
                   activeIndex === targetIndex
                     ? "border-[var(--accent)] ring-4 ring-[var(--accent-soft)]"
                     : "border-[var(--border-soft)] hover:border-[var(--accent)]",
@@ -109,7 +109,7 @@ export function ListingMediaDetailsGallery({
                 {image ? (
                   <MediaImage
                     alt={`${title} ${index + 1}`}
-                    className="rounded-xl object-contain p-1"
+                    className="rounded-[var(--radius-media)] object-contain p-1"
                     fill
                     sizes="84px"
                     src={image}
@@ -121,7 +121,7 @@ export function ListingMediaDetailsGallery({
                 )}
 
                 {isRemainderPreview ? (
-                  <span className="absolute inset-1 grid place-items-center rounded-xl bg-[color-mix(in_srgb,var(--brand-deep)_68%,transparent)] text-lg font-black text-white">
+                  <span className="absolute inset-1 grid place-items-center rounded-[var(--radius-media)] bg-[color-mix(in_srgb,var(--brand-deep)_68%,transparent)] text-lg font-black text-white">
                     +{hiddenImagesCount}
                   </span>
                 ) : null}

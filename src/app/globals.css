@@ -48,6 +48,13 @@
     --inverted-surface-border: color-mix(in srgb, var(--palette-silver) 18%, transparent);
     --shadow-soft: 0 24px 60px color-mix(in srgb, var(--palette-midnight) 16%, transparent);
     --shadow-card: 0 18px 38px color-mix(in srgb, var(--palette-midnight) 10%, transparent);
+    --radius-control: 8px;
+    --radius-media: 6px;
+    --radius-surface: 8px;
+    --focus-ring: color-mix(in srgb, var(--accent) 72%, var(--foreground));
+    --focus-ring-offset: 3px;
+    --page-inline-space: clamp(1rem, 3vw, 2rem);
+    --section-block-space: clamp(1.5rem, 4vw, 3rem);
 }
 
 .dark {
@@ -158,7 +165,26 @@ body {
     display: none;
 }
 
+.category-conveyor-viewport:hover .category-conveyor-track,
+.category-conveyor-viewport:focus-within .category-conveyor-track {
+    animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
+    html,
+    body {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+
     .category-conveyor-track {
         animation-play-state: paused;
     }
@@ -178,22 +204,10 @@ body {
     color: var(--foreground);
     font-family: "Inter", "Segoe UI", sans-serif;
     min-height: 100vh;
-    background-image:
-            radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 28rem),
-            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--palette-light-gray) 46%, transparent), transparent 26rem),
-            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
-            linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, var(--palette-light-gray)), var(--background) 42%, color-mix(in srgb, var(--background) 88%, var(--palette-light-gray)) 100%);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: cover;
 }
 
 .dark body {
-    background-image:
-            radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 28rem),
-            radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--palette-dark-gray) 42%, transparent), transparent 28rem),
-            radial-gradient(circle at 18% 62%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
-            linear-gradient(180deg, var(--background), color-mix(in srgb, var(--background) 82%, var(--palette-dark-gray)) 48%, var(--background) 100%);
+    background: var(--background);
 }
 
 a,
@@ -217,6 +231,11 @@ button:not(:disabled):active {
     filter: saturate(1.04) brightness(0.98);
 }
 
+:where(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+}
+
 ::selection {
     background: var(--accent-soft);
     color: var(--brand-deep);
@@ -227,16 +246,13 @@ button:not(:disabled):active {
 }
 
 .surface-card {
-    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    background: var(--surface);
     border: 1px solid var(--border-soft);
     box-shadow: var(--shadow-card);
-    backdrop-filter: blur(18px);
 }
 
 .dark .surface-card {
-    background:
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, var(--palette-dark-gray)), var(--surface)),
-            var(--surface);
+    background: var(--surface);
     border-color: var(--border-strong);
     box-shadow:
             inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent),
@@ -244,17 +260,12 @@ button:not(:disabled):active {
 }
 
 .hero-shell {
-    background:
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 96%, transparent), color-mix(in srgb, var(--surface-muted) 72%, transparent)),
-            linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--background) 78%, transparent));
+    background: var(--surface);
     box-shadow: var(--shadow-soft);
 }
 
 .dark .hero-shell {
-    background:
-            radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 20rem),
-            radial-gradient(circle at 84% 0%, color-mix(in srgb, var(--palette-light-gray) 8%, transparent), transparent 22rem),
-            linear-gradient(145deg, color-mix(in srgb, var(--surface) 88%, var(--palette-dark-gray)), var(--surface));
+    background: var(--surface);
     border: 1px solid var(--border-strong);
     box-shadow:
             inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent),

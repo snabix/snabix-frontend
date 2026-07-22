@@ -21,6 +21,11 @@ This version has breaking changes - APIs, conventions, and file structure may al
 - `src/entities` содержит бизнес-сущности: user, category, listing.
 - `src/shared` содержит API-клиент, UI-kit, config, utils и базовые стили.
 
+Направление зависимостей идет сверху вниз. Production-модули `src/shared` не
+импортируют `app`, `widgets`, `screens`, `features` или `entities`; это правило
+проверяется ESLint через `no-restricted-imports`. Межслойные contract tests
+хранятся отдельно в `tests/contracts`, а не внутри одного из FSD-слоев.
+
 Не смешивай API-запросы, состояние формы и крупную верстку в одном компоненте. Если компонент растет, выноси state/hook/model отдельно.
 
 ## UI
@@ -58,6 +63,7 @@ This version has breaking changes - APIs, conventions, and file structure may al
 - Backend lists API для объявлений использует контракт `data.items` + `data.meta`; frontend adapters должны учитывать пагинацию.
 - JSON-поля следуют `.docs/API_DTO_CONTRACTS.md` backend: `lowerCamelCase`, semantic string enums, `...Id`, ISO 8601 `...At`, money как `...AmountMinor` + `...Currency`.
 - Deprecated numeric/generic aliases разрешены только внутри `src/shared/api/schemas` compatibility adapters до указанной backend датой границы. Entities, features и screens не должны хранить или отправлять `type/status/price/currency` вместо канонических полей объявления.
+- Stable public/private listing DTO проверяются snapshot из `contracts/listings.v1.json`; после backend contract change синхронизируй snapshot и запускай `npm run contracts:check`. Snapshot не заменяет Zod adapters или domain types.
 
 ## Auth
 

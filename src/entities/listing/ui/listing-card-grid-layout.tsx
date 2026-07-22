@@ -25,11 +25,11 @@ export function ListingCardGridLayout({
       <div className="pointer-events-none relative grid gap-2 overflow-hidden px-4 pb-4 pt-3">
         <div className="grid min-w-0 content-between gap-2 overflow-hidden">
           <div className="min-w-0 overflow-hidden">
-            <p className="truncate font-heading text-[1.2rem] font-black leading-none tracking-[-0.03em] text-[var(--accent)]">
+            <p className="truncate font-heading text-[1.2rem] font-black leading-none tracking-normal text-[var(--accent)]">
               {presentation.formattedPrice}
             </p>
 
-            <h3 className="mt-2 line-clamp-2 overflow-hidden font-heading text-[1rem] font-bold leading-[1.2] tracking-[-0.02em] text-[var(--brand-deep)]">
+            <h3 className="mt-2 line-clamp-2 overflow-hidden font-heading text-[1rem] font-bold leading-[1.2] tracking-normal text-[var(--brand-deep)]">
               {listing.title}
             </h3>
 

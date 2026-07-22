@@ -52,7 +52,9 @@ export function HeaderSearchMenu({
     <div
       className={[
         "relative min-w-0 transition-all duration-300 ease-out",
-        isOpen ? "w-[min(36vw,420px)] min-w-[240px]" : "w-11",
+        isOpen
+          ? "absolute right-0 top-0 z-20 w-[min(78vw,320px)] sm:static sm:w-[min(36vw,420px)] sm:min-w-[240px]"
+          : "w-11",
       ].join(" ")}
       ref={rootRef}
     >
@@ -60,7 +62,7 @@ export function HeaderSearchMenu({
         aria-expanded={isOpen}
         aria-label="Открыть поиск"
         className={[
-          "grid size-11 place-items-center rounded-2xl border border-[var(--border-soft)]",
+          "grid size-11 place-items-center rounded-[var(--radius-control)] border border-[var(--border-soft)]",
           "bg-[var(--surface)] text-[var(--brand-deep)] transition",
           "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]",
           "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
@@ -75,11 +77,12 @@ export function HeaderSearchMenu({
       {isOpen ? (
         <div className="relative min-w-0">
           <form
-            className="flex h-12 items-center gap-3 rounded-full border-4 border-[#7ABFFF] bg-[var(--surface-muted)] px-5 text-[var(--brand-deep)] shadow-sm transition"
+            className="flex h-12 items-center gap-3 rounded-[var(--radius-control)] border-2 border-[var(--focus-ring)] bg-[var(--surface)] px-4 text-[var(--brand-deep)] shadow-sm transition"
             onSubmit={handleSubmit}
           >
             <Search className="shrink-0 text-[var(--text-muted)]" size={18} />
             <input
+              aria-label="Поиск объявлений"
               className="min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-[var(--text-muted)]"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Поиск"
@@ -99,7 +102,7 @@ export function HeaderSearchMenu({
             ) : null}
           </form>
 
-          <div className="absolute left-0 top-[calc(100%+1rem)] z-50 w-full rounded-b-[24px] bg-[var(--surface)] px-5 py-5 shadow-[var(--shadow-soft)]">
+          <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-full rounded-[var(--radius-surface)] border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-4 shadow-[var(--shadow-soft)]">
             <h2 className="font-heading text-lg font-black text-[var(--brand-deep)]">
               Недавние поисковые запросы
             </h2>

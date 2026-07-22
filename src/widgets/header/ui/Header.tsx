@@ -7,12 +7,12 @@ import { toast } from "sonner";
 import { useUserStore } from "@/src/entities/user";
 import { logout } from "@/src/features/auth/api";
 import { extractApiError } from "@/src/shared/lib/extract-api-error";
-import { CategoryCatalog } from "@/src/shared/ui/header/CategoryCatalog";
-import { CatalogToggleButton } from "@/src/shared/ui/header/CatalogToggleButton";
-import { HeaderSessionActions } from "@/src/shared/ui/header/HeaderSessionActions";
-import { useHeaderState } from "@/src/shared/ui/header/use-header-state";
 import { Container } from "@/src/shared/ui/container";
 import { Logo } from "@/src/shared/ui/logo";
+import { CatalogToggleButton } from "./CatalogToggleButton";
+import { CategoryCatalog } from "./CategoryCatalog";
+import { HeaderSessionActions } from "./HeaderSessionActions";
+import { useHeaderState } from "./use-header-state";
 
 export function Header() {
   const router = useRouter();
@@ -52,7 +52,10 @@ export function Header() {
       ].join(" ")}
     >
       <Container>
-        <div className="surface-card flex items-center justify-between gap-3 rounded-[30px] px-4 py-4 sm:px-5">
+        <div
+          className="surface-card flex items-center justify-between gap-2 rounded-[var(--radius-surface)] px-3 py-3 sm:gap-3 sm:px-5"
+          data-testid="marketplace-header"
+        >
           <div className="flex min-w-0 items-center gap-2.5">
             <Logo variant="wordmark" />
 
@@ -95,7 +98,7 @@ function HeaderLink({
 }) {
   return (
     <Link
-      className="rounded-full px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition-colors hover:text-[var(--accent)]"
+      className="rounded-[var(--radius-control)] px-4 py-2 text-sm font-black text-[var(--brand-deep)] transition-colors hover:text-[var(--accent)]"
       href={href}
     >
       {children}

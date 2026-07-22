@@ -31,7 +31,7 @@ export function CategoryCatalogBranch({
   rootsStatus,
 }: CategoryCatalogBranchProps) {
   return (
-    <section className="surface-card h-full min-h-0 overflow-hidden rounded-[24px] p-5 sm:p-7">
+    <section className="surface-card h-full min-h-0 overflow-hidden rounded-[var(--radius-surface)] p-5 sm:p-7">
       {rootsStatus === "loading" && !hasLoadedCategories ? (
         <div className="grid min-h-[28rem] content-start gap-5">
           <Skeleton className="h-10 w-2/5" />
@@ -48,7 +48,7 @@ export function CategoryCatalogBranch({
 
       {rootsStatus === "error" && !hasLoadedCategories && rootsErrorMessage ? (
         <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
-          <div className="grid size-14 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+          <div className="grid size-14 place-items-center rounded-[var(--radius-control)] bg-[var(--accent-soft)] text-[var(--accent)]">
             <LayoutGrid aria-hidden="true" size={24} />
           </div>
           <div>
@@ -60,7 +60,7 @@ export function CategoryCatalogBranch({
             </p>
           </div>
           <Button
-            className="rounded-[18px] px-5 font-semibold"
+            className="rounded-[var(--radius-control)] px-5 font-semibold"
             onClick={onRetryRoots}
           >
             Повторить загрузку
@@ -71,13 +71,13 @@ export function CategoryCatalogBranch({
       {(rootsStatus === "success" || hasLoadedCategories) && activeRoot ? (
         <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-6">
           <div className="border-b border-[var(--border-soft)] pb-4">
-            <h3 className="font-heading text-[1.9rem] font-extrabold tracking-[-0.03em] text-[var(--brand-deep)]">
+            <h3 className="font-heading text-[1.9rem] font-extrabold tracking-normal text-[var(--brand-deep)]">
               {activeRoot.name}
             </h3>
           </div>
 
           {activeBranchStatus === "loading" && activeBranch === null ? (
-            <div className="grid min-h-[22rem] content-start gap-5 rounded-[28px] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] p-5">
+            <div className="grid min-h-[22rem] content-start gap-5 border-y border-[var(--border-soft)] py-5">
               <Skeleton className="h-8 w-2/5" />
               <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3">
                 <Skeleton className="h-24" />
@@ -88,7 +88,7 @@ export function CategoryCatalogBranch({
           ) : null}
 
           {activeBranchStatus === "error" && activeBranch === null ? (
-            <div className="flex min-h-[22rem] flex-col items-center justify-center gap-4 rounded-[28px] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] text-center">
+            <div className="flex min-h-[22rem] flex-col items-center justify-center gap-4 border-y border-[var(--border-soft)] text-center">
               <p className="text-lg font-black text-[var(--brand-deep)]">
                 Не удалось открыть раздел
               </p>
@@ -96,7 +96,7 @@ export function CategoryCatalogBranch({
                 {activeBranchError ?? "Попробуйте еще раз чуть позже."}
               </p>
               <Button
-                className="rounded-[18px] px-5 font-semibold"
+                className="rounded-[var(--radius-control)] px-5 font-semibold"
                 onClick={onRetryBranch}
               >
                 Повторить загрузку
@@ -175,7 +175,7 @@ function CategoryTitleLink({
 }) {
   return (
     <Link
-      className="inline-flex text-[1rem] font-extrabold leading-6 tracking-[-0.01em] text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
+      className="inline-flex text-[1rem] font-extrabold leading-6 tracking-normal text-[var(--brand-deep)] transition-colors duration-200 hover:text-[var(--brand)]"
       href={`/?categoryId=${category.id}`}
       onClick={onCategorySelect}
     >

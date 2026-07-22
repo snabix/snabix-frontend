@@ -246,12 +246,13 @@ describe("api adapter contracts", () => {
     expect(apiPatchMock).toHaveBeenCalledWith("/listings/listing-1", payload);
   });
 
-  it("unwraps public listings pagination contract with media fields", async () => {
+  it("unwraps public listings pagination contract with public image fields", async () => {
     const publicListingContract = { ...listingContract };
 
     deletePartialListingField(publicListingContract, "contactEmail");
     deletePartialListingField(publicListingContract, "contactName");
     deletePartialListingField(publicListingContract, "contactPhone");
+    deletePartialListingField(publicListingContract, "media");
     deletePartialListingField(publicListingContract, "rejectionReason");
     deletePartialListingField(publicListingContract, "userId");
 

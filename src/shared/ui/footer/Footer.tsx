@@ -27,7 +27,8 @@ export function AppFooter() {
           <section aria-labelledby="footer-brand-title">
             <Link
               aria-label="На главную Snabix"
-              className="inline-flex items-center rounded-2xl text-2xl font-black tracking-[-0.06em] text-[var(--brand-deep)] transition hover:text-[var(--accent)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--radius-control)] text-2xl font-black tracking-normal text-[var(--brand-deep)] transition hover:text-[var(--accent)]"
+              data-touch-target
               href="/"
             >
               SNABIX
@@ -51,8 +52,8 @@ export function AppFooter() {
                   <Link
                     aria-label={link.label}
                     className={[
-                      "grid size-11 place-items-center rounded-2xl",
-                      "border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)]",
+                      "grid size-11 place-items-center rounded-[var(--radius-control)]",
+                      "border border-[var(--border-soft)] bg-[var(--surface)]",
                       "text-[var(--brand-deep)] transition-all duration-200",
                       "hover:-translate-y-0.5 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-[var(--shadow-card)]",
                       "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--accent-soft)]",
@@ -69,13 +70,14 @@ export function AppFooter() {
 
           <section aria-labelledby="footer-platform-title">
             <h2
-              className="font-heading text-sm font-extrabold uppercase tracking-[0.18em] text-[var(--brand-deep)]"
+              className="font-heading text-sm font-extrabold uppercase tracking-normal text-[var(--brand-deep)]"
               id="footer-platform-title"
             >
               Платформа
             </h2>
             <Link
-              className="mt-5 inline-flex text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+              className="mt-5 inline-flex min-h-6 items-center text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+              data-touch-target
               href="/about"
             >
               О SNABIX
@@ -84,7 +86,7 @@ export function AppFooter() {
 
           <section aria-labelledby="footer-legal-title">
             <h2
-              className="font-heading text-sm font-extrabold uppercase tracking-[0.18em] text-[var(--brand-deep)]"
+              className="font-heading text-sm font-extrabold uppercase tracking-normal text-[var(--brand-deep)]"
               id="footer-legal-title"
             >
               Правовая информация
@@ -93,7 +95,8 @@ export function AppFooter() {
             <div className="mt-5 flex flex-col gap-3">
               {legalLinks.map((link) => (
                 <Link
-                  className="text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+                  className="inline-flex min-h-6 items-center text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+                  data-touch-target
                   href={link.href}
                   key={link.label}
                 >
@@ -105,7 +108,7 @@ export function AppFooter() {
 
           <section aria-labelledby="footer-additional-title">
             <h2
-              className="font-heading text-sm font-extrabold uppercase tracking-[0.18em] text-[var(--brand-deep)]"
+              className="font-heading text-sm font-extrabold uppercase tracking-normal text-[var(--brand-deep)]"
               id="footer-additional-title"
             >
               Дополнительная информация
@@ -114,7 +117,8 @@ export function AppFooter() {
             <div className="mt-5 flex flex-col gap-3">
               {additionalLinks.map((link) => (
                 <Link
-                  className="text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+                  className="inline-flex min-h-6 items-center text-sm font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--brand-deep)]"
+                  data-touch-target
                   href={link.href}
                   key={link.label}
                 >

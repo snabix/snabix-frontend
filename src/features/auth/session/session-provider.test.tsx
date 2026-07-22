@@ -4,7 +4,7 @@ import {
   AUTH_CONTINUE_MESSAGE,
   AUTH_UNAUTHORIZED_EVENT,
   notifyUnauthorized,
-} from "@/src/features/auth/session/auth-events";
+} from "@/src/shared/api/auth-session-events";
 import { SessionProvider } from "@/src/features/auth/session/session-provider";
 import { useUserStore } from "@/src/entities/user";
 import type { User } from "@/src/entities/user";
